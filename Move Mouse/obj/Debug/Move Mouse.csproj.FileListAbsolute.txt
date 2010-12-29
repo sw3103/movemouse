@@ -1,0 +1,16 @@
+C:\Users\v315933\Desktop\Move Mouse\Move Mouse\bin\Debug\Move Mouse.exe
+C:\Users\v315933\Desktop\Move Mouse\Move Mouse\bin\Debug\Move Mouse.pdb
+C:\Users\v315933\Desktop\Move Mouse\Move Mouse\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\v315933\Desktop\Move Mouse\Move Mouse\obj\Debug\Move Mouse.exe
+C:\Users\v315933\Desktop\Move Mouse\Move Mouse\obj\Debug\Move Mouse.pdb
+C:\Users\v315933\Desktop\Move Mouse\Move Mouse\obj\Debug\Move Mouse.csproj.GenerateResource.Cache
+C:\Users\v315933\Desktop\Move Mouse\Move Mouse\obj\Debug\Ellanet.MouseForm.resources
+C:\Users\v315933\Desktop\Move Mouse\Move Mouse\obj\Debug\Ellanet.Properties.Resources.resources
+C:\Users\Steve Williams\Desktop\movemouse\Move Mouse\obj\Debug\Move Mouse.exe
+C:\Users\Steve Williams\Desktop\movemouse\Move Mouse\obj\Debug\Move Mouse.pdb
+C:\Users\Steve Williams\Desktop\movemouse\Move Mouse\bin\Debug\Move Mouse.exe
+C:\Users\Steve Williams\Desktop\movemouse\Move Mouse\bin\Debug\Move Mouse.pdb
+C:\Users\Steve Williams\Desktop\movemouse\Move Mouse\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\Steve Williams\Desktop\movemouse\Move Mouse\obj\Debug\Ellanet.MouseForm.resources
+C:\Users\Steve Williams\Desktop\movemouse\Move Mouse\obj\Debug\Ellanet.Properties.Resources.resources
+C:\Users\Steve Williams\Desktop\movemouse\Move Mouse\obj\Debug\Move Mouse.csproj.GenerateResource.Cache
