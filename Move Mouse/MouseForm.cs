@@ -258,6 +258,7 @@ namespace Ellanet
                             const int mouseMoveLoopSleep = 1;
                             const int mouseSpeed = 1;
                             const int moveSquareSize = 10;
+                            Point cursorStartPosition = Cursor.Position;
 
                             for (int i = 0; i < moveSquareSize; i += mouseSpeed)
                             {
@@ -282,6 +283,8 @@ namespace Ellanet
                                 MoveMouse(new Point(0, -1));
                                 Thread.Sleep(mouseMoveLoopSleep);
                             }
+
+                            Cursor.Position = cursorStartPosition;
                         }
                         else
                         {
