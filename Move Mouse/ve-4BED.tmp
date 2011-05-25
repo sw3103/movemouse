@@ -114,49 +114,25 @@ namespace Ellanet
         public MouseForm()
         {
             InitializeComponent();
-            int screenSaverTimeout = GetScreenSaverTimeout();
-
-            if (screenSaverTimeout > 0)
-            {
-                resumeNumericUpDown.Value = (screenSaverTimeout / 2);
-            } 
-            
-            keystrokeCheckBox.CheckedChanged += new EventHandler(keystrokeCheckBox_CheckedChanged);
-            staticPositionCheckBox.CheckedChanged += new EventHandler(startPositionCheckBox_CheckedChanged);
-            resumeCheckBox.CheckedChanged += new EventHandler(resumeCheckBox_CheckedChanged);
-            launchAtLogonCheckBox.CheckedChanged += new EventHandler(launchAtLogonCheckBox_CheckedChanged);
-            ReadSettings();
             this.Icon = global::Ellanet.Properties.Resources.Mouse_Icon;
             this.Text = String.Format("Move Mouse ({0}.{1}.{2}) - http://movemouse.codeplex.com/", Assembly.GetExecutingAssembly().GetName().Version.Major, Assembly.GetExecutingAssembly().GetName().Version.Minor, Assembly.GetExecutingAssembly().GetName().Version.Build);
-            this.FormClosing += new FormClosingEventHandler(MouseForm_FormClosing);
-            this.Load += new EventHandler(MouseForm_Load);
             actionButton.Click += new EventHandler(actionButton_Click);
+            this.FormClosing += new FormClosingEventHandler(MouseForm_FormClosing);
             moveMouseCheckBox.CheckedChanged += new EventHandler(moveMouseCheckBox_CheckedChanged);
             clickMouseCheckBox.CheckedChanged += new EventHandler(clickMouseCheckBox_CheckedChanged);
             autoPauseCheckBox.CheckedChanged += new EventHandler(autoPauseCheckBox_CheckedChanged);
             resumeTimer.Interval = 1000;
             resumeTimer.Tick += new EventHandler(resumeTimer_Tick);
+            resumeCheckBox.CheckedChanged += new EventHandler(resumeCheckBox_CheckedChanged);
+            keystrokeCheckBox.CheckedChanged += new EventHandler(keystrokeCheckBox_CheckedChanged);
+            startPositionCheckBox.CheckedChanged += new EventHandler(startPositionCheckBox_CheckedChanged);
             traceButton.Click += new EventHandler(traceButton_Click);
             SetButtonTag(ref traceButton, GetButtonText(ref traceButton));
-        }
+            int screenSaverTimeout = GetScreenSaverTimeout();
 
-        void launchAtLogonCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            if (launchAtLogonCheckBox.Checked)
+            if (screenSaverTimeout > 0)
             {
-                Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true).SetValue("Move Mouse", Application.ExecutablePath);
-            }
-            else
-            {
-                Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true).DeleteValue("Move Mouse");
-            }
-        }
-
-        void MouseForm_Load(object sender, EventArgs e)
-        {
-            if (startOnLaunchCheckBox.Checked)
-            {
-                actionButton.PerformClick();
+                resumeNumericUpDown.Value = (screenSaverTimeout / 2);
             }
         }
 
@@ -187,9 +163,9 @@ namespace Ellanet
 
         void startPositionCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            xNumericUpDown.Enabled = staticPositionCheckBox.Checked;
-            yNumericUpDown.Enabled = staticPositionCheckBox.Checked;
-            traceButton.Enabled = staticPositionCheckBox.Checked;
+            xNumericUpDown.Enabled = startPositionCheckBox.Checked;
+            yNumericUpDown.Enabled = startPositionCheckBox.Checked;
+            traceButton.Enabled = startPositionCheckBox.Checked;
         }
 
         void keystrokeCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -229,10 +205,10 @@ namespace Ellanet
                 clickMouseCheckBox.Checked = true;
             }
 
-            staticPositionCheckBox.Enabled = (clickMouseCheckBox.Checked | moveMouseCheckBox.Checked);
-            xNumericUpDown.Enabled = (staticPositionCheckBox.Enabled & staticPositionCheckBox.Checked);
-            yNumericUpDown.Enabled = (staticPositionCheckBox.Enabled & staticPositionCheckBox.Checked);
-            traceButton.Enabled = (staticPositionCheckBox.Enabled & staticPositionCheckBox.Checked);
+            startPositionCheckBox.Enabled = (clickMouseCheckBox.Checked | moveMouseCheckBox.Checked);
+            xNumericUpDown.Enabled = (startPositionCheckBox.Enabled & startPositionCheckBox.Checked);
+            yNumericUpDown.Enabled = (startPositionCheckBox.Enabled & startPositionCheckBox.Checked);
+            traceButton.Enabled = (startPositionCheckBox.Enabled & startPositionCheckBox.Checked);
         }
 
         void moveMouseCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -243,10 +219,10 @@ namespace Ellanet
             }
 
             stealthCheckBox.Enabled = moveMouseCheckBox.Checked;
-            staticPositionCheckBox.Enabled = (clickMouseCheckBox.Checked | moveMouseCheckBox.Checked);
-            xNumericUpDown.Enabled = (staticPositionCheckBox.Enabled & staticPositionCheckBox.Checked);
-            yNumericUpDown.Enabled = (staticPositionCheckBox.Enabled & staticPositionCheckBox.Checked);
-            traceButton.Enabled = (staticPositionCheckBox.Enabled & staticPositionCheckBox.Checked);
+            startPositionCheckBox.Enabled = (clickMouseCheckBox.Checked | moveMouseCheckBox.Checked);
+            xNumericUpDown.Enabled = (startPositionCheckBox.Enabled & startPositionCheckBox.Checked);
+            yNumericUpDown.Enabled = (startPositionCheckBox.Enabled & startPositionCheckBox.Checked);
+            traceButton.Enabled = (startPositionCheckBox.Enabled & startPositionCheckBox.Checked);
         }
 
         void MouseForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -274,13 +250,8 @@ namespace Ellanet
                     resumeTimer.Start();
                     actionButton.Text = "Start";
                     this.Opacity = 1.0;
+                    this.WindowState = FormWindowState.Minimized;
                     this.TopMost = false;
-
-                    if (minimiseCheckBox.Checked)
-                    {
-                        this.WindowState = FormWindowState.Minimized;
-                    }
-
                     break;
                 default:
 
@@ -308,11 +279,6 @@ namespace Ellanet
         {
             int secondsElapsed = 0;
 
-            if (staticPositionCheckBox.Checked)
-            {
-                Cursor.Position = new Point(Convert.ToInt32(xNumericUpDown.Value), Convert.ToInt32(yNumericUpDown.Value));
-            }
-
             do
             {
                 UpdateCountdownProgressBar(ref countdownProgressBar, Convert.ToInt32(delayNumericUpDown.Value), secondsElapsed);
@@ -326,7 +292,7 @@ namespace Ellanet
                 else
                 {
                     startingMousePoint = Cursor.Position;
-               }
+                }
 
                 if (secondsElapsed > Convert.ToInt32(delayNumericUpDown.Value))
                 {
@@ -559,65 +525,51 @@ namespace Ellanet
 
         void ReadSettings()
         {
-            try
+            if (File.Exists(Path.Combine(moveMouseXmlDirectory, moveMouseXmlName)))
             {
-                if (File.Exists(Path.Combine(moveMouseXmlDirectory, moveMouseXmlName)))
-                {
-                    XmlDocument settingsXmlDoc = new XmlDocument();
-                    settingsXmlDoc.Load(Path.Combine(moveMouseXmlDirectory, moveMouseXmlName));
-                    delayNumericUpDown.Value = Convert.ToDecimal(settingsXmlDoc.SelectSingleNode("settings/second_delay").InnerText);
-                    moveMouseCheckBox.Checked = Convert.ToBoolean(settingsXmlDoc.SelectSingleNode("settings/move_mouse_pointer").InnerText);
-                    stealthCheckBox.Checked = Convert.ToBoolean(settingsXmlDoc.SelectSingleNode("settings/stealth_mode").InnerText);
-                    staticPositionCheckBox.Checked = Convert.ToBoolean(settingsXmlDoc.SelectSingleNode("settings/enable_static_position").InnerText);
-                    xNumericUpDown.Value = Convert.ToDecimal(settingsXmlDoc.SelectSingleNode("settings/x_static_position").InnerText);
-                    yNumericUpDown.Value = Convert.ToDecimal(settingsXmlDoc.SelectSingleNode("settings/y_static_position").InnerText);
-                    clickMouseCheckBox.Checked = Convert.ToBoolean(settingsXmlDoc.SelectSingleNode("settings/click_left_mouse_button").InnerText);
-                    keystrokeCheckBox.Checked = Convert.ToBoolean(settingsXmlDoc.SelectSingleNode("settings/send_keystroke").InnerText);
-                    keystrokeComboBox.Text = settingsXmlDoc.SelectSingleNode("settings/keystroke").InnerText;
-                    autoPauseCheckBox.Checked = Convert.ToBoolean(settingsXmlDoc.SelectSingleNode("settings/pause_when_mouse_moved").InnerText);
-                    resumeCheckBox.Checked = Convert.ToBoolean(settingsXmlDoc.SelectSingleNode("settings/automatically_resume").InnerText);
-                    resumeNumericUpDown.Value = Convert.ToDecimal(settingsXmlDoc.SelectSingleNode("settings/resume_seconds").InnerText);
-                    startOnLaunchCheckBox.Checked = Convert.ToBoolean(settingsXmlDoc.SelectSingleNode("settings/automatically_start_on_launch").InnerText);
-                    launchAtLogonCheckBox.Checked = Convert.ToBoolean(settingsXmlDoc.SelectSingleNode("settings/automatically_launch_on_logon").InnerText);
-                    minimiseCheckBox.Checked = Convert.ToBoolean(settingsXmlDoc.SelectSingleNode("settings/minimise_on_pause").InnerText);
-                }
-            }
-            catch
-            {
+                XmlDocument settingsXmlDoc = new XmlDocument();
+                settingsXmlDoc.LoadXml("<settings><second_delay /><move_mouse_pointer /><stealth_mode /><enable_start_position /><x_start_position /><y_start_position /><click_left_mouse_button /><send_keystroke /><keystroke /><pause_when_mouse_moved /><automatically_resume /><resume_seconds /><automatically_start_on_launch /><automatically_launch_on_logon /></settings>");
+        delayNumericUpDown.Value    =   Convert.ToDecimal( settingsXmlDoc.SelectSingleNode("settings/second_delay").InnerText);
+             moveMouseCheckBox.Checked  =Convert.ToBoolean( settingsXmlDoc.SelectSingleNode("settings/move_mouse_pointer").InnerText);
+            stealthCheckBox.Checked  =Convert.ToBoolean(  settingsXmlDoc.SelectSingleNode("settings/stealth_mode").InnerText);
+           startPositionCheckBox.Checked  = Convert.ToBoolean(  settingsXmlDoc.SelectSingleNode("settings/enable_start_position").InnerText);
+           xNumericUpDown.Value = Convert.ToDecimal(settingsXmlDoc.SelectSingleNode("settings/x_start_position").InnerText);
+           yNumericUpDown.Value = Convert.ToDecimal(settingsXmlDoc.SelectSingleNode("settings/y_start_position").InnerText);
+            clickMouseCheckBox.Checked  = Convert.ToBoolean( settingsXmlDoc.SelectSingleNode("settings/click_left_mouse_button").InnerText);
+              keystrokeCheckBox.Checked = Convert.ToBoolean(settingsXmlDoc.SelectSingleNode("settings/send_keystroke").InnerText);
+            keystrokeComboBox.Text =   settingsXmlDoc.SelectSingleNode("settings/keystroke").InnerText;
+             autoPauseCheckBox.Checked = Convert.ToBoolean( settingsXmlDoc.SelectSingleNode("settings/pause_when_mouse_moved").InnerText);
+             resumeCheckBox.Checked = Convert.ToBoolean( settingsXmlDoc.SelectSingleNode("settings/automatically_resume").InnerText);
+             resumeNumericUpDown.Value = Convert.ToDecimal(settingsXmlDoc.SelectSingleNode("settings/resume_seconds").InnerText);
+          startOnLaunchCheckBox.Checked   = Convert.ToBoolean( settingsXmlDoc.SelectSingleNode("settings/automatically_start_on_launch").InnerText);
+              launchAtLogonCheckBox.Checked = Convert.ToBoolean( settingsXmlDoc.SelectSingleNode("settings/automatically_launch_on_logon").InnerText);
             }
         }
 
         void SaveSettings()
         {
-            try
+            if (!Directory.Exists(moveMouseXmlDirectory))
             {
-                if (!Directory.Exists(moveMouseXmlDirectory))
-                {
-                    Directory.CreateDirectory(moveMouseXmlDirectory);
-                }
+                Directory.CreateDirectory(moveMouseXmlDirectory);
+            }
 
-                XmlDocument settingsXmlDoc = new XmlDocument();
-                settingsXmlDoc.LoadXml("<settings><second_delay /><move_mouse_pointer /><stealth_mode /><enable_static_position /><x_static_position /><y_static_position /><click_left_mouse_button /><send_keystroke /><keystroke /><pause_when_mouse_moved /><automatically_resume /><resume_seconds /><automatically_start_on_launch /><automatically_launch_on_logon /><minimise_on_pause /></settings>");
-                settingsXmlDoc.SelectSingleNode("settings/second_delay").InnerText = Convert.ToDecimal(delayNumericUpDown.Value).ToString();
-                settingsXmlDoc.SelectSingleNode("settings/move_mouse_pointer").InnerText = moveMouseCheckBox.Checked.ToString();
-                settingsXmlDoc.SelectSingleNode("settings/stealth_mode").InnerText = stealthCheckBox.Checked.ToString();
-                settingsXmlDoc.SelectSingleNode("settings/enable_static_position").InnerText = staticPositionCheckBox.Checked.ToString();
-                settingsXmlDoc.SelectSingleNode("settings/x_static_position").InnerText = Convert.ToDecimal(xNumericUpDown.Value).ToString();
-                settingsXmlDoc.SelectSingleNode("settings/y_static_position").InnerText = Convert.ToDecimal(yNumericUpDown.Value).ToString();
-                settingsXmlDoc.SelectSingleNode("settings/click_left_mouse_button").InnerText = clickMouseCheckBox.Checked.ToString();
-                settingsXmlDoc.SelectSingleNode("settings/send_keystroke").InnerText = keystrokeCheckBox.Checked.ToString();
-                settingsXmlDoc.SelectSingleNode("settings/keystroke").InnerText = keystrokeComboBox.Text;
-                settingsXmlDoc.SelectSingleNode("settings/pause_when_mouse_moved").InnerText = autoPauseCheckBox.Checked.ToString();
-                settingsXmlDoc.SelectSingleNode("settings/automatically_resume").InnerText = resumeCheckBox.Checked.ToString();
-                settingsXmlDoc.SelectSingleNode("settings/resume_seconds").InnerText = Convert.ToDecimal(resumeNumericUpDown.Value).ToString();
-                settingsXmlDoc.SelectSingleNode("settings/automatically_start_on_launch").InnerText = startOnLaunchCheckBox.Checked.ToString();
-                settingsXmlDoc.SelectSingleNode("settings/automatically_launch_on_logon").InnerText = launchAtLogonCheckBox.Checked.ToString();
-                settingsXmlDoc.SelectSingleNode("settings/minimise_on_pause").InnerText = minimiseCheckBox.Checked.ToString();
-                settingsXmlDoc.Save(Path.Combine(moveMouseXmlDirectory, moveMouseXmlName));
-            }
-            catch
-            {
-            }
+            XmlDocument settingsXmlDoc = new XmlDocument();
+            settingsXmlDoc.LoadXml("<settings><second_delay /><move_mouse_pointer /><stealth_mode /><enable_start_position /><x_start_position /><y_start_position /><click_left_mouse_button /><send_keystroke /><keystroke /><pause_when_mouse_moved /><automatically_resume /><resume_seconds /><automatically_start_on_launch /><automatically_launch_on_logon /></settings>");
+            settingsXmlDoc.SelectSingleNode("settings/second_delay").InnerText = delayNumericUpDown.Value.ToString();
+            settingsXmlDoc.SelectSingleNode("settings/move_mouse_pointer").InnerText = moveMouseCheckBox.Checked.ToString();
+            settingsXmlDoc.SelectSingleNode("settings/stealth_mode").InnerText = stealthCheckBox.Checked.ToString();
+            settingsXmlDoc.SelectSingleNode("settings/enable_start_position").InnerText = startPositionCheckBox.Checked.ToString();
+            settingsXmlDoc.SelectSingleNode("settings/x_start_position").InnerText = xNumericUpDown.Value.ToString();
+            settingsXmlDoc.SelectSingleNode("settings/y_start_position").InnerText = yNumericUpDown.Value.ToString();
+            settingsXmlDoc.SelectSingleNode("settings/click_left_mouse_button").InnerText = clickMouseCheckBox.Checked.ToString();
+            settingsXmlDoc.SelectSingleNode("settings/send_keystroke").InnerText = keystrokeCheckBox.Checked.ToString();
+            settingsXmlDoc.SelectSingleNode("settings/keystroke").InnerText = keystrokeComboBox.Text;
+            settingsXmlDoc.SelectSingleNode("settings/pause_when_mouse_moved").InnerText = autoPauseCheckBox.Checked.ToString();
+            settingsXmlDoc.SelectSingleNode("settings/automatically_resume").InnerText = resumeCheckBox.Checked.ToString();
+            settingsXmlDoc.SelectSingleNode("settings/resume_seconds").InnerText = resumeNumericUpDown.Value.ToString();
+            settingsXmlDoc.SelectSingleNode("settings/automatically_start_on_launch").InnerText = startOnLaunchCheckBox.Checked.ToString();
+            settingsXmlDoc.SelectSingleNode("settings/automatically_launch_on_logon").InnerText = launchAtLogonCheckBox.Checked.ToString();
+            settingsXmlDoc.Save(Path.Combine(moveMouseXmlDirectory, moveMouseXmlName));
         }
     }
 }

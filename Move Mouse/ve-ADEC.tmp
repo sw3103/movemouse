@@ -124,7 +124,6 @@ namespace Ellanet
             keystrokeCheckBox.CheckedChanged += new EventHandler(keystrokeCheckBox_CheckedChanged);
             staticPositionCheckBox.CheckedChanged += new EventHandler(startPositionCheckBox_CheckedChanged);
             resumeCheckBox.CheckedChanged += new EventHandler(resumeCheckBox_CheckedChanged);
-            launchAtLogonCheckBox.CheckedChanged += new EventHandler(launchAtLogonCheckBox_CheckedChanged);
             ReadSettings();
             this.Icon = global::Ellanet.Properties.Resources.Mouse_Icon;
             this.Text = String.Format("Move Mouse ({0}.{1}.{2}) - http://movemouse.codeplex.com/", Assembly.GetExecutingAssembly().GetName().Version.Major, Assembly.GetExecutingAssembly().GetName().Version.Minor, Assembly.GetExecutingAssembly().GetName().Version.Build);
@@ -137,6 +136,7 @@ namespace Ellanet
             resumeTimer.Interval = 1000;
             resumeTimer.Tick += new EventHandler(resumeTimer_Tick);
             traceButton.Click += new EventHandler(traceButton_Click);
+            launchAtLogonCheckBox.CheckedChanged += new EventHandler(launchAtLogonCheckBox_CheckedChanged);
             SetButtonTag(ref traceButton, GetButtonText(ref traceButton));
         }
 
@@ -145,10 +145,6 @@ namespace Ellanet
             if (launchAtLogonCheckBox.Checked)
             {
                 Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true).SetValue("Move Mouse", Application.ExecutablePath);
-            }
-            else
-            {
-                Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true).DeleteValue("Move Mouse");
             }
         }
 
