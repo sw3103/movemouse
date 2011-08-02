@@ -47,7 +47,8 @@
             this.xNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.yNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.traceButton = new System.Windows.Forms.Button();
-            this.minimiseCheckBox = new System.Windows.Forms.CheckBox();
+            this.minimiseOnPauseCheckBox = new System.Windows.Forms.CheckBox();
+            this.minimiseOnStartCheckBox = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.mousePictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.delayNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.resumeNumericUpDown)).BeginInit();
@@ -318,24 +319,37 @@
             this.traceButton.Text = "Trace";
             this.traceButton.UseVisualStyleBackColor = true;
             // 
-            // minimiseCheckBox
+            // minimiseOnPauseCheckBox
             // 
-            this.minimiseCheckBox.AutoSize = true;
-            this.minimiseCheckBox.Checked = true;
-            this.minimiseCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.minimiseCheckBox.Location = new System.Drawing.Point(12, 274);
-            this.minimiseCheckBox.Name = "minimiseCheckBox";
-            this.minimiseCheckBox.Size = new System.Drawing.Size(133, 20);
-            this.minimiseCheckBox.TabIndex = 16;
-            this.minimiseCheckBox.Text = "Minimise on pause";
-            this.minimiseCheckBox.UseVisualStyleBackColor = true;
+            this.minimiseOnPauseCheckBox.AutoSize = true;
+            this.minimiseOnPauseCheckBox.Checked = true;
+            this.minimiseOnPauseCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.minimiseOnPauseCheckBox.Location = new System.Drawing.Point(12, 274);
+            this.minimiseOnPauseCheckBox.Name = "minimiseOnPauseCheckBox";
+            this.minimiseOnPauseCheckBox.Size = new System.Drawing.Size(133, 20);
+            this.minimiseOnPauseCheckBox.TabIndex = 16;
+            this.minimiseOnPauseCheckBox.Text = "Minimise on pause";
+            this.minimiseOnPauseCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // minimiseOnStartCheckBox
+            // 
+            this.minimiseOnStartCheckBox.AutoSize = true;
+            this.minimiseOnStartCheckBox.Checked = true;
+            this.minimiseOnStartCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.minimiseOnStartCheckBox.Location = new System.Drawing.Point(12, 300);
+            this.minimiseOnStartCheckBox.Name = "minimiseOnStartCheckBox";
+            this.minimiseOnStartCheckBox.Size = new System.Drawing.Size(125, 20);
+            this.minimiseOnStartCheckBox.TabIndex = 17;
+            this.minimiseOnStartCheckBox.Text = "Minimise on start";
+            this.minimiseOnStartCheckBox.UseVisualStyleBackColor = true;
             // 
             // MouseForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(524, 362);
-            this.Controls.Add(this.minimiseCheckBox);
+            this.Controls.Add(this.minimiseOnStartCheckBox);
+            this.Controls.Add(this.minimiseOnPauseCheckBox);
             this.Controls.Add(this.traceButton);
             this.Controls.Add(this.yNumericUpDown);
             this.Controls.Add(this.xNumericUpDown);
@@ -393,6 +407,7 @@
         private System.Windows.Forms.NumericUpDown xNumericUpDown;
         private System.Windows.Forms.NumericUpDown yNumericUpDown;
         private System.Windows.Forms.Button traceButton;
-        private System.Windows.Forms.CheckBox minimiseCheckBox;
+        private System.Windows.Forms.CheckBox minimiseOnPauseCheckBox;
+        private System.Windows.Forms.CheckBox minimiseOnStartCheckBox;
     }
 }

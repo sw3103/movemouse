@@ -119,8 +119,8 @@ namespace Ellanet
             if (screenSaverTimeout > 0)
             {
                 resumeNumericUpDown.Value = (screenSaverTimeout / 2);
-            } 
-            
+            }
+
             keystrokeCheckBox.CheckedChanged += new EventHandler(keystrokeCheckBox_CheckedChanged);
             staticPositionCheckBox.CheckedChanged += new EventHandler(startPositionCheckBox_CheckedChanged);
             resumeCheckBox.CheckedChanged += new EventHandler(resumeCheckBox_CheckedChanged);
@@ -276,7 +276,7 @@ namespace Ellanet
                     this.Opacity = 1.0;
                     this.TopMost = false;
 
-                    if (minimiseCheckBox.Checked)
+                    if (minimiseOnPauseCheckBox.Checked)
                     {
                         this.WindowState = FormWindowState.Minimized;
                     }
@@ -295,9 +295,17 @@ namespace Ellanet
                     moveMouseThread.Start();
                     actionButton.Text = "Pause";
                     this.Opacity = .75;
-                    this.WindowState = FormWindowState.Normal;
                     this.TopMost = true;
                     startTime = DateTime.Now;
+
+                    if (minimiseOnStartCheckBox.Checked)
+                    {
+                        this.WindowState = FormWindowState.Minimized;
+                    }
+                    else
+                    {
+                        this.WindowState = FormWindowState.Normal;
+                    }
                     //}
 
                     break;
@@ -326,7 +334,7 @@ namespace Ellanet
                 else
                 {
                     startingMousePoint = Cursor.Position;
-               }
+                }
 
                 if (secondsElapsed > Convert.ToInt32(delayNumericUpDown.Value))
                 {
@@ -579,7 +587,8 @@ namespace Ellanet
                     resumeNumericUpDown.Value = Convert.ToDecimal(settingsXmlDoc.SelectSingleNode("settings/resume_seconds").InnerText);
                     startOnLaunchCheckBox.Checked = Convert.ToBoolean(settingsXmlDoc.SelectSingleNode("settings/automatically_start_on_launch").InnerText);
                     launchAtLogonCheckBox.Checked = Convert.ToBoolean(settingsXmlDoc.SelectSingleNode("settings/automatically_launch_on_logon").InnerText);
-                    minimiseCheckBox.Checked = Convert.ToBoolean(settingsXmlDoc.SelectSingleNode("settings/minimise_on_pause").InnerText);
+                    minimiseOnPauseCheckBox.Checked = Convert.ToBoolean(settingsXmlDoc.SelectSingleNode("settings/minimise_on_pause").InnerText);
+                    minimiseOnStartCheckBox.Checked = Convert.ToBoolean(settingsXmlDoc.SelectSingleNode("settings/minimise_on_start").InnerText);
                 }
             }
             catch
@@ -597,7 +606,7 @@ namespace Ellanet
                 }
 
                 XmlDocument settingsXmlDoc = new XmlDocument();
-                settingsXmlDoc.LoadXml("<settings><second_delay /><move_mouse_pointer /><stealth_mode /><enable_static_position /><x_static_position /><y_static_position /><click_left_mouse_button /><send_keystroke /><keystroke /><pause_when_mouse_moved /><automatically_resume /><resume_seconds /><automatically_start_on_launch /><automatically_launch_on_logon /><minimise_on_pause /></settings>");
+                settingsXmlDoc.LoadXml("<settings><second_delay /><move_mouse_pointer /><stealth_mode /><enable_static_position /><x_static_position /><y_static_position /><click_left_mouse_button /><send_keystroke /><keystroke /><pause_when_mouse_moved /><automatically_resume /><resume_seconds /><automatically_start_on_launch /><automatically_launch_on_logon /><minimise_on_pause /><minimise_on_start /></settings>");
                 settingsXmlDoc.SelectSingleNode("settings/second_delay").InnerText = Convert.ToDecimal(delayNumericUpDown.Value).ToString();
                 settingsXmlDoc.SelectSingleNode("settings/move_mouse_pointer").InnerText = moveMouseCheckBox.Checked.ToString();
                 settingsXmlDoc.SelectSingleNode("settings/stealth_mode").InnerText = stealthCheckBox.Checked.ToString();
@@ -612,7 +621,8 @@ namespace Ellanet
                 settingsXmlDoc.SelectSingleNode("settings/resume_seconds").InnerText = Convert.ToDecimal(resumeNumericUpDown.Value).ToString();
                 settingsXmlDoc.SelectSingleNode("settings/automatically_start_on_launch").InnerText = startOnLaunchCheckBox.Checked.ToString();
                 settingsXmlDoc.SelectSingleNode("settings/automatically_launch_on_logon").InnerText = launchAtLogonCheckBox.Checked.ToString();
-                settingsXmlDoc.SelectSingleNode("settings/minimise_on_pause").InnerText = minimiseCheckBox.Checked.ToString();
+                settingsXmlDoc.SelectSingleNode("settings/minimise_on_pause").InnerText = minimiseOnPauseCheckBox.Checked.ToString();
+                settingsXmlDoc.SelectSingleNode("settings/minimise_on_start").InnerText = minimiseOnStartCheckBox.Checked.ToString();
                 settingsXmlDoc.Save(Path.Combine(moveMouseXmlDirectory, moveMouseXmlName));
             }
             catch
