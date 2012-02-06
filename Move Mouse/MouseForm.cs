@@ -11,33 +11,38 @@ using System.Threading;
 using System.Diagnostics;
 using System.IO;
 using System.Xml;
+using Microsoft.VisualBasic;
 
 namespace Ellanet
 {
     public partial class MouseForm : Form
     {
-        const int traceSeconds = 5;
-        const string moveMouseXmlName = "Move Mouse.xml";
+        private const int traceSeconds = 5;
+        private const string moveMouseXmlName = "Move Mouse.xml";
+        private const string homeAddress = "http://movemouse.codeplex.com/";
+        private const string helpAddress = "http://movemouse.codeplex.com/documentation";
 
-        Thread moveMouseThread;
-        TimeSpan waitUntilAutoMoveDetect = new TimeSpan(0, 0, 5);
-        DateTime startTime;
-        Point startingMousePoint = new Point();
-        System.Windows.Forms.Timer resumeTimer = new System.Windows.Forms.Timer();
-        DateTime traceTimeComplete = DateTime.MinValue;
-        Thread traceMouseThread;
-        string moveMouseXmlDirectory = Environment.ExpandEnvironmentVariables(@"%APPDATA%\Ellanet\Move Mouse");
+        private Thread moveMouseThread;
+        private TimeSpan waitUntilAutoMoveDetect = new TimeSpan(0, 0, 5);
+        private DateTime startTime;
+        private Point startingMousePoint = new Point();
+        private System.Windows.Forms.Timer resumeTimer = new System.Windows.Forms.Timer();
+        private DateTime traceTimeComplete = DateTime.MinValue;
+        private Thread traceMouseThread;
+        private string moveMouseXmlDirectory = Environment.ExpandEnvironmentVariables(@"%APPDATA%\Ellanet\Move Mouse");
+        private bool _suppressAutoStart = false;
 
-        delegate void UpdateCountdownProgressBarDelegate(ref ProgressBar pb, int delay, int elapsed);
-        delegate void ButtonPerformClickDelegate(ref Button b);
-        delegate Point GetControlScreenLocationDelegate(ref Control c);
-        delegate object ComboBoxGetSelectedItemDelegate(ref ComboBox cb);
-        delegate int ComboBoxGetSelectedIndexDelegate(ref ComboBox cb);
-        delegate void SetNumericUpDownValueDelegate(ref NumericUpDown nud, int value);
-        delegate void SetButtonTextDelegate(ref Button b, string text);
-        delegate void SetButtonTagDelegate(ref Button b, object o);
-        delegate object GetButtonTagDelegate(ref Button b);
-        delegate string GetButtonTextDelegate(ref Button b);
+        private delegate void UpdateCountdownProgressBarDelegate(ref ProgressBar pb, int delay, int elapsed);
+        private delegate void ButtonPerformClickDelegate(ref Button b);
+        private delegate Point GetControlScreenLocationDelegate(ref Control c);
+        private delegate object ComboBoxGetSelectedItemDelegate(ref ComboBox cb);
+        private delegate int ComboBoxGetSelectedIndexDelegate(ref ComboBox cb);
+        private delegate void SetNumericUpDownValueDelegate(ref NumericUpDown nud, int value);
+        private delegate void SetButtonTextDelegate(ref Button b, string text);
+        private delegate void SetButtonTagDelegate(ref Button b, object o);
+        private delegate object GetButtonTagDelegate(ref Button b);
+        private delegate string GetButtonTextDelegate(ref Button b);
+        private delegate bool GetCheckBoxCheckedDelegate(ref CheckBox cb);
 
         [Flags]
         enum MouseEventFlags : int
@@ -58,6 +63,24 @@ namespace Ellanet
             INPUT_MOUSE = 0,
             INPUT_KEYBOARD = 1,
             INPUT_HARDWARE = 2,
+        }
+
+        [Flags]
+        enum ShowWindowCommands : int
+        {
+            Hide = 0,
+            Normal = 1,
+            ShowMinimized = 2,
+            Maximize = 3,
+            ShowMaximized = 3,
+            ShowNoActivate = 4,
+            Show = 5,
+            Minimize = 6,
+            ShowMinNoActive = 7,
+            ShowNA = 8,
+            Restore = 9,
+            ShowDefault = 10,
+            ForceMinimize = 11
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -111,9 +134,21 @@ namespace Ellanet
             ref INPUT pInputs,
             int cbSize);
 
-        public MouseForm()
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern IntPtr FindWindow(
+            string lpClassName,
+            string lpWindowName);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool ShowWindow(
+            IntPtr hWnd,
+            ShowWindowCommands nCmdShow);
+
+        public MouseForm(bool suppressAutoStart)
         {
             InitializeComponent();
+            _suppressAutoStart = suppressAutoStart;
             int screenSaverTimeout = GetScreenSaverTimeout();
 
             if (screenSaverTimeout > 0)
@@ -122,14 +157,18 @@ namespace Ellanet
             }
 
             keystrokeCheckBox.CheckedChanged += new EventHandler(keystrokeCheckBox_CheckedChanged);
+            appActivateCheckBox.CheckedChanged += new EventHandler(appActivateCheckBox_CheckedChanged);
+            //minimiseOnPauseCheckBox.CheckedChanged += new EventHandler(minimiseOnPauseCheckBox_CheckedChanged);
+            //minimiseOnStartCheckBox.CheckedChanged += new EventHandler(minimiseOnStartCheckBox_CheckedChanged);
             staticPositionCheckBox.CheckedChanged += new EventHandler(startPositionCheckBox_CheckedChanged);
             resumeCheckBox.CheckedChanged += new EventHandler(resumeCheckBox_CheckedChanged);
             launchAtLogonCheckBox.CheckedChanged += new EventHandler(launchAtLogonCheckBox_CheckedChanged);
             ReadSettings();
             this.Icon = global::Ellanet.Properties.Resources.Mouse_Icon;
-            this.Text = String.Format("Move Mouse ({0}.{1}.{2}) - http://movemouse.codeplex.com/", Assembly.GetExecutingAssembly().GetName().Version.Major, Assembly.GetExecutingAssembly().GetName().Version.Minor, Assembly.GetExecutingAssembly().GetName().Version.Build);
+            this.Text = String.Format("Move Mouse ({0}.{1}.{2}) - {3}", Assembly.GetExecutingAssembly().GetName().Version.Major, Assembly.GetExecutingAssembly().GetName().Version.Minor, Assembly.GetExecutingAssembly().GetName().Version.Build, homeAddress);
             this.FormClosing += new FormClosingEventHandler(MouseForm_FormClosing);
             this.Load += new EventHandler(MouseForm_Load);
+            this.Resize += new EventHandler(MouseForm_Resize);
             actionButton.Click += new EventHandler(actionButton_Click);
             moveMouseCheckBox.CheckedChanged += new EventHandler(moveMouseCheckBox_CheckedChanged);
             clickMouseCheckBox.CheckedChanged += new EventHandler(clickMouseCheckBox_CheckedChanged);
@@ -137,7 +176,101 @@ namespace Ellanet
             resumeTimer.Interval = 1000;
             resumeTimer.Tick += new EventHandler(resumeTimer_Tick);
             traceButton.Click += new EventHandler(traceButton_Click);
+            mousePictureBox.MouseEnter += new EventHandler(mousePictureBox_MouseEnter);
+            mousePictureBox.MouseLeave += new EventHandler(mousePictureBox_MouseLeave);
+            mousePictureBox.MouseClick += new MouseEventHandler(mousePictureBox_MouseClick);
+            helpPictureBox.MouseEnter += new EventHandler(helpPictureBox_MouseEnter);
+            helpPictureBox.MouseLeave += new EventHandler(helpPictureBox_MouseLeave);
+            helpPictureBox.MouseClick += new MouseEventHandler(helpPictureBox_MouseClick);
             SetButtonTag(ref traceButton, GetButtonText(ref traceButton));
+        }
+
+        void helpPictureBox_MouseClick(object sender, MouseEventArgs e)
+        {
+            try
+            {
+                Process.Start(helpAddress);
+            }
+            catch
+            {
+            }
+        }
+
+        void helpPictureBox_MouseLeave(object sender, EventArgs e)
+        {
+            if (this.Cursor != Cursors.WaitCursor)
+            {
+                this.Cursor = Cursors.Default;
+            }
+        }
+
+        void helpPictureBox_MouseEnter(object sender, EventArgs e)
+        {
+            if (this.Cursor != Cursors.WaitCursor)
+            {
+                this.Cursor = Cursors.Hand;
+            }
+        }
+
+        void mousePictureBox_MouseClick(object sender, MouseEventArgs e)
+        {
+            try
+            {
+                Process.Start(homeAddress);
+            }
+            catch
+            {
+            }
+        }
+
+        void mousePictureBox_MouseLeave(object sender, EventArgs e)
+        {
+            if (this.Cursor != Cursors.WaitCursor)
+            {
+                this.Cursor = Cursors.Default;
+            }
+        }
+
+        void mousePictureBox_MouseEnter(object sender, EventArgs e)
+        {
+            if (this.Cursor != Cursors.WaitCursor)
+            {
+                this.Cursor = Cursors.Hand;
+            }
+        }
+
+        void appActivateCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            processComboBox.Enabled = appActivateCheckBox.Checked;
+        }
+
+        void ListRunningProcesses()
+        {
+            foreach (Process p in Process.GetProcesses())
+            {
+                if (!String.IsNullOrEmpty(p.MainWindowTitle) && !processComboBox.Items.Contains(p.MainWindowTitle))
+                {
+                    processComboBox.Items.Add(p.MainWindowTitle);
+                }
+            }
+        }
+
+        //void minimiseOnStartCheckBox_CheckedChanged(object sender, EventArgs e)
+        //{
+        //    minimiseToSystemTrayCheckBox.Enabled = (minimiseOnStartCheckBox.Checked | minimiseOnPauseCheckBox.Checked);
+        //}
+
+        //void minimiseOnPauseCheckBox_CheckedChanged(object sender, EventArgs e)
+        //{
+        //    minimiseToSystemTrayCheckBox.Enabled = (minimiseOnStartCheckBox.Checked | minimiseOnPauseCheckBox.Checked);
+        //}
+
+        void MouseForm_Resize(object sender, EventArgs e)
+        {
+            if ((this.WindowState == FormWindowState.Minimized) && minimiseToSystemTrayCheckBox.Checked)
+            {
+                this.ShowInTaskbar = false;
+            }
         }
 
         void launchAtLogonCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -154,7 +287,9 @@ namespace Ellanet
 
         void MouseForm_Load(object sender, EventArgs e)
         {
-            if (startOnLaunchCheckBox.Checked)
+            ListRunningProcesses();
+
+            if (startOnLaunchCheckBox.Checked && !_suppressAutoStart)
             {
                 actionButton.PerformClick();
             }
@@ -194,7 +329,7 @@ namespace Ellanet
 
         void keystrokeCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            if ((!moveMouseCheckBox.Checked) && (!clickMouseCheckBox.Checked) && (!keystrokeCheckBox.Checked))
+            if (!moveMouseCheckBox.Checked && !clickMouseCheckBox.Checked && !keystrokeCheckBox.Checked)
             {
                 keystrokeCheckBox.Checked = true;
             }
@@ -211,7 +346,7 @@ namespace Ellanet
         {
             //Debug.WriteLine(GetLastInputTime().ToString());
 
-            if (GetLastInputTime() > resumeNumericUpDown.Value)
+            if (GetCheckBoxChecked(ref resumeCheckBox) && (GetLastInputTime() > resumeNumericUpDown.Value))
             {
                 ButtonPerformClick(ref actionButton);
             }
@@ -224,7 +359,7 @@ namespace Ellanet
 
         void clickMouseCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            if ((!moveMouseCheckBox.Checked) && (!clickMouseCheckBox.Checked) && (!keystrokeCheckBox.Checked))
+            if (!moveMouseCheckBox.Checked && !clickMouseCheckBox.Checked && !keystrokeCheckBox.Checked)
             {
                 clickMouseCheckBox.Checked = true;
             }
@@ -274,7 +409,7 @@ namespace Ellanet
                     resumeTimer.Start();
                     actionButton.Text = "Start";
                     this.Opacity = 1.0;
-                    this.TopMost = false;
+                    //this.TopMost = false;
 
                     if (minimiseOnPauseCheckBox.Checked)
                     {
@@ -295,7 +430,7 @@ namespace Ellanet
                     moveMouseThread.Start();
                     actionButton.Text = "Pause";
                     this.Opacity = .75;
-                    this.TopMost = true;
+                    //this.TopMost = true;
                     startTime = DateTime.Now;
 
                     if (minimiseOnStartCheckBox.Checked)
@@ -308,6 +443,7 @@ namespace Ellanet
                     }
                     //}
 
+                    SaveSettings();
                     break;
             }
         }
@@ -321,13 +457,35 @@ namespace Ellanet
                 Cursor.Position = new Point(Convert.ToInt32(xNumericUpDown.Value), Convert.ToInt32(yNumericUpDown.Value));
             }
 
+            if (appActivateCheckBox.Checked && (ComboBoxGetSelectedIndex(ref processComboBox) > -1))
+            {
+                try
+                {
+                    IntPtr handle = FindWindow(null, ComboBoxGetSelectedItem(ref processComboBox).ToString());
+                    Process p = GetProessByMainWindowTitle(ComboBoxGetSelectedItem(ref processComboBox).ToString());
+
+                    if (handle != IntPtr.Zero)
+                    {
+                        if (p == null)
+                        {
+                            ShowWindow(handle, ShowWindowCommands.Restore);
+                        }
+                        
+                        Interaction.AppActivate(ComboBoxGetSelectedItem(ref processComboBox).ToString());
+                    }
+                }
+                catch
+                {
+                }
+            }
+
             do
             {
                 UpdateCountdownProgressBar(ref countdownProgressBar, Convert.ToInt32(delayNumericUpDown.Value), secondsElapsed);
                 secondsElapsed += 1;
                 Thread.Sleep(1000);
 
-                if ((autoPauseCheckBox.Checked) && (startTime.Add(waitUntilAutoMoveDetect) < DateTime.Now) && (startingMousePoint != Cursor.Position))
+                if (autoPauseCheckBox.Checked && (startTime.Add(waitUntilAutoMoveDetect) < DateTime.Now) && (startingMousePoint != Cursor.Position))
                 {
                     ButtonPerformClick(ref actionButton);
                 }
@@ -385,7 +543,7 @@ namespace Ellanet
                         }
                     }
 
-                    if ((keystrokeCheckBox.Checked) && (ComboBoxGetSelectedIndex(ref keystrokeComboBox) > -1))
+                    if (keystrokeCheckBox.Checked && (ComboBoxGetSelectedIndex(ref keystrokeComboBox) > -1))
                     {
                         SendKeys.SendWait(ComboBoxGetSelectedItem(ref keystrokeComboBox).ToString());
                     }
@@ -525,6 +683,18 @@ namespace Ellanet
             }
         }
 
+        bool GetCheckBoxChecked(ref CheckBox cb)
+        {
+            if (InvokeRequired)
+            {
+                return Convert.ToBoolean(Invoke(new GetCheckBoxCheckedDelegate(GetCheckBoxChecked), new object[] { cb }));
+            }
+            else
+            {
+                return cb.Checked;
+            }
+        }
+
         int GetLastInputTime()
         {
             int idleTime = 0;
@@ -589,6 +759,14 @@ namespace Ellanet
                     launchAtLogonCheckBox.Checked = Convert.ToBoolean(settingsXmlDoc.SelectSingleNode("settings/automatically_launch_on_logon").InnerText);
                     minimiseOnPauseCheckBox.Checked = Convert.ToBoolean(settingsXmlDoc.SelectSingleNode("settings/minimise_on_pause").InnerText);
                     minimiseOnStartCheckBox.Checked = Convert.ToBoolean(settingsXmlDoc.SelectSingleNode("settings/minimise_on_start").InnerText);
+                    minimiseToSystemTrayCheckBox.Checked = Convert.ToBoolean(settingsXmlDoc.SelectSingleNode("settings/minimise_to_system_tray").InnerText);
+                    appActivateCheckBox.Checked = Convert.ToBoolean(settingsXmlDoc.SelectSingleNode("settings/activate_application").InnerText);
+
+                    if (!String.IsNullOrEmpty(settingsXmlDoc.SelectSingleNode("settings/activate_application_title").InnerText))
+                    {
+                        processComboBox.Items.Add(settingsXmlDoc.SelectSingleNode("settings/activate_application_title").InnerText);
+                        processComboBox.Text = settingsXmlDoc.SelectSingleNode("settings/activate_application_title").InnerText;
+                    }
                 }
             }
             catch
@@ -606,7 +784,7 @@ namespace Ellanet
                 }
 
                 XmlDocument settingsXmlDoc = new XmlDocument();
-                settingsXmlDoc.LoadXml("<settings><second_delay /><move_mouse_pointer /><stealth_mode /><enable_static_position /><x_static_position /><y_static_position /><click_left_mouse_button /><send_keystroke /><keystroke /><pause_when_mouse_moved /><automatically_resume /><resume_seconds /><automatically_start_on_launch /><automatically_launch_on_logon /><minimise_on_pause /><minimise_on_start /></settings>");
+                settingsXmlDoc.LoadXml("<settings><second_delay /><move_mouse_pointer /><stealth_mode /><enable_static_position /><x_static_position /><y_static_position /><click_left_mouse_button /><send_keystroke /><keystroke /><pause_when_mouse_moved /><automatically_resume /><resume_seconds /><automatically_start_on_launch /><automatically_launch_on_logon /><minimise_on_pause /><minimise_on_start /><minimise_to_system_tray /><activate_application /><activate_application_title /></settings>");
                 settingsXmlDoc.SelectSingleNode("settings/second_delay").InnerText = Convert.ToDecimal(delayNumericUpDown.Value).ToString();
                 settingsXmlDoc.SelectSingleNode("settings/move_mouse_pointer").InnerText = moveMouseCheckBox.Checked.ToString();
                 settingsXmlDoc.SelectSingleNode("settings/stealth_mode").InnerText = stealthCheckBox.Checked.ToString();
@@ -623,11 +801,27 @@ namespace Ellanet
                 settingsXmlDoc.SelectSingleNode("settings/automatically_launch_on_logon").InnerText = launchAtLogonCheckBox.Checked.ToString();
                 settingsXmlDoc.SelectSingleNode("settings/minimise_on_pause").InnerText = minimiseOnPauseCheckBox.Checked.ToString();
                 settingsXmlDoc.SelectSingleNode("settings/minimise_on_start").InnerText = minimiseOnStartCheckBox.Checked.ToString();
+                settingsXmlDoc.SelectSingleNode("settings/minimise_to_system_tray").InnerText = minimiseToSystemTrayCheckBox.Checked.ToString();
+                settingsXmlDoc.SelectSingleNode("settings/activate_application").InnerText = appActivateCheckBox.Checked.ToString();
+                settingsXmlDoc.SelectSingleNode("settings/activate_application_title").InnerText = processComboBox.Text;
                 settingsXmlDoc.Save(Path.Combine(moveMouseXmlDirectory, moveMouseXmlName));
             }
             catch
             {
             }
+        }
+
+        Process GetProessByMainWindowTitle(string title)
+        {
+            foreach (Process p in Process.GetProcesses())
+            {
+                if (p.MainWindowTitle.Equals(title, StringComparison.CurrentCultureIgnoreCase))
+                {
+                    return p;
+                }
+            }
+
+            return null;
         }
     }
 }

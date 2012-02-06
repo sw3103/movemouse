@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{5F138C5F-255A-4B0F-BFFD-7F49993571E7}</ProjectGuid>
     <OutputType>WinExe</OutputType>
@@ -56,8 +56,15 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="SystemTrayIcon.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SystemTrayIcon.Designer.cs">
+      <DependentUpon>SystemTrayIcon.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -79,5 +86,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Mouse_Icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Help_Image.png" />
   </ItemGroup>
 </Project>
