@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Move Mouse", "Move Mouse\Move Mouse.csproj", "{5F138C5F-255A-4B0F-BFFD-7F49993571E7}"
 EndProject
 Global

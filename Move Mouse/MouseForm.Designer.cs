@@ -53,19 +53,27 @@
             this.processComboBox = new System.Windows.Forms.ComboBox();
             this.appActivateCheckBox = new System.Windows.Forms.CheckBox();
             this.helpPictureBox = new System.Windows.Forms.PictureBox();
+            this.insideOutsideComboBox = new System.Windows.Forms.ComboBox();
+            this.blackoutCheckBox = new System.Windows.Forms.CheckBox();
+            this.boStartComboBox = new System.Windows.Forms.ComboBox();
+            this.boEndComboBox = new System.Windows.Forms.ComboBox();
+            this.contactPictureBox = new System.Windows.Forms.PictureBox();
+            this.paypalPictureBox = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.mousePictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.delayNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.resumeNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.xNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.yNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.helpPictureBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.contactPictureBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.paypalPictureBox)).BeginInit();
             this.SuspendLayout();
             // 
             // mousePictureBox
             // 
             this.mousePictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.mousePictureBox.Image = global::Ellanet.Properties.Resources.Mouse_Image;
-            this.mousePictureBox.Location = new System.Drawing.Point(379, 236);
+            this.mousePictureBox.Location = new System.Drawing.Point(404, 296);
             this.mousePictureBox.Name = "mousePictureBox";
             this.mousePictureBox.Size = new System.Drawing.Size(133, 129);
             this.mousePictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -75,7 +83,7 @@
             // actionButton
             // 
             this.actionButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.actionButton.Location = new System.Drawing.Point(218, 342);
+            this.actionButton.Location = new System.Drawing.Point(230, 402);
             this.actionButton.Name = "actionButton";
             this.actionButton.Size = new System.Drawing.Size(89, 23);
             this.actionButton.TabIndex = 0;
@@ -84,11 +92,11 @@
             // 
             // countdownProgressBar
             // 
-            this.countdownProgressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.countdownProgressBar.Location = new System.Drawing.Point(12, 381);
+            this.countdownProgressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.countdownProgressBar.Location = new System.Drawing.Point(12, 441);
             this.countdownProgressBar.Name = "countdownProgressBar";
-            this.countdownProgressBar.Size = new System.Drawing.Size(500, 17);
+            this.countdownProgressBar.Size = new System.Drawing.Size(525, 17);
             this.countdownProgressBar.TabIndex = 2;
             // 
             // delayNumericUpDown
@@ -127,7 +135,7 @@
             this.moveMouseCheckBox.AutoSize = true;
             this.moveMouseCheckBox.Checked = true;
             this.moveMouseCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.moveMouseCheckBox.Location = new System.Drawing.Point(12, 41);
+            this.moveMouseCheckBox.Location = new System.Drawing.Point(12, 43);
             this.moveMouseCheckBox.Name = "moveMouseCheckBox";
             this.moveMouseCheckBox.Size = new System.Drawing.Size(143, 20);
             this.moveMouseCheckBox.TabIndex = 2;
@@ -137,37 +145,37 @@
             // clickMouseCheckBox
             // 
             this.clickMouseCheckBox.AutoSize = true;
-            this.clickMouseCheckBox.Location = new System.Drawing.Point(12, 145);
+            this.clickMouseCheckBox.Location = new System.Drawing.Point(12, 155);
             this.clickMouseCheckBox.Name = "clickMouseCheckBox";
             this.clickMouseCheckBox.Size = new System.Drawing.Size(157, 20);
-            this.clickMouseCheckBox.TabIndex = 8;
+            this.clickMouseCheckBox.TabIndex = 10;
             this.clickMouseCheckBox.Text = "Click left mouse button";
             this.clickMouseCheckBox.UseVisualStyleBackColor = true;
             // 
             // autoPauseCheckBox
             // 
             this.autoPauseCheckBox.AutoSize = true;
-            this.autoPauseCheckBox.Location = new System.Drawing.Point(12, 197);
+            this.autoPauseCheckBox.Location = new System.Drawing.Point(12, 239);
             this.autoPauseCheckBox.Name = "autoPauseCheckBox";
             this.autoPauseCheckBox.Size = new System.Drawing.Size(224, 20);
-            this.autoPauseCheckBox.TabIndex = 11;
+            this.autoPauseCheckBox.TabIndex = 17;
             this.autoPauseCheckBox.Text = "Pause when mouse pointer moved";
             this.autoPauseCheckBox.UseVisualStyleBackColor = true;
             // 
             // resumeCheckBox
             // 
             this.resumeCheckBox.AutoSize = true;
-            this.resumeCheckBox.Location = new System.Drawing.Point(12, 223);
+            this.resumeCheckBox.Location = new System.Drawing.Point(12, 267);
             this.resumeCheckBox.Name = "resumeCheckBox";
             this.resumeCheckBox.Size = new System.Drawing.Size(359, 20);
-            this.resumeCheckBox.TabIndex = 12;
+            this.resumeCheckBox.TabIndex = 18;
             this.resumeCheckBox.Text = "Automatically resume after                seconds of inactivity";
             this.resumeCheckBox.UseVisualStyleBackColor = true;
             // 
             // resumeNumericUpDown
             // 
             this.resumeNumericUpDown.Enabled = false;
-            this.resumeNumericUpDown.Location = new System.Drawing.Point(191, 222);
+            this.resumeNumericUpDown.Location = new System.Drawing.Point(191, 266);
             this.resumeNumericUpDown.Maximum = new decimal(new int[] {
             9999,
             0,
@@ -180,7 +188,7 @@
             0});
             this.resumeNumericUpDown.Name = "resumeNumericUpDown";
             this.resumeNumericUpDown.Size = new System.Drawing.Size(53, 23);
-            this.resumeNumericUpDown.TabIndex = 13;
+            this.resumeNumericUpDown.TabIndex = 19;
             this.resumeNumericUpDown.Value = new decimal(new int[] {
             300,
             0,
@@ -190,7 +198,7 @@
             // stealthCheckBox
             // 
             this.stealthCheckBox.AutoSize = true;
-            this.stealthCheckBox.Location = new System.Drawing.Point(12, 67);
+            this.stealthCheckBox.Location = new System.Drawing.Point(12, 71);
             this.stealthCheckBox.Name = "stealthCheckBox";
             this.stealthCheckBox.Size = new System.Drawing.Size(282, 20);
             this.stealthCheckBox.TabIndex = 3;
@@ -200,10 +208,10 @@
             // keystrokeCheckBox
             // 
             this.keystrokeCheckBox.AutoSize = true;
-            this.keystrokeCheckBox.Location = new System.Drawing.Point(12, 171);
+            this.keystrokeCheckBox.Location = new System.Drawing.Point(12, 183);
             this.keystrokeCheckBox.Name = "keystrokeCheckBox";
             this.keystrokeCheckBox.Size = new System.Drawing.Size(114, 20);
-            this.keystrokeCheckBox.TabIndex = 9;
+            this.keystrokeCheckBox.TabIndex = 11;
             this.keystrokeCheckBox.Text = "Send keystroke";
             this.keystrokeCheckBox.UseVisualStyleBackColor = true;
             // 
@@ -253,45 +261,45 @@
             "{SUBTRACT}",
             "{MULTIPLY}",
             "{DIVIDE}"});
-            this.keystrokeComboBox.Location = new System.Drawing.Point(132, 169);
+            this.keystrokeComboBox.Location = new System.Drawing.Point(132, 181);
             this.keystrokeComboBox.Name = "keystrokeComboBox";
             this.keystrokeComboBox.Size = new System.Drawing.Size(138, 24);
-            this.keystrokeComboBox.TabIndex = 10;
+            this.keystrokeComboBox.TabIndex = 12;
             // 
             // startOnLaunchCheckBox
             // 
             this.startOnLaunchCheckBox.AutoSize = true;
-            this.startOnLaunchCheckBox.Location = new System.Drawing.Point(12, 249);
+            this.startOnLaunchCheckBox.Location = new System.Drawing.Point(12, 295);
             this.startOnLaunchCheckBox.Name = "startOnLaunchCheckBox";
             this.startOnLaunchCheckBox.Size = new System.Drawing.Size(267, 20);
-            this.startOnLaunchCheckBox.TabIndex = 14;
+            this.startOnLaunchCheckBox.TabIndex = 20;
             this.startOnLaunchCheckBox.Text = "Automatically start Move Mouse on launch";
             this.startOnLaunchCheckBox.UseVisualStyleBackColor = true;
             // 
             // launchAtLogonCheckBox
             // 
             this.launchAtLogonCheckBox.AutoSize = true;
-            this.launchAtLogonCheckBox.Location = new System.Drawing.Point(12, 274);
+            this.launchAtLogonCheckBox.Location = new System.Drawing.Point(12, 322);
             this.launchAtLogonCheckBox.Name = "launchAtLogonCheckBox";
             this.launchAtLogonCheckBox.Size = new System.Drawing.Size(325, 20);
-            this.launchAtLogonCheckBox.TabIndex = 15;
+            this.launchAtLogonCheckBox.TabIndex = 21;
             this.launchAtLogonCheckBox.Text = "Automatically launch Move Mouse at Windows logon";
             this.launchAtLogonCheckBox.UseVisualStyleBackColor = true;
             // 
             // staticPositionCheckBox
             // 
             this.staticPositionCheckBox.AutoSize = true;
-            this.staticPositionCheckBox.Location = new System.Drawing.Point(12, 119);
+            this.staticPositionCheckBox.Location = new System.Drawing.Point(12, 127);
             this.staticPositionCheckBox.Name = "staticPositionCheckBox";
             this.staticPositionCheckBox.Size = new System.Drawing.Size(321, 20);
-            this.staticPositionCheckBox.TabIndex = 4;
+            this.staticPositionCheckBox.TabIndex = 6;
             this.staticPositionCheckBox.Text = "Enable mouse pointer static position   x                y";
             this.staticPositionCheckBox.UseVisualStyleBackColor = true;
             // 
             // xNumericUpDown
             // 
             this.xNumericUpDown.Enabled = false;
-            this.xNumericUpDown.Location = new System.Drawing.Point(260, 118);
+            this.xNumericUpDown.Location = new System.Drawing.Point(260, 126);
             this.xNumericUpDown.Maximum = new decimal(new int[] {
             999999,
             0,
@@ -299,12 +307,12 @@
             0});
             this.xNumericUpDown.Name = "xNumericUpDown";
             this.xNumericUpDown.Size = new System.Drawing.Size(53, 23);
-            this.xNumericUpDown.TabIndex = 5;
+            this.xNumericUpDown.TabIndex = 7;
             // 
             // yNumericUpDown
             // 
             this.yNumericUpDown.Enabled = false;
-            this.yNumericUpDown.Location = new System.Drawing.Point(330, 118);
+            this.yNumericUpDown.Location = new System.Drawing.Point(330, 126);
             this.yNumericUpDown.Maximum = new decimal(new int[] {
             999999,
             0,
@@ -312,45 +320,45 @@
             0});
             this.yNumericUpDown.Name = "yNumericUpDown";
             this.yNumericUpDown.Size = new System.Drawing.Size(53, 23);
-            this.yNumericUpDown.TabIndex = 6;
+            this.yNumericUpDown.TabIndex = 8;
             // 
             // traceButton
             // 
             this.traceButton.Enabled = false;
-            this.traceButton.Location = new System.Drawing.Point(395, 118);
+            this.traceButton.Location = new System.Drawing.Point(395, 126);
             this.traceButton.Name = "traceButton";
-            this.traceButton.Size = new System.Drawing.Size(89, 23);
-            this.traceButton.TabIndex = 7;
-            this.traceButton.Text = "Trace";
+            this.traceButton.Size = new System.Drawing.Size(142, 23);
+            this.traceButton.TabIndex = 9;
+            this.traceButton.Text = "Trace Mouse";
             this.traceButton.UseVisualStyleBackColor = true;
             // 
             // minimiseOnPauseCheckBox
             // 
             this.minimiseOnPauseCheckBox.AutoSize = true;
-            this.minimiseOnPauseCheckBox.Location = new System.Drawing.Point(12, 300);
+            this.minimiseOnPauseCheckBox.Location = new System.Drawing.Point(12, 350);
             this.minimiseOnPauseCheckBox.Name = "minimiseOnPauseCheckBox";
             this.minimiseOnPauseCheckBox.Size = new System.Drawing.Size(133, 20);
-            this.minimiseOnPauseCheckBox.TabIndex = 16;
+            this.minimiseOnPauseCheckBox.TabIndex = 22;
             this.minimiseOnPauseCheckBox.Text = "Minimise on pause";
             this.minimiseOnPauseCheckBox.UseVisualStyleBackColor = true;
             // 
             // minimiseOnStartCheckBox
             // 
             this.minimiseOnStartCheckBox.AutoSize = true;
-            this.minimiseOnStartCheckBox.Location = new System.Drawing.Point(12, 326);
+            this.minimiseOnStartCheckBox.Location = new System.Drawing.Point(12, 378);
             this.minimiseOnStartCheckBox.Name = "minimiseOnStartCheckBox";
             this.minimiseOnStartCheckBox.Size = new System.Drawing.Size(125, 20);
-            this.minimiseOnStartCheckBox.TabIndex = 17;
+            this.minimiseOnStartCheckBox.TabIndex = 23;
             this.minimiseOnStartCheckBox.Text = "Minimise on start";
             this.minimiseOnStartCheckBox.UseVisualStyleBackColor = true;
             // 
             // minimiseToSystemTrayCheckBox
             // 
             this.minimiseToSystemTrayCheckBox.AutoSize = true;
-            this.minimiseToSystemTrayCheckBox.Location = new System.Drawing.Point(12, 351);
+            this.minimiseToSystemTrayCheckBox.Location = new System.Drawing.Point(12, 405);
             this.minimiseToSystemTrayCheckBox.Name = "minimiseToSystemTrayCheckBox";
             this.minimiseToSystemTrayCheckBox.Size = new System.Drawing.Size(168, 20);
-            this.minimiseToSystemTrayCheckBox.TabIndex = 18;
+            this.minimiseToSystemTrayCheckBox.TabIndex = 24;
             this.minimiseToSystemTrayCheckBox.Text = "Minimise to System Tray";
             this.minimiseToSystemTrayCheckBox.UseVisualStyleBackColor = true;
             // 
@@ -359,19 +367,19 @@
             this.processComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.processComboBox.Enabled = false;
             this.processComboBox.FormattingEnabled = true;
-            this.processComboBox.Location = new System.Drawing.Point(155, 91);
+            this.processComboBox.Location = new System.Drawing.Point(155, 97);
             this.processComboBox.Name = "processComboBox";
-            this.processComboBox.Size = new System.Drawing.Size(329, 24);
+            this.processComboBox.Size = new System.Drawing.Size(383, 24);
             this.processComboBox.Sorted = true;
-            this.processComboBox.TabIndex = 20;
+            this.processComboBox.TabIndex = 5;
             // 
             // appActivateCheckBox
             // 
             this.appActivateCheckBox.AutoSize = true;
-            this.appActivateCheckBox.Location = new System.Drawing.Point(12, 93);
+            this.appActivateCheckBox.Location = new System.Drawing.Point(12, 99);
             this.appActivateCheckBox.Name = "appActivateCheckBox";
             this.appActivateCheckBox.Size = new System.Drawing.Size(137, 20);
-            this.appActivateCheckBox.TabIndex = 19;
+            this.appActivateCheckBox.TabIndex = 4;
             this.appActivateCheckBox.Text = "Activate application";
             this.appActivateCheckBox.UseVisualStyleBackColor = true;
             // 
@@ -379,17 +387,89 @@
             // 
             this.helpPictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.helpPictureBox.Image = global::Ellanet.Properties.Resources.Help_Image;
-            this.helpPictureBox.Location = new System.Drawing.Point(480, 12);
+            this.helpPictureBox.Location = new System.Drawing.Point(505, 12);
             this.helpPictureBox.Name = "helpPictureBox";
             this.helpPictureBox.Size = new System.Drawing.Size(32, 32);
             this.helpPictureBox.TabIndex = 21;
             this.helpPictureBox.TabStop = false;
             // 
+            // insideOutsideComboBox
+            // 
+            this.insideOutsideComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.insideOutsideComboBox.Enabled = false;
+            this.insideOutsideComboBox.FormattingEnabled = true;
+            this.insideOutsideComboBox.Items.AddRange(new object[] {
+            "outside",
+            "inside"});
+            this.insideOutsideComboBox.Location = new System.Drawing.Point(191, 209);
+            this.insideOutsideComboBox.Name = "insideOutsideComboBox";
+            this.insideOutsideComboBox.Size = new System.Drawing.Size(79, 24);
+            this.insideOutsideComboBox.TabIndex = 14;
+            // 
+            // blackoutCheckBox
+            // 
+            this.blackoutCheckBox.AutoSize = true;
+            this.blackoutCheckBox.Location = new System.Drawing.Point(12, 211);
+            this.blackoutCheckBox.Name = "blackoutCheckBox";
+            this.blackoutCheckBox.Size = new System.Drawing.Size(450, 20);
+            this.blackoutCheckBox.TabIndex = 13;
+            this.blackoutCheckBox.Text = "Operate blackout schedule                        of   start:                     " +
+    "   end:";
+            this.blackoutCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // boStartComboBox
+            // 
+            this.boStartComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.boStartComboBox.Enabled = false;
+            this.boStartComboBox.FormattingEnabled = true;
+            this.boStartComboBox.Location = new System.Drawing.Point(337, 209);
+            this.boStartComboBox.Name = "boStartComboBox";
+            this.boStartComboBox.Size = new System.Drawing.Size(79, 24);
+            this.boStartComboBox.TabIndex = 15;
+            // 
+            // boEndComboBox
+            // 
+            this.boEndComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.boEndComboBox.Enabled = false;
+            this.boEndComboBox.FormattingEnabled = true;
+            this.boEndComboBox.Location = new System.Drawing.Point(459, 209);
+            this.boEndComboBox.Name = "boEndComboBox";
+            this.boEndComboBox.Size = new System.Drawing.Size(79, 24);
+            this.boEndComboBox.TabIndex = 16;
+            // 
+            // contactPictureBox
+            // 
+            this.contactPictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.contactPictureBox.Image = global::Ellanet.Properties.Resources.Contact_Image;
+            this.contactPictureBox.Location = new System.Drawing.Point(464, 17);
+            this.contactPictureBox.Name = "contactPictureBox";
+            this.contactPictureBox.Size = new System.Drawing.Size(32, 23);
+            this.contactPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.contactPictureBox.TabIndex = 25;
+            this.contactPictureBox.TabStop = false;
+            // 
+            // paypalPictureBox
+            // 
+            this.paypalPictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.paypalPictureBox.Image = global::Ellanet.Properties.Resources.PayPal_Image;
+            this.paypalPictureBox.Location = new System.Drawing.Point(409, 15);
+            this.paypalPictureBox.Name = "paypalPictureBox";
+            this.paypalPictureBox.Size = new System.Drawing.Size(41, 27);
+            this.paypalPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.paypalPictureBox.TabIndex = 26;
+            this.paypalPictureBox.TabStop = false;
+            // 
             // MouseForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(524, 413);
+            this.ClientSize = new System.Drawing.Size(549, 473);
+            this.Controls.Add(this.paypalPictureBox);
+            this.Controls.Add(this.contactPictureBox);
+            this.Controls.Add(this.boEndComboBox);
+            this.Controls.Add(this.boStartComboBox);
+            this.Controls.Add(this.insideOutsideComboBox);
+            this.Controls.Add(this.blackoutCheckBox);
             this.Controls.Add(this.helpPictureBox);
             this.Controls.Add(this.processComboBox);
             this.Controls.Add(this.appActivateCheckBox);
@@ -428,6 +508,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.xNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.yNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.helpPictureBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.contactPictureBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.paypalPictureBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -460,5 +542,11 @@
         private System.Windows.Forms.ComboBox processComboBox;
         private System.Windows.Forms.CheckBox appActivateCheckBox;
         private System.Windows.Forms.PictureBox helpPictureBox;
+        private System.Windows.Forms.ComboBox insideOutsideComboBox;
+        private System.Windows.Forms.CheckBox blackoutCheckBox;
+        private System.Windows.Forms.ComboBox boStartComboBox;
+        private System.Windows.Forms.ComboBox boEndComboBox;
+        private System.Windows.Forms.PictureBox contactPictureBox;
+        private System.Windows.Forms.PictureBox paypalPictureBox;
     }
 }

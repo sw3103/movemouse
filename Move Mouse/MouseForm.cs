@@ -20,29 +20,42 @@ namespace Ellanet
         private const int traceSeconds = 5;
         private const string moveMouseXmlName = "Move Mouse.xml";
         private const string homeAddress = "http://movemouse.codeplex.com/";
-        private const string helpAddress = "http://movemouse.codeplex.com/documentation";
+        private const string contactAddress = "http://www.codeplex.com/site/users/view/sw3103/";
+        private const string helpAddress = "http://movemouse.codeplex.com/documentation/";
+        private const string paypalAddress = "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=QZTWHD9CRW5XN";
+        private const string versionXmlUrl = "https://movemouse.svn.codeplex.com/svn/Version.xml";
 
         private Thread moveMouseThread;
         private TimeSpan waitUntilAutoMoveDetect = new TimeSpan(0, 0, 5);
-        private DateTime startTime;
+        private DateTime mmStartTime;
         private Point startingMousePoint = new Point();
         private System.Windows.Forms.Timer resumeTimer = new System.Windows.Forms.Timer();
         private DateTime traceTimeComplete = DateTime.MinValue;
         private Thread traceMouseThread;
         private string moveMouseXmlDirectory = Environment.ExpandEnvironmentVariables(@"%APPDATA%\Ellanet\Move Mouse");
         private bool _suppressAutoStart = false;
+        private BlackoutStatusChangeEventArgs.BlackoutStatus blackoutStatus = BlackoutStatusChangeEventArgs.BlackoutStatus.Ended;
+        private TimeSpan waitBetweenUpdateChecks = new TimeSpan(7, 0, 0, 0);
+        private DateTime lastUpdateCheck = DateTime.MinValue;
 
         private delegate void UpdateCountdownProgressBarDelegate(ref ProgressBar pb, int delay, int elapsed);
         private delegate void ButtonPerformClickDelegate(ref Button b);
         private delegate Point GetControlScreenLocationDelegate(ref Control c);
-        private delegate object ComboBoxGetSelectedItemDelegate(ref ComboBox cb);
-        private delegate int ComboBoxGetSelectedIndexDelegate(ref ComboBox cb);
+        private delegate object GetComboBoxSelectedItemDelegate(ref ComboBox cb);
+        private delegate int GetComboBoxSelectedIndexDelegate(ref ComboBox cb);
         private delegate void SetNumericUpDownValueDelegate(ref NumericUpDown nud, int value);
         private delegate void SetButtonTextDelegate(ref Button b, string text);
         private delegate void SetButtonTagDelegate(ref Button b, object o);
         private delegate object GetButtonTagDelegate(ref Button b);
         private delegate string GetButtonTextDelegate(ref Button b);
         private delegate bool GetCheckBoxCheckedDelegate(ref CheckBox cb);
+        private delegate void AddComboBoxItemDelegate(ref ComboBox cb, string item);
+
+        public delegate void BlackoutStatusChangeHandler(object sender, BlackoutStatusChangeEventArgs e);
+        public delegate void NewVersionAvailableHandler(object sender, NewVersionAvailableEventArgs e);
+
+        public event BlackoutStatusChangeHandler BlackoutStatusChange;
+        public event NewVersionAvailableHandler NewVersionAvailable;
 
         [Flags]
         enum MouseEventFlags : int
@@ -163,6 +176,8 @@ namespace Ellanet
             staticPositionCheckBox.CheckedChanged += new EventHandler(startPositionCheckBox_CheckedChanged);
             resumeCheckBox.CheckedChanged += new EventHandler(resumeCheckBox_CheckedChanged);
             launchAtLogonCheckBox.CheckedChanged += new EventHandler(launchAtLogonCheckBox_CheckedChanged);
+            blackoutCheckBox.CheckedChanged += new EventHandler(blackoutCheckBox_CheckedChanged);
+            PopulateBlackoutStartEndComboBoxes();
             ReadSettings();
             this.Icon = global::Ellanet.Properties.Resources.Mouse_Icon;
             this.Text = String.Format("Move Mouse ({0}.{1}.{2}) - {3}", Assembly.GetExecutingAssembly().GetName().Version.Major, Assembly.GetExecutingAssembly().GetName().Version.Minor, Assembly.GetExecutingAssembly().GetName().Version.Build, homeAddress);
@@ -182,7 +197,144 @@ namespace Ellanet
             helpPictureBox.MouseEnter += new EventHandler(helpPictureBox_MouseEnter);
             helpPictureBox.MouseLeave += new EventHandler(helpPictureBox_MouseLeave);
             helpPictureBox.MouseClick += new MouseEventHandler(helpPictureBox_MouseClick);
+            contactPictureBox.MouseEnter += new EventHandler(contactPictureBox_MouseEnter);
+            contactPictureBox.MouseLeave += new EventHandler(contactPictureBox_MouseLeave);
+            contactPictureBox.MouseClick += new MouseEventHandler(contactPictureBox_MouseClick);
+            paypalPictureBox.MouseEnter += new EventHandler(paypalPictureBox_MouseEnter);
+            paypalPictureBox.MouseLeave += new EventHandler(paypalPictureBox_MouseLeave);
+            paypalPictureBox.MouseClick += new MouseEventHandler(paypalPictureBox_MouseClick);
+            boStartComboBox.SelectedIndexChanged += new EventHandler(boStartComboBox_SelectedIndexChanged);
+            boEndComboBox.SelectedIndexChanged += new EventHandler(boEndComboBox_SelectedIndexChanged);
             SetButtonTag(ref traceButton, GetButtonText(ref traceButton));
+        }
+
+        void paypalPictureBox_MouseClick(object sender, MouseEventArgs e)
+        {
+            try
+            {
+                Process.Start(paypalAddress);
+            }
+            catch
+            {
+            }
+        }
+
+        void paypalPictureBox_MouseLeave(object sender, EventArgs e)
+        {
+            if (this.Cursor != Cursors.WaitCursor)
+            {
+                this.Cursor = Cursors.Default;
+            }
+        }
+
+        void paypalPictureBox_MouseEnter(object sender, EventArgs e)
+        {
+            if (this.Cursor != Cursors.WaitCursor)
+            {
+                this.Cursor = Cursors.Hand;
+            }
+        }
+
+        void contactPictureBox_MouseClick(object sender, MouseEventArgs e)
+        {
+            try
+            {
+                Process.Start(contactAddress);
+            }
+            catch
+            {
+            }
+        }
+
+        void contactPictureBox_MouseLeave(object sender, EventArgs e)
+        {
+            if (this.Cursor != Cursors.WaitCursor)
+            {
+                this.Cursor = Cursors.Default;
+            }
+        }
+
+        void contactPictureBox_MouseEnter(object sender, EventArgs e)
+        {
+            if (this.Cursor != Cursors.WaitCursor)
+            {
+                this.Cursor = Cursors.Hand;
+            }
+        }
+
+        protected void OnBlackoutStatusChange(object sender, BlackoutStatusChangeEventArgs e)
+        {
+            if (BlackoutStatusChange != null)
+            {
+                BlackoutStatusChange(this, e);
+            }
+        }
+
+        protected void OnNewVersionAvailable(object sender, NewVersionAvailableEventArgs e)
+        {
+            if (NewVersionAvailable != null)
+            {
+                NewVersionAvailable(this, e);
+            }
+        }
+
+        void boEndComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (boEndComboBox.SelectedIndex < boStartComboBox.SelectedIndex)
+            {
+                boStartComboBox.SelectedIndex = boEndComboBox.SelectedIndex;
+            }
+        }
+
+        void boStartComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (boEndComboBox.SelectedIndex < boStartComboBox.SelectedIndex)
+            {
+                boEndComboBox.SelectedIndex = boStartComboBox.SelectedIndex;
+            }
+        }
+
+        void PopulateBlackoutStartEndComboBoxes()
+        {
+            int minute = 0;
+            int hour = 0;
+            bool breakLoop = false;
+
+            while (!breakLoop)
+            {
+                string time = String.Format("{0}:{1}", hour.ToString().PadLeft(2, Convert.ToChar("0")), minute.ToString().PadLeft(2, Convert.ToChar("0")));
+                boStartComboBox.Items.Add(time);
+                boEndComboBox.Items.Add(time);
+                minute += 5;
+
+                if (minute >= 60)
+                {
+                    minute = 0;
+                    hour++;
+                }
+
+                if (hour >= 24)
+                {
+                    breakLoop = true;
+                }
+            }
+
+            boStartComboBox.Items.RemoveAt(boStartComboBox.Items.Count - 1);
+            boEndComboBox.Items.RemoveAt(0);
+        }
+
+        void blackoutCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            insideOutsideComboBox.Enabled = blackoutCheckBox.Checked;
+            boStartComboBox.Enabled = blackoutCheckBox.Checked;
+            boEndComboBox.Enabled = blackoutCheckBox.Checked;
+
+            if (blackoutCheckBox.Checked && insideOutsideComboBox.SelectedIndex.Equals(-1))
+            {
+                insideOutsideComboBox.SelectedIndex = 0;
+                boStartComboBox.Text = "09:00";
+                boEndComboBox.Text = "17:00";
+            }
         }
 
         void helpPictureBox_MouseClick(object sender, MouseEventArgs e)
@@ -244,14 +396,20 @@ namespace Ellanet
             processComboBox.Enabled = appActivateCheckBox.Checked;
         }
 
-        void ListRunningProcesses()
+        void ListRunningProcesses(object stareInfo)
         {
-            foreach (Process p in Process.GetProcesses())
+            try
             {
-                if (!String.IsNullOrEmpty(p.MainWindowTitle) && !processComboBox.Items.Contains(p.MainWindowTitle))
+                foreach (Process p in Process.GetProcesses())
                 {
-                    processComboBox.Items.Add(p.MainWindowTitle);
+                    if (!String.IsNullOrEmpty(p.MainWindowTitle) && !processComboBox.Items.Contains(p.MainWindowTitle))
+                    {
+                        AddComboBoxItem(ref processComboBox, p.MainWindowTitle);
+                    }
                 }
+            }
+            catch
+            {
             }
         }
 
@@ -287,11 +445,52 @@ namespace Ellanet
 
         void MouseForm_Load(object sender, EventArgs e)
         {
-            ListRunningProcesses();
+            ThreadPool.QueueUserWorkItem(CheckForUpdate);
+            ThreadPool.QueueUserWorkItem(ListRunningProcesses);
 
             if (startOnLaunchCheckBox.Checked && !_suppressAutoStart)
             {
                 actionButton.PerformClick();
+            }
+        }
+
+        void CheckForUpdate(object stateInfo)
+        {
+            if (lastUpdateCheck.Add(waitBetweenUpdateChecks) < DateTime.Now)
+            {
+                lastUpdateCheck = DateTime.Now;
+                XmlDocument versionXmlDoc = new XmlDocument();
+                versionXmlDoc.Load(versionXmlUrl);
+                Version availableVersion = new Version(Convert.ToInt32(versionXmlDoc.SelectSingleNode("version/major").InnerText), Convert.ToInt32(versionXmlDoc.SelectSingleNode("version/minor").InnerText), Convert.ToInt32(versionXmlDoc.SelectSingleNode("version/build").InnerText));
+
+                if (availableVersion > Assembly.GetExecutingAssembly().GetName().Version)
+                {
+                    DateTime released = Convert.ToDateTime(versionXmlDoc.SelectSingleNode("version/released_date").InnerText);
+                    DateTime advertised = Convert.ToDateTime(versionXmlDoc.SelectSingleNode("version/advertised_date").InnerText);
+                    List<string> features = new List<string>();
+                    List<string> fixes = new List<string>();
+
+                    if (versionXmlDoc.SelectSingleNode("version/features").ChildNodes.Count > 0)
+                    {
+                        foreach (XmlNode featureNode in versionXmlDoc.SelectSingleNode("version/features").ChildNodes)
+                        {
+                            features.Add(featureNode.InnerText);
+                        }
+                    }
+
+                    if (versionXmlDoc.SelectSingleNode("version/fixes").ChildNodes.Count > 0)
+                    {
+                        foreach (XmlNode fixNode in versionXmlDoc.SelectSingleNode("version/fixes").ChildNodes)
+                        {
+                            fixes.Add(fixNode.InnerText);
+                        }
+                    }
+
+                    if (advertised < DateTime.Now)
+                    {
+                        OnNewVersionAvailable(this, new NewVersionAvailableEventArgs(availableVersion, released, advertised, features.ToArray(), fixes.ToArray()));
+                    }
+                }
             }
         }
 
@@ -431,7 +630,7 @@ namespace Ellanet
                     actionButton.Text = "Pause";
                     this.Opacity = .75;
                     //this.TopMost = true;
-                    startTime = DateTime.Now;
+                    mmStartTime = DateTime.Now;
 
                     if (minimiseOnStartCheckBox.Checked)
                     {
@@ -451,18 +650,19 @@ namespace Ellanet
         void MoveMouseThread()
         {
             int secondsElapsed = 0;
+            blackoutStatus = BlackoutStatusChangeEventArgs.BlackoutStatus.Ended;
 
             if (staticPositionCheckBox.Checked)
             {
                 Cursor.Position = new Point(Convert.ToInt32(xNumericUpDown.Value), Convert.ToInt32(yNumericUpDown.Value));
             }
 
-            if (appActivateCheckBox.Checked && (ComboBoxGetSelectedIndex(ref processComboBox) > -1))
+            if (appActivateCheckBox.Checked && (GetComboBoxSelectedIndex(ref processComboBox) > -1))
             {
                 try
                 {
-                    IntPtr handle = FindWindow(null, ComboBoxGetSelectedItem(ref processComboBox).ToString());
-                    Process p = GetProessByMainWindowTitle(ComboBoxGetSelectedItem(ref processComboBox).ToString());
+                    IntPtr handle = FindWindow(null, GetComboBoxSelectedItem(ref processComboBox).ToString());
+                    Process p = GetProessByMainWindowTitle(GetComboBoxSelectedItem(ref processComboBox).ToString());
 
                     if (handle != IntPtr.Zero)
                     {
@@ -470,8 +670,8 @@ namespace Ellanet
                         {
                             ShowWindow(handle, ShowWindowCommands.Restore);
                         }
-                        
-                        Interaction.AppActivate(ComboBoxGetSelectedItem(ref processComboBox).ToString());
+
+                        Interaction.AppActivate(GetComboBoxSelectedItem(ref processComboBox).ToString());
                     }
                 }
                 catch
@@ -481,76 +681,158 @@ namespace Ellanet
 
             do
             {
-                UpdateCountdownProgressBar(ref countdownProgressBar, Convert.ToInt32(delayNumericUpDown.Value), secondsElapsed);
-                secondsElapsed += 1;
                 Thread.Sleep(1000);
 
-                if (autoPauseCheckBox.Checked && (startTime.Add(waitUntilAutoMoveDetect) < DateTime.Now) && (startingMousePoint != Cursor.Position))
+                if (!BlackoutInEffect())
                 {
-                    ButtonPerformClick(ref actionButton);
+                    UpdateCountdownProgressBar(ref countdownProgressBar, Convert.ToInt32(delayNumericUpDown.Value), secondsElapsed);
+                    secondsElapsed += 1;
+
+                    if (blackoutStatus == BlackoutStatusChangeEventArgs.BlackoutStatus.Started)
+                    {
+                        blackoutStatus = BlackoutStatusChangeEventArgs.BlackoutStatus.Ended;
+                        string startTime = null;
+                        string endTime = null;
+                        GetNextBlackoutStatusChangeTime(out startTime, out endTime);
+                        OnBlackoutStatusChange(this, new BlackoutStatusChangeEventArgs(blackoutStatus, startTime, endTime));
+                    }
+
+                    if (autoPauseCheckBox.Checked && (mmStartTime.Add(waitUntilAutoMoveDetect) < DateTime.Now) && (startingMousePoint != Cursor.Position))
+                    {
+                        ButtonPerformClick(ref actionButton);
+                    }
+                    else
+                    {
+                        startingMousePoint = Cursor.Position;
+                    }
+
+                    if (secondsElapsed > Convert.ToInt32(delayNumericUpDown.Value))
+                    {
+                        if (clickMouseCheckBox.Checked)
+                        {
+                            mouse_event((int)MouseEventFlags.LEFTDOWN, 0, 0, 0, 0);
+                            mouse_event((int)MouseEventFlags.LEFTUP, 0, 0, 0, 0);
+                        }
+
+                        if (moveMouseCheckBox.Checked)
+                        {
+                            if (!stealthCheckBox.Checked)
+                            {
+                                const int mouseMoveLoopSleep = 1;
+                                const int mouseSpeed = 1;
+                                const int moveSquareSize = 10;
+                                Point cursorStartPosition = Cursor.Position;
+
+                                for (int i = 0; i < moveSquareSize; i += mouseSpeed)
+                                {
+                                    MoveMouse(new Point(1, 0));
+                                    Thread.Sleep(mouseMoveLoopSleep);
+                                }
+
+                                for (int i = 0; i < moveSquareSize; i += mouseSpeed)
+                                {
+                                    MoveMouse(new Point(0, 1));
+                                    Thread.Sleep(mouseMoveLoopSleep);
+                                }
+
+                                for (int i = 0; i < moveSquareSize; i += mouseSpeed)
+                                {
+                                    MoveMouse(new Point(-1, 0));
+                                    Thread.Sleep(mouseMoveLoopSleep);
+                                }
+
+                                for (int i = 0; i < moveSquareSize; i += mouseSpeed)
+                                {
+                                    MoveMouse(new Point(0, -1));
+                                    Thread.Sleep(mouseMoveLoopSleep);
+                                }
+
+                                Cursor.Position = cursorStartPosition;
+                            }
+                            else
+                            {
+                                MoveMouse(new Point(0, 0));
+                            }
+                        }
+
+                        if (keystrokeCheckBox.Checked && (GetComboBoxSelectedIndex(ref keystrokeComboBox) > -1))
+                        {
+                            SendKeys.SendWait(GetComboBoxSelectedItem(ref keystrokeComboBox).ToString());
+                        }
+
+                        secondsElapsed = 0;
+                    }
                 }
                 else
                 {
-                    startingMousePoint = Cursor.Position;
-                }
-
-                if (secondsElapsed > Convert.ToInt32(delayNumericUpDown.Value))
-                {
-                    if (clickMouseCheckBox.Checked)
+                    if (blackoutStatus == BlackoutStatusChangeEventArgs.BlackoutStatus.Ended)
                     {
-                        mouse_event((int)MouseEventFlags.LEFTDOWN, 0, 0, 0, 0);
-                        mouse_event((int)MouseEventFlags.LEFTUP, 0, 0, 0, 0);
+                        blackoutStatus = BlackoutStatusChangeEventArgs.BlackoutStatus.Started;
+                        string startTime = null;
+                        string endTime = null;
+                        GetNextBlackoutStatusChangeTime(out startTime, out endTime);
+                        OnBlackoutStatusChange(this, new BlackoutStatusChangeEventArgs(blackoutStatus, startTime, endTime));
                     }
-
-                    if (moveMouseCheckBox.Checked)
-                    {
-                        if (!stealthCheckBox.Checked)
-                        {
-                            const int mouseMoveLoopSleep = 1;
-                            const int mouseSpeed = 1;
-                            const int moveSquareSize = 10;
-                            Point cursorStartPosition = Cursor.Position;
-
-                            for (int i = 0; i < moveSquareSize; i += mouseSpeed)
-                            {
-                                MoveMouse(new Point(1, 0));
-                                Thread.Sleep(mouseMoveLoopSleep);
-                            }
-
-                            for (int i = 0; i < moveSquareSize; i += mouseSpeed)
-                            {
-                                MoveMouse(new Point(0, 1));
-                                Thread.Sleep(mouseMoveLoopSleep);
-                            }
-
-                            for (int i = 0; i < moveSquareSize; i += mouseSpeed)
-                            {
-                                MoveMouse(new Point(-1, 0));
-                                Thread.Sleep(mouseMoveLoopSleep);
-                            }
-
-                            for (int i = 0; i < moveSquareSize; i += mouseSpeed)
-                            {
-                                MoveMouse(new Point(0, -1));
-                                Thread.Sleep(mouseMoveLoopSleep);
-                            }
-
-                            Cursor.Position = cursorStartPosition;
-                        }
-                        else
-                        {
-                            MoveMouse(new Point(0, 0));
-                        }
-                    }
-
-                    if (keystrokeCheckBox.Checked && (ComboBoxGetSelectedIndex(ref keystrokeComboBox) > -1))
-                    {
-                        SendKeys.SendWait(ComboBoxGetSelectedItem(ref keystrokeComboBox).ToString());
-                    }
-
-                    secondsElapsed = 0;
                 }
             } while (true);
+        }
+
+        bool BlackoutInEffect()
+        {
+            try
+            {
+                if (GetCheckBoxChecked(ref blackoutCheckBox))
+                {
+                    switch (GetComboBoxSelectedItem(ref insideOutsideComboBox).ToString())
+                    {
+                        case "inside":
+
+                            if ((DateTime.Now > Convert.ToDateTime(String.Format("{0} {1}", DateTime.Now.ToString("yyyy-MMM-dd"), GetComboBoxSelectedItem(ref boStartComboBox).ToString()))) && (DateTime.Now < Convert.ToDateTime(String.Format("{0} {1}", DateTime.Now.ToString("yyyy-MMM-dd"), GetComboBoxSelectedItem(ref boEndComboBox).ToString()))))
+                            {
+                                return true;
+                            }
+
+                            break;
+                        case "outside":
+
+                            if ((DateTime.Now < Convert.ToDateTime(String.Format("{0} {1}", DateTime.Now.ToString("yyyy-MMM-dd"), GetComboBoxSelectedItem(ref boStartComboBox).ToString()))) || (DateTime.Now > Convert.ToDateTime(String.Format("{0} {1}", DateTime.Now.ToString("yyyy-MMM-dd"), GetComboBoxSelectedItem(ref boEndComboBox).ToString()))))
+                            {
+                                return true;
+                            }
+
+                            break;
+                    }
+                }
+            }
+            catch
+            {
+            }
+
+            return false;
+        }
+
+        void GetNextBlackoutStatusChangeTime(out string startTime, out string endTime)
+        {
+            startTime = "??:??";
+            endTime = "??:??";
+
+            try
+            {
+                switch (GetComboBoxSelectedItem(ref insideOutsideComboBox).ToString())
+                {
+                    case "inside":
+                        startTime = GetComboBoxSelectedItem(ref boEndComboBox).ToString();
+                        endTime = GetComboBoxSelectedItem(ref boStartComboBox).ToString();
+                        break;
+                    case "outside":
+                        startTime = GetComboBoxSelectedItem(ref boStartComboBox).ToString();
+                        endTime = GetComboBoxSelectedItem(ref boEndComboBox).ToString();
+                        break;
+                }
+            }
+            catch
+            {
+            }
         }
 
         void UpdateCountdownProgressBar(ref ProgressBar pb, int delay, int elapsed)
@@ -599,11 +881,11 @@ namespace Ellanet
             }
         }
 
-        object ComboBoxGetSelectedItem(ref ComboBox cb)
+        object GetComboBoxSelectedItem(ref ComboBox cb)
         {
             if (InvokeRequired)
             {
-                return (object)Invoke(new ComboBoxGetSelectedItemDelegate(ComboBoxGetSelectedItem), new object[] { cb });
+                return (object)Invoke(new GetComboBoxSelectedItemDelegate(GetComboBoxSelectedItem), new object[] { cb });
             }
             else
             {
@@ -611,11 +893,11 @@ namespace Ellanet
             }
         }
 
-        int ComboBoxGetSelectedIndex(ref ComboBox cb)
+        int GetComboBoxSelectedIndex(ref ComboBox cb)
         {
             if (InvokeRequired)
             {
-                return (int)Invoke(new ComboBoxGetSelectedIndexDelegate(ComboBoxGetSelectedIndex), new object[] { cb });
+                return (int)Invoke(new GetComboBoxSelectedIndexDelegate(GetComboBoxSelectedIndex), new object[] { cb });
             }
             else
             {
@@ -695,6 +977,18 @@ namespace Ellanet
             }
         }
 
+        void AddComboBoxItem(ref ComboBox cb, string item)
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new AddComboBoxItemDelegate(AddComboBoxItem), new object[] { cb, item });
+            }
+            else
+            {
+                cb.Items.Add(item);
+            }
+        }
+
         int GetLastInputTime()
         {
             int idleTime = 0;
@@ -767,6 +1061,12 @@ namespace Ellanet
                         processComboBox.Items.Add(settingsXmlDoc.SelectSingleNode("settings/activate_application_title").InnerText);
                         processComboBox.Text = settingsXmlDoc.SelectSingleNode("settings/activate_application_title").InnerText;
                     }
+
+                    blackoutCheckBox.Checked = Convert.ToBoolean(settingsXmlDoc.SelectSingleNode("settings/blackout_schedule_enabled").InnerText);
+                    insideOutsideComboBox.Text = settingsXmlDoc.SelectSingleNode("settings/blackout_schedule_scope").InnerText;
+                    boStartComboBox.Text = settingsXmlDoc.SelectSingleNode("settings/blackout_schedule_start").InnerText;
+                    boEndComboBox.Text = settingsXmlDoc.SelectSingleNode("settings/blackout_schedule_end").InnerText;
+                    lastUpdateCheck = Convert.ToDateTime(settingsXmlDoc.SelectSingleNode("settings/last_update_check").InnerText);
                 }
             }
             catch
@@ -784,7 +1084,7 @@ namespace Ellanet
                 }
 
                 XmlDocument settingsXmlDoc = new XmlDocument();
-                settingsXmlDoc.LoadXml("<settings><second_delay /><move_mouse_pointer /><stealth_mode /><enable_static_position /><x_static_position /><y_static_position /><click_left_mouse_button /><send_keystroke /><keystroke /><pause_when_mouse_moved /><automatically_resume /><resume_seconds /><automatically_start_on_launch /><automatically_launch_on_logon /><minimise_on_pause /><minimise_on_start /><minimise_to_system_tray /><activate_application /><activate_application_title /></settings>");
+                settingsXmlDoc.LoadXml("<settings><second_delay /><move_mouse_pointer /><stealth_mode /><enable_static_position /><x_static_position /><y_static_position /><click_left_mouse_button /><send_keystroke /><keystroke /><pause_when_mouse_moved /><automatically_resume /><resume_seconds /><automatically_start_on_launch /><automatically_launch_on_logon /><minimise_on_pause /><minimise_on_start /><minimise_to_system_tray /><activate_application /><activate_application_title /><blackout_schedule_enabled /><blackout_schedule_scope /><blackout_schedule_start /><blackout_schedule_end /><last_update_check /></settings>");
                 settingsXmlDoc.SelectSingleNode("settings/second_delay").InnerText = Convert.ToDecimal(delayNumericUpDown.Value).ToString();
                 settingsXmlDoc.SelectSingleNode("settings/move_mouse_pointer").InnerText = moveMouseCheckBox.Checked.ToString();
                 settingsXmlDoc.SelectSingleNode("settings/stealth_mode").InnerText = stealthCheckBox.Checked.ToString();
@@ -804,6 +1104,11 @@ namespace Ellanet
                 settingsXmlDoc.SelectSingleNode("settings/minimise_to_system_tray").InnerText = minimiseToSystemTrayCheckBox.Checked.ToString();
                 settingsXmlDoc.SelectSingleNode("settings/activate_application").InnerText = appActivateCheckBox.Checked.ToString();
                 settingsXmlDoc.SelectSingleNode("settings/activate_application_title").InnerText = processComboBox.Text;
+                settingsXmlDoc.SelectSingleNode("settings/blackout_schedule_enabled").InnerText = blackoutCheckBox.Checked.ToString();
+                settingsXmlDoc.SelectSingleNode("settings/blackout_schedule_scope").InnerText = insideOutsideComboBox.Text;
+                settingsXmlDoc.SelectSingleNode("settings/blackout_schedule_start").InnerText = boStartComboBox.Text;
+                settingsXmlDoc.SelectSingleNode("settings/blackout_schedule_end").InnerText = boEndComboBox.Text;
+                settingsXmlDoc.SelectSingleNode("settings/last_update_check").InnerText = lastUpdateCheck.ToString("yyyy-MMM-dd HH:mm:ss");
                 settingsXmlDoc.Save(Path.Combine(moveMouseXmlDirectory, moveMouseXmlName));
             }
             catch
