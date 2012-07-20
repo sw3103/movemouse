@@ -1,0 +1,14 @@
+<version>
+  <major>2</major>
+  <minor>5</minor>
+  <build>0</build>
+  <released_date>20-Jun-2012</released_date>
+  <advertised_date>20-Jun-2012</advertised_date>
+  <features>
+    <feature>Feature 1</feature>
+    <feature>Feature 2</feature>
+  </features>
+  <fixes>
+    <fix>Various fixes</fix>
+  </fixes>
+</version>
