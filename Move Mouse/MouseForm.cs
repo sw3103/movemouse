@@ -456,41 +456,47 @@ namespace Ellanet
 
         void CheckForUpdate(object stateInfo)
         {
-            if (lastUpdateCheck.Add(waitBetweenUpdateChecks) < DateTime.Now)
+            try
             {
-                lastUpdateCheck = DateTime.Now;
-                XmlDocument versionXmlDoc = new XmlDocument();
-                versionXmlDoc.Load(versionXmlUrl);
-                Version availableVersion = new Version(Convert.ToInt32(versionXmlDoc.SelectSingleNode("version/major").InnerText), Convert.ToInt32(versionXmlDoc.SelectSingleNode("version/minor").InnerText), Convert.ToInt32(versionXmlDoc.SelectSingleNode("version/build").InnerText));
-
-                if (availableVersion > Assembly.GetExecutingAssembly().GetName().Version)
+                if (lastUpdateCheck.Add(waitBetweenUpdateChecks) < DateTime.Now)
                 {
-                    DateTime released = Convert.ToDateTime(versionXmlDoc.SelectSingleNode("version/released_date").InnerText);
-                    DateTime advertised = Convert.ToDateTime(versionXmlDoc.SelectSingleNode("version/advertised_date").InnerText);
-                    List<string> features = new List<string>();
-                    List<string> fixes = new List<string>();
+                    lastUpdateCheck = DateTime.Now;
+                    XmlDocument versionXmlDoc = new XmlDocument();
+                    versionXmlDoc.Load(versionXmlUrl);
+                    Version availableVersion = new Version(Convert.ToInt32(versionXmlDoc.SelectSingleNode("version/major").InnerText), Convert.ToInt32(versionXmlDoc.SelectSingleNode("version/minor").InnerText), Convert.ToInt32(versionXmlDoc.SelectSingleNode("version/build").InnerText));
 
-                    if (versionXmlDoc.SelectSingleNode("version/features").ChildNodes.Count > 0)
+                    if (availableVersion > Assembly.GetExecutingAssembly().GetName().Version)
                     {
-                        foreach (XmlNode featureNode in versionXmlDoc.SelectSingleNode("version/features").ChildNodes)
+                        DateTime released = Convert.ToDateTime(versionXmlDoc.SelectSingleNode("version/released_date").InnerText);
+                        DateTime advertised = Convert.ToDateTime(versionXmlDoc.SelectSingleNode("version/advertised_date").InnerText);
+                        List<string> features = new List<string>();
+                        List<string> fixes = new List<string>();
+
+                        if (versionXmlDoc.SelectSingleNode("version/features").ChildNodes.Count > 0)
                         {
-                            features.Add(featureNode.InnerText);
+                            foreach (XmlNode featureNode in versionXmlDoc.SelectSingleNode("version/features").ChildNodes)
+                            {
+                                features.Add(featureNode.InnerText);
+                            }
                         }
-                    }
 
-                    if (versionXmlDoc.SelectSingleNode("version/fixes").ChildNodes.Count > 0)
-                    {
-                        foreach (XmlNode fixNode in versionXmlDoc.SelectSingleNode("version/fixes").ChildNodes)
+                        if (versionXmlDoc.SelectSingleNode("version/fixes").ChildNodes.Count > 0)
                         {
-                            fixes.Add(fixNode.InnerText);
+                            foreach (XmlNode fixNode in versionXmlDoc.SelectSingleNode("version/fixes").ChildNodes)
+                            {
+                                fixes.Add(fixNode.InnerText);
+                            }
                         }
-                    }
 
-                    if (advertised < DateTime.Now)
-                    {
-                        OnNewVersionAvailable(this, new NewVersionAvailableEventArgs(availableVersion, released, advertised, features.ToArray(), fixes.ToArray()));
+                        if (advertised < DateTime.Now)
+                        {
+                            OnNewVersionAvailable(this, new NewVersionAvailableEventArgs(availableVersion, released, advertised, features.ToArray(), fixes.ToArray()));
+                        }
                     }
                 }
+            }
+            catch
+            {
             }
         }
 
