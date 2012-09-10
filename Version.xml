@@ -1,13 +1,13 @@
 <version>
   <major>2</major>
   <minor>5</minor>
-  <build>1</build>
-  <released_date>25-Jul-2012</released_date>
-  <advertised_date>25-Jul-2012</advertised_date>
+  <build>2</build>
+  <released_date>10-Sep-2012</released_date>
+  <advertised_date>10-Sep-2012</advertised_date>
   <features>
     <feature>None</feature>
   </features>
   <fixes>
-    <fix>Issue when checking for notifications</fix>
+    <fix>Minor fixes and improvements</fix>
   </fixes>
 </version>

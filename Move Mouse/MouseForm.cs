@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Text;
+using System.Globalization;
 using System.Windows.Forms;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -17,48 +15,60 @@ namespace Ellanet
 {
     public partial class MouseForm : Form
     {
-        private const int traceSeconds = 5;
-        private const string moveMouseXmlName = "Move Mouse.xml";
-        private const string homeAddress = "http://movemouse.codeplex.com/";
-        private const string contactAddress = "http://www.codeplex.com/site/users/view/sw3103/";
-        private const string helpAddress = "http://movemouse.codeplex.com/documentation/";
-        private const string paypalAddress = "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=QZTWHD9CRW5XN";
-        private const string versionXmlUrl = "https://movemouse.svn.codeplex.com/svn/Version.xml";
+        private const int TraceSeconds = 5;
+        private const string MoveMouseXmlName = "Move Mouse.xml";
+        private const string HomeAddress = "http://movemouse.codeplex.com/";
+        private const string ContactAddress = "http://www.codeplex.com/site/users/view/sw3103/";
+        private const string HelpAddress = "http://movemouse.codeplex.com/documentation/";
+        private const string PayPalAddress = "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=QZTWHD9CRW5XN";
+        private const string VersionXmlUrl = "https://movemouse.svn.codeplex.com/svn/Version.xml";
 
-        private Thread moveMouseThread;
-        private TimeSpan waitUntilAutoMoveDetect = new TimeSpan(0, 0, 5);
-        private DateTime mmStartTime;
-        private Point startingMousePoint = new Point();
-        private System.Windows.Forms.Timer resumeTimer = new System.Windows.Forms.Timer();
-        private DateTime traceTimeComplete = DateTime.MinValue;
-        private Thread traceMouseThread;
-        private string moveMouseXmlDirectory = Environment.ExpandEnvironmentVariables(@"%APPDATA%\Ellanet\Move Mouse");
-        private bool _suppressAutoStart = false;
-        private BlackoutStatusChangeEventArgs.BlackoutStatus blackoutStatus = BlackoutStatusChangeEventArgs.BlackoutStatus.Ended;
-        private TimeSpan waitBetweenUpdateChecks = new TimeSpan(7, 0, 0, 0);
-        private DateTime lastUpdateCheck = DateTime.MinValue;
+        private readonly TimeSpan _waitBetweenUpdateChecks = new TimeSpan(7, 0, 0, 0);
+        private readonly TimeSpan _waitUntilAutoMoveDetect = new TimeSpan(0, 0, 5);
+        private readonly System.Windows.Forms.Timer _resumeTimer = new System.Windows.Forms.Timer();
+        private readonly string _moveMouseXmlDirectory = Environment.ExpandEnvironmentVariables(@"%APPDATA%\Ellanet\Move Mouse");
+        private readonly bool _suppressAutoStart;
+        private Thread _moveMouseThread;
+        private DateTime _mmStartTime;
+        private Point _startingMousePoint;
+        private DateTime _traceTimeComplete = DateTime.MinValue;
+        private Thread _traceMouseThread;
+        private BlackoutStatusChangeEventArgs.BlackoutStatus _blackoutStatus = BlackoutStatusChangeEventArgs.BlackoutStatus.Ended;
+        private DateTime _lastUpdateCheck = DateTime.MinValue;
 
         private delegate void UpdateCountdownProgressBarDelegate(ref ProgressBar pb, int delay, int elapsed);
+
         private delegate void ButtonPerformClickDelegate(ref Button b);
-        private delegate Point GetControlScreenLocationDelegate(ref Control c);
+
         private delegate object GetComboBoxSelectedItemDelegate(ref ComboBox cb);
+
         private delegate int GetComboBoxSelectedIndexDelegate(ref ComboBox cb);
+
         private delegate void SetNumericUpDownValueDelegate(ref NumericUpDown nud, int value);
+
         private delegate void SetButtonTextDelegate(ref Button b, string text);
+
         private delegate void SetButtonTagDelegate(ref Button b, object o);
+
         private delegate object GetButtonTagDelegate(ref Button b);
+
         private delegate string GetButtonTextDelegate(ref Button b);
+
         private delegate bool GetCheckBoxCheckedDelegate(ref CheckBox cb);
+
         private delegate void AddComboBoxItemDelegate(ref ComboBox cb, string item);
 
         public delegate void BlackoutStatusChangeHandler(object sender, BlackoutStatusChangeEventArgs e);
+
         public delegate void NewVersionAvailableHandler(object sender, NewVersionAvailableEventArgs e);
 
         public event BlackoutStatusChangeHandler BlackoutStatusChange;
         public event NewVersionAvailableHandler NewVersionAvailable;
 
+        // ReSharper disable UnusedMember.Local
+
         [Flags]
-        enum MouseEventFlags : int
+        private enum MouseEventFlags
         {
             LEFTDOWN = 0x00000002,
             LEFTUP = 0x00000004,
@@ -71,7 +81,7 @@ namespace Ellanet
         }
 
         [Flags]
-        enum Win32Consts
+        private enum Win32Consts
         {
             INPUT_MOUSE = 0,
             INPUT_KEYBOARD = 1,
@@ -79,7 +89,7 @@ namespace Ellanet
         }
 
         [Flags]
-        enum ShowWindowCommands : int
+        private enum ShowWindowCommands
         {
             Hide = 0,
             Normal = 1,
@@ -90,29 +100,31 @@ namespace Ellanet
             Show = 5,
             Minimize = 6,
             ShowMinNoActive = 7,
-            ShowNA = 8,
+            ShowNa = 8,
             Restore = 9,
             ShowDefault = 10,
             ForceMinimize = 11
         }
 
+        // ReSharper restore UnusedMember.Local
+        // ReSharper disable InconsistentNaming
+        // ReSharper disable NotAccessedField.Local
+
         [StructLayout(LayoutKind.Sequential)]
-        struct LASTINPUTINFO
+        private struct LASTINPUTINFO
         {
-            public static readonly int SizeOf = Marshal.SizeOf(typeof(LASTINPUTINFO));
-            [MarshalAs(UnmanagedType.U4)]
-            public int cbSize;
-            [MarshalAs(UnmanagedType.U4)]
-            public int dwTime;
+            private static readonly int SizeOf = Marshal.SizeOf(typeof (LASTINPUTINFO));
+            [MarshalAs(UnmanagedType.U4)] public int cbSize;
+            [MarshalAs(UnmanagedType.U4)] public int dwTime;
         }
 
-        struct INPUT
+        private struct INPUT
         {
             public int type;
             public MOUSEINPUT mi;
         }
 
-        struct MOUSEINPUT
+        private struct MOUSEINPUT
         {
             public int dx;
             public int dy;
@@ -122,8 +134,11 @@ namespace Ellanet
             public int dwExtraInfo;
         }
 
+        // ReSharper restore NotAccessedField.Local
+        // ReSharper restore InconsistentNaming
+
         [DllImport("user32.dll")]
-        static extern void mouse_event(
+        private static extern void mouse_event(
             uint dwFlags,
             uint dx,
             uint dy,
@@ -131,30 +146,30 @@ namespace Ellanet
             int dwExtraInfo);
 
         [DllImport("user32.dll")]
-        static extern bool GetLastInputInfo(
+        private static extern bool GetLastInputInfo(
             ref LASTINPUTINFO plii);
 
         [DllImport("user32.dll")]
-        static extern bool SystemParametersInfo(
+        private static extern bool SystemParametersInfo(
             int uAction,
             int uParam,
             ref int lpvParam,
             int flags);
 
         [DllImport("user32.dll", SetLastError = true)]
-        static extern uint SendInput(
+        private static extern uint SendInput(
             uint nInputs,
             ref INPUT pInputs,
             int cbSize);
 
         [DllImport("user32.dll", SetLastError = true)]
-        static extern IntPtr FindWindow(
+        private static extern IntPtr FindWindow(
             string lpClassName,
             string lpWindowName);
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool ShowWindow(
+        private static extern bool ShowWindow(
             IntPtr hWnd,
             ShowWindowCommands nCmdShow);
 
@@ -166,99 +181,105 @@ namespace Ellanet
 
             if (screenSaverTimeout > 0)
             {
-                resumeNumericUpDown.Value = (screenSaverTimeout / 2);
+                resumeNumericUpDown.Value = (decimal) (screenSaverTimeout/2.0);
             }
 
-            keystrokeCheckBox.CheckedChanged += new EventHandler(keystrokeCheckBox_CheckedChanged);
-            appActivateCheckBox.CheckedChanged += new EventHandler(appActivateCheckBox_CheckedChanged);
-            //minimiseOnPauseCheckBox.CheckedChanged += new EventHandler(minimiseOnPauseCheckBox_CheckedChanged);
-            //minimiseOnStartCheckBox.CheckedChanged += new EventHandler(minimiseOnStartCheckBox_CheckedChanged);
-            staticPositionCheckBox.CheckedChanged += new EventHandler(startPositionCheckBox_CheckedChanged);
-            resumeCheckBox.CheckedChanged += new EventHandler(resumeCheckBox_CheckedChanged);
-            launchAtLogonCheckBox.CheckedChanged += new EventHandler(launchAtLogonCheckBox_CheckedChanged);
-            blackoutCheckBox.CheckedChanged += new EventHandler(blackoutCheckBox_CheckedChanged);
+            keystrokeCheckBox.CheckedChanged += keystrokeCheckBox_CheckedChanged;
+            appActivateCheckBox.CheckedChanged += appActivateCheckBox_CheckedChanged;
+            staticPositionCheckBox.CheckedChanged += startPositionCheckBox_CheckedChanged;
+            resumeCheckBox.CheckedChanged += resumeCheckBox_CheckedChanged;
+            launchAtLogonCheckBox.CheckedChanged += launchAtLogonCheckBox_CheckedChanged;
+            blackoutCheckBox.CheckedChanged += blackoutCheckBox_CheckedChanged;
             PopulateBlackoutStartEndComboBoxes();
             ReadSettings();
-            this.Icon = global::Ellanet.Properties.Resources.Mouse_Icon;
-            this.Text = String.Format("Move Mouse ({0}.{1}.{2}) - {3}", Assembly.GetExecutingAssembly().GetName().Version.Major, Assembly.GetExecutingAssembly().GetName().Version.Minor, Assembly.GetExecutingAssembly().GetName().Version.Build, homeAddress);
-            this.FormClosing += new FormClosingEventHandler(MouseForm_FormClosing);
-            this.Load += new EventHandler(MouseForm_Load);
-            this.Resize += new EventHandler(MouseForm_Resize);
-            actionButton.Click += new EventHandler(actionButton_Click);
-            moveMouseCheckBox.CheckedChanged += new EventHandler(moveMouseCheckBox_CheckedChanged);
-            clickMouseCheckBox.CheckedChanged += new EventHandler(clickMouseCheckBox_CheckedChanged);
-            autoPauseCheckBox.CheckedChanged += new EventHandler(autoPauseCheckBox_CheckedChanged);
-            resumeTimer.Interval = 1000;
-            resumeTimer.Tick += new EventHandler(resumeTimer_Tick);
-            traceButton.Click += new EventHandler(traceButton_Click);
-            mousePictureBox.MouseEnter += new EventHandler(mousePictureBox_MouseEnter);
-            mousePictureBox.MouseLeave += new EventHandler(mousePictureBox_MouseLeave);
-            mousePictureBox.MouseClick += new MouseEventHandler(mousePictureBox_MouseClick);
-            helpPictureBox.MouseEnter += new EventHandler(helpPictureBox_MouseEnter);
-            helpPictureBox.MouseLeave += new EventHandler(helpPictureBox_MouseLeave);
-            helpPictureBox.MouseClick += new MouseEventHandler(helpPictureBox_MouseClick);
-            contactPictureBox.MouseEnter += new EventHandler(contactPictureBox_MouseEnter);
-            contactPictureBox.MouseLeave += new EventHandler(contactPictureBox_MouseLeave);
-            contactPictureBox.MouseClick += new MouseEventHandler(contactPictureBox_MouseClick);
-            paypalPictureBox.MouseEnter += new EventHandler(paypalPictureBox_MouseEnter);
-            paypalPictureBox.MouseLeave += new EventHandler(paypalPictureBox_MouseLeave);
-            paypalPictureBox.MouseClick += new MouseEventHandler(paypalPictureBox_MouseClick);
-            boStartComboBox.SelectedIndexChanged += new EventHandler(boStartComboBox_SelectedIndexChanged);
-            boEndComboBox.SelectedIndexChanged += new EventHandler(boEndComboBox_SelectedIndexChanged);
+            Icon = Properties.Resources.Mouse_Icon;
+            Text = String.Format("Move Mouse ({0}.{1}.{2}) - {3}", Assembly.GetExecutingAssembly().GetName().Version.Major, Assembly.GetExecutingAssembly().GetName().Version.Minor, Assembly.GetExecutingAssembly().GetName().Version.Build, HomeAddress);
+            FormClosing += MouseForm_FormClosing;
+            Load += MouseForm_Load;
+            Resize += MouseForm_Resize;
+            actionButton.Click += actionButton_Click;
+            moveMouseCheckBox.CheckedChanged += moveMouseCheckBox_CheckedChanged;
+            clickMouseCheckBox.CheckedChanged += clickMouseCheckBox_CheckedChanged;
+            autoPauseCheckBox.CheckedChanged += autoPauseCheckBox_CheckedChanged;
+            _resumeTimer.Interval = 1000;
+            _resumeTimer.Tick += resumeTimer_Tick;
+            traceButton.Click += traceButton_Click;
+            mousePictureBox.MouseEnter += mousePictureBox_MouseEnter;
+            mousePictureBox.MouseLeave += mousePictureBox_MouseLeave;
+            mousePictureBox.MouseClick += mousePictureBox_MouseClick;
+            helpPictureBox.MouseEnter += helpPictureBox_MouseEnter;
+            helpPictureBox.MouseLeave += helpPictureBox_MouseLeave;
+            helpPictureBox.MouseClick += helpPictureBox_MouseClick;
+            contactPictureBox.MouseEnter += contactPictureBox_MouseEnter;
+            contactPictureBox.MouseLeave += contactPictureBox_MouseLeave;
+            contactPictureBox.MouseClick += contactPictureBox_MouseClick;
+            paypalPictureBox.MouseEnter += paypalPictureBox_MouseEnter;
+            paypalPictureBox.MouseLeave += paypalPictureBox_MouseLeave;
+            paypalPictureBox.MouseClick += paypalPictureBox_MouseClick;
+            boStartComboBox.SelectedIndexChanged += boStartComboBox_SelectedIndexChanged;
+            boEndComboBox.SelectedIndexChanged += boEndComboBox_SelectedIndexChanged;
             SetButtonTag(ref traceButton, GetButtonText(ref traceButton));
         }
 
-        void paypalPictureBox_MouseClick(object sender, MouseEventArgs e)
+        public override sealed string Text
+        {
+            get { return base.Text; }
+            set { base.Text = value; }
+        }
+
+        private void paypalPictureBox_MouseClick(object sender, MouseEventArgs e)
         {
             try
             {
-                Process.Start(paypalAddress);
+                Process.Start(PayPalAddress);
             }
-            catch
+            catch (Exception ex)
             {
+                Debug.WriteLine(ex.Message);
             }
         }
 
-        void paypalPictureBox_MouseLeave(object sender, EventArgs e)
+        private void paypalPictureBox_MouseLeave(object sender, EventArgs e)
         {
-            if (this.Cursor != Cursors.WaitCursor)
+            if (Cursor != Cursors.WaitCursor)
             {
-                this.Cursor = Cursors.Default;
+                Cursor = Cursors.Default;
             }
         }
 
-        void paypalPictureBox_MouseEnter(object sender, EventArgs e)
+        private void paypalPictureBox_MouseEnter(object sender, EventArgs e)
         {
-            if (this.Cursor != Cursors.WaitCursor)
+            if (Cursor != Cursors.WaitCursor)
             {
-                this.Cursor = Cursors.Hand;
+                Cursor = Cursors.Hand;
             }
         }
 
-        void contactPictureBox_MouseClick(object sender, MouseEventArgs e)
+        private void contactPictureBox_MouseClick(object sender, MouseEventArgs e)
         {
             try
             {
-                Process.Start(contactAddress);
+                Process.Start(ContactAddress);
             }
-            catch
+            catch (Exception ex)
             {
-            }
-        }
-
-        void contactPictureBox_MouseLeave(object sender, EventArgs e)
-        {
-            if (this.Cursor != Cursors.WaitCursor)
-            {
-                this.Cursor = Cursors.Default;
+                Debug.WriteLine(ex.Message);
             }
         }
 
-        void contactPictureBox_MouseEnter(object sender, EventArgs e)
+        private void contactPictureBox_MouseLeave(object sender, EventArgs e)
         {
-            if (this.Cursor != Cursors.WaitCursor)
+            if (Cursor != Cursors.WaitCursor)
             {
-                this.Cursor = Cursors.Hand;
+                Cursor = Cursors.Default;
+            }
+        }
+
+        private void contactPictureBox_MouseEnter(object sender, EventArgs e)
+        {
+            if (Cursor != Cursors.WaitCursor)
+            {
+                Cursor = Cursors.Hand;
             }
         }
 
@@ -278,7 +299,7 @@ namespace Ellanet
             }
         }
 
-        void boEndComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void boEndComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (boEndComboBox.SelectedIndex < boStartComboBox.SelectedIndex)
             {
@@ -286,7 +307,7 @@ namespace Ellanet
             }
         }
 
-        void boStartComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void boStartComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (boEndComboBox.SelectedIndex < boStartComboBox.SelectedIndex)
             {
@@ -294,7 +315,7 @@ namespace Ellanet
             }
         }
 
-        void PopulateBlackoutStartEndComboBoxes()
+        private void PopulateBlackoutStartEndComboBoxes()
         {
             int minute = 0;
             int hour = 0;
@@ -302,7 +323,7 @@ namespace Ellanet
 
             while (!breakLoop)
             {
-                string time = String.Format("{0}:{1}", hour.ToString().PadLeft(2, Convert.ToChar("0")), minute.ToString().PadLeft(2, Convert.ToChar("0")));
+                string time = String.Format("{0}:{1}", hour.ToString(CultureInfo.InvariantCulture).PadLeft(2, Convert.ToChar("0")), minute.ToString(CultureInfo.InvariantCulture).PadLeft(2, Convert.ToChar("0")));
                 boStartComboBox.Items.Add(time);
                 boEndComboBox.Items.Add(time);
                 minute += 5;
@@ -323,7 +344,7 @@ namespace Ellanet
             boEndComboBox.Items.RemoveAt(0);
         }
 
-        void blackoutCheckBox_CheckedChanged(object sender, EventArgs e)
+        private void blackoutCheckBox_CheckedChanged(object sender, EventArgs e)
         {
             insideOutsideComboBox.Enabled = blackoutCheckBox.Checked;
             boStartComboBox.Enabled = blackoutCheckBox.Checked;
@@ -337,66 +358,68 @@ namespace Ellanet
             }
         }
 
-        void helpPictureBox_MouseClick(object sender, MouseEventArgs e)
+        private void helpPictureBox_MouseClick(object sender, MouseEventArgs e)
         {
             try
             {
-                Process.Start(helpAddress);
+                Process.Start(HelpAddress);
             }
-            catch
+            catch (Exception ex)
             {
+                Debug.WriteLine(ex.Message);
             }
         }
 
-        void helpPictureBox_MouseLeave(object sender, EventArgs e)
+        private void helpPictureBox_MouseLeave(object sender, EventArgs e)
         {
-            if (this.Cursor != Cursors.WaitCursor)
+            if (Cursor != Cursors.WaitCursor)
             {
-                this.Cursor = Cursors.Default;
+                Cursor = Cursors.Default;
             }
         }
 
-        void helpPictureBox_MouseEnter(object sender, EventArgs e)
+        private void helpPictureBox_MouseEnter(object sender, EventArgs e)
         {
-            if (this.Cursor != Cursors.WaitCursor)
+            if (Cursor != Cursors.WaitCursor)
             {
-                this.Cursor = Cursors.Hand;
+                Cursor = Cursors.Hand;
             }
         }
 
-        void mousePictureBox_MouseClick(object sender, MouseEventArgs e)
+        private void mousePictureBox_MouseClick(object sender, MouseEventArgs e)
         {
             try
             {
-                Process.Start(homeAddress);
+                Process.Start(HomeAddress);
             }
-            catch
+            catch (Exception ex)
             {
+                Debug.WriteLine(ex.Message);
             }
         }
 
-        void mousePictureBox_MouseLeave(object sender, EventArgs e)
+        private void mousePictureBox_MouseLeave(object sender, EventArgs e)
         {
-            if (this.Cursor != Cursors.WaitCursor)
+            if (Cursor != Cursors.WaitCursor)
             {
-                this.Cursor = Cursors.Default;
+                Cursor = Cursors.Default;
             }
         }
 
-        void mousePictureBox_MouseEnter(object sender, EventArgs e)
+        private void mousePictureBox_MouseEnter(object sender, EventArgs e)
         {
-            if (this.Cursor != Cursors.WaitCursor)
+            if (Cursor != Cursors.WaitCursor)
             {
-                this.Cursor = Cursors.Hand;
+                Cursor = Cursors.Hand;
             }
         }
 
-        void appActivateCheckBox_CheckedChanged(object sender, EventArgs e)
+        private void appActivateCheckBox_CheckedChanged(object sender, EventArgs e)
         {
             processComboBox.Enabled = appActivateCheckBox.Checked;
         }
 
-        void ListRunningProcesses(object stareInfo)
+        private void ListRunningProcesses(object stareInfo)
         {
             try
             {
@@ -408,8 +431,9 @@ namespace Ellanet
                     }
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                Debug.WriteLine(ex.Message);
             }
         }
 
@@ -423,27 +447,37 @@ namespace Ellanet
         //    minimiseToSystemTrayCheckBox.Enabled = (minimiseOnStartCheckBox.Checked | minimiseOnPauseCheckBox.Checked);
         //}
 
-        void MouseForm_Resize(object sender, EventArgs e)
+        private void MouseForm_Resize(object sender, EventArgs e)
         {
-            if ((this.WindowState == FormWindowState.Minimized) && minimiseToSystemTrayCheckBox.Checked)
+            if ((WindowState == FormWindowState.Minimized) && minimiseToSystemTrayCheckBox.Checked)
             {
-                this.ShowInTaskbar = false;
+                ShowInTaskbar = false;
             }
         }
 
-        void launchAtLogonCheckBox_CheckedChanged(object sender, EventArgs e)
+        private void launchAtLogonCheckBox_CheckedChanged(object sender, EventArgs e)
         {
             if (launchAtLogonCheckBox.Checked)
             {
-                Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true).SetValue("Move Mouse", Application.ExecutablePath);
+                var key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
+
+                if (key != null)
+                {
+                    key.SetValue("Move Mouse", Application.ExecutablePath);
+                }
             }
             else
             {
-                Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true).DeleteValue("Move Mouse");
+                var key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
+
+                if (key != null)
+                {
+                    key.DeleteValue("Move Mouse");
+                }
             }
         }
 
-        void MouseForm_Load(object sender, EventArgs e)
+        private void MouseForm_Load(object sender, EventArgs e)
         {
             ThreadPool.QueueUserWorkItem(CheckForUpdate);
             ThreadPool.QueueUserWorkItem(ListRunningProcesses);
@@ -454,23 +488,25 @@ namespace Ellanet
             }
         }
 
-        void CheckForUpdate(object stateInfo)
+        private void CheckForUpdate(object stateInfo)
         {
+            // ReSharper disable PossibleNullReferenceException
+
             try
             {
-                if (lastUpdateCheck.Add(waitBetweenUpdateChecks) < DateTime.Now)
+                if (_lastUpdateCheck.Add(_waitBetweenUpdateChecks) < DateTime.Now)
                 {
-                    lastUpdateCheck = DateTime.Now;
-                    XmlDocument versionXmlDoc = new XmlDocument();
-                    versionXmlDoc.Load(versionXmlUrl);
-                    Version availableVersion = new Version(Convert.ToInt32(versionXmlDoc.SelectSingleNode("version/major").InnerText), Convert.ToInt32(versionXmlDoc.SelectSingleNode("version/minor").InnerText), Convert.ToInt32(versionXmlDoc.SelectSingleNode("version/build").InnerText));
+                    _lastUpdateCheck = DateTime.Now;
+                    var versionXmlDoc = new XmlDocument();
+                    versionXmlDoc.Load(VersionXmlUrl);
+                    var availableVersion = new Version(Convert.ToInt32(versionXmlDoc.SelectSingleNode("version/major").InnerText), Convert.ToInt32(versionXmlDoc.SelectSingleNode("version/minor").InnerText), Convert.ToInt32(versionXmlDoc.SelectSingleNode("version/build").InnerText));
 
                     if (availableVersion > Assembly.GetExecutingAssembly().GetName().Version)
                     {
                         DateTime released = Convert.ToDateTime(versionXmlDoc.SelectSingleNode("version/released_date").InnerText);
                         DateTime advertised = Convert.ToDateTime(versionXmlDoc.SelectSingleNode("version/advertised_date").InnerText);
-                        List<string> features = new List<string>();
-                        List<string> fixes = new List<string>();
+                        var features = new List<string>();
+                        var fixes = new List<string>();
 
                         if (versionXmlDoc.SelectSingleNode("version/features").ChildNodes.Count > 0)
                         {
@@ -495,44 +531,46 @@ namespace Ellanet
                     }
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                Debug.WriteLine(ex.Message);
             }
+
+            // ReSharper restore PossibleNullReferenceException
         }
 
-        void traceButton_Click(object sender, EventArgs e)
+        private void traceButton_Click(object sender, EventArgs e)
         {
-            traceTimeComplete = DateTime.Now.AddSeconds(traceSeconds);
+            _traceTimeComplete = DateTime.Now.AddSeconds(TraceSeconds);
 
-            if ((traceMouseThread == null) || (traceMouseThread.ThreadState != System.Threading.ThreadState.Running))
+            if ((_traceMouseThread == null) || (_traceMouseThread.ThreadState != System.Threading.ThreadState.Running))
             {
-                traceMouseThread = new Thread(new ThreadStart(TraceMouse));
-                traceMouseThread.Start();
+                _traceMouseThread = new Thread(TraceMouse);
+                _traceMouseThread.Start();
             }
         }
 
-        void TraceMouse()
+        private void TraceMouse()
         {
             do
             {
                 SetNumericUpDownValue(ref xNumericUpDown, Cursor.Position.X);
                 SetNumericUpDownValue(ref yNumericUpDown, Cursor.Position.Y);
-                SetButtonText(ref traceButton, String.Format("{0} ({1})", Convert.ToString(GetButtonTag(ref traceButton)), traceTimeComplete.Subtract(DateTime.Now).TotalSeconds.ToString("0.0")));
+                SetButtonText(ref traceButton, String.Format("{0} ({1})", Convert.ToString(GetButtonTag(ref traceButton)), _traceTimeComplete.Subtract(DateTime.Now).TotalSeconds.ToString("0.0")));
                 Thread.Sleep(100);
-            }
-            while (traceTimeComplete > DateTime.Now);
+            } while (_traceTimeComplete > DateTime.Now);
 
             SetButtonText(ref traceButton, Convert.ToString(GetButtonTag(ref traceButton)));
         }
 
-        void startPositionCheckBox_CheckedChanged(object sender, EventArgs e)
+        private void startPositionCheckBox_CheckedChanged(object sender, EventArgs e)
         {
             xNumericUpDown.Enabled = staticPositionCheckBox.Checked;
             yNumericUpDown.Enabled = staticPositionCheckBox.Checked;
             traceButton.Enabled = staticPositionCheckBox.Checked;
         }
 
-        void keystrokeCheckBox_CheckedChanged(object sender, EventArgs e)
+        private void keystrokeCheckBox_CheckedChanged(object sender, EventArgs e)
         {
             if (!moveMouseCheckBox.Checked && !clickMouseCheckBox.Checked && !keystrokeCheckBox.Checked)
             {
@@ -542,12 +580,12 @@ namespace Ellanet
             keystrokeComboBox.Enabled = keystrokeCheckBox.Checked;
         }
 
-        void resumeCheckBox_CheckedChanged(object sender, EventArgs e)
+        private void resumeCheckBox_CheckedChanged(object sender, EventArgs e)
         {
             resumeNumericUpDown.Enabled = resumeCheckBox.Checked;
         }
 
-        void resumeTimer_Tick(object sender, EventArgs e)
+        private void resumeTimer_Tick(object sender, EventArgs e)
         {
             //Debug.WriteLine(GetLastInputTime().ToString());
 
@@ -557,12 +595,12 @@ namespace Ellanet
             }
         }
 
-        void autoPauseCheckBox_CheckedChanged(object sender, EventArgs e)
+        private void autoPauseCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            startingMousePoint = Cursor.Position;
+            _startingMousePoint = Cursor.Position;
         }
 
-        void clickMouseCheckBox_CheckedChanged(object sender, EventArgs e)
+        private void clickMouseCheckBox_CheckedChanged(object sender, EventArgs e)
         {
             if (!moveMouseCheckBox.Checked && !clickMouseCheckBox.Checked && !keystrokeCheckBox.Checked)
             {
@@ -575,7 +613,7 @@ namespace Ellanet
             traceButton.Enabled = (staticPositionCheckBox.Enabled & staticPositionCheckBox.Checked);
         }
 
-        void moveMouseCheckBox_CheckedChanged(object sender, EventArgs e)
+        private void moveMouseCheckBox_CheckedChanged(object sender, EventArgs e)
         {
             if ((!moveMouseCheckBox.Checked) && (!clickMouseCheckBox.Checked) && (!keystrokeCheckBox.Checked))
             {
@@ -589,74 +627,56 @@ namespace Ellanet
             traceButton.Enabled = (staticPositionCheckBox.Enabled & staticPositionCheckBox.Checked);
         }
 
-        void MouseForm_FormClosing(object sender, FormClosingEventArgs e)
+        private void MouseForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (moveMouseThread != null)
+            if (_moveMouseThread != null)
             {
-                moveMouseThread.Abort();
+                _moveMouseThread.Abort();
             }
 
-            resumeTimer.Stop();
+            _resumeTimer.Stop();
             SaveSettings();
         }
 
-        void actionButton_Click(object sender, EventArgs e)
+        private void actionButton_Click(object sender, EventArgs e)
         {
             switch (actionButton.Text)
             {
                 case "Pause":
 
-                    if (moveMouseThread != null)
+                    if (_moveMouseThread != null)
                     {
-                        moveMouseThread.Abort();
+                        _moveMouseThread.Abort();
                     }
 
-                    resumeTimer.Start();
+                    _resumeTimer.Start();
                     actionButton.Text = "Start";
-                    this.Opacity = 1.0;
+                    Opacity = 1.0;
                     //this.TopMost = false;
 
                     if (minimiseOnPauseCheckBox.Checked)
                     {
-                        this.WindowState = FormWindowState.Minimized;
+                        WindowState = FormWindowState.Minimized;
                     }
 
                     break;
                 default:
-
-                    //if ((!moveMouseCheckBox.Checked) && (!clickMouseCheckBox.Checked))
-                    //{
-                    //    MessageBox.Show("Please select at least on mouse action (move or click).", "No Mouse Actions Enabled", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    //}
-                    //else
-                    //{
-                    resumeTimer.Stop();
-                    moveMouseThread = new Thread(new ThreadStart(MoveMouseThread));
-                    moveMouseThread.Start();
+                    _resumeTimer.Stop();
+                    _moveMouseThread = new Thread(MoveMouseThread);
+                    _moveMouseThread.Start();
                     actionButton.Text = "Pause";
-                    this.Opacity = .75;
-                    //this.TopMost = true;
-                    mmStartTime = DateTime.Now;
-
-                    if (minimiseOnStartCheckBox.Checked)
-                    {
-                        this.WindowState = FormWindowState.Minimized;
-                    }
-                    else
-                    {
-                        this.WindowState = FormWindowState.Normal;
-                    }
-                    //}
-
+                    Opacity = .75;
+                    _mmStartTime = DateTime.Now;
+                    WindowState = minimiseOnStartCheckBox.Checked ? FormWindowState.Minimized : FormWindowState.Normal;
                     SaveSettings();
                     break;
             }
         }
 
-        void MoveMouseThread()
+        private void MoveMouseThread()
         {
             int secondsElapsed = 0;
-            blackoutStatus = BlackoutStatusChangeEventArgs.BlackoutStatus.Ended;
+            _blackoutStatus = BlackoutStatusChangeEventArgs.BlackoutStatus.Ended;
 
             if (staticPositionCheckBox.Checked)
             {
@@ -680,8 +700,9 @@ namespace Ellanet
                         Interaction.AppActivate(GetComboBoxSelectedItem(ref processComboBox).ToString());
                     }
                 }
-                catch
+                catch (Exception ex)
                 {
+                    Debug.WriteLine(ex.Message);
                 }
             }
 
@@ -694,30 +715,30 @@ namespace Ellanet
                     UpdateCountdownProgressBar(ref countdownProgressBar, Convert.ToInt32(delayNumericUpDown.Value), secondsElapsed);
                     secondsElapsed += 1;
 
-                    if (blackoutStatus == BlackoutStatusChangeEventArgs.BlackoutStatus.Started)
+                    if (_blackoutStatus == BlackoutStatusChangeEventArgs.BlackoutStatus.Started)
                     {
-                        blackoutStatus = BlackoutStatusChangeEventArgs.BlackoutStatus.Ended;
-                        string startTime = null;
-                        string endTime = null;
+                        _blackoutStatus = BlackoutStatusChangeEventArgs.BlackoutStatus.Ended;
+                        string startTime;
+                        string endTime;
                         GetNextBlackoutStatusChangeTime(out startTime, out endTime);
-                        OnBlackoutStatusChange(this, new BlackoutStatusChangeEventArgs(blackoutStatus, startTime, endTime));
+                        OnBlackoutStatusChange(this, new BlackoutStatusChangeEventArgs(_blackoutStatus, startTime, endTime));
                     }
 
-                    if (autoPauseCheckBox.Checked && (mmStartTime.Add(waitUntilAutoMoveDetect) < DateTime.Now) && (startingMousePoint != Cursor.Position))
+                    if (autoPauseCheckBox.Checked && (_mmStartTime.Add(_waitUntilAutoMoveDetect) < DateTime.Now) && (_startingMousePoint != Cursor.Position))
                     {
                         ButtonPerformClick(ref actionButton);
                     }
                     else
                     {
-                        startingMousePoint = Cursor.Position;
+                        _startingMousePoint = Cursor.Position;
                     }
 
                     if (secondsElapsed > Convert.ToInt32(delayNumericUpDown.Value))
                     {
                         if (clickMouseCheckBox.Checked)
                         {
-                            mouse_event((int)MouseEventFlags.LEFTDOWN, 0, 0, 0, 0);
-                            mouse_event((int)MouseEventFlags.LEFTUP, 0, 0, 0, 0);
+                            mouse_event((int) MouseEventFlags.LEFTDOWN, 0, 0, 0, 0);
+                            mouse_event((int) MouseEventFlags.LEFTUP, 0, 0, 0, 0);
                         }
 
                         if (moveMouseCheckBox.Checked)
@@ -727,7 +748,7 @@ namespace Ellanet
                                 const int mouseMoveLoopSleep = 1;
                                 const int mouseSpeed = 1;
                                 const int moveSquareSize = 10;
-                                Point cursorStartPosition = Cursor.Position;
+                                var cursorStartPosition = Cursor.Position;
 
                                 for (int i = 0; i < moveSquareSize; i += mouseSpeed)
                                 {
@@ -771,19 +792,19 @@ namespace Ellanet
                 }
                 else
                 {
-                    if (blackoutStatus == BlackoutStatusChangeEventArgs.BlackoutStatus.Ended)
+                    if (_blackoutStatus == BlackoutStatusChangeEventArgs.BlackoutStatus.Ended)
                     {
-                        blackoutStatus = BlackoutStatusChangeEventArgs.BlackoutStatus.Started;
-                        string startTime = null;
-                        string endTime = null;
+                        _blackoutStatus = BlackoutStatusChangeEventArgs.BlackoutStatus.Started;
+                        string startTime;
+                        string endTime;
                         GetNextBlackoutStatusChangeTime(out startTime, out endTime);
-                        OnBlackoutStatusChange(this, new BlackoutStatusChangeEventArgs(blackoutStatus, startTime, endTime));
+                        OnBlackoutStatusChange(this, new BlackoutStatusChangeEventArgs(_blackoutStatus, startTime, endTime));
                     }
                 }
-            } while (true);
+            } while (DateTime.Now < DateTime.MaxValue);
         }
 
-        bool BlackoutInEffect()
+        private bool BlackoutInEffect()
         {
             try
             {
@@ -793,7 +814,7 @@ namespace Ellanet
                     {
                         case "inside":
 
-                            if ((DateTime.Now > Convert.ToDateTime(String.Format("{0} {1}", DateTime.Now.ToString("yyyy-MMM-dd"), GetComboBoxSelectedItem(ref boStartComboBox).ToString()))) && (DateTime.Now < Convert.ToDateTime(String.Format("{0} {1}", DateTime.Now.ToString("yyyy-MMM-dd"), GetComboBoxSelectedItem(ref boEndComboBox).ToString()))))
+                            if ((DateTime.Now > Convert.ToDateTime(String.Format("{0} {1}", DateTime.Now.ToString("yyyy-MMM-dd"), GetComboBoxSelectedItem(ref boStartComboBox)))) && (DateTime.Now < Convert.ToDateTime(String.Format("{0} {1}", DateTime.Now.ToString("yyyy-MMM-dd"), GetComboBoxSelectedItem(ref boEndComboBox)))))
                             {
                                 return true;
                             }
@@ -801,7 +822,7 @@ namespace Ellanet
                             break;
                         case "outside":
 
-                            if ((DateTime.Now < Convert.ToDateTime(String.Format("{0} {1}", DateTime.Now.ToString("yyyy-MMM-dd"), GetComboBoxSelectedItem(ref boStartComboBox).ToString()))) || (DateTime.Now > Convert.ToDateTime(String.Format("{0} {1}", DateTime.Now.ToString("yyyy-MMM-dd"), GetComboBoxSelectedItem(ref boEndComboBox).ToString()))))
+                            if ((DateTime.Now < Convert.ToDateTime(String.Format("{0} {1}", DateTime.Now.ToString("yyyy-MMM-dd"), GetComboBoxSelectedItem(ref boStartComboBox)))) || (DateTime.Now > Convert.ToDateTime(String.Format("{0} {1}", DateTime.Now.ToString("yyyy-MMM-dd"), GetComboBoxSelectedItem(ref boEndComboBox)))))
                             {
                                 return true;
                             }
@@ -810,14 +831,15 @@ namespace Ellanet
                     }
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                Debug.WriteLine(ex.Message);
             }
 
             return false;
         }
 
-        void GetNextBlackoutStatusChangeTime(out string startTime, out string endTime)
+        private void GetNextBlackoutStatusChangeTime(out string startTime, out string endTime)
         {
             startTime = "??:??";
             endTime = "??:??";
@@ -836,16 +858,17 @@ namespace Ellanet
                         break;
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                Debug.WriteLine(ex.Message);
             }
         }
 
-        void UpdateCountdownProgressBar(ref ProgressBar pb, int delay, int elapsed)
+        private void UpdateCountdownProgressBar(ref ProgressBar pb, int delay, int elapsed)
         {
             if (InvokeRequired)
             {
-                Invoke(new UpdateCountdownProgressBarDelegate(UpdateCountdownProgressBar), new object[] { pb, delay, elapsed });
+                Invoke(new UpdateCountdownProgressBarDelegate(UpdateCountdownProgressBar), new object[] {pb, delay, elapsed});
             }
             else
             {
@@ -863,11 +886,11 @@ namespace Ellanet
             }
         }
 
-        void ButtonPerformClick(ref Button b)
+        private void ButtonPerformClick(ref Button b)
         {
             if (InvokeRequired)
             {
-                Invoke(new ButtonPerformClickDelegate(ButtonPerformClick), new object[] { b });
+                Invoke(new ButtonPerformClickDelegate(ButtonPerformClick), new object[] {b});
             }
             else
             {
@@ -875,47 +898,43 @@ namespace Ellanet
             }
         }
 
-        Point GetControlScreenLocation(ref Control c)
+        /*
+                Point GetControlScreenLocation(ref Control c)
+                {
+                    if (InvokeRequired)
+                    {
+                        return (Point)Invoke(new GetControlScreenLocationDelegate(GetControlScreenLocation), new object[] { c });
+                    }
+
+                    return this.PointToScreen(c.Location);
+                }
+        */
+
+        private object GetComboBoxSelectedItem(ref ComboBox cb)
         {
             if (InvokeRequired)
             {
-                return (Point)Invoke(new GetControlScreenLocationDelegate(GetControlScreenLocation), new object[] { c });
+                return Invoke(new GetComboBoxSelectedItemDelegate(GetComboBoxSelectedItem), new object[] {cb});
             }
-            else
-            {
-                return this.PointToScreen(c.Location);
-            }
+
+            return cb.SelectedItem;
         }
 
-        object GetComboBoxSelectedItem(ref ComboBox cb)
+        private int GetComboBoxSelectedIndex(ref ComboBox cb)
         {
             if (InvokeRequired)
             {
-                return (object)Invoke(new GetComboBoxSelectedItemDelegate(GetComboBoxSelectedItem), new object[] { cb });
+                return (int) Invoke(new GetComboBoxSelectedIndexDelegate(GetComboBoxSelectedIndex), new object[] {cb});
             }
-            else
-            {
-                return cb.SelectedItem;
-            }
+
+            return cb.SelectedIndex;
         }
 
-        int GetComboBoxSelectedIndex(ref ComboBox cb)
+        private void SetNumericUpDownValue(ref NumericUpDown nud, int value)
         {
             if (InvokeRequired)
             {
-                return (int)Invoke(new GetComboBoxSelectedIndexDelegate(GetComboBoxSelectedIndex), new object[] { cb });
-            }
-            else
-            {
-                return cb.SelectedIndex;
-            }
-        }
-
-        void SetNumericUpDownValue(ref NumericUpDown nud, int value)
-        {
-            if (InvokeRequired)
-            {
-                Invoke(new SetNumericUpDownValueDelegate(SetNumericUpDownValue), new object[] { nud, value });
+                Invoke(new SetNumericUpDownValueDelegate(SetNumericUpDownValue), new object[] {nud, value});
             }
             else
             {
@@ -923,11 +942,11 @@ namespace Ellanet
             }
         }
 
-        void SetButtonText(ref Button b, string text)
+        private void SetButtonText(ref Button b, string text)
         {
             if (InvokeRequired)
             {
-                Invoke(new SetButtonTextDelegate(SetButtonText), new object[] { b, text });
+                Invoke(new SetButtonTextDelegate(SetButtonText), new object[] {b, text});
             }
             else
             {
@@ -935,11 +954,11 @@ namespace Ellanet
             }
         }
 
-        void SetButtonTag(ref Button b, object o)
+        private void SetButtonTag(ref Button b, object o)
         {
             if (InvokeRequired)
             {
-                Invoke(new SetButtonTagDelegate(SetButtonTag), new object[] { b, o });
+                Invoke(new SetButtonTagDelegate(SetButtonTag), new[] {b, o});
             }
             else
             {
@@ -947,47 +966,41 @@ namespace Ellanet
             }
         }
 
-        object GetButtonTag(ref Button b)
+        private object GetButtonTag(ref Button b)
         {
             if (InvokeRequired)
             {
-                return Invoke(new GetButtonTagDelegate(GetButtonTag), new object[] { b });
+                return Invoke(new GetButtonTagDelegate(GetButtonTag), new object[] {b});
             }
-            else
-            {
-                return b.Tag;
-            }
+
+            return b.Tag;
         }
 
-        string GetButtonText(ref Button b)
+        private string GetButtonText(ref Button b)
         {
             if (InvokeRequired)
             {
-                return Convert.ToString(Invoke(new GetButtonTextDelegate(GetButtonText), new object[] { b }));
+                return Convert.ToString(Invoke(new GetButtonTextDelegate(GetButtonText), new object[] {b}));
             }
-            else
-            {
-                return b.Text;
-            }
+
+            return b.Text;
         }
 
-        bool GetCheckBoxChecked(ref CheckBox cb)
+        private bool GetCheckBoxChecked(ref CheckBox cb)
         {
             if (InvokeRequired)
             {
-                return Convert.ToBoolean(Invoke(new GetCheckBoxCheckedDelegate(GetCheckBoxChecked), new object[] { cb }));
+                return Convert.ToBoolean(Invoke(new GetCheckBoxCheckedDelegate(GetCheckBoxChecked), new object[] {cb}));
             }
-            else
-            {
-                return cb.Checked;
-            }
+
+            return cb.Checked;
         }
 
-        void AddComboBoxItem(ref ComboBox cb, string item)
+        private void AddComboBoxItem(ref ComboBox cb, string item)
         {
             if (InvokeRequired)
             {
-                Invoke(new AddComboBoxItemDelegate(AddComboBoxItem), new object[] { cb, item });
+                Invoke(new AddComboBoxItemDelegate(AddComboBoxItem), new object[] {cb, item});
             }
             else
             {
@@ -995,10 +1008,10 @@ namespace Ellanet
             }
         }
 
-        int GetLastInputTime()
+        private int GetLastInputTime()
         {
             int idleTime = 0;
-            LASTINPUTINFO lastInputInfo = new LASTINPUTINFO();
+            var lastInputInfo = new LASTINPUTINFO();
             lastInputInfo.cbSize = Marshal.SizeOf(lastInputInfo);
             lastInputInfo.dwTime = 0;
             int envTicks = Environment.TickCount;
@@ -1009,10 +1022,10 @@ namespace Ellanet
                 idleTime = envTicks - lastInputTick;
             }
 
-            return ((idleTime > 0) ? (idleTime / 1000) : 0);
+            return ((idleTime > 0) ? (idleTime/1000) : 0);
         }
 
-        int GetScreenSaverTimeout()
+        private int GetScreenSaverTimeout()
         {
             const int SPI_GETSCREENSAVERTIMEOUT = 14;
             int value = 0;
@@ -1020,29 +1033,35 @@ namespace Ellanet
             return value;
         }
 
-        void MoveMouse(Point point)
+        private void MoveMouse(Point point)
         {
-            MOUSEINPUT mi = new MOUSEINPUT();
-            mi.dx = point.X;
-            mi.dy = point.Y;
-            mi.mouseData = 0;
-            mi.time = 0;
-            mi.dwFlags = Convert.ToInt32(MouseEventFlags.MOVE);
-            mi.dwExtraInfo = 0;
-            INPUT input = new INPUT();
-            input.mi = mi;
-            input.type = Convert.ToInt32(Win32Consts.INPUT_MOUSE);
+            var mi = new MOUSEINPUT
+                         {
+                             dx = point.X,
+                             dy = point.Y,
+                             mouseData = 0,
+                             time = 0,
+                             dwFlags = Convert.ToInt32(MouseEventFlags.MOVE),
+                             dwExtraInfo = 0
+                         };
+            var input = new INPUT
+                            {
+                                mi = mi,
+                                type = Convert.ToInt32(Win32Consts.INPUT_MOUSE)
+                            };
             SendInput(1, ref input, 28);
         }
 
-        void ReadSettings()
+        // ReSharper disable PossibleNullReferenceException
+
+        private void ReadSettings()
         {
             try
             {
-                if (File.Exists(Path.Combine(moveMouseXmlDirectory, moveMouseXmlName)))
+                if (File.Exists(Path.Combine(_moveMouseXmlDirectory, MoveMouseXmlName)))
                 {
-                    XmlDocument settingsXmlDoc = new XmlDocument();
-                    settingsXmlDoc.Load(Path.Combine(moveMouseXmlDirectory, moveMouseXmlName));
+                    var settingsXmlDoc = new XmlDocument();
+                    settingsXmlDoc.Load(Path.Combine(_moveMouseXmlDirectory, MoveMouseXmlName));
                     delayNumericUpDown.Value = Convert.ToDecimal(settingsXmlDoc.SelectSingleNode("settings/second_delay").InnerText);
                     moveMouseCheckBox.Checked = Convert.ToBoolean(settingsXmlDoc.SelectSingleNode("settings/move_mouse_pointer").InnerText);
                     stealthCheckBox.Checked = Convert.ToBoolean(settingsXmlDoc.SelectSingleNode("settings/stealth_mode").InnerText);
@@ -1072,37 +1091,38 @@ namespace Ellanet
                     insideOutsideComboBox.Text = settingsXmlDoc.SelectSingleNode("settings/blackout_schedule_scope").InnerText;
                     boStartComboBox.Text = settingsXmlDoc.SelectSingleNode("settings/blackout_schedule_start").InnerText;
                     boEndComboBox.Text = settingsXmlDoc.SelectSingleNode("settings/blackout_schedule_end").InnerText;
-                    lastUpdateCheck = Convert.ToDateTime(settingsXmlDoc.SelectSingleNode("settings/last_update_check").InnerText);
+                    _lastUpdateCheck = Convert.ToDateTime(settingsXmlDoc.SelectSingleNode("settings/last_update_check").InnerText);
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                Debug.WriteLine(ex.Message);
             }
         }
 
-        void SaveSettings()
+        private void SaveSettings()
         {
             try
             {
-                if (!Directory.Exists(moveMouseXmlDirectory))
+                if (!Directory.Exists(_moveMouseXmlDirectory))
                 {
-                    Directory.CreateDirectory(moveMouseXmlDirectory);
+                    Directory.CreateDirectory(_moveMouseXmlDirectory);
                 }
 
-                XmlDocument settingsXmlDoc = new XmlDocument();
+                var settingsXmlDoc = new XmlDocument();
                 settingsXmlDoc.LoadXml("<settings><second_delay /><move_mouse_pointer /><stealth_mode /><enable_static_position /><x_static_position /><y_static_position /><click_left_mouse_button /><send_keystroke /><keystroke /><pause_when_mouse_moved /><automatically_resume /><resume_seconds /><automatically_start_on_launch /><automatically_launch_on_logon /><minimise_on_pause /><minimise_on_start /><minimise_to_system_tray /><activate_application /><activate_application_title /><blackout_schedule_enabled /><blackout_schedule_scope /><blackout_schedule_start /><blackout_schedule_end /><last_update_check /></settings>");
-                settingsXmlDoc.SelectSingleNode("settings/second_delay").InnerText = Convert.ToDecimal(delayNumericUpDown.Value).ToString();
+                settingsXmlDoc.SelectSingleNode("settings/second_delay").InnerText = Convert.ToDecimal(delayNumericUpDown.Value).ToString(CultureInfo.InvariantCulture);
                 settingsXmlDoc.SelectSingleNode("settings/move_mouse_pointer").InnerText = moveMouseCheckBox.Checked.ToString();
                 settingsXmlDoc.SelectSingleNode("settings/stealth_mode").InnerText = stealthCheckBox.Checked.ToString();
                 settingsXmlDoc.SelectSingleNode("settings/enable_static_position").InnerText = staticPositionCheckBox.Checked.ToString();
-                settingsXmlDoc.SelectSingleNode("settings/x_static_position").InnerText = Convert.ToDecimal(xNumericUpDown.Value).ToString();
-                settingsXmlDoc.SelectSingleNode("settings/y_static_position").InnerText = Convert.ToDecimal(yNumericUpDown.Value).ToString();
+                settingsXmlDoc.SelectSingleNode("settings/x_static_position").InnerText = Convert.ToDecimal(xNumericUpDown.Value).ToString(CultureInfo.InvariantCulture);
+                settingsXmlDoc.SelectSingleNode("settings/y_static_position").InnerText = Convert.ToDecimal(yNumericUpDown.Value).ToString(CultureInfo.InvariantCulture);
                 settingsXmlDoc.SelectSingleNode("settings/click_left_mouse_button").InnerText = clickMouseCheckBox.Checked.ToString();
                 settingsXmlDoc.SelectSingleNode("settings/send_keystroke").InnerText = keystrokeCheckBox.Checked.ToString();
                 settingsXmlDoc.SelectSingleNode("settings/keystroke").InnerText = keystrokeComboBox.Text;
                 settingsXmlDoc.SelectSingleNode("settings/pause_when_mouse_moved").InnerText = autoPauseCheckBox.Checked.ToString();
                 settingsXmlDoc.SelectSingleNode("settings/automatically_resume").InnerText = resumeCheckBox.Checked.ToString();
-                settingsXmlDoc.SelectSingleNode("settings/resume_seconds").InnerText = Convert.ToDecimal(resumeNumericUpDown.Value).ToString();
+                settingsXmlDoc.SelectSingleNode("settings/resume_seconds").InnerText = Convert.ToDecimal(resumeNumericUpDown.Value).ToString(CultureInfo.InvariantCulture);
                 settingsXmlDoc.SelectSingleNode("settings/automatically_start_on_launch").InnerText = startOnLaunchCheckBox.Checked.ToString();
                 settingsXmlDoc.SelectSingleNode("settings/automatically_launch_on_logon").InnerText = launchAtLogonCheckBox.Checked.ToString();
                 settingsXmlDoc.SelectSingleNode("settings/minimise_on_pause").InnerText = minimiseOnPauseCheckBox.Checked.ToString();
@@ -1114,17 +1134,20 @@ namespace Ellanet
                 settingsXmlDoc.SelectSingleNode("settings/blackout_schedule_scope").InnerText = insideOutsideComboBox.Text;
                 settingsXmlDoc.SelectSingleNode("settings/blackout_schedule_start").InnerText = boStartComboBox.Text;
                 settingsXmlDoc.SelectSingleNode("settings/blackout_schedule_end").InnerText = boEndComboBox.Text;
-                settingsXmlDoc.SelectSingleNode("settings/last_update_check").InnerText = lastUpdateCheck.ToString("yyyy-MMM-dd HH:mm:ss");
-                settingsXmlDoc.Save(Path.Combine(moveMouseXmlDirectory, moveMouseXmlName));
+                settingsXmlDoc.SelectSingleNode("settings/last_update_check").InnerText = _lastUpdateCheck.ToString("yyyy-MMM-dd HH:mm:ss");
+                settingsXmlDoc.Save(Path.Combine(_moveMouseXmlDirectory, MoveMouseXmlName));
             }
-            catch
+            catch (Exception ex)
             {
+                Debug.WriteLine(ex.Message);
             }
         }
 
-        Process GetProessByMainWindowTitle(string title)
+        // ReSharper restore PossibleNullReferenceException
+
+        private Process GetProessByMainWindowTitle(string title)
         {
-            foreach (Process p in Process.GetProcesses())
+            foreach (var p in Process.GetProcesses())
             {
                 if (p.MainWindowTitle.Equals(title, StringComparison.CurrentCultureIgnoreCase))
                 {

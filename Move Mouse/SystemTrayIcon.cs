@@ -1,58 +1,58 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using System.Diagnostics;
+using System.Drawing;
+using System.Windows.Forms;
 
 namespace Ellanet
 {
     public partial class SystemTrayIcon : Form
     {
-        private const int balloonTipTimeout = 30000;
-        private const string downloadsUrl = "http://movemouse.codeplex.com/releases/";
+        private const int BalloonTipTimeout = 30000;
+        private const string DownloadsUrl = "http://movemouse.codeplex.com/releases/";
 
-        private NotifyIcon sysTrayIcon;
-        private ContextMenu sysTrayMenu;
-        private MouseForm moveMouse;
-        private bool directUserToDownloadsOnBalloonClick = false;
+        private readonly NotifyIcon _sysTrayIcon;
+        private readonly ContextMenu _sysTrayMenu;
+        private MouseForm _moveMouse;
+        private bool _directUserToDownloadsOnBalloonClick;
 
         public SystemTrayIcon()
         {
             InitializeComponent();
-            sysTrayMenu = new ContextMenu();
-            sysTrayMenu.MenuItems.Add("Open", OpenMoveMouse);
-            sysTrayMenu.MenuItems.Add("-");
-            sysTrayMenu.MenuItems.Add("Close", CloseMoveMouse);
-            sysTrayIcon = new NotifyIcon();
-            sysTrayIcon.DoubleClick += new EventHandler(sysTrayIcon_DoubleClick);
-            sysTrayIcon.Text = "Move Mouse";
-            sysTrayIcon.Icon = new Icon(global::Ellanet.Properties.Resources.Mouse_Icon, new Size(16, 16));
-            sysTrayIcon.ContextMenu = sysTrayMenu;
-            sysTrayIcon.Visible = true;
-            sysTrayIcon.BalloonTipClicked += new EventHandler(sysTrayIcon_BalloonTipClicked);
-            sysTrayIcon.BalloonTipClosed += new EventHandler(sysTrayIcon_BalloonTipClosed);
+            _sysTrayMenu = new ContextMenu();
+            _sysTrayMenu.MenuItems.Add("Open", OpenMoveMouse);
+            _sysTrayMenu.MenuItems.Add("-");
+            _sysTrayMenu.MenuItems.Add("Close", CloseMoveMouse);
+            _sysTrayIcon = new NotifyIcon();
+            _sysTrayIcon.DoubleClick += sysTrayIcon_DoubleClick;
+            _sysTrayIcon.Text = "Move Mouse";
+            _sysTrayIcon.Icon = new Icon(Properties.Resources.Mouse_Icon, new Size(16, 16));
+            _sysTrayIcon.ContextMenu = _sysTrayMenu;
+            _sysTrayIcon.Visible = true;
+            _sysTrayIcon.BalloonTipClicked += sysTrayIcon_BalloonTipClicked;
+            _sysTrayIcon.BalloonTipClosed += sysTrayIcon_BalloonTipClosed;
         }
 
-        void sysTrayIcon_BalloonTipClosed(object sender, EventArgs e)
+        private void sysTrayIcon_BalloonTipClosed(object sender, EventArgs e)
         {
-            directUserToDownloadsOnBalloonClick = false;
+            _directUserToDownloadsOnBalloonClick = false;
         }
 
-        void sysTrayIcon_BalloonTipClicked(object sender, EventArgs e)
+        private void sysTrayIcon_BalloonTipClicked(object sender, EventArgs e)
         {
             try
             {
-                Process.Start(downloadsUrl);
+                if (_directUserToDownloadsOnBalloonClick)
+                {
+                    Process.Start(DownloadsUrl);
+                }
             }
-            catch
+            catch (Exception ex)
             {
+                Debug.WriteLine(ex.Message);
             }
         }
 
-        void sysTrayIcon_DoubleClick(object sender, EventArgs e)
+        private void sysTrayIcon_DoubleClick(object sender, EventArgs e)
         {
             ShowMoveMouse(true);
         }
@@ -60,8 +60,8 @@ namespace Ellanet
         protected override void OnLoad(EventArgs e)
         {
             ShowMoveMouse(false);
-            this.Visible = false;
-            this.ShowInTaskbar = false;
+            Visible = false;
+            ShowInTaskbar = false;
             base.OnLoad(e);
         }
 
@@ -72,39 +72,39 @@ namespace Ellanet
 
         private void CloseMoveMouse(object sender, EventArgs e)
         {
-            if ((moveMouse != null) || (!moveMouse.IsDisposed))
+            if ((_moveMouse != null) && (!_moveMouse.IsDisposed))
             {
-                moveMouse.Close();
+                _moveMouse.Close();
             }
 
-            sysTrayIcon.Dispose();
-            this.Close();
+            _sysTrayIcon.Dispose();
+            Close();
         }
 
         private void ShowMoveMouse(bool suppressAutoStart)
         {
-            if ((moveMouse == null) || (moveMouse.IsDisposed))
+            if ((_moveMouse == null) || (_moveMouse.IsDisposed))
             {
-                moveMouse = new MouseForm(suppressAutoStart);
-                moveMouse.BlackoutStatusChange += new MouseForm.BlackoutStatusChangeHandler(moveMouse_BlackoutStatusChange);
-                moveMouse.NewVersionAvailable += new MouseForm.NewVersionAvailableHandler(moveMouse_NewVersionAvailable);
-                moveMouse.Show();
+                _moveMouse = new MouseForm(suppressAutoStart);
+                _moveMouse.BlackoutStatusChange += moveMouse_BlackoutStatusChange;
+                _moveMouse.NewVersionAvailable += moveMouse_NewVersionAvailable;
+                _moveMouse.Show();
             }
             else
             {
-                moveMouse.ShowInTaskbar = true;
-                moveMouse.WindowState = FormWindowState.Normal;
-                moveMouse.Activate();
-                moveMouse.BringToFront();
+                _moveMouse.ShowInTaskbar = true;
+                _moveMouse.WindowState = FormWindowState.Normal;
+                _moveMouse.Activate();
+                _moveMouse.BringToFront();
             }
         }
 
-        void moveMouse_NewVersionAvailable(object sender, NewVersionAvailableEventArgs e)
+        private void moveMouse_NewVersionAvailable(object sender, NewVersionAvailableEventArgs e)
         {
             try
             {
-                directUserToDownloadsOnBalloonClick = true;
-                string balloonText = String.Format("Move Mouse {0} was released on {1}.\r\n", e.Version.ToString(), e.Released.ToString("dd-MMM-yyyy"));
+                _directUserToDownloadsOnBalloonClick = true;
+                string balloonText = String.Format("Move Mouse {0} was released on {1}.\r\n", e.Version, e.Released.ToString("dd-MMM-yyyy"));
 
                 if ((e.Features != null) && (e.Features.Length > 0))
                 {
@@ -127,29 +127,31 @@ namespace Ellanet
                 }
 
                 balloonText += String.Format("\r\nPlease click here to visit the downloads page.");
-                sysTrayIcon.ShowBalloonTip(balloonTipTimeout, "New Version Available", balloonText, ToolTipIcon.Info);
+                _sysTrayIcon.ShowBalloonTip(BalloonTipTimeout, "New Version Available", balloonText, ToolTipIcon.Info);
             }
-            catch
+            catch (Exception ex)
             {
+                Debug.WriteLine(ex.Message);
             }
         }
 
-        void moveMouse_BlackoutStatusChange(object sender, BlackoutStatusChangeEventArgs e)
+        private void moveMouse_BlackoutStatusChange(object sender, BlackoutStatusChangeEventArgs e)
         {
             try
             {
                 switch (e.Status)
                 {
                     case BlackoutStatusChangeEventArgs.BlackoutStatus.Started:
-                        sysTrayIcon.ShowBalloonTip(balloonTipTimeout, "Blackout Schedule Started", String.Format("Move Mouse has now entered into a blackout schedule, and will suspend all operations until {0}.", e.StartTime), ToolTipIcon.Info);
+                        _sysTrayIcon.ShowBalloonTip(BalloonTipTimeout, "Blackout Schedule Started", String.Format("Move Mouse has now entered into a blackout schedule, and will suspend all operations until {0}.", e.StartTime), ToolTipIcon.Info);
                         break;
                     case BlackoutStatusChangeEventArgs.BlackoutStatus.Ended:
-                        sysTrayIcon.ShowBalloonTip(balloonTipTimeout, "Blackout Schedule Ended", String.Format("Move Mouse has now left the blackout schedule, and will resume all operations until {0}.", e.EndTime), ToolTipIcon.Info);
+                        _sysTrayIcon.ShowBalloonTip(BalloonTipTimeout, "Blackout Schedule Ended", String.Format("Move Mouse has now left the blackout schedule, and will resume all operations until {0}.", e.EndTime), ToolTipIcon.Info);
                         break;
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                Debug.WriteLine(ex.Message);
             }
         }
     }
