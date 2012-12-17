@@ -66,6 +66,7 @@ namespace Ellanet
         public event NewVersionAvailableHandler NewVersionAvailable;
 
         // ReSharper disable UnusedMember.Local
+        // ReSharper disable InconsistentNaming
 
         [Flags]
         private enum MouseEventFlags
@@ -107,7 +108,6 @@ namespace Ellanet
         }
 
         // ReSharper restore UnusedMember.Local
-        // ReSharper disable InconsistentNaming
         // ReSharper disable NotAccessedField.Local
 
         [StructLayout(LayoutKind.Sequential)]
@@ -181,7 +181,14 @@ namespace Ellanet
 
             if (screenSaverTimeout > 0)
             {
-                resumeNumericUpDown.Value = (decimal) (screenSaverTimeout/2.0);
+                if ((decimal) (screenSaverTimeout/2.0) > resumeNumericUpDown.Maximum)
+                {
+                    resumeNumericUpDown.Value = resumeNumericUpDown.Maximum;
+                }
+                else
+                {
+                    resumeNumericUpDown.Value = (decimal) (screenSaverTimeout/2.0);
+                }
             }
 
             keystrokeCheckBox.CheckedChanged += keystrokeCheckBox_CheckedChanged;
@@ -1027,7 +1034,9 @@ namespace Ellanet
 
         private int GetScreenSaverTimeout()
         {
+            // ReSharper disable InconsistentNaming
             const int SPI_GETSCREENSAVERTIMEOUT = 14;
+            // ReSharper restore InconsistentNaming
             int value = 0;
             SystemParametersInfo(SPI_GETSCREENSAVERTIMEOUT, 0, ref value, 0);
             return value;
@@ -1036,19 +1045,19 @@ namespace Ellanet
         private void MoveMouse(Point point)
         {
             var mi = new MOUSEINPUT
-                         {
-                             dx = point.X,
-                             dy = point.Y,
-                             mouseData = 0,
-                             time = 0,
-                             dwFlags = Convert.ToInt32(MouseEventFlags.MOVE),
-                             dwExtraInfo = 0
-                         };
+                {
+                    dx = point.X,
+                    dy = point.Y,
+                    mouseData = 0,
+                    time = 0,
+                    dwFlags = Convert.ToInt32(MouseEventFlags.MOVE),
+                    dwExtraInfo = 0
+                };
             var input = new INPUT
-                            {
-                                mi = mi,
-                                type = Convert.ToInt32(Win32Consts.INPUT_MOUSE)
-                            };
+                {
+                    mi = mi,
+                    type = Convert.ToInt32(Win32Consts.INPUT_MOUSE)
+                };
             SendInput(1, ref input, 28);
         }
 

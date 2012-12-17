@@ -46,14 +46,5 @@ C:\Users\v315933\Desktop\movemouse\Move Mouse\obj\Debug\ResGen.read.1.tlog
 C:\Users\v315933\Desktop\movemouse\Move Mouse\obj\Debug\ResGen.write.1.tlog
 C:\Users\v315933\Desktop\movemouse\Move Mouse\obj\Debug\Move Mouse.exe
 C:\Users\v315933\Desktop\movemouse\Move Mouse\obj\Debug\Move Mouse.pdb
-C:\Users\Steve\Desktop\movemouse\Move Mouse\bin\Debug\Move Mouse.exe
-C:\Users\Steve\Desktop\movemouse\Move Mouse\bin\Debug\Move Mouse.pdb
-C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Debug\ResolveAssemblyReference.cache
-C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Debug\Ellanet.MouseForm.resources
-C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Debug\Ellanet.Properties.Resources.resources
-C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Debug\ResGen.read.1.tlog
-C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Debug\ResGen.write.1.tlog
-C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Debug\Move Mouse.exe
-C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Debug\Move Mouse.pdb
 \\qnap01\Documents\Documents\Visual Studio 2008\Projects\Move Mouse\C#\Move Mouse\obj\Debug\ResGen.read.1.tlog
 \\qnap01\Documents\Documents\Visual Studio 2008\Projects\Move Mouse\C#\Move Mouse\obj\Debug\ResGen.write.1.tlog

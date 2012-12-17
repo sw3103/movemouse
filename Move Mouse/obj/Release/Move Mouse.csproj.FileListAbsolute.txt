@@ -1,0 +1,8 @@
+C:\Users\Steve\Desktop\movemouse\Move Mouse\bin\Release\Move Mouse.exe
+C:\Users\Steve\Desktop\movemouse\Move Mouse\bin\Release\Move Mouse.pdb
+C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Release\Move Mouse.csprojResolveAssemblyReference.cache
+C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Release\Ellanet.MouseForm.resources
+C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Release\Ellanet.Properties.Resources.resources
+C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Release\Move Mouse.csproj.GenerateResource.Cache
+C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Release\Move Mouse.exe
+C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Release\Move Mouse.pdb
