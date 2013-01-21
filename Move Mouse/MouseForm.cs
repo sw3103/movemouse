@@ -62,6 +62,8 @@ namespace Ellanet
 
         public delegate void NewVersionAvailableHandler(object sender, NewVersionAvailableEventArgs e);
 
+        public delegate void ClearComboBoxItemsDelegate(ref ComboBox cb);
+
         public event BlackoutStatusChangeHandler BlackoutStatusChange;
         public event NewVersionAvailableHandler NewVersionAvailable;
 
@@ -225,7 +227,13 @@ namespace Ellanet
             paypalPictureBox.MouseClick += paypalPictureBox_MouseClick;
             boStartComboBox.SelectedIndexChanged += boStartComboBox_SelectedIndexChanged;
             boEndComboBox.SelectedIndexChanged += boEndComboBox_SelectedIndexChanged;
+            refreshButton.Click += refreshButton_Click;
             SetButtonTag(ref traceButton, GetButtonText(ref traceButton));
+        }
+
+        void refreshButton_Click(object sender, EventArgs e)
+        {
+            ThreadPool.QueueUserWorkItem(ListOpenWindows);
         }
 
         public override sealed string Text
@@ -424,12 +432,15 @@ namespace Ellanet
         private void appActivateCheckBox_CheckedChanged(object sender, EventArgs e)
         {
             processComboBox.Enabled = appActivateCheckBox.Checked;
+            refreshButton.Enabled = appActivateCheckBox.Checked;
         }
 
-        private void ListRunningProcesses(object stareInfo)
+        private void ListOpenWindows(object stareInfo)
         {
             try
             {
+                ClearComboBoxItems(ref processComboBox);
+
                 foreach (Process p in Process.GetProcesses())
                 {
                     if (!String.IsNullOrEmpty(p.MainWindowTitle) && !processComboBox.Items.Contains(p.MainWindowTitle))
@@ -487,7 +498,7 @@ namespace Ellanet
         private void MouseForm_Load(object sender, EventArgs e)
         {
             ThreadPool.QueueUserWorkItem(CheckForUpdate);
-            ThreadPool.QueueUserWorkItem(ListRunningProcesses);
+            ThreadPool.QueueUserWorkItem(ListOpenWindows);
 
             if (startOnLaunchCheckBox.Checked && !_suppressAutoStart)
             {
@@ -1012,6 +1023,18 @@ namespace Ellanet
             else
             {
                 cb.Items.Add(item);
+            }
+        }
+
+        private void ClearComboBoxItems(ref ComboBox cb)
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new ClearComboBoxItemsDelegate(ClearComboBoxItems), new object[] {cb});
+            }
+            else
+            {
+                cb.Items.Clear();
             }
         }
 

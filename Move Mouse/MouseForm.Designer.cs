@@ -59,6 +59,7 @@
             this.boEndComboBox = new System.Windows.Forms.ComboBox();
             this.contactPictureBox = new System.Windows.Forms.PictureBox();
             this.paypalPictureBox = new System.Windows.Forms.PictureBox();
+            this.refreshButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.mousePictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.delayNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.resumeNumericUpDown)).BeginInit();
@@ -83,9 +84,9 @@
             // actionButton
             // 
             this.actionButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.actionButton.Location = new System.Drawing.Point(230, 402);
+            this.actionButton.Location = new System.Drawing.Point(237, 402);
             this.actionButton.Name = "actionButton";
-            this.actionButton.Size = new System.Drawing.Size(89, 23);
+            this.actionButton.Size = new System.Drawing.Size(75, 23);
             this.actionButton.TabIndex = 0;
             this.actionButton.Text = "Start";
             this.actionButton.UseVisualStyleBackColor = true;
@@ -327,7 +328,7 @@
             this.traceButton.Enabled = false;
             this.traceButton.Location = new System.Drawing.Point(395, 126);
             this.traceButton.Name = "traceButton";
-            this.traceButton.Size = new System.Drawing.Size(142, 23);
+            this.traceButton.Size = new System.Drawing.Size(101, 23);
             this.traceButton.TabIndex = 9;
             this.traceButton.Text = "Trace Mouse";
             this.traceButton.UseVisualStyleBackColor = true;
@@ -369,7 +370,7 @@
             this.processComboBox.FormattingEnabled = true;
             this.processComboBox.Location = new System.Drawing.Point(155, 97);
             this.processComboBox.Name = "processComboBox";
-            this.processComboBox.Size = new System.Drawing.Size(383, 24);
+            this.processComboBox.Size = new System.Drawing.Size(295, 24);
             this.processComboBox.Sorted = true;
             this.processComboBox.TabIndex = 5;
             // 
@@ -459,11 +460,23 @@
             this.paypalPictureBox.TabIndex = 26;
             this.paypalPictureBox.TabStop = false;
             // 
+            // refreshButton
+            // 
+            this.refreshButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.refreshButton.Enabled = false;
+            this.refreshButton.Location = new System.Drawing.Point(462, 98);
+            this.refreshButton.Name = "refreshButton";
+            this.refreshButton.Size = new System.Drawing.Size(75, 23);
+            this.refreshButton.TabIndex = 27;
+            this.refreshButton.Text = "Refresh";
+            this.refreshButton.UseVisualStyleBackColor = true;
+            // 
             // MouseForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(549, 473);
+            this.Controls.Add(this.refreshButton);
             this.Controls.Add(this.paypalPictureBox);
             this.Controls.Add(this.contactPictureBox);
             this.Controls.Add(this.boEndComboBox);
@@ -548,5 +561,6 @@
         private System.Windows.Forms.ComboBox boEndComboBox;
         private System.Windows.Forms.PictureBox contactPictureBox;
         private System.Windows.Forms.PictureBox paypalPictureBox;
+        private System.Windows.Forms.Button refreshButton;
     }
 }
