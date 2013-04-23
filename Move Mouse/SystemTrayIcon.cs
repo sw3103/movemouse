@@ -88,6 +88,7 @@ namespace Ellanet
                 _moveMouse = new MouseForm(suppressAutoStart);
                 _moveMouse.BlackoutStatusChange += moveMouse_BlackoutStatusChange;
                 _moveMouse.NewVersionAvailable += moveMouse_NewVersionAvailable;
+                _moveMouse.FormClosing += _moveMouse_FormClosing;
                 _moveMouse.Show();
             }
             else
@@ -96,6 +97,14 @@ namespace Ellanet
                 _moveMouse.WindowState = FormWindowState.Normal;
                 _moveMouse.Activate();
                 _moveMouse.BringToFront();
+            }
+        }
+
+        private void _moveMouse_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (!_moveMouse.MinimiseToSystemTrayWarningShown)
+            {
+                _sysTrayIcon.ShowBalloonTip(BalloonTipTimeout, "Move Mouse", "Closed to System Tray.", ToolTipIcon.Info);
             }
         }
 

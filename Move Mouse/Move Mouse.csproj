@@ -64,6 +64,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="ScriptEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ScriptEditor.Designer.cs">
+      <DependentUpon>ScriptEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="SystemTrayIcon.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -88,6 +94,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="ScriptEditor.resx">
+      <DependentUpon>ScriptEditor.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Mouse_Image.png" />
@@ -103,5 +112,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\PayPal_Image.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ScriptEditor_Icon.ico" />
   </ItemGroup>
 </Project>

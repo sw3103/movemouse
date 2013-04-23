@@ -1,19 +1,25 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace Ellanet
 {
     internal class Program
     {
+        [STAThread]
         private static void Main()
         {
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            Application.ThreadException += Application_ThreadException;
+
             try
             {
-                AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-                Application.ThreadException += Application_ThreadException;
-                Application.EnableVisualStyles();
-                Application.DoEvents();
-                Application.Run(new SystemTrayIcon());
+                if (Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName).Length < 2)
+                {
+                    Application.EnableVisualStyles();
+                    Application.DoEvents();
+                    Application.Run(new SystemTrayIcon());
+                }
             }
             catch (Exception ex)
             {

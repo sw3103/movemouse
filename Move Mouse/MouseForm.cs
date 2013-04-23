@@ -20,13 +20,17 @@ namespace Ellanet
         private const string HomeAddress = "http://movemouse.codeplex.com/";
         private const string ContactAddress = "http://www.codeplex.com/site/users/view/sw3103/";
         private const string HelpAddress = "http://movemouse.codeplex.com/documentation/";
+        private const string ScriptsHelpAddress = "https://movemouse.codeplex.com/wikipage?title=Custom%20Scripts";
         private const string PayPalAddress = "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=QZTWHD9CRW5XN";
         private const string VersionXmlUrl = "https://movemouse.svn.codeplex.com/svn/Version.xml";
+        private const string StartScriptName = "Move Mouse - Start.vbs";
+        private const string IntervalScriptName = "Move Mouse - Interval.vbs";
+        private const string PauseScriptName = "Move Mouse - Pause.vbs";
 
         private readonly TimeSpan _waitBetweenUpdateChecks = new TimeSpan(7, 0, 0, 0);
         private readonly TimeSpan _waitUntilAutoMoveDetect = new TimeSpan(0, 0, 5);
         private readonly System.Windows.Forms.Timer _resumeTimer = new System.Windows.Forms.Timer();
-        private readonly string _moveMouseXmlDirectory = Environment.ExpandEnvironmentVariables(@"%APPDATA%\Ellanet\Move Mouse");
+        private readonly string _moveMouseWorkingDirectory = Environment.ExpandEnvironmentVariables(@"%APPDATA%\Ellanet\Move Mouse");
         private readonly bool _suppressAutoStart;
         private Thread _moveMouseThread;
         private DateTime _mmStartTime;
@@ -35,6 +39,7 @@ namespace Ellanet
         private Thread _traceMouseThread;
         private BlackoutStatusChangeEventArgs.BlackoutStatus _blackoutStatus = BlackoutStatusChangeEventArgs.BlackoutStatus.Ended;
         private DateTime _lastUpdateCheck = DateTime.MinValue;
+        private string _scriptEditor = Path.Combine(Environment.ExpandEnvironmentVariables("%WINDIR%"), @"System32\notepad.exe");
 
         private delegate void UpdateCountdownProgressBarDelegate(ref ProgressBar pb, int delay, int elapsed);
 
@@ -66,6 +71,8 @@ namespace Ellanet
 
         public event BlackoutStatusChangeHandler BlackoutStatusChange;
         public event NewVersionAvailableHandler NewVersionAvailable;
+
+        public bool MinimiseToSystemTrayWarningShown { get; private set; }
 
         // ReSharper disable UnusedMember.Local
         // ReSharper disable InconsistentNaming
@@ -199,6 +206,7 @@ namespace Ellanet
             resumeCheckBox.CheckedChanged += resumeCheckBox_CheckedChanged;
             launchAtLogonCheckBox.CheckedChanged += launchAtLogonCheckBox_CheckedChanged;
             blackoutCheckBox.CheckedChanged += blackoutCheckBox_CheckedChanged;
+            customScriptsCheckBox.CheckedChanged += customScriptsCheckBox_CheckedChanged;
             PopulateBlackoutStartEndComboBoxes();
             ReadSettings();
             Icon = Properties.Resources.Mouse_Icon;
@@ -228,10 +236,95 @@ namespace Ellanet
             boStartComboBox.SelectedIndexChanged += boStartComboBox_SelectedIndexChanged;
             boEndComboBox.SelectedIndexChanged += boEndComboBox_SelectedIndexChanged;
             refreshButton.Click += refreshButton_Click;
+            editScriptButton.Click += editScriptButton_Click;
+            scriptsHelpPictureBox.MouseEnter += scriptsHelpPictureBox_MouseEnter;
+            scriptsHelpPictureBox.MouseLeave += scriptsHelpPictureBox_MouseLeave;
+            scriptsHelpPictureBox.MouseClick += scriptsHelpPictureBox_MouseClick;
             SetButtonTag(ref traceButton, GetButtonText(ref traceButton));
         }
 
-        void refreshButton_Click(object sender, EventArgs e)
+        private void customScriptsCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            editScriptButton.Enabled = customScriptsCheckBox.Checked;
+        }
+
+        private void scriptsHelpPictureBox_MouseClick(object sender, MouseEventArgs e)
+        {
+            try
+            {
+                Process.Start(ScriptsHelpAddress);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+        }
+
+        private void scriptsHelpPictureBox_MouseLeave(object sender, EventArgs e)
+        {
+            if (Cursor != Cursors.WaitCursor)
+            {
+                Cursor = Cursors.Default;
+            }
+        }
+
+        private void scriptsHelpPictureBox_MouseEnter(object sender, EventArgs e)
+        {
+            if (Cursor != Cursors.WaitCursor)
+            {
+                Cursor = Cursors.Hand;
+            }
+        }
+
+        private void editScriptButton_Click(object sender, EventArgs e)
+        {
+            var se = new ScriptEditor(_scriptEditor);
+
+            if (se.ShowDialog() == DialogResult.OK)
+            {
+                _scriptEditor = se.ScriptEditorPath;
+                SaveSettings();
+                string scriptPath = null;
+
+                switch (se.ScriptToEdit)
+                {
+                    case "Start":
+                        scriptPath = Path.Combine(_moveMouseWorkingDirectory, StartScriptName);
+                        break;
+                    case "Interval":
+                        scriptPath = Path.Combine(_moveMouseWorkingDirectory, IntervalScriptName);
+                        break;
+                    case "Pause":
+                        scriptPath = Path.Combine(_moveMouseWorkingDirectory, PauseScriptName);
+                        break;
+                }
+
+                if (!String.IsNullOrEmpty(scriptPath) && !File.Exists(scriptPath))
+                {
+                    CreateEmptyScript(scriptPath);
+                }
+
+                var p = new Process
+                    {
+                        StartInfo =
+                            {
+                                FileName = se.ScriptEditorPath,
+                                Arguments = String.Format("\"{0}\"", scriptPath)
+                            }
+                    };
+                p.Start();
+            }
+        }
+
+        private void CreateEmptyScript(string path)
+        {
+            var sw = new StreamWriter(path, false);
+            sw.WriteLine("' Move Mouse Custom Script");
+            sw.WriteLine("' See {0} for some useful scripting examples.", ScriptsHelpAddress);
+            sw.Close();
+        }
+
+        private void refreshButton_Click(object sender, EventArgs e)
         {
             ThreadPool.QueueUserWorkItem(ListOpenWindows);
         }
@@ -497,6 +590,11 @@ namespace Ellanet
 
         private void MouseForm_Load(object sender, EventArgs e)
         {
+            if (!Directory.Exists(_moveMouseWorkingDirectory))
+            {
+                Directory.CreateDirectory(_moveMouseWorkingDirectory);
+            }
+
             ThreadPool.QueueUserWorkItem(CheckForUpdate);
             ThreadPool.QueueUserWorkItem(ListOpenWindows);
 
@@ -677,8 +775,10 @@ namespace Ellanet
                         WindowState = FormWindowState.Minimized;
                     }
 
+                    LaunchScript(PauseScriptName);
                     break;
                 default:
+                    LaunchScript(StartScriptName);
                     _resumeTimer.Stop();
                     _moveMouseThread = new Thread(MoveMouseThread);
                     _moveMouseThread.Start();
@@ -688,6 +788,28 @@ namespace Ellanet
                     WindowState = minimiseOnStartCheckBox.Checked ? FormWindowState.Minimized : FormWindowState.Normal;
                     SaveSettings();
                     break;
+            }
+        }
+
+        private void LaunchScript(string name)
+        {
+            if (GetCheckBoxChecked(ref customScriptsCheckBox))
+            {
+                string scriptPath = Path.Combine(_moveMouseWorkingDirectory, name);
+
+                if (File.Exists(scriptPath))
+                {
+                    var p = new Process
+                        {
+                            StartInfo =
+                                {
+                                    FileName = Path.Combine(Environment.ExpandEnvironmentVariables("%WINDIR%"), @"System32\wscript.exe"),
+                                    Arguments = String.Format("\"{0}\"", scriptPath),
+                                    WindowStyle = ProcessWindowStyle.Normal
+                                }
+                        };
+                    p.Start();
+                }
             }
         }
 
@@ -753,6 +875,8 @@ namespace Ellanet
 
                     if (secondsElapsed > Convert.ToInt32(delayNumericUpDown.Value))
                     {
+                        LaunchScript(IntervalScriptName);
+
                         if (clickMouseCheckBox.Checked)
                         {
                             mouse_event((int) MouseEventFlags.LEFTDOWN, 0, 0, 0, 0);
@@ -916,17 +1040,15 @@ namespace Ellanet
             }
         }
 
-        /*
-                Point GetControlScreenLocation(ref Control c)
-                {
-                    if (InvokeRequired)
-                    {
-                        return (Point)Invoke(new GetControlScreenLocationDelegate(GetControlScreenLocation), new object[] { c });
-                    }
+        //private Point GetControlScreenLocation(ref Control c)
+        //{
+        //    if (InvokeRequired)
+        //    {
+        //        return (Point) Invoke(new GetControlScreenLocationDelegate(GetControlScreenLocation), new object[] {c});
+        //    }
 
-                    return this.PointToScreen(c.Location);
-                }
-        */
+        //    return this.PointToScreen(c.Location);
+        //}
 
         private object GetComboBoxSelectedItem(ref ComboBox cb)
         {
@@ -1090,10 +1212,10 @@ namespace Ellanet
         {
             try
             {
-                if (File.Exists(Path.Combine(_moveMouseXmlDirectory, MoveMouseXmlName)))
+                if (File.Exists(Path.Combine(_moveMouseWorkingDirectory, MoveMouseXmlName)))
                 {
                     var settingsXmlDoc = new XmlDocument();
-                    settingsXmlDoc.Load(Path.Combine(_moveMouseXmlDirectory, MoveMouseXmlName));
+                    settingsXmlDoc.Load(Path.Combine(_moveMouseWorkingDirectory, MoveMouseXmlName));
                     delayNumericUpDown.Value = Convert.ToDecimal(settingsXmlDoc.SelectSingleNode("settings/second_delay").InnerText);
                     moveMouseCheckBox.Checked = Convert.ToBoolean(settingsXmlDoc.SelectSingleNode("settings/move_mouse_pointer").InnerText);
                     stealthCheckBox.Checked = Convert.ToBoolean(settingsXmlDoc.SelectSingleNode("settings/stealth_mode").InnerText);
@@ -1124,6 +1246,9 @@ namespace Ellanet
                     boStartComboBox.Text = settingsXmlDoc.SelectSingleNode("settings/blackout_schedule_start").InnerText;
                     boEndComboBox.Text = settingsXmlDoc.SelectSingleNode("settings/blackout_schedule_end").InnerText;
                     _lastUpdateCheck = Convert.ToDateTime(settingsXmlDoc.SelectSingleNode("settings/last_update_check").InnerText);
+                    MinimiseToSystemTrayWarningShown = Convert.ToBoolean(settingsXmlDoc.SelectSingleNode("settings/system_tray_warning_shown").InnerText);
+                    customScriptsCheckBox.Checked = Convert.ToBoolean(settingsXmlDoc.SelectSingleNode("settings/enable_custom_scripts").InnerText);
+                    _scriptEditor = settingsXmlDoc.SelectSingleNode("settings/script_editor").InnerText;
                 }
             }
             catch (Exception ex)
@@ -1136,13 +1261,8 @@ namespace Ellanet
         {
             try
             {
-                if (!Directory.Exists(_moveMouseXmlDirectory))
-                {
-                    Directory.CreateDirectory(_moveMouseXmlDirectory);
-                }
-
                 var settingsXmlDoc = new XmlDocument();
-                settingsXmlDoc.LoadXml("<settings><second_delay /><move_mouse_pointer /><stealth_mode /><enable_static_position /><x_static_position /><y_static_position /><click_left_mouse_button /><send_keystroke /><keystroke /><pause_when_mouse_moved /><automatically_resume /><resume_seconds /><automatically_start_on_launch /><automatically_launch_on_logon /><minimise_on_pause /><minimise_on_start /><minimise_to_system_tray /><activate_application /><activate_application_title /><blackout_schedule_enabled /><blackout_schedule_scope /><blackout_schedule_start /><blackout_schedule_end /><last_update_check /></settings>");
+                settingsXmlDoc.LoadXml("<settings><second_delay /><move_mouse_pointer /><stealth_mode /><enable_static_position /><x_static_position /><y_static_position /><click_left_mouse_button /><send_keystroke /><keystroke /><pause_when_mouse_moved /><automatically_resume /><resume_seconds /><automatically_start_on_launch /><automatically_launch_on_logon /><minimise_on_pause /><minimise_on_start /><minimise_to_system_tray /><activate_application /><activate_application_title /><blackout_schedule_enabled /><blackout_schedule_scope /><blackout_schedule_start /><blackout_schedule_end /><last_update_check /><system_tray_warning_shown /><enable_custom_scripts /><script_editor /></settings>");
                 settingsXmlDoc.SelectSingleNode("settings/second_delay").InnerText = Convert.ToDecimal(delayNumericUpDown.Value).ToString(CultureInfo.InvariantCulture);
                 settingsXmlDoc.SelectSingleNode("settings/move_mouse_pointer").InnerText = moveMouseCheckBox.Checked.ToString();
                 settingsXmlDoc.SelectSingleNode("settings/stealth_mode").InnerText = stealthCheckBox.Checked.ToString();
@@ -1167,7 +1287,10 @@ namespace Ellanet
                 settingsXmlDoc.SelectSingleNode("settings/blackout_schedule_start").InnerText = boStartComboBox.Text;
                 settingsXmlDoc.SelectSingleNode("settings/blackout_schedule_end").InnerText = boEndComboBox.Text;
                 settingsXmlDoc.SelectSingleNode("settings/last_update_check").InnerText = _lastUpdateCheck.ToString("yyyy-MMM-dd HH:mm:ss");
-                settingsXmlDoc.Save(Path.Combine(_moveMouseXmlDirectory, MoveMouseXmlName));
+                settingsXmlDoc.SelectSingleNode("settings/system_tray_warning_shown").InnerText = "True";
+                settingsXmlDoc.SelectSingleNode("settings/enable_custom_scripts").InnerText = customScriptsCheckBox.Checked.ToString();
+                settingsXmlDoc.SelectSingleNode("settings/script_editor").InnerText = _scriptEditor;
+                settingsXmlDoc.Save(Path.Combine(_moveMouseWorkingDirectory, MoveMouseXmlName));
             }
             catch (Exception ex)
             {
