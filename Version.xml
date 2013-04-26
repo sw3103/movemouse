@@ -1,13 +1,13 @@
 <version>
   <major>2</major>
-  <minor>5</minor>
-  <build>4</build>
-  <released_date>21-Jan-2013</released_date>
-  <advertised_date>21-Jan-2013</advertised_date>
+  <minor>6</minor>
+  <build>1</build>
+  <released_date>26-Apr-2013</released_date>
+  <advertised_date>26-Apr-2013</advertised_date>
   <features>
-    <feature>Refresh button for open applications.</feature>
+    <feature>Custom scripts feature.</feature>
   </features>
   <fixes>
-    <fix>Mouse pointer not moving.</fix>
+    <fix>Trace button increased to show count down.</fix>
   </fixes>
 </version>

@@ -332,7 +332,7 @@
             this.traceButton.Enabled = false;
             this.traceButton.Location = new System.Drawing.Point(395, 126);
             this.traceButton.Name = "traceButton";
-            this.traceButton.Size = new System.Drawing.Size(101, 23);
+            this.traceButton.Size = new System.Drawing.Size(143, 23);
             this.traceButton.TabIndex = 10;
             this.traceButton.Text = "Trace Mouse";
             this.traceButton.UseVisualStyleBackColor = true;
