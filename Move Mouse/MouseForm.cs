@@ -49,6 +49,8 @@ namespace Ellanet
 
         private delegate int GetComboBoxSelectedIndexDelegate(ref ComboBox cb);
 
+        private delegate object GetComboBoxTagDelegate(ref ComboBox cb);
+
         private delegate void SetNumericUpDownValueDelegate(ref NumericUpDown nud, int value);
 
         private delegate void SetButtonTextDelegate(ref Button b, string text);
@@ -61,13 +63,15 @@ namespace Ellanet
 
         private delegate bool GetCheckBoxCheckedDelegate(ref CheckBox cb);
 
-        private delegate void AddComboBoxItemDelegate(ref ComboBox cb, string item);
+        private delegate void AddComboBoxItemDelegate(ref ComboBox cb, string item, bool selected);
 
         public delegate void BlackoutStatusChangeHandler(object sender, BlackoutStatusChangeEventArgs e);
 
         public delegate void NewVersionAvailableHandler(object sender, NewVersionAvailableEventArgs e);
 
         public delegate void ClearComboBoxItemsDelegate(ref ComboBox cb);
+
+        private delegate bool IsWindowMinimisedDelegate(IntPtr handle);
 
         public event BlackoutStatusChangeHandler BlackoutStatusChange;
         public event NewVersionAvailableHandler NewVersionAvailable;
@@ -143,6 +147,21 @@ namespace Ellanet
             public int dwExtraInfo;
         }
 
+        // ReSharper disable MemberCanBePrivate.Local
+
+        [Serializable]
+        [StructLayout(LayoutKind.Sequential)]
+        private struct WINDOWPLACEMENT
+        {
+            public int length;
+            public readonly int flags;
+            public readonly ShowWindowCommands showCmd;
+            public readonly Point ptMinPosition;
+            public readonly Point ptMaxPosition;
+            public readonly Rectangle rcNormalPosition;
+        }
+
+        // ReSharper restore MemberCanBePrivate.Local
         // ReSharper restore NotAccessedField.Local
         // ReSharper restore InconsistentNaming
 
@@ -181,6 +200,12 @@ namespace Ellanet
         private static extern bool ShowWindow(
             IntPtr hWnd,
             ShowWindowCommands nCmdShow);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool GetWindowPlacement(
+            IntPtr hWnd,
+            ref WINDOWPLACEMENT lpwndpl);
 
         public MouseForm(bool suppressAutoStart)
         {
@@ -534,11 +559,11 @@ namespace Ellanet
             {
                 ClearComboBoxItems(ref processComboBox);
 
-                foreach (Process p in Process.GetProcesses())
+                foreach (var p in Process.GetProcesses())
                 {
                     if (!String.IsNullOrEmpty(p.MainWindowTitle) && !processComboBox.Items.Contains(p.MainWindowTitle))
                     {
-                        AddComboBoxItem(ref processComboBox, p.MainWindowTitle);
+                        AddComboBoxItem(ref processComboBox, p.MainWindowTitle, (GetComboBoxTag(ref processComboBox).ToString().Equals(p.MainWindowTitle)));
                     }
                 }
             }
@@ -828,11 +853,10 @@ namespace Ellanet
                 try
                 {
                     IntPtr handle = FindWindow(null, GetComboBoxSelectedItem(ref processComboBox).ToString());
-                    Process p = GetProessByMainWindowTitle(GetComboBoxSelectedItem(ref processComboBox).ToString());
 
                     if (handle != IntPtr.Zero)
                     {
-                        if (p == null)
+                        if (IsWindowMinimised(handle))
                         {
                             ShowWindow(handle, ShowWindowCommands.Restore);
                         }
@@ -1136,16 +1160,31 @@ namespace Ellanet
             return cb.Checked;
         }
 
-        private void AddComboBoxItem(ref ComboBox cb, string item)
+        private void AddComboBoxItem(ref ComboBox cb, string item, bool selected)
         {
             if (InvokeRequired)
             {
-                Invoke(new AddComboBoxItemDelegate(AddComboBoxItem), new object[] {cb, item});
+                Invoke(new AddComboBoxItemDelegate(AddComboBoxItem), new object[] {cb, item, selected});
             }
             else
             {
-                cb.Items.Add(item);
+                int index = cb.Items.Add(item);
+
+                if (selected)
+                {
+                    cb.SelectedIndex = index;
+                }
             }
+        }
+
+        private object GetComboBoxTag(ref ComboBox cb)
+        {
+            if (InvokeRequired)
+            {
+                return Invoke(new GetComboBoxTagDelegate(GetComboBoxTag), new object[] {cb});
+            }
+
+            return cb.Tag;
         }
 
         private void ClearComboBoxItems(ref ComboBox cb)
@@ -1158,6 +1197,26 @@ namespace Ellanet
             {
                 cb.Items.Clear();
             }
+        }
+
+        private bool IsWindowMinimised(IntPtr handle)
+        {
+            if (InvokeRequired)
+            {
+                return Convert.ToBoolean(Invoke(new IsWindowMinimisedDelegate(IsWindowMinimised), new object[] {handle}));
+            }
+
+            var placement = GetPlacement(handle);
+            Debug.WriteLine(placement.showCmd.ToString());
+            return placement.showCmd == ShowWindowCommands.ShowMinimized;
+        }
+
+        private WINDOWPLACEMENT GetPlacement(IntPtr hwnd)
+        {
+            var placement = new WINDOWPLACEMENT();
+            placement.length = Marshal.SizeOf(placement);
+            GetWindowPlacement(hwnd, ref placement);
+            return placement;
         }
 
         private int GetLastInputTime()
@@ -1237,8 +1296,9 @@ namespace Ellanet
 
                     if (!String.IsNullOrEmpty(settingsXmlDoc.SelectSingleNode("settings/activate_application_title").InnerText))
                     {
-                        processComboBox.Items.Add(settingsXmlDoc.SelectSingleNode("settings/activate_application_title").InnerText);
-                        processComboBox.Text = settingsXmlDoc.SelectSingleNode("settings/activate_application_title").InnerText;
+                        //processComboBox.Items.Add(settingsXmlDoc.SelectSingleNode("settings/activate_application_title").InnerText);
+                        //processComboBox.Text = settingsXmlDoc.SelectSingleNode("settings/activate_application_title").InnerText;
+                        processComboBox.Tag = settingsXmlDoc.SelectSingleNode("settings/activate_application_title").InnerText;
                     }
 
                     blackoutCheckBox.Checked = Convert.ToBoolean(settingsXmlDoc.SelectSingleNode("settings/blackout_schedule_enabled").InnerText);
@@ -1291,6 +1351,7 @@ namespace Ellanet
                 settingsXmlDoc.SelectSingleNode("settings/enable_custom_scripts").InnerText = customScriptsCheckBox.Checked.ToString();
                 settingsXmlDoc.SelectSingleNode("settings/script_editor").InnerText = _scriptEditor;
                 settingsXmlDoc.Save(Path.Combine(_moveMouseWorkingDirectory, MoveMouseXmlName));
+                processComboBox.Tag = processComboBox.Text;
             }
             catch (Exception ex)
             {
@@ -1300,17 +1361,17 @@ namespace Ellanet
 
         // ReSharper restore PossibleNullReferenceException
 
-        private Process GetProessByMainWindowTitle(string title)
-        {
-            foreach (var p in Process.GetProcesses())
-            {
-                if (p.MainWindowTitle.Equals(title, StringComparison.CurrentCultureIgnoreCase))
-                {
-                    return p;
-                }
-            }
+        //private Process GetProessByMainWindowTitle(string title)
+        //{
+        //    foreach (var p in Process.GetProcesses())
+        //    {
+        //        if (p.MainWindowTitle.Equals(title, StringComparison.CurrentCultureIgnoreCase))
+        //        {
+        //            return p;
+        //        }
+        //    }
 
-            return null;
-        }
+        //    return null;
+        //}
     }
 }
