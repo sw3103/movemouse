@@ -1,13 +1,14 @@
 <version>
   <major>2</major>
   <minor>6</minor>
-  <build>1</build>
-  <released_date>26-Apr-2013</released_date>
-  <advertised_date>26-Apr-2013</advertised_date>
+  <build>2</build>
+  <released_date>05-Dec-2013</released_date>
+  <advertised_date>08-Dec-2013</advertised_date>
   <features>
-    <feature>Custom scripts feature.</feature>
+    <feature>None.</feature>
   </features>
   <fixes>
-    <fix>Trace button increased to show count down.</fix>
+    <fix>Activate Application feature handles minimised windows better.</fix>
+    <fix>Minor bug fixes.</fix>
   </fixes>
 </version>
