@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.Management;
 using System.Windows.Forms;
 
 namespace Ellanet
@@ -9,7 +10,6 @@ namespace Ellanet
     {
         private const int BalloonTipTimeout = 30000;
         private const string DownloadsUrl = "http://movemouse.codeplex.com/releases/";
-
         private readonly NotifyIcon _sysTrayIcon;
         private readonly ContextMenu _sysTrayMenu;
         private MouseForm _moveMouse;
@@ -30,6 +30,24 @@ namespace Ellanet
             _sysTrayIcon.Visible = true;
             _sysTrayIcon.BalloonTipClicked += sysTrayIcon_BalloonTipClicked;
             _sysTrayIcon.BalloonTipClosed += sysTrayIcon_BalloonTipClosed;
+
+            
+            try
+            {
+                if (Is64BitWindows8Point1() && (GetCurrentDpi() > 120))
+                {
+                    var layersRegKey = Microsoft.Win32.Registry.CurrentUser.CreateSubKey(@"Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers");
+
+                    if (layersRegKey != null)
+                    {
+                        layersRegKey.SetValue(Application.ExecutablePath, "HIGHDPIAWARE");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
         }
 
         private void sysTrayIcon_BalloonTipClosed(object sender, EventArgs e)
@@ -162,6 +180,39 @@ namespace Ellanet
             {
                 Debug.WriteLine(ex.Message);
             }
+        }
+
+        private int GetCurrentDpi()
+        {
+            try
+            {
+                using (Graphics g = CreateGraphics())
+                {
+                    return (int) g.DpiX;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            return 96;
+        }
+
+        private bool Is64BitWindows8Point1()
+        {
+            try
+            {
+                var mos = new ManagementObjectSearcher(@"\\.\root\CIMv2", "SELECT * FROM Win32_OperatingSystem WHERE Version > '6.3' AND OSArchitecture = '64-bit'");
+                var moc = mos.Get();
+                return (moc.Count > 0);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            return false;
         }
     }
 }

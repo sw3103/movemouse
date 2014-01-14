@@ -800,6 +800,7 @@ namespace Ellanet
                         WindowState = FormWindowState.Minimized;
                     }
 
+                    ReadSettings();
                     LaunchScript(PauseScriptName);
                     break;
                 default:
