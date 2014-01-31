@@ -558,12 +558,21 @@ namespace Ellanet
             try
             {
                 ClearComboBoxItems(ref processComboBox);
+                var tag = GetComboBoxTag(ref processComboBox);
 
                 foreach (var p in Process.GetProcesses())
                 {
-                    if (!String.IsNullOrEmpty(p.MainWindowTitle) && !processComboBox.Items.Contains(p.MainWindowTitle))
+                    try
                     {
-                        AddComboBoxItem(ref processComboBox, p.MainWindowTitle, (GetComboBoxTag(ref processComboBox).ToString().Equals(p.MainWindowTitle)));
+                        if (!String.IsNullOrEmpty(p.MainWindowTitle) && !processComboBox.Items.Contains(p.MainWindowTitle))
+                        {
+                            Debug.WriteLine(p.MainWindowTitle);
+                            AddComboBoxItem(ref processComboBox, p.MainWindowTitle, ((tag != null) && tag.ToString().Equals(p.MainWindowTitle)));
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine(ex.Message);
                     }
                 }
             }
@@ -792,6 +801,7 @@ namespace Ellanet
 
                     _resumeTimer.Start();
                     actionButton.Text = "Start";
+                    countdownProgressBar.Value = 0;
                     Opacity = 1.0;
                     //this.TopMost = false;
 
@@ -809,6 +819,7 @@ namespace Ellanet
                     _moveMouseThread = new Thread(MoveMouseThread);
                     _moveMouseThread.Start();
                     actionButton.Text = "Pause";
+                    optionsTabControl.SelectedTab = mouseTabPage;
                     Opacity = .75;
                     _mmStartTime = DateTime.Now;
                     WindowState = minimiseOnStartCheckBox.Checked ? FormWindowState.Minimized : FormWindowState.Normal;

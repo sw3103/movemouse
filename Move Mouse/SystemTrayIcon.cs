@@ -30,7 +30,6 @@ namespace Ellanet
             _sysTrayIcon.Visible = true;
             _sysTrayIcon.BalloonTipClicked += sysTrayIcon_BalloonTipClicked;
             _sysTrayIcon.BalloonTipClosed += sysTrayIcon_BalloonTipClosed;
-
             
             try
             {
