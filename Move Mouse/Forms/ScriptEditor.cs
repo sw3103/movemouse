@@ -2,7 +2,7 @@
 using System.IO;
 using System.Windows.Forms;
 
-namespace Ellanet
+namespace Ellanet.Forms
 {
     public partial class ScriptEditor : Form
     {

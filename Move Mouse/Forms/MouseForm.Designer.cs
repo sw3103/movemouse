@@ -1,4 +1,4 @@
-﻿namespace Ellanet
+﻿namespace Ellanet.Forms
 {
     partial class MouseForm
     {
@@ -64,13 +64,12 @@
             this.scriptsHelpPictureBox = new System.Windows.Forms.PictureBox();
             this.editScriptButton = new System.Windows.Forms.Button();
             this.optionsTabControl = new System.Windows.Forms.TabControl();
-            this.mouseTabPage = new System.Windows.Forms.TabPage();
-            this.label2 = new System.Windows.Forms.Label();
             this.actionsTabPage = new System.Windows.Forms.TabPage();
             this.blackoutsTabPage = new System.Windows.Forms.TabPage();
             this.schedulesTabPage = new System.Windows.Forms.TabPage();
             this.scriptsTabPage = new System.Windows.Forms.TabPage();
             this.behaviourTabPage = new System.Windows.Forms.TabPage();
+            this.mouseTabPage = new System.Windows.Forms.TabPage();
             ((System.ComponentModel.ISupportInitialize)(this.mousePictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.delayNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.resumeNumericUpDown)).BeginInit();
@@ -81,20 +80,23 @@
             ((System.ComponentModel.ISupportInitialize)(this.paypalPictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.scriptsHelpPictureBox)).BeginInit();
             this.optionsTabControl.SuspendLayout();
-            this.mouseTabPage.SuspendLayout();
             this.actionsTabPage.SuspendLayout();
             this.blackoutsTabPage.SuspendLayout();
             this.scriptsTabPage.SuspendLayout();
             this.behaviourTabPage.SuspendLayout();
+            this.mouseTabPage.SuspendLayout();
             this.SuspendLayout();
             // 
             // mousePictureBox
             // 
+            this.mousePictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.mousePictureBox.Image = global::Ellanet.Properties.Resources.Mouse_Image;
-            this.mousePictureBox.Location = new System.Drawing.Point(30, 83);
+            this.mousePictureBox.Location = new System.Drawing.Point(3, 3);
             this.mousePictureBox.Name = "mousePictureBox";
-            this.mousePictureBox.Size = new System.Drawing.Size(133, 129);
-            this.mousePictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.mousePictureBox.Size = new System.Drawing.Size(461, 234);
+            this.mousePictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.mousePictureBox.TabIndex = 0;
             this.mousePictureBox.TabStop = false;
             // 
@@ -317,7 +319,7 @@
             // xNumericUpDown
             // 
             this.xNumericUpDown.Enabled = false;
-            this.xNumericUpDown.Location = new System.Drawing.Point(228, 109);
+            this.xNumericUpDown.Location = new System.Drawing.Point(228, 108);
             this.xNumericUpDown.Maximum = new decimal(new int[] {
             999999,
             0,
@@ -330,7 +332,7 @@
             // yNumericUpDown
             // 
             this.yNumericUpDown.Enabled = false;
-            this.yNumericUpDown.Location = new System.Drawing.Point(307, 109);
+            this.yNumericUpDown.Location = new System.Drawing.Point(307, 108);
             this.yNumericUpDown.Maximum = new decimal(new int[] {
             999999,
             0,
@@ -343,7 +345,7 @@
             // traceButton
             // 
             this.traceButton.Enabled = false;
-            this.traceButton.Location = new System.Drawing.Point(375, 168);
+            this.traceButton.Location = new System.Drawing.Point(375, 107);
             this.traceButton.Name = "traceButton";
             this.traceButton.Size = new System.Drawing.Size(75, 24);
             this.traceButton.TabIndex = 10;
@@ -404,7 +406,7 @@
             // helpPictureBox
             // 
             this.helpPictureBox.Image = global::Ellanet.Properties.Resources.Help_Image;
-            this.helpPictureBox.Location = new System.Drawing.Point(325, 16);
+            this.helpPictureBox.Location = new System.Drawing.Point(19, 91);
             this.helpPictureBox.Name = "helpPictureBox";
             this.helpPictureBox.Size = new System.Drawing.Size(32, 32);
             this.helpPictureBox.TabIndex = 21;
@@ -456,7 +458,7 @@
             // contactPictureBox
             // 
             this.contactPictureBox.Image = global::Ellanet.Properties.Resources.Contact_Image;
-            this.contactPictureBox.Location = new System.Drawing.Point(284, 21);
+            this.contactPictureBox.Location = new System.Drawing.Point(19, 55);
             this.contactPictureBox.Name = "contactPictureBox";
             this.contactPictureBox.Size = new System.Drawing.Size(32, 23);
             this.contactPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
@@ -466,7 +468,7 @@
             // paypalPictureBox
             // 
             this.paypalPictureBox.Image = global::Ellanet.Properties.Resources.PayPal_Image;
-            this.paypalPictureBox.Location = new System.Drawing.Point(229, 19);
+            this.paypalPictureBox.Location = new System.Drawing.Point(15, 15);
             this.paypalPictureBox.Name = "paypalPictureBox";
             this.paypalPictureBox.Size = new System.Drawing.Size(41, 27);
             this.paypalPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
@@ -518,40 +520,17 @@
             this.optionsTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.optionsTabControl.Controls.Add(this.mouseTabPage);
             this.optionsTabControl.Controls.Add(this.actionsTabPage);
             this.optionsTabControl.Controls.Add(this.blackoutsTabPage);
             this.optionsTabControl.Controls.Add(this.schedulesTabPage);
             this.optionsTabControl.Controls.Add(this.scriptsTabPage);
             this.optionsTabControl.Controls.Add(this.behaviourTabPage);
-            this.optionsTabControl.Controls.Add(this.mouseTabPage);
             this.optionsTabControl.Location = new System.Drawing.Point(12, 12);
             this.optionsTabControl.Name = "optionsTabControl";
             this.optionsTabControl.SelectedIndex = 0;
             this.optionsTabControl.Size = new System.Drawing.Size(475, 269);
             this.optionsTabControl.TabIndex = 30;
-            // 
-            // mouseTabPage
-            // 
-            this.mouseTabPage.Controls.Add(this.label2);
-            this.mouseTabPage.Controls.Add(this.mousePictureBox);
-            this.mouseTabPage.Controls.Add(this.paypalPictureBox);
-            this.mouseTabPage.Controls.Add(this.contactPictureBox);
-            this.mouseTabPage.Controls.Add(this.helpPictureBox);
-            this.mouseTabPage.Location = new System.Drawing.Point(4, 25);
-            this.mouseTabPage.Name = "mouseTabPage";
-            this.mouseTabPage.Size = new System.Drawing.Size(467, 240);
-            this.mouseTabPage.TabIndex = 4;
-            this.mouseTabPage.Text = "Mouse";
-            this.mouseTabPage.UseVisualStyleBackColor = true;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(235, 83);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(330, 16);
-            this.label2.TabIndex = 27;
-            this.label2.Text = "double click shows famous mice and updates tabe name";
             // 
             // actionsTabPage
             // 
@@ -629,6 +608,19 @@
             this.behaviourTabPage.Text = "Behaviour";
             this.behaviourTabPage.UseVisualStyleBackColor = true;
             // 
+            // mouseTabPage
+            // 
+            this.mouseTabPage.Controls.Add(this.paypalPictureBox);
+            this.mouseTabPage.Controls.Add(this.contactPictureBox);
+            this.mouseTabPage.Controls.Add(this.helpPictureBox);
+            this.mouseTabPage.Controls.Add(this.mousePictureBox);
+            this.mouseTabPage.Location = new System.Drawing.Point(4, 25);
+            this.mouseTabPage.Name = "mouseTabPage";
+            this.mouseTabPage.Size = new System.Drawing.Size(467, 240);
+            this.mouseTabPage.TabIndex = 4;
+            this.mouseTabPage.Text = "Mouse";
+            this.mouseTabPage.UseVisualStyleBackColor = true;
+            // 
             // MouseForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
@@ -654,8 +646,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.paypalPictureBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.scriptsHelpPictureBox)).EndInit();
             this.optionsTabControl.ResumeLayout(false);
-            this.mouseTabPage.ResumeLayout(false);
-            this.mouseTabPage.PerformLayout();
             this.actionsTabPage.ResumeLayout(false);
             this.actionsTabPage.PerformLayout();
             this.blackoutsTabPage.ResumeLayout(false);
@@ -664,6 +654,7 @@
             this.scriptsTabPage.PerformLayout();
             this.behaviourTabPage.ResumeLayout(false);
             this.behaviourTabPage.PerformLayout();
+            this.mouseTabPage.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -712,6 +703,5 @@
         private System.Windows.Forms.TabPage mouseTabPage;
         private System.Windows.Forms.TabPage behaviourTabPage;
         private System.Windows.Forms.TabPage schedulesTabPage;
-        private System.Windows.Forms.Label label2;
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Ellanet
+namespace Ellanet.Events
 {
     public class NewVersionAvailableEventArgs : EventArgs
     {

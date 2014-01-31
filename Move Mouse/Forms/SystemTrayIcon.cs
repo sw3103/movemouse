@@ -3,8 +3,9 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Management;
 using System.Windows.Forms;
+using Ellanet.Events;
 
-namespace Ellanet
+namespace Ellanet.Forms
 {
     public partial class SystemTrayIcon : Form
     {

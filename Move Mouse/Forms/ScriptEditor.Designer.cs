@@ -1,4 +1,4 @@
-﻿namespace Ellanet
+﻿namespace Ellanet.Forms
 {
     partial class ScriptEditor
     {

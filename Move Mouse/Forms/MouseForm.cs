@@ -1,17 +1,18 @@
-﻿using System;
+﻿using Ellanet.Events;
+using Microsoft.VisualBasic;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
-using System.Windows.Forms;
+using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
-using System.Diagnostics;
-using System.IO;
+using System.Windows.Forms;
 using System.Xml;
-using Microsoft.VisualBasic;
 
-namespace Ellanet
+namespace Ellanet.Forms
 {
     public partial class MouseForm : Form
     {
@@ -330,13 +331,13 @@ namespace Ellanet
                 }
 
                 var p = new Process
+                {
+                    StartInfo =
                     {
-                        StartInfo =
-                            {
-                                FileName = se.ScriptEditorPath,
-                                Arguments = String.Format("\"{0}\"", scriptPath)
-                            }
-                    };
+                        FileName = se.ScriptEditorPath,
+                        Arguments = String.Format("\"{0}\"", scriptPath)
+                    }
+                };
                 p.Start();
             }
         }
@@ -706,7 +707,7 @@ namespace Ellanet
             {
                 SetNumericUpDownValue(ref xNumericUpDown, Cursor.Position.X);
                 SetNumericUpDownValue(ref yNumericUpDown, Cursor.Position.Y);
-                SetButtonText(ref traceButton, String.Format("{0} ({1})", Convert.ToString(GetButtonTag(ref traceButton)), _traceTimeComplete.Subtract(DateTime.Now).TotalSeconds.ToString("0.0")));
+                SetButtonText(ref traceButton, String.Format("{0}", _traceTimeComplete.Subtract(DateTime.Now).TotalSeconds.ToString("0.0")));
                 Thread.Sleep(100);
             } while (_traceTimeComplete > DateTime.Now);
 
@@ -837,14 +838,14 @@ namespace Ellanet
                 if (File.Exists(scriptPath))
                 {
                     var p = new Process
+                    {
+                        StartInfo =
                         {
-                            StartInfo =
-                                {
-                                    FileName = Path.Combine(Environment.ExpandEnvironmentVariables("%WINDIR%"), @"System32\wscript.exe"),
-                                    Arguments = String.Format("\"{0}\"", scriptPath),
-                                    WindowStyle = ProcessWindowStyle.Normal
-                                }
-                        };
+                            FileName = Path.Combine(Environment.ExpandEnvironmentVariables("%WINDIR%"), @"System32\wscript.exe"),
+                            Arguments = String.Format("\"{0}\"", scriptPath),
+                            WindowStyle = ProcessWindowStyle.Normal
+                        }
+                    };
                     p.Start();
                 }
             }
@@ -1245,7 +1246,7 @@ namespace Ellanet
                 idleTime = envTicks - lastInputTick;
             }
 
-            return ((idleTime > 0) ? (idleTime/1000) : 0);
+            return (idleTime > 0) ? (idleTime/1000) : 0;
         }
 
         private int GetScreenSaverTimeout()
@@ -1261,19 +1262,19 @@ namespace Ellanet
         private void MoveMouse(Point point)
         {
             var mi = new MOUSEINPUT
-                {
-                    dx = point.X,
-                    dy = point.Y,
-                    mouseData = 0,
-                    time = 0,
-                    dwFlags = Convert.ToInt32(MouseEventFlags.MOVE),
-                    dwExtraInfo = 0
-                };
+            {
+                dx = point.X,
+                dy = point.Y,
+                mouseData = 0,
+                time = 0,
+                dwFlags = Convert.ToInt32(MouseEventFlags.MOVE),
+                dwExtraInfo = 0
+            };
             var input = new INPUT
-                {
-                    mi = mi,
-                    type = Convert.ToInt32(Win32Consts.INPUT_MOUSE)
-                };
+            {
+                mi = mi,
+                type = Convert.ToInt32(Win32Consts.INPUT_MOUSE)
+            };
             SendInput(1, ref input, 28);
         }
 

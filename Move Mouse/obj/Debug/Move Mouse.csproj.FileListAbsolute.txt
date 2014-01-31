@@ -6,3 +6,4 @@ C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Debug\Move Mouse.exe
 C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Debug\Move Mouse.pdb
 C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Debug\Ellanet.Forms.MouseForm.resources
 C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Debug\Ellanet.Forms.ScriptEditor.resources
+C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Debug\Move Mouse.csprojResolveAssemblyReference.cache
