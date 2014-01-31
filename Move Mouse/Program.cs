@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Windows.Forms;
+using Ellanet.Forms;
 
 namespace Ellanet
 {
@@ -25,8 +26,6 @@ namespace Ellanet
             {
                 CloseMoveMouseWithException(ex.Message);
             }
-
-            //todo Simple and advanced mode
         }
 
         private static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
@@ -44,5 +43,9 @@ namespace Ellanet
             MessageBox.Show(exception, "Move Mouse - Generic Exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
             Application.Exit();
         }
+
+        //todo Show famous mice when double-clicking icon
+        //todo Balloon notifications when blackout starts and stops
+        //todo Balloon notifications when scheduling starts and stops
     }
 }

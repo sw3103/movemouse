@@ -1,9 +1,8 @@
 C:\Users\Steve\Desktop\movemouse\Move Mouse\bin\Debug\Move Mouse.exe
 C:\Users\Steve\Desktop\movemouse\Move Mouse\bin\Debug\Move Mouse.pdb
-C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Debug\Ellanet.MouseForm.resources
 C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Debug\Ellanet.Properties.Resources.resources
 C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Debug\Move Mouse.csproj.GenerateResource.Cache
 C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Debug\Move Mouse.exe
 C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Debug\Move Mouse.pdb
-C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Debug\Ellanet.ScriptEditor.resources
-C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Debug\Move Mouse.csprojResolveAssemblyReference.cache
+C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Debug\Ellanet.Forms.MouseForm.resources
+C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Debug\Ellanet.Forms.ScriptEditor.resources
