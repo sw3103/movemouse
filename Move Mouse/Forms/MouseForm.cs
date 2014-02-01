@@ -234,6 +234,10 @@ namespace Ellanet.Forms
             blackoutCheckBox.CheckedChanged += blackoutCheckBox_CheckedChanged;
             customScriptsCheckBox.CheckedChanged += customScriptsCheckBox_CheckedChanged;
             PopulateBlackoutStartEndComboBoxes();
+            scheduleListView.SelectedIndexChanged += scheduleListView_SelectedIndexChanged;
+            scheduleListView.DoubleClick += scheduleListView_DoubleClick;
+            blackoutListView.SelectedIndexChanged += blackoutListView_SelectedIndexChanged;
+            blackoutListView.DoubleClick += blackoutListView_DoubleClick;
             ReadSettings();
             Icon = Properties.Resources.Mouse_Icon;
             Text = String.Format("Move Mouse ({0}.{1}.{2}) - {3}", Assembly.GetExecutingAssembly().GetName().Version.Major, Assembly.GetExecutingAssembly().GetName().Version.Minor, Assembly.GetExecutingAssembly().GetName().Version.Build, HomeAddress);
@@ -269,27 +273,115 @@ namespace Ellanet.Forms
             addScheduleButton.Click += addScheduleButton_Click;
             editScheduleButton.Click += editScheduleButton_Click;
             removeScheduleButton.Click += removeScheduleButton_Click;
+            addBlackoutButton.Click += addBlackoutButton_Click;
+            editBlackoutButton.Click += editBlackoutButton_Click;
+            removeBlackoutButton.Click += removeBlackoutButton_Click;
             SetButtonTag(ref traceButton, GetButtonText(ref traceButton));
         }
 
-        void removeScheduleButton_Click(object sender, EventArgs e)
+        void removeBlackoutButton_Click(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            foreach (ListViewItem lvi in blackoutListView.SelectedItems)
+            {
+                blackoutListView.Items.Remove(lvi);
+            }
         }
 
-        void editScheduleButton_Click(object sender, EventArgs e)
+        void editBlackoutButton_Click(object sender, EventArgs e)
         {
-            TimeSpan ts;
-            TimeSpan.TryParse("13:45:54", out ts);
-            var asf = new AddScheduleForm(ts, "Start");
+            EditSelectedBlackout();
+        }
+
+        void addBlackoutButton_Click(object sender, EventArgs e)
+        {
+            var abf = new AddBlackoutForm();
             Opacity = .75;
 
-            if (asf.ShowDialog() == DialogResult.OK)
+            if (abf.ShowDialog() == DialogResult.OK)
             {
-                Debug.WriteLine(asf.Time);
+                AddBlackoutToListView(abf.Start, abf.End, -1);
             }
 
             Opacity = 1;
+        }
+
+        void blackoutListView_DoubleClick(object sender, EventArgs e)
+        {
+            EditSelectedBlackout();
+        }
+
+        void blackoutListView_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            editBlackoutButton.Enabled = blackoutListView.SelectedItems.Count.Equals(1);
+            removeBlackoutButton.Enabled = blackoutListView.SelectedItems.Count > 0;
+        }
+
+        private void AddBlackoutToListView(TimeSpan start, TimeSpan end, int index)
+        {
+            ListViewItem lvi;
+
+            if ((index > -1) && ((blackoutListView.Items.Count - 1) >= index))
+            {
+                lvi = blackoutListView.Items[index];
+                lvi.SubItems.Clear();
+            }
+            else
+            {
+                lvi = new ListViewItem();
+                blackoutListView.Items.Add(lvi);
+            }
+
+            lvi.Text = start.ToString();
+            lvi.SubItems.Add(end.ToString());
+            blackoutListView.SelectedItems.Clear();
+            lvi.Selected = true;
+            blackoutListView.Select();
+            blackoutListView.Sort();
+        }
+
+        private void EditSelectedBlackout()
+        {
+            if (blackoutListView.SelectedItems.Count > 0)
+            {
+                TimeSpan startTs;
+                TimeSpan endTs;
+                TimeSpan.TryParse(blackoutListView.SelectedItems[0].Text, out startTs);
+                TimeSpan.TryParse(blackoutListView.SelectedItems[0].SubItems[0].ToString(), out endTs);
+                var abf = new AddBlackoutForm(startTs, endTs);
+                Opacity = .75;
+
+                if (abf.ShowDialog() == DialogResult.OK)
+                {
+                    AddBlackoutToListView(abf.Start, abf.End, blackoutListView.SelectedIndices[0]);
+                }
+
+                blackoutListView.Select();
+                Opacity = 1;
+            }
+        }
+
+        private void scheduleListView_DoubleClick(object sender, EventArgs e)
+        {
+            EditSelectedSchedule();
+        }
+
+        private void scheduleListView_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            editScheduleButton.Enabled = scheduleListView.SelectedItems.Count.Equals(1);
+            removeScheduleButton.Enabled = scheduleListView.SelectedItems.Count > 0;
+        }
+
+        private void removeScheduleButton_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem lvi in scheduleListView.SelectedItems)
+            {
+                scheduleListView.Items.Remove(lvi);
+            }
+        }
+
+        private void editScheduleButton_Click(object sender, EventArgs e)
+        {
+            EditSelectedSchedule();
         }
 
         private void addScheduleButton_Click(object sender, EventArgs e)
@@ -299,10 +391,52 @@ namespace Ellanet.Forms
 
             if (asf.ShowDialog() == DialogResult.OK)
             {
-                Debug.WriteLine(asf.Time);
+                AddScheduleToListView(asf.Time, asf.Action, -1);
             }
 
             Opacity = 1;
+        }
+
+        private void AddScheduleToListView(TimeSpan time, string action, int index)
+        {
+            ListViewItem lvi;
+
+            if ((index > -1) && ((scheduleListView.Items.Count - 1) >= index))
+            {
+                lvi = scheduleListView.Items[index];
+                lvi.SubItems.Clear();
+            }
+            else
+            {
+                lvi = new ListViewItem();
+                scheduleListView.Items.Add(lvi);
+            }
+
+            lvi.Text = time.ToString();
+            lvi.SubItems.Add(action);
+            scheduleListView.SelectedItems.Clear();
+            lvi.Selected = true;
+            scheduleListView.Select();
+            scheduleListView.Sort();
+        }
+
+        private void EditSelectedSchedule()
+        {
+            if (scheduleListView.SelectedItems.Count > 0)
+            {
+                TimeSpan ts;
+                TimeSpan.TryParse(scheduleListView.SelectedItems[0].Text, out ts);
+                var asf = new AddScheduleForm(ts, scheduleListView.SelectedItems[0].SubItems[0].ToString());
+                Opacity = .75;
+
+                if (asf.ShowDialog() == DialogResult.OK)
+                {
+                    AddScheduleToListView(asf.Time, asf.Action, scheduleListView.SelectedIndices[0]);
+                }
+
+                scheduleListView.Select();
+                Opacity = 1;
+            }
         }
 
         private void customScriptsCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -603,7 +737,7 @@ namespace Ellanet.Forms
                     {
                         if (!String.IsNullOrEmpty(p.MainWindowTitle) && !processComboBox.Items.Contains(p.MainWindowTitle))
                         {
-                            Debug.WriteLine(p.MainWindowTitle);
+                            //Debug.WriteLine(p.MainWindowTitle);
                             AddComboBoxItem(ref processComboBox, p.MainWindowTitle, ((tag != null) && tag.ToString().Equals(p.MainWindowTitle)));
                         }
                     }
@@ -660,7 +794,7 @@ namespace Ellanet.Forms
         }
 
         private void MouseForm_Load(object sender, EventArgs e)
-        {
+        {            
             if (!Directory.Exists(_moveMouseWorkingDirectory))
             {
                 Directory.CreateDirectory(_moveMouseWorkingDirectory);
@@ -1360,6 +1494,39 @@ namespace Ellanet.Forms
                     MinimiseToSystemTrayWarningShown = Convert.ToBoolean(settingsXmlDoc.SelectSingleNode("settings/system_tray_warning_shown").InnerText);
                     customScriptsCheckBox.Checked = Convert.ToBoolean(settingsXmlDoc.SelectSingleNode("settings/enable_custom_scripts").InnerText);
                     _scriptEditor = settingsXmlDoc.SelectSingleNode("settings/script_editor").InnerText;
+
+                    if (settingsXmlDoc.SelectNodes("settings/schedules/schedule").Count > 0)
+                    {
+                        foreach (XmlNode scheduleNode in settingsXmlDoc.SelectNodes("settings/schedules/schedule"))
+                        {
+                            TimeSpan ts;
+
+                            if (TimeSpan.TryParse(scheduleNode.SelectSingleNode("time").InnerText, out ts))
+                            {
+                                AddScheduleToListView(ts, scheduleNode.SelectSingleNode("action").InnerText, -1);
+                            }
+                        }
+                    }
+
+                    if (settingsXmlDoc.SelectNodes("settings/blackouts/blackout").Count > 0)
+                    {
+                        foreach (XmlNode blackoutNode in settingsXmlDoc.SelectNodes("settings/blackouts/blackout"))
+                        {
+                            TimeSpan startTs;
+                            TimeSpan endTs;
+
+                            if (TimeSpan.TryParse(blackoutNode.SelectSingleNode("start").InnerText, out startTs) && TimeSpan.TryParse(blackoutNode.SelectSingleNode("end").InnerText, out endTs))
+                            {
+                                AddBlackoutToListView(startTs, endTs, -1);
+                            }
+                        }
+                    }
+
+                    //todo Need to fix this
+                    Debug.WriteLine(scheduleListView.SelectedItems.Count);
+                    scheduleListView.SelectedItems.Clear();
+                    Debug.WriteLine(scheduleListView.SelectedItems.Count);
+                    blackoutListView.SelectedItems.Clear();
                 }
             }
             catch (Exception ex)
@@ -1373,7 +1540,7 @@ namespace Ellanet.Forms
             try
             {
                 var settingsXmlDoc = new XmlDocument();
-                settingsXmlDoc.LoadXml("<settings><second_delay /><move_mouse_pointer /><stealth_mode /><enable_static_position /><x_static_position /><y_static_position /><click_left_mouse_button /><send_keystroke /><keystroke /><pause_when_mouse_moved /><automatically_resume /><resume_seconds /><automatically_start_on_launch /><automatically_launch_on_logon /><minimise_on_pause /><minimise_on_start /><minimise_to_system_tray /><activate_application /><activate_application_title /><blackout_schedule_enabled /><blackout_schedule_scope /><blackout_schedule_start /><blackout_schedule_end /><last_update_check /><system_tray_warning_shown /><enable_custom_scripts /><script_editor /></settings>");
+                settingsXmlDoc.LoadXml("<settings><second_delay /><move_mouse_pointer /><stealth_mode /><enable_static_position /><x_static_position /><y_static_position /><click_left_mouse_button /><send_keystroke /><keystroke /><pause_when_mouse_moved /><automatically_resume /><resume_seconds /><automatically_start_on_launch /><automatically_launch_on_logon /><minimise_on_pause /><minimise_on_start /><minimise_to_system_tray /><activate_application /><activate_application_title /><blackout_schedule_enabled /><blackout_schedule_scope /><blackout_schedule_start /><blackout_schedule_end /><last_update_check /><system_tray_warning_shown /><enable_custom_scripts /><script_editor /><schedules /><blackouts /></settings>");
                 settingsXmlDoc.SelectSingleNode("settings/second_delay").InnerText = Convert.ToDecimal(delayNumericUpDown.Value).ToString(CultureInfo.InvariantCulture);
                 settingsXmlDoc.SelectSingleNode("settings/move_mouse_pointer").InnerText = moveMouseCheckBox.Checked.ToString();
                 settingsXmlDoc.SelectSingleNode("settings/stealth_mode").InnerText = stealthCheckBox.Checked.ToString();
@@ -1401,6 +1568,31 @@ namespace Ellanet.Forms
                 settingsXmlDoc.SelectSingleNode("settings/system_tray_warning_shown").InnerText = "True";
                 settingsXmlDoc.SelectSingleNode("settings/enable_custom_scripts").InnerText = customScriptsCheckBox.Checked.ToString();
                 settingsXmlDoc.SelectSingleNode("settings/script_editor").InnerText = _scriptEditor;
+
+                if (scheduleListView.Items.Count > 0)
+                {
+                    foreach (ListViewItem lvi in scheduleListView.Items)
+                    {
+                        var scheduleNode = settingsXmlDoc.CreateElement("schedule");
+                        scheduleNode.InnerXml = "<time /><action />";
+                        scheduleNode.SelectSingleNode("time").InnerText = lvi.SubItems[0].Text;
+                        scheduleNode.SelectSingleNode("action").InnerText = lvi.SubItems[1].Text;
+                        settingsXmlDoc.SelectSingleNode("settings/schedules").AppendChild(scheduleNode);
+                    }
+                }
+
+                if (blackoutListView.Items.Count > 0)
+                {
+                    foreach (ListViewItem lvi in blackoutListView.Items)
+                    {
+                        var blackoutNode = settingsXmlDoc.CreateElement("blackout");
+                        blackoutNode.InnerXml = "<start /><end />";
+                        blackoutNode.SelectSingleNode("start").InnerText = lvi.SubItems[0].Text;
+                        blackoutNode.SelectSingleNode("end").InnerText = lvi.SubItems[1].Text;
+                        settingsXmlDoc.SelectSingleNode("settings/blackouts").AppendChild(blackoutNode);
+                    }
+                }
+
                 settingsXmlDoc.Save(Path.Combine(_moveMouseWorkingDirectory, MoveMouseXmlName));
                 processComboBox.Tag = processComboBox.Text;
             }

@@ -47,5 +47,6 @@ namespace Ellanet
         //todo Show famous mice when double-clicking icon
         //todo Balloon notifications when blackout starts and stops
         //todo Balloon notifications when scheduling starts and stops
+        //todo One time upgrade for XML
     }
 }

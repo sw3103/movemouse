@@ -53,10 +53,6 @@
             this.processComboBox = new System.Windows.Forms.ComboBox();
             this.appActivateCheckBox = new System.Windows.Forms.CheckBox();
             this.helpPictureBox = new System.Windows.Forms.PictureBox();
-            this.insideOutsideComboBox = new System.Windows.Forms.ComboBox();
-            this.blackoutCheckBox = new System.Windows.Forms.CheckBox();
-            this.boStartComboBox = new System.Windows.Forms.ComboBox();
-            this.boEndComboBox = new System.Windows.Forms.ComboBox();
             this.contactPictureBox = new System.Windows.Forms.PictureBox();
             this.paypalPictureBox = new System.Windows.Forms.PictureBox();
             this.refreshButton = new System.Windows.Forms.Button();
@@ -68,14 +64,24 @@
             this.actionsTabPage = new System.Windows.Forms.TabPage();
             this.blackoutsTabPage = new System.Windows.Forms.TabPage();
             this.schedulesTabPage = new System.Windows.Forms.TabPage();
+            this.removeScheduleButton = new System.Windows.Forms.Button();
+            this.editScheduleButton = new System.Windows.Forms.Button();
+            this.addScheduleButton = new System.Windows.Forms.Button();
             this.scheduleListView = new System.Windows.Forms.ListView();
             this.timeColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.actionColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.scriptsTabPage = new System.Windows.Forms.TabPage();
             this.behaviourTabPage = new System.Windows.Forms.TabPage();
-            this.addScheduleButton = new System.Windows.Forms.Button();
-            this.actionColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.editScheduleButton = new System.Windows.Forms.Button();
-            this.removeScheduleButton = new System.Windows.Forms.Button();
+            this.boEndComboBox = new System.Windows.Forms.ComboBox();
+            this.blackoutCheckBox = new System.Windows.Forms.CheckBox();
+            this.insideOutsideComboBox = new System.Windows.Forms.ComboBox();
+            this.boStartComboBox = new System.Windows.Forms.ComboBox();
+            this.removeBlackoutButton = new System.Windows.Forms.Button();
+            this.editBlackoutButton = new System.Windows.Forms.Button();
+            this.addBlackoutButton = new System.Windows.Forms.Button();
+            this.blackoutListView = new System.Windows.Forms.ListView();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             ((System.ComponentModel.ISupportInitialize)(this.mousePictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.delayNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.resumeNumericUpDown)).BeginInit();
@@ -419,49 +425,6 @@
             this.helpPictureBox.TabIndex = 21;
             this.helpPictureBox.TabStop = false;
             // 
-            // insideOutsideComboBox
-            // 
-            this.insideOutsideComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.insideOutsideComboBox.Enabled = false;
-            this.insideOutsideComboBox.FormattingEnabled = true;
-            this.insideOutsideComboBox.Items.AddRange(new object[] {
-            "outside",
-            "inside"});
-            this.insideOutsideComboBox.Location = new System.Drawing.Point(15, 79);
-            this.insideOutsideComboBox.Name = "insideOutsideComboBox";
-            this.insideOutsideComboBox.Size = new System.Drawing.Size(79, 24);
-            this.insideOutsideComboBox.TabIndex = 17;
-            // 
-            // blackoutCheckBox
-            // 
-            this.blackoutCheckBox.AutoSize = true;
-            this.blackoutCheckBox.Location = new System.Drawing.Point(18, 20);
-            this.blackoutCheckBox.Name = "blackoutCheckBox";
-            this.blackoutCheckBox.Size = new System.Drawing.Size(176, 20);
-            this.blackoutCheckBox.TabIndex = 16;
-            this.blackoutCheckBox.Text = "Enable blackout schedules";
-            this.blackoutCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // boStartComboBox
-            // 
-            this.boStartComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.boStartComboBox.Enabled = false;
-            this.boStartComboBox.FormattingEnabled = true;
-            this.boStartComboBox.Location = new System.Drawing.Point(161, 79);
-            this.boStartComboBox.Name = "boStartComboBox";
-            this.boStartComboBox.Size = new System.Drawing.Size(79, 24);
-            this.boStartComboBox.TabIndex = 18;
-            // 
-            // boEndComboBox
-            // 
-            this.boEndComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.boEndComboBox.Enabled = false;
-            this.boEndComboBox.FormattingEnabled = true;
-            this.boEndComboBox.Location = new System.Drawing.Point(283, 79);
-            this.boEndComboBox.Name = "boEndComboBox";
-            this.boEndComboBox.Size = new System.Drawing.Size(79, 24);
-            this.boEndComboBox.TabIndex = 19;
-            // 
             // contactPictureBox
             // 
             this.contactPictureBox.Image = global::Ellanet.Properties.Resources.Contact_Image;
@@ -529,10 +492,10 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.optionsTabControl.Controls.Add(this.mouseTabPage);
             this.optionsTabControl.Controls.Add(this.actionsTabPage);
-            this.optionsTabControl.Controls.Add(this.blackoutsTabPage);
-            this.optionsTabControl.Controls.Add(this.schedulesTabPage);
-            this.optionsTabControl.Controls.Add(this.scriptsTabPage);
             this.optionsTabControl.Controls.Add(this.behaviourTabPage);
+            this.optionsTabControl.Controls.Add(this.scriptsTabPage);
+            this.optionsTabControl.Controls.Add(this.schedulesTabPage);
+            this.optionsTabControl.Controls.Add(this.blackoutsTabPage);
             this.optionsTabControl.Location = new System.Drawing.Point(12, 12);
             this.optionsTabControl.Name = "optionsTabControl";
             this.optionsTabControl.SelectedIndex = 0;
@@ -578,10 +541,10 @@
             // 
             // blackoutsTabPage
             // 
-            this.blackoutsTabPage.Controls.Add(this.boEndComboBox);
-            this.blackoutsTabPage.Controls.Add(this.blackoutCheckBox);
-            this.blackoutsTabPage.Controls.Add(this.insideOutsideComboBox);
-            this.blackoutsTabPage.Controls.Add(this.boStartComboBox);
+            this.blackoutsTabPage.Controls.Add(this.removeBlackoutButton);
+            this.blackoutsTabPage.Controls.Add(this.editBlackoutButton);
+            this.blackoutsTabPage.Controls.Add(this.addBlackoutButton);
+            this.blackoutsTabPage.Controls.Add(this.blackoutListView);
             this.blackoutsTabPage.Location = new System.Drawing.Point(4, 25);
             this.blackoutsTabPage.Name = "blackoutsTabPage";
             this.blackoutsTabPage.Padding = new System.Windows.Forms.Padding(3);
@@ -603,6 +566,38 @@
             this.schedulesTabPage.Text = "Schedules";
             this.schedulesTabPage.UseVisualStyleBackColor = true;
             // 
+            // removeScheduleButton
+            // 
+            this.removeScheduleButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.removeScheduleButton.Enabled = false;
+            this.removeScheduleButton.Location = new System.Drawing.Point(369, 152);
+            this.removeScheduleButton.Name = "removeScheduleButton";
+            this.removeScheduleButton.Size = new System.Drawing.Size(75, 23);
+            this.removeScheduleButton.TabIndex = 3;
+            this.removeScheduleButton.Text = "Remove";
+            this.removeScheduleButton.UseVisualStyleBackColor = true;
+            // 
+            // editScheduleButton
+            // 
+            this.editScheduleButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.editScheduleButton.Enabled = false;
+            this.editScheduleButton.Location = new System.Drawing.Point(369, 109);
+            this.editScheduleButton.Name = "editScheduleButton";
+            this.editScheduleButton.Size = new System.Drawing.Size(75, 23);
+            this.editScheduleButton.TabIndex = 2;
+            this.editScheduleButton.Text = "Edit";
+            this.editScheduleButton.UseVisualStyleBackColor = true;
+            // 
+            // addScheduleButton
+            // 
+            this.addScheduleButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.addScheduleButton.Location = new System.Drawing.Point(369, 66);
+            this.addScheduleButton.Name = "addScheduleButton";
+            this.addScheduleButton.Size = new System.Drawing.Size(75, 23);
+            this.addScheduleButton.TabIndex = 1;
+            this.addScheduleButton.Text = "Add";
+            this.addScheduleButton.UseVisualStyleBackColor = true;
+            // 
             // scheduleListView
             // 
             this.scheduleListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
@@ -622,8 +617,17 @@
             this.timeColumnHeader.Text = "Time";
             this.timeColumnHeader.Width = 125;
             // 
+            // actionColumnHeader
+            // 
+            this.actionColumnHeader.Text = "Action";
+            this.actionColumnHeader.Width = 125;
+            // 
             // scriptsTabPage
             // 
+            this.scriptsTabPage.Controls.Add(this.boEndComboBox);
+            this.scriptsTabPage.Controls.Add(this.blackoutCheckBox);
+            this.scriptsTabPage.Controls.Add(this.insideOutsideComboBox);
+            this.scriptsTabPage.Controls.Add(this.boStartComboBox);
             this.scriptsTabPage.Controls.Add(this.customScriptsCheckBox);
             this.scriptsTabPage.Controls.Add(this.editScriptButton);
             this.scriptsTabPage.Controls.Add(this.scriptsHelpPictureBox);
@@ -651,40 +655,104 @@
             this.behaviourTabPage.Text = "Behaviour";
             this.behaviourTabPage.UseVisualStyleBackColor = true;
             // 
-            // addScheduleButton
+            // boEndComboBox
             // 
-            this.addScheduleButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.addScheduleButton.Location = new System.Drawing.Point(368, 66);
-            this.addScheduleButton.Name = "addScheduleButton";
-            this.addScheduleButton.Size = new System.Drawing.Size(75, 23);
-            this.addScheduleButton.TabIndex = 1;
-            this.addScheduleButton.Text = "Add";
-            this.addScheduleButton.UseVisualStyleBackColor = true;
+            this.boEndComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.boEndComboBox.Enabled = false;
+            this.boEndComboBox.FormattingEnabled = true;
+            this.boEndComboBox.Location = new System.Drawing.Point(328, 138);
+            this.boEndComboBox.Name = "boEndComboBox";
+            this.boEndComboBox.Size = new System.Drawing.Size(79, 24);
+            this.boEndComboBox.TabIndex = 33;
             // 
-            // actionColumnHeader
+            // blackoutCheckBox
             // 
-            this.actionColumnHeader.Text = "Action";
-            this.actionColumnHeader.Width = 125;
+            this.blackoutCheckBox.AutoSize = true;
+            this.blackoutCheckBox.Location = new System.Drawing.Point(63, 79);
+            this.blackoutCheckBox.Name = "blackoutCheckBox";
+            this.blackoutCheckBox.Size = new System.Drawing.Size(176, 20);
+            this.blackoutCheckBox.TabIndex = 30;
+            this.blackoutCheckBox.Text = "Enable blackout schedules";
+            this.blackoutCheckBox.UseVisualStyleBackColor = true;
             // 
-            // editScheduleButton
+            // insideOutsideComboBox
             // 
-            this.editScheduleButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.editScheduleButton.Location = new System.Drawing.Point(368, 109);
-            this.editScheduleButton.Name = "editScheduleButton";
-            this.editScheduleButton.Size = new System.Drawing.Size(75, 23);
-            this.editScheduleButton.TabIndex = 2;
-            this.editScheduleButton.Text = "Edit";
-            this.editScheduleButton.UseVisualStyleBackColor = true;
+            this.insideOutsideComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.insideOutsideComboBox.Enabled = false;
+            this.insideOutsideComboBox.FormattingEnabled = true;
+            this.insideOutsideComboBox.Items.AddRange(new object[] {
+            "outside",
+            "inside"});
+            this.insideOutsideComboBox.Location = new System.Drawing.Point(60, 138);
+            this.insideOutsideComboBox.Name = "insideOutsideComboBox";
+            this.insideOutsideComboBox.Size = new System.Drawing.Size(79, 24);
+            this.insideOutsideComboBox.TabIndex = 31;
             // 
-            // removeScheduleButton
+            // boStartComboBox
             // 
-            this.removeScheduleButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.removeScheduleButton.Location = new System.Drawing.Point(368, 152);
-            this.removeScheduleButton.Name = "removeScheduleButton";
-            this.removeScheduleButton.Size = new System.Drawing.Size(75, 23);
-            this.removeScheduleButton.TabIndex = 3;
-            this.removeScheduleButton.Text = "Remove";
-            this.removeScheduleButton.UseVisualStyleBackColor = true;
+            this.boStartComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.boStartComboBox.Enabled = false;
+            this.boStartComboBox.FormattingEnabled = true;
+            this.boStartComboBox.Location = new System.Drawing.Point(206, 138);
+            this.boStartComboBox.Name = "boStartComboBox";
+            this.boStartComboBox.Size = new System.Drawing.Size(79, 24);
+            this.boStartComboBox.TabIndex = 32;
+            // 
+            // removeBlackoutButton
+            // 
+            this.removeBlackoutButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.removeBlackoutButton.Enabled = false;
+            this.removeBlackoutButton.Location = new System.Drawing.Point(369, 152);
+            this.removeBlackoutButton.Name = "removeBlackoutButton";
+            this.removeBlackoutButton.Size = new System.Drawing.Size(75, 23);
+            this.removeBlackoutButton.TabIndex = 7;
+            this.removeBlackoutButton.Text = "Remove";
+            this.removeBlackoutButton.UseVisualStyleBackColor = true;
+            // 
+            // editBlackoutButton
+            // 
+            this.editBlackoutButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.editBlackoutButton.Enabled = false;
+            this.editBlackoutButton.Location = new System.Drawing.Point(369, 109);
+            this.editBlackoutButton.Name = "editBlackoutButton";
+            this.editBlackoutButton.Size = new System.Drawing.Size(75, 23);
+            this.editBlackoutButton.TabIndex = 6;
+            this.editBlackoutButton.Text = "Edit";
+            this.editBlackoutButton.UseVisualStyleBackColor = true;
+            // 
+            // addBlackoutButton
+            // 
+            this.addBlackoutButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.addBlackoutButton.Location = new System.Drawing.Point(369, 66);
+            this.addBlackoutButton.Name = "addBlackoutButton";
+            this.addBlackoutButton.Size = new System.Drawing.Size(75, 23);
+            this.addBlackoutButton.TabIndex = 5;
+            this.addBlackoutButton.Text = "Add";
+            this.addBlackoutButton.UseVisualStyleBackColor = true;
+            // 
+            // blackoutListView
+            // 
+            this.blackoutListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1,
+            this.columnHeader2});
+            this.blackoutListView.FullRowSelect = true;
+            this.blackoutListView.Location = new System.Drawing.Point(20, 20);
+            this.blackoutListView.Name = "blackoutListView";
+            this.blackoutListView.Size = new System.Drawing.Size(327, 201);
+            this.blackoutListView.Sorting = System.Windows.Forms.SortOrder.Ascending;
+            this.blackoutListView.TabIndex = 4;
+            this.blackoutListView.UseCompatibleStateImageBehavior = false;
+            this.blackoutListView.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "Time";
+            this.columnHeader1.Width = 125;
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "Action";
+            this.columnHeader2.Width = 125;
             // 
             // MouseForm
             // 
@@ -715,7 +783,6 @@
             this.actionsTabPage.ResumeLayout(false);
             this.actionsTabPage.PerformLayout();
             this.blackoutsTabPage.ResumeLayout(false);
-            this.blackoutsTabPage.PerformLayout();
             this.schedulesTabPage.ResumeLayout(false);
             this.scriptsTabPage.ResumeLayout(false);
             this.scriptsTabPage.PerformLayout();
@@ -752,10 +819,6 @@
         private System.Windows.Forms.ComboBox processComboBox;
         private System.Windows.Forms.CheckBox appActivateCheckBox;
         private System.Windows.Forms.PictureBox helpPictureBox;
-        private System.Windows.Forms.ComboBox insideOutsideComboBox;
-        private System.Windows.Forms.CheckBox blackoutCheckBox;
-        private System.Windows.Forms.ComboBox boStartComboBox;
-        private System.Windows.Forms.ComboBox boEndComboBox;
         private System.Windows.Forms.PictureBox contactPictureBox;
         private System.Windows.Forms.PictureBox paypalPictureBox;
         private System.Windows.Forms.Button refreshButton;
@@ -775,5 +838,15 @@
         private System.Windows.Forms.ColumnHeader actionColumnHeader;
         private System.Windows.Forms.Button removeScheduleButton;
         private System.Windows.Forms.Button editScheduleButton;
+        private System.Windows.Forms.ComboBox boEndComboBox;
+        private System.Windows.Forms.CheckBox blackoutCheckBox;
+        private System.Windows.Forms.ComboBox insideOutsideComboBox;
+        private System.Windows.Forms.ComboBox boStartComboBox;
+        private System.Windows.Forms.Button removeBlackoutButton;
+        private System.Windows.Forms.Button editBlackoutButton;
+        private System.Windows.Forms.Button addBlackoutButton;
+        private System.Windows.Forms.ListView blackoutListView;
+        private System.Windows.Forms.ColumnHeader columnHeader1;
+        private System.Windows.Forms.ColumnHeader columnHeader2;
     }
 }

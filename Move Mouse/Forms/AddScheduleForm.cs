@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Ellanet.Forms
@@ -36,11 +31,11 @@ namespace Ellanet.Forms
             okButton.Click += okButton_Click;
         }
 
-        void okButton_Click(object sender, EventArgs e)
+        private void okButton_Click(object sender, EventArgs e)
         {
             Time = new TimeSpan(Convert.ToInt32(hourNumericUpDown.Value), Convert.ToInt32(minuteNumericUpDown.Value), Convert.ToInt32(secondNumericUpDown.Value));
             Action = actionComboBox.SelectedItem.ToString();
-           DialogResult = DialogResult.OK;
+            DialogResult = DialogResult.OK;
             Close();
         }
     }
