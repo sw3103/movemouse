@@ -266,7 +266,43 @@ namespace Ellanet.Forms
             scriptsHelpPictureBox.MouseEnter += scriptsHelpPictureBox_MouseEnter;
             scriptsHelpPictureBox.MouseLeave += scriptsHelpPictureBox_MouseLeave;
             scriptsHelpPictureBox.MouseClick += scriptsHelpPictureBox_MouseClick;
+            addScheduleButton.Click += addScheduleButton_Click;
+            editScheduleButton.Click += editScheduleButton_Click;
+            removeScheduleButton.Click += removeScheduleButton_Click;
             SetButtonTag(ref traceButton, GetButtonText(ref traceButton));
+        }
+
+        void removeScheduleButton_Click(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        void editScheduleButton_Click(object sender, EventArgs e)
+        {
+            TimeSpan ts;
+            TimeSpan.TryParse("13:45:54", out ts);
+            var asf = new AddScheduleForm(ts, "Start");
+            Opacity = .75;
+
+            if (asf.ShowDialog() == DialogResult.OK)
+            {
+                Debug.WriteLine(asf.Time);
+            }
+
+            Opacity = 1;
+        }
+
+        private void addScheduleButton_Click(object sender, EventArgs e)
+        {
+            var asf = new AddScheduleForm();
+            Opacity = .75;
+
+            if (asf.ShowDialog() == DialogResult.OK)
+            {
+                Debug.WriteLine(asf.Time);
+            }
+
+            Opacity = 1;
         }
 
         private void customScriptsCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -803,6 +839,7 @@ namespace Ellanet.Forms
                     _resumeTimer.Start();
                     actionButton.Text = "Start";
                     countdownProgressBar.Value = 0;
+                    optionsTabControl.Enabled = true;
                     Opacity = 1.0;
                     //this.TopMost = false;
 
@@ -821,6 +858,7 @@ namespace Ellanet.Forms
                     _moveMouseThread.Start();
                     actionButton.Text = "Pause";
                     optionsTabControl.SelectedTab = mouseTabPage;
+                    optionsTabControl.Enabled = false;
                     Opacity = .75;
                     _mmStartTime = DateTime.Now;
                     WindowState = minimiseOnStartCheckBox.Checked ? FormWindowState.Minimized : FormWindowState.Normal;

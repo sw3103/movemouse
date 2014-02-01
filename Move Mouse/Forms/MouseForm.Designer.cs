@@ -64,12 +64,18 @@
             this.scriptsHelpPictureBox = new System.Windows.Forms.PictureBox();
             this.editScriptButton = new System.Windows.Forms.Button();
             this.optionsTabControl = new System.Windows.Forms.TabControl();
+            this.mouseTabPage = new System.Windows.Forms.TabPage();
             this.actionsTabPage = new System.Windows.Forms.TabPage();
             this.blackoutsTabPage = new System.Windows.Forms.TabPage();
             this.schedulesTabPage = new System.Windows.Forms.TabPage();
+            this.scheduleListView = new System.Windows.Forms.ListView();
+            this.timeColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.scriptsTabPage = new System.Windows.Forms.TabPage();
             this.behaviourTabPage = new System.Windows.Forms.TabPage();
-            this.mouseTabPage = new System.Windows.Forms.TabPage();
+            this.addScheduleButton = new System.Windows.Forms.Button();
+            this.actionColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.editScheduleButton = new System.Windows.Forms.Button();
+            this.removeScheduleButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.mousePictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.delayNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.resumeNumericUpDown)).BeginInit();
@@ -80,11 +86,12 @@
             ((System.ComponentModel.ISupportInitialize)(this.paypalPictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.scriptsHelpPictureBox)).BeginInit();
             this.optionsTabControl.SuspendLayout();
+            this.mouseTabPage.SuspendLayout();
             this.actionsTabPage.SuspendLayout();
             this.blackoutsTabPage.SuspendLayout();
+            this.schedulesTabPage.SuspendLayout();
             this.scriptsTabPage.SuspendLayout();
             this.behaviourTabPage.SuspendLayout();
-            this.mouseTabPage.SuspendLayout();
             this.SuspendLayout();
             // 
             // mousePictureBox
@@ -532,6 +539,19 @@
             this.optionsTabControl.Size = new System.Drawing.Size(475, 269);
             this.optionsTabControl.TabIndex = 30;
             // 
+            // mouseTabPage
+            // 
+            this.mouseTabPage.Controls.Add(this.paypalPictureBox);
+            this.mouseTabPage.Controls.Add(this.contactPictureBox);
+            this.mouseTabPage.Controls.Add(this.helpPictureBox);
+            this.mouseTabPage.Controls.Add(this.mousePictureBox);
+            this.mouseTabPage.Location = new System.Drawing.Point(4, 25);
+            this.mouseTabPage.Name = "mouseTabPage";
+            this.mouseTabPage.Size = new System.Drawing.Size(467, 240);
+            this.mouseTabPage.TabIndex = 4;
+            this.mouseTabPage.Text = "Mouse";
+            this.mouseTabPage.UseVisualStyleBackColor = true;
+            // 
             // actionsTabPage
             // 
             this.actionsTabPage.Controls.Add(this.delayNumericUpDown);
@@ -572,12 +592,35 @@
             // 
             // schedulesTabPage
             // 
+            this.schedulesTabPage.Controls.Add(this.removeScheduleButton);
+            this.schedulesTabPage.Controls.Add(this.editScheduleButton);
+            this.schedulesTabPage.Controls.Add(this.addScheduleButton);
+            this.schedulesTabPage.Controls.Add(this.scheduleListView);
             this.schedulesTabPage.Location = new System.Drawing.Point(4, 25);
             this.schedulesTabPage.Name = "schedulesTabPage";
             this.schedulesTabPage.Size = new System.Drawing.Size(467, 240);
             this.schedulesTabPage.TabIndex = 5;
             this.schedulesTabPage.Text = "Schedules";
             this.schedulesTabPage.UseVisualStyleBackColor = true;
+            // 
+            // scheduleListView
+            // 
+            this.scheduleListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.timeColumnHeader,
+            this.actionColumnHeader});
+            this.scheduleListView.FullRowSelect = true;
+            this.scheduleListView.Location = new System.Drawing.Point(20, 20);
+            this.scheduleListView.Name = "scheduleListView";
+            this.scheduleListView.Size = new System.Drawing.Size(327, 201);
+            this.scheduleListView.Sorting = System.Windows.Forms.SortOrder.Ascending;
+            this.scheduleListView.TabIndex = 0;
+            this.scheduleListView.UseCompatibleStateImageBehavior = false;
+            this.scheduleListView.View = System.Windows.Forms.View.Details;
+            // 
+            // timeColumnHeader
+            // 
+            this.timeColumnHeader.Text = "Time";
+            this.timeColumnHeader.Width = 125;
             // 
             // scriptsTabPage
             // 
@@ -608,18 +651,40 @@
             this.behaviourTabPage.Text = "Behaviour";
             this.behaviourTabPage.UseVisualStyleBackColor = true;
             // 
-            // mouseTabPage
+            // addScheduleButton
             // 
-            this.mouseTabPage.Controls.Add(this.paypalPictureBox);
-            this.mouseTabPage.Controls.Add(this.contactPictureBox);
-            this.mouseTabPage.Controls.Add(this.helpPictureBox);
-            this.mouseTabPage.Controls.Add(this.mousePictureBox);
-            this.mouseTabPage.Location = new System.Drawing.Point(4, 25);
-            this.mouseTabPage.Name = "mouseTabPage";
-            this.mouseTabPage.Size = new System.Drawing.Size(467, 240);
-            this.mouseTabPage.TabIndex = 4;
-            this.mouseTabPage.Text = "Mouse";
-            this.mouseTabPage.UseVisualStyleBackColor = true;
+            this.addScheduleButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.addScheduleButton.Location = new System.Drawing.Point(368, 66);
+            this.addScheduleButton.Name = "addScheduleButton";
+            this.addScheduleButton.Size = new System.Drawing.Size(75, 23);
+            this.addScheduleButton.TabIndex = 1;
+            this.addScheduleButton.Text = "Add";
+            this.addScheduleButton.UseVisualStyleBackColor = true;
+            // 
+            // actionColumnHeader
+            // 
+            this.actionColumnHeader.Text = "Action";
+            this.actionColumnHeader.Width = 125;
+            // 
+            // editScheduleButton
+            // 
+            this.editScheduleButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.editScheduleButton.Location = new System.Drawing.Point(368, 109);
+            this.editScheduleButton.Name = "editScheduleButton";
+            this.editScheduleButton.Size = new System.Drawing.Size(75, 23);
+            this.editScheduleButton.TabIndex = 2;
+            this.editScheduleButton.Text = "Edit";
+            this.editScheduleButton.UseVisualStyleBackColor = true;
+            // 
+            // removeScheduleButton
+            // 
+            this.removeScheduleButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.removeScheduleButton.Location = new System.Drawing.Point(368, 152);
+            this.removeScheduleButton.Name = "removeScheduleButton";
+            this.removeScheduleButton.Size = new System.Drawing.Size(75, 23);
+            this.removeScheduleButton.TabIndex = 3;
+            this.removeScheduleButton.Text = "Remove";
+            this.removeScheduleButton.UseVisualStyleBackColor = true;
             // 
             // MouseForm
             // 
@@ -646,15 +711,16 @@
             ((System.ComponentModel.ISupportInitialize)(this.paypalPictureBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.scriptsHelpPictureBox)).EndInit();
             this.optionsTabControl.ResumeLayout(false);
+            this.mouseTabPage.ResumeLayout(false);
             this.actionsTabPage.ResumeLayout(false);
             this.actionsTabPage.PerformLayout();
             this.blackoutsTabPage.ResumeLayout(false);
             this.blackoutsTabPage.PerformLayout();
+            this.schedulesTabPage.ResumeLayout(false);
             this.scriptsTabPage.ResumeLayout(false);
             this.scriptsTabPage.PerformLayout();
             this.behaviourTabPage.ResumeLayout(false);
             this.behaviourTabPage.PerformLayout();
-            this.mouseTabPage.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -703,5 +769,11 @@
         private System.Windows.Forms.TabPage mouseTabPage;
         private System.Windows.Forms.TabPage behaviourTabPage;
         private System.Windows.Forms.TabPage schedulesTabPage;
+        private System.Windows.Forms.ListView scheduleListView;
+        private System.Windows.Forms.ColumnHeader timeColumnHeader;
+        private System.Windows.Forms.Button addScheduleButton;
+        private System.Windows.Forms.ColumnHeader actionColumnHeader;
+        private System.Windows.Forms.Button removeScheduleButton;
+        private System.Windows.Forms.Button editScheduleButton;
     }
 }
