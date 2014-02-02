@@ -1,4 +1,5 @@
-﻿using Ellanet.Events;
+﻿using Ellanet.Classes;
+using Ellanet.Events;
 using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
@@ -24,12 +25,13 @@ namespace Ellanet.Forms
         private const string ScriptsHelpAddress = "https://movemouse.codeplex.com/wikipage?title=Custom%20Scripts";
         private const string PayPalAddress = "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=QZTWHD9CRW5XN";
         private const string VersionXmlUrl = "https://movemouse.svn.codeplex.com/svn/Version.xml";
-        private const string StartScriptName = "Move Mouse - Start.vbs";
-        private const string IntervalScriptName = "Move Mouse - Interval.vbs";
-        private const string PauseScriptName = "Move Mouse - Pause.vbs";
+        private const string StartScriptName = "Move Mouse - Start";
+        private const string IntervalScriptName = "Move Mouse - Interval";
+        private const string PauseScriptName = "Move Mouse - Pause";
+        private const int MaxScriptPathLength = 40;
 
         private readonly TimeSpan _waitBetweenUpdateChecks = new TimeSpan(7, 0, 0, 0);
-        private readonly TimeSpan _waitUntilAutoMoveDetect = new TimeSpan(0, 0, 5);
+        private readonly TimeSpan _waitUntilAutoMoveDetect = new TimeSpan(0, 0, 2);
         private readonly System.Windows.Forms.Timer _resumeTimer = new System.Windows.Forms.Timer();
         private readonly string _moveMouseWorkingDirectory = Environment.ExpandEnvironmentVariables(@"%APPDATA%\Ellanet\Move Mouse");
         private readonly bool _suppressAutoStart;
@@ -41,6 +43,7 @@ namespace Ellanet.Forms
         private BlackoutStatusChangeEventArgs.BlackoutStatus _blackoutStatus = BlackoutStatusChangeEventArgs.BlackoutStatus.Ended;
         private DateTime _lastUpdateCheck = DateTime.MinValue;
         private string _scriptEditor = Path.Combine(Environment.ExpandEnvironmentVariables("%WINDIR%"), @"System32\notepad.exe");
+        private List<ScriptingLanguage> _scriptingLanguages;
 
         private delegate void UpdateCountdownProgressBarDelegate(ref ProgressBar pb, int delay, int elapsed);
 
@@ -78,6 +81,13 @@ namespace Ellanet.Forms
         public event NewVersionAvailableHandler NewVersionAvailable;
 
         public bool MinimiseToSystemTrayWarningShown { get; private set; }
+
+        private enum Script
+        {
+            Start,
+            Interval,
+            Pause
+        }
 
         // ReSharper disable UnusedMember.Local
         // ReSharper disable InconsistentNaming
@@ -238,6 +248,8 @@ namespace Ellanet.Forms
             scheduleListView.DoubleClick += scheduleListView_DoubleClick;
             blackoutListView.SelectedIndexChanged += blackoutListView_SelectedIndexChanged;
             blackoutListView.DoubleClick += blackoutListView_DoubleClick;
+            scriptEditorLabel.TextChanged += scriptEditorLabel_TextChanged;
+            ListScriptingLanguages();
             ReadSettings();
             Icon = Properties.Resources.Mouse_Icon;
             Text = String.Format("Move Mouse ({0}.{1}.{2}) - {3}", Assembly.GetExecutingAssembly().GetName().Version.Major, Assembly.GetExecutingAssembly().GetName().Version.Minor, Assembly.GetExecutingAssembly().GetName().Version.Build, HomeAddress);
@@ -266,7 +278,6 @@ namespace Ellanet.Forms
             boStartComboBox.SelectedIndexChanged += boStartComboBox_SelectedIndexChanged;
             boEndComboBox.SelectedIndexChanged += boEndComboBox_SelectedIndexChanged;
             refreshButton.Click += refreshButton_Click;
-            editScriptButton.Click += editScriptButton_Click;
             scriptsHelpPictureBox.MouseEnter += scriptsHelpPictureBox_MouseEnter;
             scriptsHelpPictureBox.MouseLeave += scriptsHelpPictureBox_MouseLeave;
             scriptsHelpPictureBox.MouseClick += scriptsHelpPictureBox_MouseClick;
@@ -276,10 +287,112 @@ namespace Ellanet.Forms
             addBlackoutButton.Click += addBlackoutButton_Click;
             editBlackoutButton.Click += editBlackoutButton_Click;
             removeBlackoutButton.Click += removeBlackoutButton_Click;
+            changeScriptEditorButton.Click += changeScriptEditorButton_Click;
+            editStartScriptButton.Click += editStartScriptButton_Click;
+            editIntervalScriptButton.Click += editIntervalScriptButton_Click;
+            editPauseScriptButton.Click += editPauseScriptButton_Click;
             SetButtonTag(ref traceButton, GetButtonText(ref traceButton));
         }
 
-        void removeBlackoutButton_Click(object sender, EventArgs e)
+        private void editPauseScriptButton_Click(object sender, EventArgs e)
+        {
+            EditScript(Script.Pause);
+        }
+
+        private void editIntervalScriptButton_Click(object sender, EventArgs e)
+        {
+            EditScript(Script.Interval);
+        }
+
+        private void editStartScriptButton_Click(object sender, EventArgs e)
+        {
+            EditScript(Script.Start);
+        }
+
+        private void changeScriptEditorButton_Click(object sender, EventArgs e)
+        {
+            var ofd = new OpenFileDialog
+            {
+                CheckFileExists = true,
+                DefaultExt = "exe",
+                Filter = "Application File (*.exe)|*.exe",
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
+                Multiselect = false,
+                Title = "Script Editor Path"
+            };
+
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                _scriptEditor = ofd.FileName;
+                scriptEditorLabel.Text = _scriptEditor;
+            }
+        }
+
+        private void scriptEditorLabel_TextChanged(object sender, EventArgs e)
+        {
+            if (!String.IsNullOrEmpty(scriptEditorLabel.Text) && !scriptEditorLabel.Text.StartsWith("..."))
+            {
+                if (scriptEditorLabel.Text.Length > MaxScriptPathLength)
+                {
+                    scriptEditorLabel.Text = String.Format("...{0}", scriptEditorLabel.Text.Substring(scriptEditorLabel.Text.Length - MaxScriptPathLength));
+                }
+            }
+        }
+
+        private void ListScriptingLanguages()
+        {
+            //todo Test all scripts
+            //todo Maybe warn about execution policy
+            _scriptingLanguages = new List<ScriptingLanguage>
+            {
+                new ScriptingLanguage
+                {
+                    Name = "PowerShell",
+                    FileExtension = "ps1",
+                    ScriptEngine = "powershell.exe",
+                    ScriptPrefixArguments = "-File"
+                },
+                new ScriptingLanguage
+                {
+                    Name = "Batch",
+                    FileExtension = "bat",
+                    ScriptEngine = "cmd.exe",
+                    ScriptPrefixArguments = "/C"
+                },
+                new ScriptingLanguage
+                {
+                    Name = "VBScript",
+                    FileExtension = "vbs",
+                    ScriptEngine = "cscript.exe",
+                    ScriptPrefixArguments = String.Empty
+                },
+                new ScriptingLanguage
+                {
+                    Name = "JScript",
+                    FileExtension = "js",
+                    ScriptEngine = "cscript.exe",
+                    ScriptPrefixArguments = String.Empty
+                },
+                //new ScriptingLanguage
+                //{
+                //    Name = "Python",
+                //    FileExtension = "py",
+                //    ScriptEngine = "python.exe",
+                //    ScriptPrefixArguments = String.Empty
+                //}
+            };
+
+            scriptLanguageComboBox.Items.Clear();
+
+            foreach (var sl in _scriptingLanguages)
+            {
+                scriptLanguageComboBox.Items.Add(sl.Name);
+            }
+
+            scriptLanguageComboBox.SelectedIndex = 0;
+        }
+
+        private void removeBlackoutButton_Click(object sender, EventArgs e)
         {
             foreach (ListViewItem lvi in blackoutListView.SelectedItems)
             {
@@ -287,12 +400,12 @@ namespace Ellanet.Forms
             }
         }
 
-        void editBlackoutButton_Click(object sender, EventArgs e)
+        private void editBlackoutButton_Click(object sender, EventArgs e)
         {
             EditSelectedBlackout();
         }
 
-        void addBlackoutButton_Click(object sender, EventArgs e)
+        private void addBlackoutButton_Click(object sender, EventArgs e)
         {
             var abf = new AddBlackoutForm();
             Opacity = .75;
@@ -305,12 +418,12 @@ namespace Ellanet.Forms
             Opacity = 1;
         }
 
-        void blackoutListView_DoubleClick(object sender, EventArgs e)
+        private void blackoutListView_DoubleClick(object sender, EventArgs e)
         {
             EditSelectedBlackout();
         }
 
-        void blackoutListView_SelectedIndexChanged(object sender, EventArgs e)
+        private void blackoutListView_SelectedIndexChanged(object sender, EventArgs e)
         {
             editBlackoutButton.Enabled = blackoutListView.SelectedItems.Count.Equals(1);
             removeBlackoutButton.Enabled = blackoutListView.SelectedItems.Count > 0;
@@ -472,26 +585,24 @@ namespace Ellanet.Forms
             }
         }
 
-        private void editScriptButton_Click(object sender, EventArgs e)
+        private void EditScript(Script script)
         {
-            var se = new ScriptEditor(_scriptEditor);
+            var sl = GetScriptingLanguage(GetComboBoxSelectedItem(ref scriptLanguageComboBox).ToString());
 
-            if (se.ShowDialog() == DialogResult.OK)
+            if (sl != null)
             {
-                _scriptEditor = se.ScriptEditorPath;
-                SaveSettings();
                 string scriptPath = null;
 
-                switch (se.ScriptToEdit)
+                switch (script)
                 {
-                    case "Start":
-                        scriptPath = Path.Combine(_moveMouseWorkingDirectory, StartScriptName);
+                    case Script.Start:
+                        scriptPath = Path.Combine(_moveMouseWorkingDirectory, String.Format("{0}.{1}", StartScriptName, sl.FileExtension));
                         break;
-                    case "Interval":
-                        scriptPath = Path.Combine(_moveMouseWorkingDirectory, IntervalScriptName);
+                    case Script.Interval:
+                        scriptPath = Path.Combine(_moveMouseWorkingDirectory, String.Format("{0}.{1}", IntervalScriptName, sl.FileExtension));
                         break;
-                    case "Pause":
-                        scriptPath = Path.Combine(_moveMouseWorkingDirectory, PauseScriptName);
+                    case Script.Pause:
+                        scriptPath = Path.Combine(_moveMouseWorkingDirectory, String.Format("{0}.{1}", PauseScriptName, sl.FileExtension));
                         break;
                 }
 
@@ -504,7 +615,7 @@ namespace Ellanet.Forms
                 {
                     StartInfo =
                     {
-                        FileName = se.ScriptEditorPath,
+                        FileName = _scriptEditor,
                         Arguments = String.Format("\"{0}\"", scriptPath)
                     }
                 };
@@ -515,8 +626,8 @@ namespace Ellanet.Forms
         private void CreateEmptyScript(string path)
         {
             var sw = new StreamWriter(path, false);
-            sw.WriteLine("' Move Mouse Custom Script");
-            sw.WriteLine("' See {0} for some useful scripting examples.", ScriptsHelpAddress);
+            //sw.WriteLine("' Move Mouse Custom Script");
+            //sw.WriteLine("' See {0} for some useful scripting examples.", ScriptsHelpAddress);
             sw.Close();
         }
 
@@ -794,7 +905,7 @@ namespace Ellanet.Forms
         }
 
         private void MouseForm_Load(object sender, EventArgs e)
-        {            
+        {
             if (!Directory.Exists(_moveMouseWorkingDirectory))
             {
                 Directory.CreateDirectory(_moveMouseWorkingDirectory);
@@ -983,10 +1094,10 @@ namespace Ellanet.Forms
                     }
 
                     ReadSettings();
-                    LaunchScript(PauseScriptName);
+                    LaunchScript(Script.Pause);
                     break;
                 default:
-                    LaunchScript(StartScriptName);
+                    LaunchScript(Script.Start);
                     _resumeTimer.Stop();
                     _moveMouseThread = new Thread(MoveMouseThread);
                     _moveMouseThread.Start();
@@ -1001,26 +1112,73 @@ namespace Ellanet.Forms
             }
         }
 
-        private void LaunchScript(string name)
+        private void LaunchScript(Script script)
         {
-            if (GetCheckBoxChecked(ref customScriptsCheckBox))
-            {
-                string scriptPath = Path.Combine(_moveMouseWorkingDirectory, name);
+            var sl = GetScriptingLanguage(GetComboBoxSelectedItem(ref scriptLanguageComboBox).ToString());
 
-                if (File.Exists(scriptPath))
+            if (sl != null)
+            {
+                string scriptPath = null;
+
+                switch (script)
                 {
+                    case Script.Start:
+
+                        if (GetCheckBoxChecked(ref executeStartScriptCheckBox))
+                        {
+                            scriptPath = Path.Combine(_moveMouseWorkingDirectory, String.Format("{0}.{1}", StartScriptName, sl.FileExtension));
+                        }
+
+                        break;
+                    case Script.Interval:
+
+                        if (GetCheckBoxChecked(ref executeIntervalScriptCheckBox))
+                        {
+                            scriptPath = Path.Combine(_moveMouseWorkingDirectory, String.Format("{0}.{1}", IntervalScriptName, sl.FileExtension));
+                        }
+
+                        break;
+                    case Script.Pause:
+
+                        if (GetCheckBoxChecked(ref executePauseScriptCheckBox))
+                        {
+                            scriptPath = Path.Combine(_moveMouseWorkingDirectory, String.Format("{0}.{1}", PauseScriptName, sl.FileExtension));
+                        }
+
+                        break;
+                }
+
+                if (!String.IsNullOrEmpty(scriptPath) && File.Exists(scriptPath))
+                {
+                    Debug.WriteLine(scriptPath);
                     var p = new Process
                     {
                         StartInfo =
                         {
-                            FileName = Path.Combine(Environment.ExpandEnvironmentVariables("%WINDIR%"), @"System32\wscript.exe"),
-                            Arguments = String.Format("\"{0}\"", scriptPath),
-                            WindowStyle = ProcessWindowStyle.Normal
+                            FileName = sl.ScriptEngine,
+                            Arguments = String.IsNullOrEmpty(sl.ScriptPrefixArguments) ? String.Format("\"{0}\"", scriptPath) : String.Format("{0} \"{1}\"", sl.ScriptPrefixArguments, scriptPath),
+                            WindowStyle = GetCheckBoxChecked(ref showScriptExecutionCheckBox) ? ProcessWindowStyle.Normal : ProcessWindowStyle.Hidden
                         }
                     };
                     p.Start();
                 }
             }
+        }
+
+        private ScriptingLanguage GetScriptingLanguage(string name)
+        {
+            if (!String.IsNullOrEmpty(name))
+            {
+                foreach (var sl in _scriptingLanguages)
+                {
+                    if (sl.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        return sl;
+                    }
+                }
+            }
+
+            return null;
         }
 
         private void MoveMouseThread()
@@ -1084,7 +1242,7 @@ namespace Ellanet.Forms
 
                     if (secondsElapsed > Convert.ToInt32(delayNumericUpDown.Value))
                     {
-                        LaunchScript(IntervalScriptName);
+                        LaunchScript(Script.Interval);
 
                         if (clickMouseCheckBox.Checked)
                         {
@@ -1481,8 +1639,6 @@ namespace Ellanet.Forms
 
                     if (!String.IsNullOrEmpty(settingsXmlDoc.SelectSingleNode("settings/activate_application_title").InnerText))
                     {
-                        //processComboBox.Items.Add(settingsXmlDoc.SelectSingleNode("settings/activate_application_title").InnerText);
-                        //processComboBox.Text = settingsXmlDoc.SelectSingleNode("settings/activate_application_title").InnerText;
                         processComboBox.Tag = settingsXmlDoc.SelectSingleNode("settings/activate_application_title").InnerText;
                     }
 
@@ -1492,8 +1648,13 @@ namespace Ellanet.Forms
                     boEndComboBox.Text = settingsXmlDoc.SelectSingleNode("settings/blackout_schedule_end").InnerText;
                     _lastUpdateCheck = Convert.ToDateTime(settingsXmlDoc.SelectSingleNode("settings/last_update_check").InnerText);
                     MinimiseToSystemTrayWarningShown = Convert.ToBoolean(settingsXmlDoc.SelectSingleNode("settings/system_tray_warning_shown").InnerText);
-                    customScriptsCheckBox.Checked = Convert.ToBoolean(settingsXmlDoc.SelectSingleNode("settings/enable_custom_scripts").InnerText);
+                    executeStartScriptCheckBox.Checked = Convert.ToBoolean(settingsXmlDoc.SelectSingleNode("settings/execute_start_script").InnerText);
+                    executeIntervalScriptCheckBox.Checked = Convert.ToBoolean(settingsXmlDoc.SelectSingleNode("settings/execute_interval_script").InnerText);
+                    executePauseScriptCheckBox.Checked = Convert.ToBoolean(settingsXmlDoc.SelectSingleNode("settings/execute_pause_script").InnerText);
+                    showScriptExecutionCheckBox.Checked = Convert.ToBoolean(settingsXmlDoc.SelectSingleNode("settings/show_script_execution").InnerText);
+                    scriptLanguageComboBox.SelectedItem = settingsXmlDoc.SelectSingleNode("settings/script_language").InnerText;
                     _scriptEditor = settingsXmlDoc.SelectSingleNode("settings/script_editor").InnerText;
+                    scriptEditorLabel.Text = _scriptEditor;
 
                     if (settingsXmlDoc.SelectNodes("settings/schedules/schedule").Count > 0)
                     {
@@ -1540,7 +1701,7 @@ namespace Ellanet.Forms
             try
             {
                 var settingsXmlDoc = new XmlDocument();
-                settingsXmlDoc.LoadXml("<settings><second_delay /><move_mouse_pointer /><stealth_mode /><enable_static_position /><x_static_position /><y_static_position /><click_left_mouse_button /><send_keystroke /><keystroke /><pause_when_mouse_moved /><automatically_resume /><resume_seconds /><automatically_start_on_launch /><automatically_launch_on_logon /><minimise_on_pause /><minimise_on_start /><minimise_to_system_tray /><activate_application /><activate_application_title /><blackout_schedule_enabled /><blackout_schedule_scope /><blackout_schedule_start /><blackout_schedule_end /><last_update_check /><system_tray_warning_shown /><enable_custom_scripts /><script_editor /><schedules /><blackouts /></settings>");
+                settingsXmlDoc.LoadXml("<settings><second_delay /><move_mouse_pointer /><stealth_mode /><enable_static_position /><x_static_position /><y_static_position /><click_left_mouse_button /><send_keystroke /><keystroke /><pause_when_mouse_moved /><automatically_resume /><resume_seconds /><automatically_start_on_launch /><automatically_launch_on_logon /><minimise_on_pause /><minimise_on_start /><minimise_to_system_tray /><activate_application /><activate_application_title /><blackout_schedule_enabled /><blackout_schedule_scope /><blackout_schedule_start /><blackout_schedule_end /><last_update_check /><system_tray_warning_shown /><execute_start_script /><execute_interval_script /><execute_pause_script /><show_script_execution /><script_language /><script_editor /><schedules /><blackouts /></settings>");
                 settingsXmlDoc.SelectSingleNode("settings/second_delay").InnerText = Convert.ToDecimal(delayNumericUpDown.Value).ToString(CultureInfo.InvariantCulture);
                 settingsXmlDoc.SelectSingleNode("settings/move_mouse_pointer").InnerText = moveMouseCheckBox.Checked.ToString();
                 settingsXmlDoc.SelectSingleNode("settings/stealth_mode").InnerText = stealthCheckBox.Checked.ToString();
@@ -1566,7 +1727,11 @@ namespace Ellanet.Forms
                 settingsXmlDoc.SelectSingleNode("settings/blackout_schedule_end").InnerText = boEndComboBox.Text;
                 settingsXmlDoc.SelectSingleNode("settings/last_update_check").InnerText = _lastUpdateCheck.ToString("yyyy-MMM-dd HH:mm:ss");
                 settingsXmlDoc.SelectSingleNode("settings/system_tray_warning_shown").InnerText = "True";
-                settingsXmlDoc.SelectSingleNode("settings/enable_custom_scripts").InnerText = customScriptsCheckBox.Checked.ToString();
+                settingsXmlDoc.SelectSingleNode("settings/execute_start_script").InnerText = GetCheckBoxChecked( ref executeStartScriptCheckBox).ToString();
+                settingsXmlDoc.SelectSingleNode("settings/execute_interval_script").InnerText = GetCheckBoxChecked(ref executeIntervalScriptCheckBox).ToString();
+                settingsXmlDoc.SelectSingleNode("settings/execute_pause_script").InnerText = GetCheckBoxChecked(ref executePauseScriptCheckBox).ToString();
+                settingsXmlDoc.SelectSingleNode("settings/show_script_execution").InnerText = GetCheckBoxChecked(ref showScriptExecutionCheckBox).ToString();
+                settingsXmlDoc.SelectSingleNode("settings/script_language").InnerText = GetComboBoxSelectedItem(ref scriptLanguageComboBox).ToString();
                 settingsXmlDoc.SelectSingleNode("settings/script_editor").InnerText = _scriptEditor;
 
                 if (scheduleListView.Items.Count > 0)

@@ -8,4 +8,3 @@ C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Debug\Ellanet.Forms.MouseForm.re
 C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Debug\Ellanet.Forms.ScriptEditor.resources
 C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Debug\Ellanet.Forms.AddScheduleForm.resources
 C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Debug\Ellanet.Forms.AddBlackoutForm.resources
-C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Debug\Move Mouse.csprojResolveAssemblyReference.cache

@@ -62,6 +62,9 @@
             this.actionsTabPage = new System.Windows.Forms.TabPage();
             this.behaviourTabPage = new System.Windows.Forms.TabPage();
             this.scriptsTabPage = new System.Windows.Forms.TabPage();
+            this.executePauseScriptCheckBox = new System.Windows.Forms.CheckBox();
+            this.executeIntervalScriptCheckBox = new System.Windows.Forms.CheckBox();
+            this.executeStartScriptCheckBox = new System.Windows.Forms.CheckBox();
             this.schedulesTabPage = new System.Windows.Forms.TabPage();
             this.removeScheduleButton = new System.Windows.Forms.Button();
             this.editScheduleButton = new System.Windows.Forms.Button();
@@ -83,9 +86,15 @@
             this.boStartComboBox = new System.Windows.Forms.ComboBox();
             this.customScriptsCheckBox = new System.Windows.Forms.CheckBox();
             this.editScriptButton = new System.Windows.Forms.Button();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
-            this.checkBox2 = new System.Windows.Forms.CheckBox();
-            this.checkBox3 = new System.Windows.Forms.CheckBox();
+            this.showScriptExecutionCheckBox = new System.Windows.Forms.CheckBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.scriptLanguageComboBox = new System.Windows.Forms.ComboBox();
+            this.scriptEditorLabel = new System.Windows.Forms.Label();
+            this.changeScriptEditorButton = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
+            this.editStartScriptButton = new System.Windows.Forms.Button();
+            this.editIntervalScriptButton = new System.Windows.Forms.Button();
+            this.editPauseScriptButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.mousePictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.delayNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.resumeNumericUpDown)).BeginInit();
@@ -463,7 +472,7 @@
             // scriptsHelpPictureBox
             // 
             this.scriptsHelpPictureBox.Image = global::Ellanet.Properties.Resources.Help_Image;
-            this.scriptsHelpPictureBox.Location = new System.Drawing.Point(220, 201);
+            this.scriptsHelpPictureBox.Location = new System.Drawing.Point(429, 20);
             this.scriptsHelpPictureBox.Name = "scriptsHelpPictureBox";
             this.scriptsHelpPictureBox.Size = new System.Drawing.Size(19, 20);
             this.scriptsHelpPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -544,16 +553,55 @@
             // 
             // scriptsTabPage
             // 
-            this.scriptsTabPage.Controls.Add(this.checkBox3);
-            this.scriptsTabPage.Controls.Add(this.checkBox2);
-            this.scriptsTabPage.Controls.Add(this.checkBox1);
+            this.scriptsTabPage.Controls.Add(this.editPauseScriptButton);
+            this.scriptsTabPage.Controls.Add(this.editIntervalScriptButton);
+            this.scriptsTabPage.Controls.Add(this.editStartScriptButton);
+            this.scriptsTabPage.Controls.Add(this.scriptEditorLabel);
+            this.scriptsTabPage.Controls.Add(this.changeScriptEditorButton);
+            this.scriptsTabPage.Controls.Add(this.label3);
+            this.scriptsTabPage.Controls.Add(this.scriptLanguageComboBox);
+            this.scriptsTabPage.Controls.Add(this.label2);
+            this.scriptsTabPage.Controls.Add(this.showScriptExecutionCheckBox);
+            this.scriptsTabPage.Controls.Add(this.executePauseScriptCheckBox);
+            this.scriptsTabPage.Controls.Add(this.executeIntervalScriptCheckBox);
+            this.scriptsTabPage.Controls.Add(this.executeStartScriptCheckBox);
             this.scriptsTabPage.Controls.Add(this.scriptsHelpPictureBox);
             this.scriptsTabPage.Location = new System.Drawing.Point(4, 25);
             this.scriptsTabPage.Name = "scriptsTabPage";
             this.scriptsTabPage.Size = new System.Drawing.Size(467, 240);
             this.scriptsTabPage.TabIndex = 2;
-            this.scriptsTabPage.Text = "Custom Scripts";
+            this.scriptsTabPage.Text = "Scripts";
             this.scriptsTabPage.UseVisualStyleBackColor = true;
+            // 
+            // executePauseScriptCheckBox
+            // 
+            this.executePauseScriptCheckBox.AutoSize = true;
+            this.executePauseScriptCheckBox.Location = new System.Drawing.Point(20, 80);
+            this.executePauseScriptCheckBox.Name = "executePauseScriptCheckBox";
+            this.executePauseScriptCheckBox.Size = new System.Drawing.Size(260, 20);
+            this.executePauseScriptCheckBox.TabIndex = 32;
+            this.executePauseScriptCheckBox.Text = "Execute script when Move Mouse pauses";
+            this.executePauseScriptCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // executeIntervalScriptCheckBox
+            // 
+            this.executeIntervalScriptCheckBox.AutoSize = true;
+            this.executeIntervalScriptCheckBox.Location = new System.Drawing.Point(20, 50);
+            this.executeIntervalScriptCheckBox.Name = "executeIntervalScriptCheckBox";
+            this.executeIntervalScriptCheckBox.Size = new System.Drawing.Size(198, 20);
+            this.executeIntervalScriptCheckBox.TabIndex = 31;
+            this.executeIntervalScriptCheckBox.Text = "Execute script at each interval";
+            this.executeIntervalScriptCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // executeStartScriptCheckBox
+            // 
+            this.executeStartScriptCheckBox.AutoSize = true;
+            this.executeStartScriptCheckBox.Location = new System.Drawing.Point(20, 20);
+            this.executeStartScriptCheckBox.Name = "executeStartScriptCheckBox";
+            this.executeStartScriptCheckBox.Size = new System.Drawing.Size(252, 20);
+            this.executeStartScriptCheckBox.TabIndex = 30;
+            this.executeStartScriptCheckBox.Text = "Execute script when Move Mouse starts";
+            this.executeStartScriptCheckBox.UseVisualStyleBackColor = true;
             // 
             // schedulesTabPage
             // 
@@ -772,35 +820,132 @@
             this.editScriptButton.Text = "Edit";
             this.editScriptButton.UseVisualStyleBackColor = true;
             // 
-            // checkBox1
+            // showScriptExecutionCheckBox
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(20, 20);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(252, 20);
-            this.checkBox1.TabIndex = 30;
-            this.checkBox1.Text = "Execute script when Move Mouse starts";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.showScriptExecutionCheckBox.AutoSize = true;
+            this.showScriptExecutionCheckBox.Location = new System.Drawing.Point(20, 110);
+            this.showScriptExecutionCheckBox.Name = "showScriptExecutionCheckBox";
+            this.showScriptExecutionCheckBox.Size = new System.Drawing.Size(358, 20);
+            this.showScriptExecutionCheckBox.TabIndex = 33;
+            this.showScriptExecutionCheckBox.Text = "Show script execution (only recommended for debugging)";
+            this.showScriptExecutionCheckBox.UseVisualStyleBackColor = true;
             // 
-            // checkBox2
+            // label2
             // 
-            this.checkBox2.AutoSize = true;
-            this.checkBox2.Location = new System.Drawing.Point(20, 50);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(198, 20);
-            this.checkBox2.TabIndex = 31;
-            this.checkBox2.Text = "Execute script at each interval";
-            this.checkBox2.UseVisualStyleBackColor = true;
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(17, 140);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(119, 16);
+            this.label2.TabIndex = 34;
+            this.label2.Text = "Scripting language:";
             // 
-            // checkBox3
+            // scriptLanguageComboBox
             // 
-            this.checkBox3.AutoSize = true;
-            this.checkBox3.Location = new System.Drawing.Point(20, 80);
-            this.checkBox3.Name = "checkBox3";
-            this.checkBox3.Size = new System.Drawing.Size(260, 20);
-            this.checkBox3.TabIndex = 32;
-            this.checkBox3.Text = "Execute script when Move Mouse pauses";
-            this.checkBox3.UseVisualStyleBackColor = true;
+            this.scriptLanguageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.scriptLanguageComboBox.FormattingEnabled = true;
+            this.scriptLanguageComboBox.Items.AddRange(new object[] {
+            "{BACKSPACE}",
+            "{BREAK}",
+            "{CAPSLOCK}",
+            "{DELETE}",
+            "{DOWN}",
+            "{END}",
+            "{ENTER}",
+            "{ESC}",
+            "{HELP}",
+            "{HOME}",
+            "{INSERT}",
+            "{LEFT}",
+            "{NUMLOCK}",
+            "{PGDN}",
+            "{PGUP}",
+            "{PRTSC}",
+            "{RIGHT}",
+            "{SCROLLLOCK}",
+            "{TAB}",
+            "{UP}",
+            "{F1}",
+            "{F2}",
+            "{F3}",
+            "{F4}",
+            "{F5}",
+            "{F6}",
+            "{F7}",
+            "{F8}",
+            "{F9}",
+            "{F10}",
+            "{F11}",
+            "{F12}",
+            "{F13}",
+            "{F14}",
+            "{F15}",
+            "{F16}",
+            "{ADD}",
+            "{SUBTRACT}",
+            "{MULTIPLY}",
+            "{DIVIDE}"});
+            this.scriptLanguageComboBox.Location = new System.Drawing.Point(142, 137);
+            this.scriptLanguageComboBox.Name = "scriptLanguageComboBox";
+            this.scriptLanguageComboBox.Size = new System.Drawing.Size(199, 24);
+            this.scriptLanguageComboBox.TabIndex = 35;
+            // 
+            // scriptEditorLabel
+            // 
+            this.scriptEditorLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.scriptEditorLabel.Location = new System.Drawing.Point(69, 170);
+            this.scriptEditorLabel.Name = "scriptEditorLabel";
+            this.scriptEditorLabel.Size = new System.Drawing.Size(288, 16);
+            this.scriptEditorLabel.TabIndex = 38;
+            // 
+            // changeScriptEditorButton
+            // 
+            this.changeScriptEditorButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.changeScriptEditorButton.Location = new System.Drawing.Point(373, 167);
+            this.changeScriptEditorButton.Name = "changeScriptEditorButton";
+            this.changeScriptEditorButton.Size = new System.Drawing.Size(75, 23);
+            this.changeScriptEditorButton.TabIndex = 37;
+            this.changeScriptEditorButton.Text = "Change";
+            this.changeScriptEditorButton.UseVisualStyleBackColor = true;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(17, 170);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(46, 16);
+            this.label3.TabIndex = 36;
+            this.label3.Text = "Editor:";
+            // 
+            // editStartScriptButton
+            // 
+            this.editStartScriptButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.editStartScriptButton.Location = new System.Drawing.Point(317, 18);
+            this.editStartScriptButton.Name = "editStartScriptButton";
+            this.editStartScriptButton.Size = new System.Drawing.Size(75, 23);
+            this.editStartScriptButton.TabIndex = 39;
+            this.editStartScriptButton.Text = "Edit";
+            this.editStartScriptButton.UseVisualStyleBackColor = true;
+            // 
+            // editIntervalScriptButton
+            // 
+            this.editIntervalScriptButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.editIntervalScriptButton.Location = new System.Drawing.Point(317, 48);
+            this.editIntervalScriptButton.Name = "editIntervalScriptButton";
+            this.editIntervalScriptButton.Size = new System.Drawing.Size(75, 23);
+            this.editIntervalScriptButton.TabIndex = 40;
+            this.editIntervalScriptButton.Text = "Edit";
+            this.editIntervalScriptButton.UseVisualStyleBackColor = true;
+            // 
+            // editPauseScriptButton
+            // 
+            this.editPauseScriptButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.editPauseScriptButton.Location = new System.Drawing.Point(317, 78);
+            this.editPauseScriptButton.Name = "editPauseScriptButton";
+            this.editPauseScriptButton.Size = new System.Drawing.Size(75, 23);
+            this.editPauseScriptButton.TabIndex = 41;
+            this.editPauseScriptButton.Text = "Edit";
+            this.editPauseScriptButton.UseVisualStyleBackColor = true;
             // 
             // MouseForm
             // 
@@ -899,8 +1044,17 @@
         private System.Windows.Forms.ComboBox boStartComboBox;
         private System.Windows.Forms.CheckBox customScriptsCheckBox;
         private System.Windows.Forms.Button editScriptButton;
-        private System.Windows.Forms.CheckBox checkBox3;
-        private System.Windows.Forms.CheckBox checkBox2;
-        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.CheckBox executePauseScriptCheckBox;
+        private System.Windows.Forms.CheckBox executeIntervalScriptCheckBox;
+        private System.Windows.Forms.CheckBox executeStartScriptCheckBox;
+        private System.Windows.Forms.CheckBox showScriptExecutionCheckBox;
+        private System.Windows.Forms.ComboBox scriptLanguageComboBox;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label scriptEditorLabel;
+        private System.Windows.Forms.Button changeScriptEditorButton;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Button editStartScriptButton;
+        private System.Windows.Forms.Button editPauseScriptButton;
+        private System.Windows.Forms.Button editIntervalScriptButton;
     }
 }

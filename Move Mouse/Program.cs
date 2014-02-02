@@ -10,8 +10,9 @@ namespace Ellanet
         [STAThread]
         private static void Main()
         {
-            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            Application.ThreadException += Application_ThreadException;
+            //todo Reinstate before release
+            //AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            //Application.ThreadException += Application_ThreadException;
 
             try
             {
@@ -48,5 +49,6 @@ namespace Ellanet
         //todo Balloon notifications when blackout starts and stops
         //todo Balloon notifications when scheduling starts and stops
         //todo One time upgrade for XML
+        //todo Sort tab ordering on all forms
     }
 }
