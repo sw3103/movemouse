@@ -33,6 +33,8 @@ namespace Ellanet.Forms
         private readonly TimeSpan _waitBetweenUpdateChecks = new TimeSpan(7, 0, 0, 0);
         private readonly TimeSpan _waitUntilAutoMoveDetect = new TimeSpan(0, 0, 2);
         private readonly System.Windows.Forms.Timer _resumeTimer = new System.Windows.Forms.Timer();
+        private readonly System.Windows.Forms.Timer _autoStartTimer = new System.Windows.Forms.Timer();
+        private readonly System.Windows.Forms.Timer _autoPauseTimer = new System.Windows.Forms.Timer();
         private readonly string _moveMouseWorkingDirectory = Environment.ExpandEnvironmentVariables(@"%APPDATA%\Ellanet\Move Mouse");
         private readonly bool _suppressAutoStart;
         private Thread _moveMouseThread;
@@ -261,6 +263,10 @@ namespace Ellanet.Forms
             autoPauseCheckBox.CheckedChanged += autoPauseCheckBox_CheckedChanged;
             _resumeTimer.Interval = 1000;
             _resumeTimer.Tick += resumeTimer_Tick;
+            _autoStartTimer.Interval = 1000;
+            _autoStartTimer.Tick += _autoStartTimer_Tick;
+            _autoPauseTimer.Interval = 1000;
+            _autoPauseTimer.Tick += _autoPauseTimer_Tick;
             traceButton.Click += traceButton_Click;
             mousePictureBox.MouseEnter += mousePictureBox_MouseEnter;
             mousePictureBox.MouseLeave += mousePictureBox_MouseLeave;
@@ -295,6 +301,16 @@ namespace Ellanet.Forms
             blackoutListView.SelectedIndexChanged += blackoutListView_SelectedIndexChanged;
             blackoutListView.DoubleClick += blackoutListView_DoubleClick;
             SetButtonTag(ref traceButton, GetButtonText(ref traceButton));
+        }
+
+        void _autoPauseTimer_Tick(object sender, EventArgs e)
+        {
+            Debug.WriteLine("_autoPauseTimer_Tick");
+        }
+
+        void _autoStartTimer_Tick(object sender, EventArgs e)
+        {
+            Debug.WriteLine("_autoStartTimer_Tick");
         }
 
         void executePauseScriptCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -369,36 +385,34 @@ namespace Ellanet.Forms
 
         private void ListScriptingLanguages()
         {
-            //todo Test all scripts
-            //todo Maybe warn about execution policy
             _scriptingLanguages = new List<ScriptingLanguage>
             {
                 new ScriptingLanguage
                 {
                     Name = "PowerShell",
                     FileExtension = "ps1",
-                    ScriptEngine = "powershell.exe",
+                    ScriptEngine = @"%SystemRoot%\system32\WindowsPowerShell\v1.0\powershell.exe",
                     ScriptPrefixArguments = "-File"
                 },
                 new ScriptingLanguage
                 {
                     Name = "Batch",
                     FileExtension = "bat",
-                    ScriptEngine = "cmd.exe",
+                    ScriptEngine = "%ComSpec%",
                     ScriptPrefixArguments = "/C"
                 },
                 new ScriptingLanguage
                 {
                     Name = "VBScript",
                     FileExtension = "vbs",
-                    ScriptEngine = "cscript.exe",
+                    ScriptEngine = @"%WinDir%\System32\cscript.exe",
                     ScriptPrefixArguments = String.Empty
                 },
                 new ScriptingLanguage
                 {
                     Name = "JScript",
                     FileExtension = "js",
-                    ScriptEngine = "cscript.exe",
+                    ScriptEngine = @"%WinDir%\System32\cscript.exe",
                     ScriptPrefixArguments = String.Empty
                 },
                 //new ScriptingLanguage
@@ -440,7 +454,7 @@ namespace Ellanet.Forms
 
             if (abf.ShowDialog() == DialogResult.OK)
             {
-                AddBlackoutToListView(abf.Start, abf.End, -1);
+                AddBlackoutToListView(abf.Start, abf.End, -1, true);
             }
 
             Opacity = 1;
@@ -458,7 +472,7 @@ namespace Ellanet.Forms
             removeBlackoutButton.Enabled = blackoutListView.SelectedItems.Count > 0;
         }
 
-        private void AddBlackoutToListView(TimeSpan start, TimeSpan end, int index)
+        private void AddBlackoutToListView(TimeSpan start, TimeSpan end, int index, bool select)
         {
             ListViewItem lvi;
 
@@ -476,7 +490,7 @@ namespace Ellanet.Forms
             lvi.Text = start.ToString();
             lvi.SubItems.Add(end.ToString());
             blackoutListView.SelectedItems.Clear();
-            lvi.Selected = true;
+            lvi.Selected = select;
             blackoutListView.Select();
             blackoutListView.Sort();
         }
@@ -494,7 +508,7 @@ namespace Ellanet.Forms
 
                 if (abf.ShowDialog() == DialogResult.OK)
                 {
-                    AddBlackoutToListView(abf.Start, abf.End, blackoutListView.SelectedIndices[0]);
+                    AddBlackoutToListView(abf.Start, abf.End, blackoutListView.SelectedIndices[0], true);
                 }
 
                 blackoutListView.Select();
@@ -533,13 +547,13 @@ namespace Ellanet.Forms
 
             if (asf.ShowDialog() == DialogResult.OK)
             {
-                AddScheduleToListView(asf.Time, asf.Action, -1);
+                AddScheduleToListView(asf.Time, asf.Action, -1, true);
             }
 
             Opacity = 1;
         }
 
-        private void AddScheduleToListView(TimeSpan time, string action, int index)
+        private void AddScheduleToListView(TimeSpan time, string action, int index, bool select)
         {
             ListViewItem lvi;
 
@@ -557,7 +571,7 @@ namespace Ellanet.Forms
             lvi.Text = time.ToString();
             lvi.SubItems.Add(action);
             scheduleListView.SelectedItems.Clear();
-            lvi.Selected = true;
+            lvi.Selected = select;
             scheduleListView.Select();
             scheduleListView.Sort();
         }
@@ -573,7 +587,7 @@ namespace Ellanet.Forms
 
                 if (asf.ShowDialog() == DialogResult.OK)
                 {
-                    AddScheduleToListView(asf.Time, asf.Action, scheduleListView.SelectedIndices[0]);
+                    AddScheduleToListView(asf.Time, asf.Action, scheduleListView.SelectedIndices[0], true);
                 }
 
                 scheduleListView.Select();
@@ -648,8 +662,14 @@ namespace Ellanet.Forms
                         Arguments = String.Format("\"{0}\"", scriptPath)
                     }
                 };
+                p.Exited += p_Exited;
                 p.Start();
             }
+        }
+
+        void p_Exited(object sender, EventArgs e)
+        {
+            BringToFront();
         }
 
         private void CreateEmptyScript(string path)
@@ -947,12 +967,10 @@ namespace Ellanet.Forms
             {
                 actionButton.PerformClick();
             }
-
-            //todo Need to fix this
-            Debug.WriteLine(scheduleListView.SelectedItems.Count);
-            scheduleListView.SelectedItems.Clear();
-            Debug.WriteLine(scheduleListView.SelectedItems.Count);
-            blackoutListView.SelectedItems.Clear();
+            else
+            {
+                _autoStartTimer.Start();
+            }
         }
 
         private void CheckForUpdate(object stateInfo)
@@ -1044,8 +1062,6 @@ namespace Ellanet.Forms
 
         private void resumeTimer_Tick(object sender, EventArgs e)
         {
-            //Debug.WriteLine(GetLastInputTime().ToString());
-
             if (GetCheckBoxChecked(ref resumeCheckBox) && (GetLastInputTime() > resumeNumericUpDown.Value))
             {
                 ButtonPerformClick(ref actionButton);
@@ -1115,6 +1131,8 @@ namespace Ellanet.Forms
             }
 
             _resumeTimer.Stop();
+            _autoStartTimer.Stop();
+            _autoPauseTimer.Stop();
             SaveSettings();
         }
 
@@ -1129,12 +1147,13 @@ namespace Ellanet.Forms
                         _moveMouseThread.Abort();
                     }
 
+                    _autoPauseTimer.Stop();
                     _resumeTimer.Start();
+                    _autoStartTimer.Start();
                     actionButton.Text = "Start";
                     countdownProgressBar.Value = 0;
                     optionsTabControl.Enabled = true;
                     Opacity = 1.0;
-                    //this.TopMost = false;
 
                     if (minimiseOnPauseCheckBox.Checked)
                     {
@@ -1147,6 +1166,8 @@ namespace Ellanet.Forms
                 default:
                     LaunchScript(Script.Start);
                     _resumeTimer.Stop();
+                    _autoStartTimer.Stop();
+                    _autoPauseTimer.Start();
                     _moveMouseThread = new Thread(MoveMouseThread);
                     _moveMouseThread.Start();
                     actionButton.Text = "Pause";
@@ -1203,7 +1224,7 @@ namespace Ellanet.Forms
                     {
                         StartInfo =
                         {
-                            FileName = sl.ScriptEngine,
+                            FileName = Environment.ExpandEnvironmentVariables( sl.ScriptEngine),
                             Arguments = String.IsNullOrEmpty(sl.ScriptPrefixArguments) ? String.Format("\"{0}\"", scriptPath) : String.Format("{0} \"{1}\"", sl.ScriptPrefixArguments, scriptPath),
                             WindowStyle = GetCheckBoxChecked(ref showScriptExecutionCheckBox) ? ProcessWindowStyle.Normal : ProcessWindowStyle.Hidden
                         }
@@ -1624,6 +1645,7 @@ namespace Ellanet.Forms
                 idleTime = envTicks - lastInputTick;
             }
 
+            Debug.WriteLine("idleTime = {0}", idleTime.ToString(CultureInfo.InvariantCulture));
             return (idleTime > 0) ? (idleTime/1000) : 0;
         }
 
@@ -1714,7 +1736,7 @@ namespace Ellanet.Forms
 
                             if (TimeSpan.TryParse(scheduleNode.SelectSingleNode("time").InnerText, out ts))
                             {
-                                AddScheduleToListView(ts, scheduleNode.SelectSingleNode("action").InnerText, -1);
+                                AddScheduleToListView(ts, scheduleNode.SelectSingleNode("action").InnerText, -1, false);
                             }
                         }
                     }
@@ -1728,16 +1750,10 @@ namespace Ellanet.Forms
 
                             if (TimeSpan.TryParse(blackoutNode.SelectSingleNode("start").InnerText, out startTs) && TimeSpan.TryParse(blackoutNode.SelectSingleNode("end").InnerText, out endTs))
                             {
-                                AddBlackoutToListView(startTs, endTs, -1);
+                                AddBlackoutToListView(startTs, endTs, -1, false);
                             }
                         }
                     }
-
-                    //todo Need to fix this
-                    Debug.WriteLine(scheduleListView.SelectedItems.Count);
-                    scheduleListView.SelectedItems.Clear();
-                    Debug.WriteLine(scheduleListView.SelectedItems.Count);
-                    blackoutListView.SelectedItems.Clear();
                 }
             }
             catch (Exception ex)
