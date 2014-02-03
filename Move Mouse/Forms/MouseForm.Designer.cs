@@ -62,6 +62,15 @@
             this.actionsTabPage = new System.Windows.Forms.TabPage();
             this.behaviourTabPage = new System.Windows.Forms.TabPage();
             this.scriptsTabPage = new System.Windows.Forms.TabPage();
+            this.editPauseScriptButton = new System.Windows.Forms.Button();
+            this.editIntervalScriptButton = new System.Windows.Forms.Button();
+            this.editStartScriptButton = new System.Windows.Forms.Button();
+            this.scriptEditorLabel = new System.Windows.Forms.Label();
+            this.changeScriptEditorButton = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
+            this.scriptLanguageComboBox = new System.Windows.Forms.ComboBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.showScriptExecutionCheckBox = new System.Windows.Forms.CheckBox();
             this.executePauseScriptCheckBox = new System.Windows.Forms.CheckBox();
             this.executeIntervalScriptCheckBox = new System.Windows.Forms.CheckBox();
             this.executeStartScriptCheckBox = new System.Windows.Forms.CheckBox();
@@ -86,15 +95,6 @@
             this.boStartComboBox = new System.Windows.Forms.ComboBox();
             this.customScriptsCheckBox = new System.Windows.Forms.CheckBox();
             this.editScriptButton = new System.Windows.Forms.Button();
-            this.showScriptExecutionCheckBox = new System.Windows.Forms.CheckBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.scriptLanguageComboBox = new System.Windows.Forms.ComboBox();
-            this.scriptEditorLabel = new System.Windows.Forms.Label();
-            this.changeScriptEditorButton = new System.Windows.Forms.Button();
-            this.label3 = new System.Windows.Forms.Label();
-            this.editStartScriptButton = new System.Windows.Forms.Button();
-            this.editIntervalScriptButton = new System.Windows.Forms.Button();
-            this.editPauseScriptButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.mousePictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.delayNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.resumeNumericUpDown)).BeginInit();
@@ -573,6 +573,139 @@
             this.scriptsTabPage.Text = "Scripts";
             this.scriptsTabPage.UseVisualStyleBackColor = true;
             // 
+            // editPauseScriptButton
+            // 
+            this.editPauseScriptButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.editPauseScriptButton.Enabled = false;
+            this.editPauseScriptButton.Location = new System.Drawing.Point(317, 78);
+            this.editPauseScriptButton.Name = "editPauseScriptButton";
+            this.editPauseScriptButton.Size = new System.Drawing.Size(75, 23);
+            this.editPauseScriptButton.TabIndex = 41;
+            this.editPauseScriptButton.Text = "Edit";
+            this.editPauseScriptButton.UseVisualStyleBackColor = true;
+            // 
+            // editIntervalScriptButton
+            // 
+            this.editIntervalScriptButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.editIntervalScriptButton.Enabled = false;
+            this.editIntervalScriptButton.Location = new System.Drawing.Point(317, 48);
+            this.editIntervalScriptButton.Name = "editIntervalScriptButton";
+            this.editIntervalScriptButton.Size = new System.Drawing.Size(75, 23);
+            this.editIntervalScriptButton.TabIndex = 40;
+            this.editIntervalScriptButton.Text = "Edit";
+            this.editIntervalScriptButton.UseVisualStyleBackColor = true;
+            // 
+            // editStartScriptButton
+            // 
+            this.editStartScriptButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.editStartScriptButton.Enabled = false;
+            this.editStartScriptButton.Location = new System.Drawing.Point(317, 18);
+            this.editStartScriptButton.Name = "editStartScriptButton";
+            this.editStartScriptButton.Size = new System.Drawing.Size(75, 23);
+            this.editStartScriptButton.TabIndex = 39;
+            this.editStartScriptButton.Text = "Edit";
+            this.editStartScriptButton.UseVisualStyleBackColor = true;
+            // 
+            // scriptEditorLabel
+            // 
+            this.scriptEditorLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.scriptEditorLabel.Location = new System.Drawing.Point(69, 170);
+            this.scriptEditorLabel.Name = "scriptEditorLabel";
+            this.scriptEditorLabel.Size = new System.Drawing.Size(288, 16);
+            this.scriptEditorLabel.TabIndex = 38;
+            // 
+            // changeScriptEditorButton
+            // 
+            this.changeScriptEditorButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.changeScriptEditorButton.Enabled = false;
+            this.changeScriptEditorButton.Location = new System.Drawing.Point(373, 167);
+            this.changeScriptEditorButton.Name = "changeScriptEditorButton";
+            this.changeScriptEditorButton.Size = new System.Drawing.Size(75, 23);
+            this.changeScriptEditorButton.TabIndex = 37;
+            this.changeScriptEditorButton.Text = "Change";
+            this.changeScriptEditorButton.UseVisualStyleBackColor = true;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(17, 170);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(46, 16);
+            this.label3.TabIndex = 36;
+            this.label3.Text = "Editor:";
+            // 
+            // scriptLanguageComboBox
+            // 
+            this.scriptLanguageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.scriptLanguageComboBox.Enabled = false;
+            this.scriptLanguageComboBox.FormattingEnabled = true;
+            this.scriptLanguageComboBox.Items.AddRange(new object[] {
+            "{BACKSPACE}",
+            "{BREAK}",
+            "{CAPSLOCK}",
+            "{DELETE}",
+            "{DOWN}",
+            "{END}",
+            "{ENTER}",
+            "{ESC}",
+            "{HELP}",
+            "{HOME}",
+            "{INSERT}",
+            "{LEFT}",
+            "{NUMLOCK}",
+            "{PGDN}",
+            "{PGUP}",
+            "{PRTSC}",
+            "{RIGHT}",
+            "{SCROLLLOCK}",
+            "{TAB}",
+            "{UP}",
+            "{F1}",
+            "{F2}",
+            "{F3}",
+            "{F4}",
+            "{F5}",
+            "{F6}",
+            "{F7}",
+            "{F8}",
+            "{F9}",
+            "{F10}",
+            "{F11}",
+            "{F12}",
+            "{F13}",
+            "{F14}",
+            "{F15}",
+            "{F16}",
+            "{ADD}",
+            "{SUBTRACT}",
+            "{MULTIPLY}",
+            "{DIVIDE}"});
+            this.scriptLanguageComboBox.Location = new System.Drawing.Point(142, 137);
+            this.scriptLanguageComboBox.Name = "scriptLanguageComboBox";
+            this.scriptLanguageComboBox.Size = new System.Drawing.Size(199, 24);
+            this.scriptLanguageComboBox.TabIndex = 35;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(17, 140);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(119, 16);
+            this.label2.TabIndex = 34;
+            this.label2.Text = "Scripting language:";
+            // 
+            // showScriptExecutionCheckBox
+            // 
+            this.showScriptExecutionCheckBox.AutoSize = true;
+            this.showScriptExecutionCheckBox.Enabled = false;
+            this.showScriptExecutionCheckBox.Location = new System.Drawing.Point(20, 110);
+            this.showScriptExecutionCheckBox.Name = "showScriptExecutionCheckBox";
+            this.showScriptExecutionCheckBox.Size = new System.Drawing.Size(358, 20);
+            this.showScriptExecutionCheckBox.TabIndex = 33;
+            this.showScriptExecutionCheckBox.Text = "Show script execution (only recommended for debugging)";
+            this.showScriptExecutionCheckBox.UseVisualStyleBackColor = true;
+            // 
             // executePauseScriptCheckBox
             // 
             this.executePauseScriptCheckBox.AutoSize = true;
@@ -819,133 +952,6 @@
             this.editScriptButton.TabIndex = 35;
             this.editScriptButton.Text = "Edit";
             this.editScriptButton.UseVisualStyleBackColor = true;
-            // 
-            // showScriptExecutionCheckBox
-            // 
-            this.showScriptExecutionCheckBox.AutoSize = true;
-            this.showScriptExecutionCheckBox.Location = new System.Drawing.Point(20, 110);
-            this.showScriptExecutionCheckBox.Name = "showScriptExecutionCheckBox";
-            this.showScriptExecutionCheckBox.Size = new System.Drawing.Size(358, 20);
-            this.showScriptExecutionCheckBox.TabIndex = 33;
-            this.showScriptExecutionCheckBox.Text = "Show script execution (only recommended for debugging)";
-            this.showScriptExecutionCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(17, 140);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(119, 16);
-            this.label2.TabIndex = 34;
-            this.label2.Text = "Scripting language:";
-            // 
-            // scriptLanguageComboBox
-            // 
-            this.scriptLanguageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.scriptLanguageComboBox.FormattingEnabled = true;
-            this.scriptLanguageComboBox.Items.AddRange(new object[] {
-            "{BACKSPACE}",
-            "{BREAK}",
-            "{CAPSLOCK}",
-            "{DELETE}",
-            "{DOWN}",
-            "{END}",
-            "{ENTER}",
-            "{ESC}",
-            "{HELP}",
-            "{HOME}",
-            "{INSERT}",
-            "{LEFT}",
-            "{NUMLOCK}",
-            "{PGDN}",
-            "{PGUP}",
-            "{PRTSC}",
-            "{RIGHT}",
-            "{SCROLLLOCK}",
-            "{TAB}",
-            "{UP}",
-            "{F1}",
-            "{F2}",
-            "{F3}",
-            "{F4}",
-            "{F5}",
-            "{F6}",
-            "{F7}",
-            "{F8}",
-            "{F9}",
-            "{F10}",
-            "{F11}",
-            "{F12}",
-            "{F13}",
-            "{F14}",
-            "{F15}",
-            "{F16}",
-            "{ADD}",
-            "{SUBTRACT}",
-            "{MULTIPLY}",
-            "{DIVIDE}"});
-            this.scriptLanguageComboBox.Location = new System.Drawing.Point(142, 137);
-            this.scriptLanguageComboBox.Name = "scriptLanguageComboBox";
-            this.scriptLanguageComboBox.Size = new System.Drawing.Size(199, 24);
-            this.scriptLanguageComboBox.TabIndex = 35;
-            // 
-            // scriptEditorLabel
-            // 
-            this.scriptEditorLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.scriptEditorLabel.Location = new System.Drawing.Point(69, 170);
-            this.scriptEditorLabel.Name = "scriptEditorLabel";
-            this.scriptEditorLabel.Size = new System.Drawing.Size(288, 16);
-            this.scriptEditorLabel.TabIndex = 38;
-            // 
-            // changeScriptEditorButton
-            // 
-            this.changeScriptEditorButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.changeScriptEditorButton.Location = new System.Drawing.Point(373, 167);
-            this.changeScriptEditorButton.Name = "changeScriptEditorButton";
-            this.changeScriptEditorButton.Size = new System.Drawing.Size(75, 23);
-            this.changeScriptEditorButton.TabIndex = 37;
-            this.changeScriptEditorButton.Text = "Change";
-            this.changeScriptEditorButton.UseVisualStyleBackColor = true;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(17, 170);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(46, 16);
-            this.label3.TabIndex = 36;
-            this.label3.Text = "Editor:";
-            // 
-            // editStartScriptButton
-            // 
-            this.editStartScriptButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.editStartScriptButton.Location = new System.Drawing.Point(317, 18);
-            this.editStartScriptButton.Name = "editStartScriptButton";
-            this.editStartScriptButton.Size = new System.Drawing.Size(75, 23);
-            this.editStartScriptButton.TabIndex = 39;
-            this.editStartScriptButton.Text = "Edit";
-            this.editStartScriptButton.UseVisualStyleBackColor = true;
-            // 
-            // editIntervalScriptButton
-            // 
-            this.editIntervalScriptButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.editIntervalScriptButton.Location = new System.Drawing.Point(317, 48);
-            this.editIntervalScriptButton.Name = "editIntervalScriptButton";
-            this.editIntervalScriptButton.Size = new System.Drawing.Size(75, 23);
-            this.editIntervalScriptButton.TabIndex = 40;
-            this.editIntervalScriptButton.Text = "Edit";
-            this.editIntervalScriptButton.UseVisualStyleBackColor = true;
-            // 
-            // editPauseScriptButton
-            // 
-            this.editPauseScriptButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.editPauseScriptButton.Location = new System.Drawing.Point(317, 78);
-            this.editPauseScriptButton.Name = "editPauseScriptButton";
-            this.editPauseScriptButton.Size = new System.Drawing.Size(75, 23);
-            this.editPauseScriptButton.TabIndex = 41;
-            this.editPauseScriptButton.Text = "Edit";
-            this.editPauseScriptButton.UseVisualStyleBackColor = true;
             // 
             // MouseForm
             // 

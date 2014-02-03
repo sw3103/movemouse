@@ -243,11 +243,10 @@ namespace Ellanet.Forms
             launchAtLogonCheckBox.CheckedChanged += launchAtLogonCheckBox_CheckedChanged;
             blackoutCheckBox.CheckedChanged += blackoutCheckBox_CheckedChanged;
             customScriptsCheckBox.CheckedChanged += customScriptsCheckBox_CheckedChanged;
+            executeStartScriptCheckBox.CheckedChanged += executeStartScriptCheckBox_CheckedChanged;
+            executeIntervalScriptCheckBox.CheckedChanged += executeIntervalScriptCheckBox_CheckedChanged;
+            executePauseScriptCheckBox.CheckedChanged += executePauseScriptCheckBox_CheckedChanged;
             PopulateBlackoutStartEndComboBoxes();
-            scheduleListView.SelectedIndexChanged += scheduleListView_SelectedIndexChanged;
-            scheduleListView.DoubleClick += scheduleListView_DoubleClick;
-            blackoutListView.SelectedIndexChanged += blackoutListView_SelectedIndexChanged;
-            blackoutListView.DoubleClick += blackoutListView_DoubleClick;
             scriptEditorLabel.TextChanged += scriptEditorLabel_TextChanged;
             ListScriptingLanguages();
             ReadSettings();
@@ -291,7 +290,36 @@ namespace Ellanet.Forms
             editStartScriptButton.Click += editStartScriptButton_Click;
             editIntervalScriptButton.Click += editIntervalScriptButton_Click;
             editPauseScriptButton.Click += editPauseScriptButton_Click;
+            scheduleListView.SelectedIndexChanged += scheduleListView_SelectedIndexChanged;
+            scheduleListView.DoubleClick += scheduleListView_DoubleClick;
+            blackoutListView.SelectedIndexChanged += blackoutListView_SelectedIndexChanged;
+            blackoutListView.DoubleClick += blackoutListView_DoubleClick;
             SetButtonTag(ref traceButton, GetButtonText(ref traceButton));
+        }
+
+        void executePauseScriptCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            DetermineScriptsTabControlState();
+        }
+
+        void executeIntervalScriptCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            DetermineScriptsTabControlState();
+        }
+
+        void executeStartScriptCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            DetermineScriptsTabControlState();
+        }
+
+        private void DetermineScriptsTabControlState()
+        {
+            editStartScriptButton.Enabled = executeStartScriptCheckBox.Checked;
+            editIntervalScriptButton.Enabled = executeIntervalScriptCheckBox.Checked;
+            editPauseScriptButton.Enabled = executePauseScriptCheckBox.Checked;
+            showScriptExecutionCheckBox.Enabled = (executeStartScriptCheckBox.Checked || executeIntervalScriptCheckBox.Checked || executePauseScriptCheckBox.Checked);
+            scriptLanguageComboBox.Enabled = (executeStartScriptCheckBox.Checked || executeIntervalScriptCheckBox.Checked || executePauseScriptCheckBox.Checked);
+            changeScriptEditorButton.Enabled = (executeStartScriptCheckBox.Checked || executeIntervalScriptCheckBox.Checked || executePauseScriptCheckBox.Checked);
         }
 
         private void editPauseScriptButton_Click(object sender, EventArgs e)
@@ -425,6 +453,7 @@ namespace Ellanet.Forms
 
         private void blackoutListView_SelectedIndexChanged(object sender, EventArgs e)
         {
+            Debug.WriteLine(blackoutListView.SelectedItems);
             editBlackoutButton.Enabled = blackoutListView.SelectedItems.Count.Equals(1);
             removeBlackoutButton.Enabled = blackoutListView.SelectedItems.Count > 0;
         }
@@ -918,6 +947,12 @@ namespace Ellanet.Forms
             {
                 actionButton.PerformClick();
             }
+
+            //todo Need to fix this
+            Debug.WriteLine(scheduleListView.SelectedItems.Count);
+            scheduleListView.SelectedItems.Clear();
+            Debug.WriteLine(scheduleListView.SelectedItems.Count);
+            blackoutListView.SelectedItems.Clear();
         }
 
         private void CheckForUpdate(object stateInfo)
@@ -1002,16 +1037,6 @@ namespace Ellanet.Forms
             traceButton.Enabled = staticPositionCheckBox.Checked;
         }
 
-        private void keystrokeCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            if (!moveMouseCheckBox.Checked && !clickMouseCheckBox.Checked && !keystrokeCheckBox.Checked)
-            {
-                keystrokeCheckBox.Checked = true;
-            }
-
-            keystrokeComboBox.Enabled = keystrokeCheckBox.Checked;
-        }
-
         private void resumeCheckBox_CheckedChanged(object sender, EventArgs e)
         {
             resumeNumericUpDown.Enabled = resumeCheckBox.Checked;
@@ -1034,29 +1059,52 @@ namespace Ellanet.Forms
 
         private void clickMouseCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            if (!moveMouseCheckBox.Checked && !clickMouseCheckBox.Checked && !keystrokeCheckBox.Checked)
+            if (!AtLeastOneActionIsEnabled())
             {
                 clickMouseCheckBox.Checked = true;
             }
 
-            staticPositionCheckBox.Enabled = (clickMouseCheckBox.Checked | moveMouseCheckBox.Checked);
-            xNumericUpDown.Enabled = (staticPositionCheckBox.Enabled & staticPositionCheckBox.Checked);
-            yNumericUpDown.Enabled = (staticPositionCheckBox.Enabled & staticPositionCheckBox.Checked);
-            traceButton.Enabled = (staticPositionCheckBox.Enabled & staticPositionCheckBox.Checked);
+            DetermineActionsTabControlState();
         }
 
         private void moveMouseCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            if ((!moveMouseCheckBox.Checked) && (!clickMouseCheckBox.Checked) && (!keystrokeCheckBox.Checked))
+            if (!AtLeastOneActionIsEnabled())
             {
                 moveMouseCheckBox.Checked = true;
             }
 
+            DetermineActionsTabControlState();
+        }
+
+        private void keystrokeCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!AtLeastOneActionIsEnabled())
+            {
+                keystrokeCheckBox.Checked = true;
+            }
+
+            DetermineActionsTabControlState();
+        }
+
+        private bool AtLeastOneActionIsEnabled()
+        {
+            return(moveMouseCheckBox.Checked || clickMouseCheckBox.Checked || keystrokeCheckBox.Checked);
+        }
+
+        private void DetermineActionsTabControlState()
+        {
             stealthCheckBox.Enabled = moveMouseCheckBox.Checked;
             staticPositionCheckBox.Enabled = (clickMouseCheckBox.Checked | moveMouseCheckBox.Checked);
             xNumericUpDown.Enabled = (staticPositionCheckBox.Enabled & staticPositionCheckBox.Checked);
             yNumericUpDown.Enabled = (staticPositionCheckBox.Enabled & staticPositionCheckBox.Checked);
             traceButton.Enabled = (staticPositionCheckBox.Enabled & staticPositionCheckBox.Checked);
+            keystrokeComboBox.Enabled = keystrokeCheckBox.Checked;
+
+            if (keystrokeComboBox.SelectedIndex.Equals(-1))
+            {
+                keystrokeComboBox.SelectedIndex = 0;
+            }
         }
 
         private void MouseForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -1655,6 +1703,8 @@ namespace Ellanet.Forms
                     scriptLanguageComboBox.SelectedItem = settingsXmlDoc.SelectSingleNode("settings/script_language").InnerText;
                     _scriptEditor = settingsXmlDoc.SelectSingleNode("settings/script_editor").InnerText;
                     scriptEditorLabel.Text = _scriptEditor;
+                    scheduleListView.Items.Clear();
+                    blackoutListView.Items.Clear();
 
                     if (settingsXmlDoc.SelectNodes("settings/schedules/schedule").Count > 0)
                     {
