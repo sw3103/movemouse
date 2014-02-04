@@ -12,22 +12,21 @@ namespace Ellanet.Forms
         private const int BalloonTipTimeout = 30000;
         private const string DownloadsUrl = "http://movemouse.codeplex.com/releases/";
         private readonly NotifyIcon _sysTrayIcon;
-        private readonly ContextMenu _sysTrayMenu;
         private MouseForm _moveMouse;
         private bool _directUserToDownloadsOnBalloonClick;
 
         public SystemTrayIcon()
         {
             InitializeComponent();
-            _sysTrayMenu = new ContextMenu();
-            _sysTrayMenu.MenuItems.Add("Open", OpenMoveMouse);
-            _sysTrayMenu.MenuItems.Add("-");
-            _sysTrayMenu.MenuItems.Add("Close", CloseMoveMouse);
+            var sysTrayMenu = new ContextMenu();
+            sysTrayMenu.MenuItems.Add("Open", OpenMoveMouse);
+            sysTrayMenu.MenuItems.Add("-");
+            sysTrayMenu.MenuItems.Add("Close", CloseMoveMouse);
             _sysTrayIcon = new NotifyIcon();
             _sysTrayIcon.DoubleClick += sysTrayIcon_DoubleClick;
             _sysTrayIcon.Text = "Move Mouse";
             _sysTrayIcon.Icon = new Icon(Properties.Resources.Mouse_Icon, new Size(16, 16));
-            _sysTrayIcon.ContextMenu = _sysTrayMenu;
+            _sysTrayIcon.ContextMenu = sysTrayMenu;
             _sysTrayIcon.Visible = true;
             _sysTrayIcon.BalloonTipClicked += sysTrayIcon_BalloonTipClicked;
             _sysTrayIcon.BalloonTipClosed += sysTrayIcon_BalloonTipClosed;
@@ -168,11 +167,11 @@ namespace Ellanet.Forms
             {
                 switch (e.Status)
                 {
-                    case BlackoutStatusChangeEventArgs.BlackoutStatus.Started:
-                        _sysTrayIcon.ShowBalloonTip(BalloonTipTimeout, "Blackout Schedule Started", String.Format("Move Mouse has now entered into a blackout schedule, and will suspend all operations until {0}.", e.StartTime), ToolTipIcon.Info);
+                    case BlackoutStatusChangeEventArgs.BlackoutStatus.Active:
+                        _sysTrayIcon.ShowBalloonTip(BalloonTipTimeout, "Blackout Schedule Started", String.Format("Move Mouse has now entered into a blackout schedule, and will suspend all operations until {0}.", e.EndTime), ToolTipIcon.Info);
                         break;
-                    case BlackoutStatusChangeEventArgs.BlackoutStatus.Ended:
-                        _sysTrayIcon.ShowBalloonTip(BalloonTipTimeout, "Blackout Schedule Ended", String.Format("Move Mouse has now left the blackout schedule, and will resume all operations until {0}.", e.EndTime), ToolTipIcon.Info);
+                    case BlackoutStatusChangeEventArgs.BlackoutStatus.Inactive:
+                        _sysTrayIcon.ShowBalloonTip(BalloonTipTimeout, "Blackout Schedule Ended", String.Format("Move Mouse has now left the blackout schedule, and will resume all operations until {0}.", e.StartTime), ToolTipIcon.Info);
                         break;
                 }
             }

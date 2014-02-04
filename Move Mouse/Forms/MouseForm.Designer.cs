@@ -88,13 +88,6 @@
             this.blackoutListView = new System.Windows.Forms.ListView();
             this.startColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.endColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.Leftovers = new System.Windows.Forms.TabPage();
-            this.boEndComboBox = new System.Windows.Forms.ComboBox();
-            this.blackoutCheckBox = new System.Windows.Forms.CheckBox();
-            this.insideOutsideComboBox = new System.Windows.Forms.ComboBox();
-            this.boStartComboBox = new System.Windows.Forms.ComboBox();
-            this.customScriptsCheckBox = new System.Windows.Forms.CheckBox();
-            this.editScriptButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.mousePictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.delayNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.resumeNumericUpDown)).BeginInit();
@@ -111,7 +104,6 @@
             this.scriptsTabPage.SuspendLayout();
             this.schedulesTabPage.SuspendLayout();
             this.blackoutsTabPage.SuspendLayout();
-            this.Leftovers.SuspendLayout();
             this.SuspendLayout();
             // 
             // mousePictureBox
@@ -490,7 +482,6 @@
             this.optionsTabControl.Controls.Add(this.scriptsTabPage);
             this.optionsTabControl.Controls.Add(this.schedulesTabPage);
             this.optionsTabControl.Controls.Add(this.blackoutsTabPage);
-            this.optionsTabControl.Controls.Add(this.Leftovers);
             this.optionsTabControl.Location = new System.Drawing.Point(12, 12);
             this.optionsTabControl.Name = "optionsTabControl";
             this.optionsTabControl.SelectedIndex = 0;
@@ -875,84 +866,6 @@
             this.endColumnHeader.Text = "End";
             this.endColumnHeader.Width = 125;
             // 
-            // Leftovers
-            // 
-            this.Leftovers.Controls.Add(this.boEndComboBox);
-            this.Leftovers.Controls.Add(this.blackoutCheckBox);
-            this.Leftovers.Controls.Add(this.insideOutsideComboBox);
-            this.Leftovers.Controls.Add(this.boStartComboBox);
-            this.Leftovers.Controls.Add(this.customScriptsCheckBox);
-            this.Leftovers.Controls.Add(this.editScriptButton);
-            this.Leftovers.Location = new System.Drawing.Point(4, 25);
-            this.Leftovers.Name = "Leftovers";
-            this.Leftovers.Size = new System.Drawing.Size(467, 240);
-            this.Leftovers.TabIndex = 6;
-            this.Leftovers.Text = "Leftovers";
-            this.Leftovers.UseVisualStyleBackColor = true;
-            // 
-            // boEndComboBox
-            // 
-            this.boEndComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.boEndComboBox.Enabled = false;
-            this.boEndComboBox.FormattingEnabled = true;
-            this.boEndComboBox.Location = new System.Drawing.Point(348, 137);
-            this.boEndComboBox.Name = "boEndComboBox";
-            this.boEndComboBox.Size = new System.Drawing.Size(79, 24);
-            this.boEndComboBox.TabIndex = 39;
-            // 
-            // blackoutCheckBox
-            // 
-            this.blackoutCheckBox.AutoSize = true;
-            this.blackoutCheckBox.Location = new System.Drawing.Point(83, 78);
-            this.blackoutCheckBox.Name = "blackoutCheckBox";
-            this.blackoutCheckBox.Size = new System.Drawing.Size(176, 20);
-            this.blackoutCheckBox.TabIndex = 36;
-            this.blackoutCheckBox.Text = "Enable blackout schedules";
-            this.blackoutCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // insideOutsideComboBox
-            // 
-            this.insideOutsideComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.insideOutsideComboBox.Enabled = false;
-            this.insideOutsideComboBox.FormattingEnabled = true;
-            this.insideOutsideComboBox.Items.AddRange(new object[] {
-            "outside",
-            "inside"});
-            this.insideOutsideComboBox.Location = new System.Drawing.Point(80, 137);
-            this.insideOutsideComboBox.Name = "insideOutsideComboBox";
-            this.insideOutsideComboBox.Size = new System.Drawing.Size(79, 24);
-            this.insideOutsideComboBox.TabIndex = 37;
-            // 
-            // boStartComboBox
-            // 
-            this.boStartComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.boStartComboBox.Enabled = false;
-            this.boStartComboBox.FormattingEnabled = true;
-            this.boStartComboBox.Location = new System.Drawing.Point(226, 137);
-            this.boStartComboBox.Name = "boStartComboBox";
-            this.boStartComboBox.Size = new System.Drawing.Size(79, 24);
-            this.boStartComboBox.TabIndex = 38;
-            // 
-            // customScriptsCheckBox
-            // 
-            this.customScriptsCheckBox.AutoSize = true;
-            this.customScriptsCheckBox.Location = new System.Drawing.Point(40, 19);
-            this.customScriptsCheckBox.Name = "customScriptsCheckBox";
-            this.customScriptsCheckBox.Size = new System.Drawing.Size(151, 20);
-            this.customScriptsCheckBox.TabIndex = 34;
-            this.customScriptsCheckBox.Text = "Enable custom scripts";
-            this.customScriptsCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // editScriptButton
-            // 
-            this.editScriptButton.Enabled = false;
-            this.editScriptButton.Location = new System.Drawing.Point(272, 199);
-            this.editScriptButton.Name = "editScriptButton";
-            this.editScriptButton.Size = new System.Drawing.Size(75, 23);
-            this.editScriptButton.TabIndex = 35;
-            this.editScriptButton.Text = "Edit";
-            this.editScriptButton.UseVisualStyleBackColor = true;
-            // 
             // MouseForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
@@ -987,8 +900,6 @@
             this.scriptsTabPage.PerformLayout();
             this.schedulesTabPage.ResumeLayout(false);
             this.blackoutsTabPage.ResumeLayout(false);
-            this.Leftovers.ResumeLayout(false);
-            this.Leftovers.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1043,13 +954,6 @@
         private System.Windows.Forms.ListView blackoutListView;
         private System.Windows.Forms.ColumnHeader startColumnHeader;
         private System.Windows.Forms.ColumnHeader endColumnHeader;
-        private System.Windows.Forms.TabPage Leftovers;
-        private System.Windows.Forms.ComboBox boEndComboBox;
-        private System.Windows.Forms.CheckBox blackoutCheckBox;
-        private System.Windows.Forms.ComboBox insideOutsideComboBox;
-        private System.Windows.Forms.ComboBox boStartComboBox;
-        private System.Windows.Forms.CheckBox customScriptsCheckBox;
-        private System.Windows.Forms.Button editScriptButton;
         private System.Windows.Forms.CheckBox executePauseScriptCheckBox;
         private System.Windows.Forms.CheckBox executeIntervalScriptCheckBox;
         private System.Windows.Forms.CheckBox executeStartScriptCheckBox;

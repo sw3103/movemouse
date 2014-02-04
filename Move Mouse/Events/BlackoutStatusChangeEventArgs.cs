@@ -10,8 +10,8 @@ namespace Ellanet.Events
 
         public enum BlackoutStatus
         {
-            Started,
-            Ended
+            Active,
+            Inactive
         }
 
         public BlackoutStatusChangeEventArgs(BlackoutStatus status, string startTime, string endTime)
