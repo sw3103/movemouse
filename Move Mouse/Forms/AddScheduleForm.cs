@@ -8,7 +8,7 @@ namespace Ellanet.Forms
         public TimeSpan Time { get; internal set; }
         public string Action { get; internal set; }
 
-        public AddScheduleForm() : this(new TimeSpan(), "Start")
+        public AddScheduleForm() : this(DateTime.Now.TimeOfDay, "Start")
         {
         }
 

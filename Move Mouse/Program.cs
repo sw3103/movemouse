@@ -10,9 +10,8 @@ namespace Ellanet
         [STAThread]
         private static void Main()
         {
-            //todo Reinstate before release
-            //AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            //Application.ThreadException += Application_ThreadException;
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            Application.ThreadException += Application_ThreadException;
 
             try
             {
@@ -54,5 +53,6 @@ namespace Ellanet
         //todo Don't allow the same start and end blackout time
         //todo Maybe rename "change" to "changed" in events
         //todo Use action enum for scheduling combobox
+        //todo Remove all the possible null exceptions
     }
 }

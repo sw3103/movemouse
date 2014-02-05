@@ -28,7 +28,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -78,12 +78,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Forms\ScriptEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\ScriptEditor.Designer.cs">
-      <DependentUpon>ScriptEditor.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\SystemTrayIcon.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -115,9 +109,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\ScriptEditor.resx">
-      <DependentUpon>ScriptEditor.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Mouse_Image.png" />
@@ -136,5 +127,31 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\ScriptEditor_Icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\Mice\Bernard01.jpg" />
+    <Content Include="Resources\Mice\Bianca01.jpg" />
+    <Content Include="Resources\Mice\Brain01.jpg" />
+    <Content Include="Resources\Mice\Danger01.png" />
+    <Content Include="Resources\Mice\Despereaux01.jpg" />
+    <Content Include="Resources\Mice\FievelMousekewitz01.png" />
+    <Content Include="Resources\Mice\GadgetHackwrench01.png" />
+    <Content Include="Resources\Mice\Itchy01.png" />
+    <Content Include="Resources\Mice\JaqGus01.jpg" />
+    <Content Include="Resources\Mice\Jerry01.png" />
+    <Content Include="Resources\Mice\Mice.xml" />
+    <Content Include="Resources\Mice\Mickey01.jpg" />
+    <Content Include="Resources\Mice\Mighty01.jpg" />
+    <Content Include="Resources\Mice\Minnie01.jpg" />
+    <Content Include="Resources\Mice\MontereyJack01.jpg" />
+    <Content Include="Resources\Mice\Pikachu01.jpg" />
+    <Content Include="Resources\Mice\Pinky01.jpg" />
+    <Content Include="Resources\Mice\PinkyAndBrain01.jpg" />
+    <Content Include="Resources\Mice\PixieDixie01.jpg" />
+    <Content Include="Resources\Mice\Rizzo01.jpg" />
+    <Content Include="Resources\Mice\Roquefort01.gif" />
+    <Content Include="Resources\Mice\Speedy01.jpg" />
+    <Content Include="Resources\Mice\StuartLittle01.jpg" />
+    <Content Include="Resources\Mice\Timothy01.JPG" />
   </ItemGroup>
 </Project>

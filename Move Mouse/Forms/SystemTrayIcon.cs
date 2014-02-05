@@ -23,7 +23,7 @@ namespace Ellanet.Forms
             sysTrayMenu.MenuItems.Add("-");
             sysTrayMenu.MenuItems.Add("Close", CloseMoveMouse);
             _sysTrayIcon = new NotifyIcon();
-            _sysTrayIcon.DoubleClick += sysTrayIcon_DoubleClick;
+            _sysTrayIcon.DoubleClick += _sysTrayIcon_DoubleClick;
             _sysTrayIcon.Text = "Move Mouse";
             _sysTrayIcon.Icon = new Icon(Properties.Resources.Mouse_Icon, new Size(16, 16));
             _sysTrayIcon.ContextMenu = sysTrayMenu;
@@ -69,7 +69,7 @@ namespace Ellanet.Forms
             }
         }
 
-        private void sysTrayIcon_DoubleClick(object sender, EventArgs e)
+        private void _sysTrayIcon_DoubleClick(object sender, EventArgs e)
         {
             ShowMoveMouse(true);
         }
@@ -116,11 +116,6 @@ namespace Ellanet.Forms
                 _moveMouse.Activate();
                 _moveMouse.BringToFront();
             }
-        }
-
-        void _moveMouse_ScheduleArrived(object sender, ScheduleArrivedEventArgs e)
-        {
-            throw new NotImplementedException();
         }
 
         private void _moveMouse_FormClosing(object sender, FormClosingEventArgs e)
@@ -185,6 +180,26 @@ namespace Ellanet.Forms
             {
                 Debug.WriteLine(ex.Message);
             }
+        }
+
+        void _moveMouse_ScheduleArrived(object sender, ScheduleArrivedEventArgs e)
+        {
+            //try
+            //{
+                switch (e.Action)
+                {
+                    case ScheduleArrivedEventArgs.ScheduleAction.Start:
+                        _sysTrayIcon.ShowBalloonTip(BalloonTipTimeout, "Scheduled Start", String.Format("Move Mouse automatically started ({0}).", e.Time), ToolTipIcon.Info);
+                        break;
+                    case ScheduleArrivedEventArgs.ScheduleAction.Pause:
+                        _sysTrayIcon.ShowBalloonTip(BalloonTipTimeout, "Scheduled Pause", String.Format("Move Mouse automatically paused ({0}).", e.Time), ToolTipIcon.Info);
+                        break;
+                }
+            //}
+            //catch (Exception ex)
+            //{
+            //    Debug.WriteLine(ex.Message);
+            //}
         }
 
         private int GetCurrentDpi()

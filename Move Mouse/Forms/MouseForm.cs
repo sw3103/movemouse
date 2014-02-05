@@ -48,6 +48,8 @@ namespace Ellanet.Forms
         private List<ScriptingLanguage> _scriptingLanguages;
         private int _mouseTimerTicks;
         private List<KeyValuePair<TimeSpan, TimeSpan>> _blackoutSchedules;
+        private List<TimeSpan> _startSchedules;
+        private List<TimeSpan> _pauseSchedules;
 
         private delegate void UpdateCountdownProgressBarDelegate(ref ProgressBar pb, int delay, int elapsed);
 
@@ -155,14 +157,15 @@ namespace Ellanet.Forms
             public MOUSEINPUT mi;
         }
 
+        [StructLayout(LayoutKind.Sequential)]
         private struct MOUSEINPUT
         {
             public int dx;
             public int dy;
             public int mouseData;
-            public int dwFlags;
-            public int time;
-            public int dwExtraInfo;
+            public MouseEventFlags dwFlags;
+            public uint time;
+            public UIntPtr dwExtraInfo;
         }
 
         // ReSharper disable MemberCanBePrivate.Local
@@ -263,7 +266,6 @@ namespace Ellanet.Forms
             moveMouseCheckBox.CheckedChanged += moveMouseCheckBox_CheckedChanged;
             clickMouseCheckBox.CheckedChanged += clickMouseCheckBox_CheckedChanged;
             autoPauseCheckBox.CheckedChanged += autoPauseCheckBox_CheckedChanged;
-            //todo Reduce these to test load
             _mouseTimer.Interval = 1000;
             _mouseTimer.Tick += _mouseTimer_Tick;
             _resumeTimer.Interval = 1000;
@@ -308,14 +310,26 @@ namespace Ellanet.Forms
 
         private void _autoPauseTimer_Tick(object sender, EventArgs e)
         {
-            //todo Needs to respect blackout
             Debug.WriteLine("_autoPauseTimer_Tick");
+            var timeNow = new TimeSpan(DateTime.Now.TimeOfDay.Hours, DateTime.Now.TimeOfDay.Minutes, DateTime.Now.TimeOfDay.Seconds);
+
+            if (_pauseSchedules.Contains(timeNow))
+            {
+                ButtonPerformClick(ref actionButton);
+                OnScheduleArrived(this, new ScheduleArrivedEventArgs(ScheduleArrivedEventArgs.ScheduleAction.Pause, timeNow));
+            }
         }
 
         private void _autoStartTimer_Tick(object sender, EventArgs e)
         {
-            //todo Needs to respect blackout
             Debug.WriteLine("_autoStartTimer_Tick");
+            var timeNow = new TimeSpan(DateTime.Now.TimeOfDay.Hours, DateTime.Now.TimeOfDay.Minutes, DateTime.Now.TimeOfDay.Seconds);
+
+            if (_startSchedules.Contains(timeNow))
+            {
+                ButtonPerformClick(ref actionButton);
+                OnScheduleArrived(this, new ScheduleArrivedEventArgs(ScheduleArrivedEventArgs.ScheduleAction.Start, timeNow));
+            }
         }
 
         private void executePauseScriptCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -534,7 +548,7 @@ namespace Ellanet.Forms
                     TimeSpan startTs;
                     TimeSpan endTs;
 
-                    if (TimeSpan.TryParse(lvi.Text, out startTs) && TimeSpan.TryParse(lvi.SubItems[1].Text, out endTs))
+                    if (TimeSpan.TryParse(lvi.SubItems[0].Text, out startTs) && TimeSpan.TryParse(lvi.SubItems[1].Text, out endTs))
                     {
                         _blackoutSchedules.Add(new KeyValuePair<TimeSpan, TimeSpan>(startTs, endTs));
                     }
@@ -573,9 +587,6 @@ namespace Ellanet.Forms
             startTime = new TimeSpan();
             endTime = new TimeSpan();
 
-            //todo Reinstate, and where else do these need to go?
-            //try
-            //{
             if (_blackoutSchedules.Count > 0)
             {
                 startTime = _blackoutSchedules[0].Key;
@@ -591,11 +602,6 @@ namespace Ellanet.Forms
                     }
                 }
             }
-            //}
-            //catch (Exception ex)
-            //{
-            //    Debug.WriteLine(ex.Message);
-            //}
         }
 
         private void scheduleListView_DoubleClick(object sender, EventArgs e)
@@ -615,6 +621,8 @@ namespace Ellanet.Forms
             {
                 scheduleListView.Items.Remove(lvi);
             }
+
+            UpdateAutoScheduleLists();
         }
 
         private void editScheduleButton_Click(object sender, EventArgs e)
@@ -656,6 +664,7 @@ namespace Ellanet.Forms
             lvi.Selected = select;
             scheduleListView.Select();
             scheduleListView.Sort();
+            UpdateAutoScheduleLists();
         }
 
         private void EditSelectedSchedule()
@@ -674,6 +683,33 @@ namespace Ellanet.Forms
 
                 scheduleListView.Select();
                 Opacity = 1;
+            }
+        }
+
+        private void UpdateAutoScheduleLists()
+        {
+            _startSchedules = new List<TimeSpan>();
+            _pauseSchedules = new List<TimeSpan>();
+
+            if (scheduleListView.Items.Count > 0)
+            {
+                foreach (ListViewItem lvi in scheduleListView.Items)
+                {
+                    TimeSpan ts;
+
+                    if (TimeSpan.TryParse(lvi.SubItems[0].Text, out ts))
+                    {
+                        switch ((ScheduleArrivedEventArgs.ScheduleAction) Enum.Parse(typeof (ScheduleArrivedEventArgs.ScheduleAction), lvi.SubItems[1].Text, true))
+                        {
+                            case ScheduleArrivedEventArgs.ScheduleAction.Start:
+                                _startSchedules.Add(ts);
+                                break;
+                            case ScheduleArrivedEventArgs.ScheduleAction.Pause:
+                                _pauseSchedules.Add(ts);
+                                break;
+                        }
+                    }
+                }
             }
         }
 
@@ -993,10 +1029,10 @@ namespace Ellanet.Forms
             {
                 actionButton.PerformClick();
             }
-            else
-            {
-                _autoStartTimer.Start();
-            }
+            //else
+            //{
+            //    _autoStartTimer.Start();
+            //}
 
             #region Loop for testing blackout schedules
 
@@ -1453,15 +1489,15 @@ namespace Ellanet.Forms
                 dy = point.Y,
                 mouseData = 0,
                 time = 0,
-                dwFlags = Convert.ToInt32(MouseEventFlags.MOVE),
-                dwExtraInfo = 0
+                dwFlags = MouseEventFlags.MOVE,
+                dwExtraInfo = UIntPtr.Zero
             };
             var input = new INPUT
             {
                 mi = mi,
                 type = Convert.ToInt32(Win32Consts.INPUT_MOUSE)
             };
-            SendInput(1, ref input, 28);
+            SendInput(1, ref input, Marshal.SizeOf(input));
         }
 
         // ReSharper disable PossibleNullReferenceException
@@ -1633,14 +1669,26 @@ namespace Ellanet.Forms
                     }
 
                     ReadSettings();
-                    LaunchScript(Script.Pause);
+
+                    if (!IsBlackoutActive(DateTime.Now.TimeOfDay))
+                    {
+                        LaunchScript(Script.Pause);
+                    }
+
                     break;
                 default:
-                    LaunchScript(Script.Start);
                     _mouseTimerTicks = 0;
+                    _mmStartTime = DateTime.Now;
                     _blackoutStatus = BlackoutStatusChangeEventArgs.BlackoutStatus.Inactive;
-                    MoveMouseToStaticPosition();
-                    ActivateApplication();
+
+                    if (!IsBlackoutActive(DateTime.Now.TimeOfDay))
+                    {
+                        LaunchScript(Script.Start);
+                        MoveMouseToStaticPosition();
+                        ActivateApplication();
+                        WindowState = minimiseOnStartCheckBox.Checked ? FormWindowState.Minimized : FormWindowState.Normal;
+                    }
+
                     _resumeTimer.Stop();
                     _autoStartTimer.Stop();
                     _mouseTimer.Start();
@@ -1649,8 +1697,6 @@ namespace Ellanet.Forms
                     optionsTabControl.SelectedTab = mouseTabPage;
                     optionsTabControl.Enabled = false;
                     Opacity = .75;
-                    _mmStartTime = DateTime.Now;
-                    WindowState = minimiseOnStartCheckBox.Checked ? FormWindowState.Minimized : FormWindowState.Normal;
                     SaveSettings();
                     break;
             }
