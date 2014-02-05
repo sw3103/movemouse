@@ -52,6 +52,7 @@
     <Compile Include="Classes\ScriptingLanguage.cs" />
     <Compile Include="Events\BlackoutStatusChangeEventArgs.cs" />
     <Compile Include="Events\NewVersionAvailableEventArgs.cs" />
+    <Compile Include="Events\ScheduleArrivedEventArgs.cs" />
     <Compile Include="Forms\AddScheduleForm.cs">
       <SubType>Form</SubType>
     </Compile>

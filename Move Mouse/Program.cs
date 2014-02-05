@@ -50,5 +50,9 @@ namespace Ellanet
         //todo Balloon notifications when scheduling starts and stops
         //todo One time upgrade for XML
         //todo Sort tab ordering on all forms
+        //todo Use comboboxes instead of numericupdowns for scheduling
+        //todo Don't allow the same start and end blackout time
+        //todo Maybe rename "change" to "changed" in events
+        //todo Use action enum for scheduling combobox
     }
 }

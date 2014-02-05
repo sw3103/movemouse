@@ -73,16 +73,19 @@ namespace Ellanet.Forms
 
         private delegate void AddComboBoxItemDelegate(ref ComboBox cb, string item, bool selected);
 
-        public delegate void BlackoutStatusChangeHandler(object sender, BlackoutStatusChangeEventArgs e);
-
-        public delegate void NewVersionAvailableHandler(object sender, NewVersionAvailableEventArgs e);
-
         public delegate void ClearComboBoxItemsDelegate(ref ComboBox cb);
 
         private delegate bool IsWindowMinimisedDelegate(IntPtr handle);
 
+        public delegate void BlackoutStatusChangeHandler(object sender, BlackoutStatusChangeEventArgs e);
+
+        public delegate void NewVersionAvailableHandler(object sender, NewVersionAvailableEventArgs e);
+
+        public delegate void ScheduleArrivedHandler(object sender, ScheduleArrivedEventArgs e);
+
         public event BlackoutStatusChangeHandler BlackoutStatusChange;
         public event NewVersionAvailableHandler NewVersionAvailable;
+        public event ScheduleArrivedHandler ScheduleArrived;
 
         public bool MinimiseToSystemTrayWarningShown { get; private set; }
 
@@ -834,6 +837,14 @@ namespace Ellanet.Forms
             if (NewVersionAvailable != null)
             {
                 NewVersionAvailable(this, e);
+            }
+        }
+
+        protected void OnScheduleArrived(object sender, ScheduleArrivedEventArgs e)
+        {
+            if (ScheduleArrived != null)
+            {
+                ScheduleArrived(this, e);
             }
         }
 
@@ -1632,7 +1643,7 @@ namespace Ellanet.Forms
                     ActivateApplication();
                     _resumeTimer.Stop();
                     _autoStartTimer.Stop();
-_mouseTimer.Start();
+                    _mouseTimer.Start();
                     _autoPauseTimer.Start();
                     actionButton.Text = "Pause";
                     optionsTabControl.SelectedTab = mouseTabPage;
@@ -1653,7 +1664,7 @@ _mouseTimer.Start();
             {
                 UpdateCountdownProgressBar(ref countdownProgressBar, Convert.ToInt32(delayNumericUpDown.Value), _mouseTimerTicks);
                 _mouseTimerTicks++;
-                StopIfMouseHasMoved();
+                AutoPauseIfMouseHasMoved();
 
                 if (_blackoutStatus == BlackoutStatusChangeEventArgs.BlackoutStatus.Active)
                 {
@@ -1661,7 +1672,7 @@ _mouseTimer.Start();
                     TimeSpan startTime;
                     TimeSpan endTime;
                     GetNextBlackoutStatusChangeTime(out startTime, out endTime);
-                    OnBlackoutStatusChange(this, new BlackoutStatusChangeEventArgs(_blackoutStatus, startTime.ToString(), endTime.ToString()));
+                    OnBlackoutStatusChange(this, new BlackoutStatusChangeEventArgs(_blackoutStatus, startTime, endTime));
                 }
 
                 if (_mouseTimerTicks > Convert.ToInt32(delayNumericUpDown.Value))
@@ -1681,7 +1692,7 @@ _mouseTimer.Start();
                     TimeSpan startTime;
                     TimeSpan endTime;
                     GetNextBlackoutStatusChangeTime(out startTime, out endTime);
-                    OnBlackoutStatusChange(this, new BlackoutStatusChangeEventArgs(_blackoutStatus, startTime.ToString(), endTime.ToString()));
+                    OnBlackoutStatusChange(this, new BlackoutStatusChangeEventArgs(_blackoutStatus, startTime, endTime));
                 }
             }
         }
@@ -1747,7 +1758,7 @@ _mouseTimer.Start();
             }
         }
 
-        private void StopIfMouseHasMoved()
+        private void AutoPauseIfMouseHasMoved()
         {
             if (GetCheckBoxChecked(ref autoPauseCheckBox) && (_mmStartTime.Add(_waitUntilAutoMoveDetect) < DateTime.Now) && (_startingMousePoint != Cursor.Position))
             {

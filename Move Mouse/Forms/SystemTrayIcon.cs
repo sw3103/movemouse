@@ -103,8 +103,9 @@ namespace Ellanet.Forms
             if ((_moveMouse == null) || (_moveMouse.IsDisposed))
             {
                 _moveMouse = new MouseForm(suppressAutoStart);
-                _moveMouse.BlackoutStatusChange += moveMouse_BlackoutStatusChange;
-                _moveMouse.NewVersionAvailable += moveMouse_NewVersionAvailable;
+                _moveMouse.BlackoutStatusChange += _moveMouse_BlackoutStatusChange;
+                _moveMouse.NewVersionAvailable += _moveMouse_NewVersionAvailable;
+                _moveMouse.ScheduleArrived += _moveMouse_ScheduleArrived;
                 _moveMouse.FormClosing += _moveMouse_FormClosing;
                 _moveMouse.Show();
             }
@@ -117,6 +118,11 @@ namespace Ellanet.Forms
             }
         }
 
+        void _moveMouse_ScheduleArrived(object sender, ScheduleArrivedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
         private void _moveMouse_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (!_moveMouse.MinimiseToSystemTrayWarningShown)
@@ -125,7 +131,7 @@ namespace Ellanet.Forms
             }
         }
 
-        private void moveMouse_NewVersionAvailable(object sender, NewVersionAvailableEventArgs e)
+        private void _moveMouse_NewVersionAvailable(object sender, NewVersionAvailableEventArgs e)
         {
             try
             {
@@ -161,7 +167,7 @@ namespace Ellanet.Forms
             }
         }
 
-        private void moveMouse_BlackoutStatusChange(object sender, BlackoutStatusChangeEventArgs e)
+        private void _moveMouse_BlackoutStatusChange(object sender, BlackoutStatusChangeEventArgs e)
         {
             try
             {
