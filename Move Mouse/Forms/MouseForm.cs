@@ -1,4 +1,5 @@
-﻿using Ellanet.Classes;
+﻿using System.Net;
+using Ellanet.Classes;
 using Ellanet.Events;
 using Microsoft.VisualBasic;
 using System;
@@ -12,6 +13,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
+using Microsoft.VisualBasic.Devices;
 
 namespace Ellanet.Forms
 {
@@ -25,6 +27,8 @@ namespace Ellanet.Forms
         private const string ScriptsHelpAddress = "https://movemouse.codeplex.com/wikipage?title=Custom%20Scripts";
         private const string PayPalAddress = "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=QZTWHD9CRW5XN";
         private const string VersionXmlUrl = "https://movemouse.svn.codeplex.com/svn/Version.xml";
+        private const string MiceResourceUrlPrefix = "https://movemouse.svn.codeplex.com/svn/Move%20Mouse/Resources/Mice/";
+        private const string MiceXmlName = "Mice.xml";
         private const string StartScriptName = "Move Mouse - Start";
         private const string IntervalScriptName = "Move Mouse - Interval";
         private const string PauseScriptName = "Move Mouse - Pause";
@@ -36,7 +40,8 @@ namespace Ellanet.Forms
         private readonly System.Windows.Forms.Timer _resumeTimer = new System.Windows.Forms.Timer();
         private readonly System.Windows.Forms.Timer _autoStartTimer = new System.Windows.Forms.Timer();
         private readonly System.Windows.Forms.Timer _autoPauseTimer = new System.Windows.Forms.Timer();
-        private readonly string _moveMouseWorkingDirectory = Environment.ExpandEnvironmentVariables(@"%APPDATA%\Ellanet\Move Mouse");
+        private readonly string _moveMouseAppDirectory = Environment.ExpandEnvironmentVariables(@"%AppData%\Ellanet\Move Mouse");
+        private readonly string _moveMouseTempDirectory = Environment.ExpandEnvironmentVariables(@"%Temp%\Ellanet\Move Mouse");
         private readonly bool _suppressAutoStart;
         private DateTime _mmStartTime;
         private Point _startingMousePoint;
@@ -50,6 +55,8 @@ namespace Ellanet.Forms
         private List<KeyValuePair<TimeSpan, TimeSpan>> _blackoutSchedules;
         private List<TimeSpan> _startSchedules;
         private List<TimeSpan> _pauseSchedules;
+        private List<CelebrityMouse> _celebrityMice;
+        private bool _easterEggActive;
 
         private delegate void UpdateCountdownProgressBarDelegate(ref ProgressBar pb, int delay, int elapsed);
 
@@ -75,7 +82,9 @@ namespace Ellanet.Forms
 
         private delegate void AddComboBoxItemDelegate(ref ComboBox cb, string item, bool selected);
 
-        public delegate void ClearComboBoxItemsDelegate(ref ComboBox cb);
+        private delegate void ClearComboBoxItemsDelegate(ref ComboBox cb);
+
+        private delegate void ShowCelebrityMouseDelegate(CelebrityMouse cb);
 
         private delegate bool IsWindowMinimisedDelegate(IntPtr handle);
 
@@ -275,9 +284,6 @@ namespace Ellanet.Forms
             _autoPauseTimer.Interval = 1000;
             _autoPauseTimer.Tick += _autoPauseTimer_Tick;
             traceButton.Click += traceButton_Click;
-            mousePictureBox.MouseEnter += mousePictureBox_MouseEnter;
-            mousePictureBox.MouseLeave += mousePictureBox_MouseLeave;
-            mousePictureBox.MouseClick += mousePictureBox_MouseClick;
             helpPictureBox.MouseEnter += helpPictureBox_MouseEnter;
             helpPictureBox.MouseLeave += helpPictureBox_MouseLeave;
             helpPictureBox.MouseClick += helpPictureBox_MouseClick;
@@ -305,7 +311,13 @@ namespace Ellanet.Forms
             scheduleListView.DoubleClick += scheduleListView_DoubleClick;
             blackoutListView.SelectedIndexChanged += blackoutListView_SelectedIndexChanged;
             blackoutListView.DoubleClick += blackoutListView_DoubleClick;
+            mousePictureBox.DoubleClick += mousePictureBox_DoubleClick;
             SetButtonTag(ref traceButton, GetButtonText(ref traceButton));
+        }
+
+        void mousePictureBox_DoubleClick(object sender, EventArgs e)
+        {
+            ShowCelebrityMouse(true);
         }
 
         private void _autoPauseTimer_Tick(object sender, EventArgs e)
@@ -752,13 +764,13 @@ namespace Ellanet.Forms
                 switch (script)
                 {
                     case Script.Start:
-                        scriptPath = Path.Combine(_moveMouseWorkingDirectory, String.Format("{0}.{1}", StartScriptName, sl.FileExtension));
+                        scriptPath = Path.Combine(_moveMouseAppDirectory, String.Format("{0}.{1}", StartScriptName, sl.FileExtension));
                         break;
                     case Script.Interval:
-                        scriptPath = Path.Combine(_moveMouseWorkingDirectory, String.Format("{0}.{1}", IntervalScriptName, sl.FileExtension));
+                        scriptPath = Path.Combine(_moveMouseAppDirectory, String.Format("{0}.{1}", IntervalScriptName, sl.FileExtension));
                         break;
                     case Script.Pause:
-                        scriptPath = Path.Combine(_moveMouseWorkingDirectory, String.Format("{0}.{1}", PauseScriptName, sl.FileExtension));
+                        scriptPath = Path.Combine(_moveMouseAppDirectory, String.Format("{0}.{1}", PauseScriptName, sl.FileExtension));
                         break;
                 }
 
@@ -1017,13 +1029,19 @@ namespace Ellanet.Forms
 
         private void MouseForm_Load(object sender, EventArgs e)
         {
-            if (!Directory.Exists(_moveMouseWorkingDirectory))
+            if (!Directory.Exists(_moveMouseAppDirectory))
             {
-                Directory.CreateDirectory(_moveMouseWorkingDirectory);
+                Directory.CreateDirectory(_moveMouseAppDirectory);
+            }
+
+            if (!Directory.Exists(_moveMouseTempDirectory))
+            {
+                Directory.CreateDirectory(_moveMouseTempDirectory);
             }
 
             ThreadPool.QueueUserWorkItem(CheckForUpdate);
             ThreadPool.QueueUserWorkItem(ListOpenWindows);
+            ThreadPool.QueueUserWorkItem(UpdateCelebrityMiceList);
 
             if (startOnLaunchCheckBox.Checked && !_suppressAutoStart)
             {
@@ -1060,8 +1078,8 @@ namespace Ellanet.Forms
 
                     if (availableVersion > Assembly.GetExecutingAssembly().GetName().Version)
                     {
-                        DateTime released = Convert.ToDateTime(versionXmlDoc.SelectSingleNode("version/released_date").InnerText);
-                        DateTime advertised = Convert.ToDateTime(versionXmlDoc.SelectSingleNode("version/advertised_date").InnerText);
+                        var released = Convert.ToDateTime(versionXmlDoc.SelectSingleNode("version/released_date").InnerText);
+                        var advertised = Convert.ToDateTime(versionXmlDoc.SelectSingleNode("version/advertised_date").InnerText);
                         var features = new List<string>();
                         var fixes = new List<string>();
 
@@ -1094,6 +1112,36 @@ namespace Ellanet.Forms
             }
 
             // ReSharper restore PossibleNullReferenceException
+        }
+
+        private void UpdateCelebrityMiceList(object stateInfo)
+        {
+            try
+            {
+                _celebrityMice = new List<CelebrityMouse>();
+                var miceXmlDoc = new XmlDocument();
+                miceXmlDoc.Load(String.Format("{0}{1}", MiceResourceUrlPrefix, MiceXmlName));
+                var mouseNodes = miceXmlDoc.SelectNodes("mice/mouse");
+
+                if ((mouseNodes != null) && (mouseNodes.Count > 0))
+                {
+                    foreach (XmlNode mouseNode in mouseNodes)
+                    {
+                        var nameNode = mouseNode.SelectSingleNode("name");
+                        var imageNameNode = mouseNode.SelectSingleNode("image_name");
+                        var toolTipNode = mouseNode.SelectSingleNode("tool_tip");
+
+                        if ((nameNode != null) && (imageNameNode != null) && (toolTipNode != null))
+                        {
+                            _celebrityMice.Add(new CelebrityMouse {Name = nameNode.InnerText, ImageName = imageNameNode.InnerText, ToolTip = toolTipNode.InnerText});
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
         }
 
         private void traceButton_Click(object sender, EventArgs e)
@@ -1222,7 +1270,7 @@ namespace Ellanet.Forms
 
                         if (GetCheckBoxChecked(ref executeStartScriptCheckBox))
                         {
-                            scriptPath = Path.Combine(_moveMouseWorkingDirectory, String.Format("{0}.{1}", StartScriptName, sl.FileExtension));
+                            scriptPath = Path.Combine(_moveMouseAppDirectory, String.Format("{0}.{1}", StartScriptName, sl.FileExtension));
                         }
 
                         break;
@@ -1230,7 +1278,7 @@ namespace Ellanet.Forms
 
                         if (GetCheckBoxChecked(ref executeIntervalScriptCheckBox))
                         {
-                            scriptPath = Path.Combine(_moveMouseWorkingDirectory, String.Format("{0}.{1}", IntervalScriptName, sl.FileExtension));
+                            scriptPath = Path.Combine(_moveMouseAppDirectory, String.Format("{0}.{1}", IntervalScriptName, sl.FileExtension));
                         }
 
                         break;
@@ -1238,7 +1286,7 @@ namespace Ellanet.Forms
 
                         if (GetCheckBoxChecked(ref executePauseScriptCheckBox))
                         {
-                            scriptPath = Path.Combine(_moveMouseWorkingDirectory, String.Format("{0}.{1}", PauseScriptName, sl.FileExtension));
+                            scriptPath = Path.Combine(_moveMouseAppDirectory, String.Format("{0}.{1}", PauseScriptName, sl.FileExtension));
                         }
 
                         break;
@@ -1446,6 +1494,28 @@ namespace Ellanet.Forms
             return placement.showCmd == ShowWindowCommands.ShowMinimized;
         }
 
+        private void ShowCelebrityMouse(CelebrityMouse cb)
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new ShowCelebrityMouseDelegate(ShowCelebrityMouse), new object[] {cb});
+            }
+            else
+            {
+                //todo try...catch
+                if (cb != null)
+                {
+                    string imageLocalPath = Path.Combine(_moveMouseTempDirectory, cb.ImageName);
+
+                    if (File.Exists(imageLocalPath))
+                    {
+                        mousePictureBox.Image = new Bitmap(imageLocalPath);
+                        mouseTabPage.Text = cb.Name;
+                    }
+                }
+            }
+        }
+
         private WINDOWPLACEMENT GetPlacement(IntPtr hwnd)
         {
             var placement = new WINDOWPLACEMENT();
@@ -1506,10 +1576,10 @@ namespace Ellanet.Forms
         {
             try
             {
-                if (File.Exists(Path.Combine(_moveMouseWorkingDirectory, MoveMouseXmlName)))
+                if (File.Exists(Path.Combine(_moveMouseAppDirectory, MoveMouseXmlName)))
                 {
                     var settingsXmlDoc = new XmlDocument();
-                    settingsXmlDoc.Load(Path.Combine(_moveMouseWorkingDirectory, MoveMouseXmlName));
+                    settingsXmlDoc.Load(Path.Combine(_moveMouseAppDirectory, MoveMouseXmlName));
                     delayNumericUpDown.Value = Convert.ToDecimal(settingsXmlDoc.SelectSingleNode("settings/second_delay").InnerText);
                     moveMouseCheckBox.Checked = Convert.ToBoolean(settingsXmlDoc.SelectSingleNode("settings/move_mouse_pointer").InnerText);
                     stealthCheckBox.Checked = Convert.ToBoolean(settingsXmlDoc.SelectSingleNode("settings/stealth_mode").InnerText);
@@ -1638,7 +1708,7 @@ namespace Ellanet.Forms
                     }
                 }
 
-                settingsXmlDoc.Save(Path.Combine(_moveMouseWorkingDirectory, MoveMouseXmlName));
+                settingsXmlDoc.Save(Path.Combine(_moveMouseAppDirectory, MoveMouseXmlName));
                 processComboBox.Tag = processComboBox.Text;
             }
             catch (Exception ex)
@@ -1680,6 +1750,7 @@ namespace Ellanet.Forms
                     _mouseTimerTicks = 0;
                     _mmStartTime = DateTime.Now;
                     _blackoutStatus = BlackoutStatusChangeEventArgs.BlackoutStatus.Inactive;
+                    _easterEggActive = new Random().Next(1, 100).Equals(31);
 
                     if (!IsBlackoutActive(DateTime.Now.TimeOfDay))
                     {
@@ -1724,6 +1795,7 @@ namespace Ellanet.Forms
                 if (_mouseTimerTicks > Convert.ToInt32(delayNumericUpDown.Value))
                 {
                     LaunchScript(Script.Interval);
+                    ShowCelebrityMouse(true);
                     SendKeystroke();
                     ClickMouse();
                     MoveMouse();
@@ -1847,6 +1919,32 @@ namespace Ellanet.Forms
                     Debug.WriteLine(ex.Message);
                 }
             }
+        }
+
+        private void ShowCelebrityMouse(bool ignoreEasterEggState)
+        {
+            //todo try...catch
+            if ((ignoreEasterEggState || _easterEggActive) && (_celebrityMice != null) && (_celebrityMice.Count > 0) && Directory.Exists(_moveMouseTempDirectory))
+            {
+                ThreadPool.QueueUserWorkItem(ShowCelebrityMouseThread);
+            }
+        }
+
+        private void ShowCelebrityMouseThread(object stateInfo)
+        {
+            //todo try...catch
+            var mouse = _celebrityMice[new Random().Next(0, (_celebrityMice.Count - 1))];
+                string imageLocalPath = Path.Combine(_moveMouseTempDirectory, mouse.ImageName);
+
+                if (!File.Exists(imageLocalPath))
+                {
+                              string imageUrl = String.Format("{0}{1}", MiceResourceUrlPrefix, mouse.ImageName);
+                                     Debug.WriteLine(imageUrl);
+   var wc = new WebClient();
+                    wc.DownloadFile(imageUrl, imageLocalPath);
+                }
+
+            ShowCelebrityMouse(mouse);
         }
     }
 }

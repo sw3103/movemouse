@@ -49,6 +49,7 @@
   </Target>
   -->
   <ItemGroup>
+    <Compile Include="Classes\CelebrityMouse.cs" />
     <Compile Include="Classes\ScriptingLanguage.cs" />
     <Compile Include="Events\BlackoutStatusChangeEventArgs.cs" />
     <Compile Include="Events\NewVersionAvailableEventArgs.cs" />
@@ -139,7 +140,9 @@
     <Content Include="Resources\Mice\Itchy01.png" />
     <Content Include="Resources\Mice\JaqGus01.jpg" />
     <Content Include="Resources\Mice\Jerry01.png" />
-    <Content Include="Resources\Mice\Mice.xml" />
+    <Content Include="Resources\Mice\Mice.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Resources\Mice\Mickey01.jpg" />
     <Content Include="Resources\Mice\Mighty01.jpg" />
     <Content Include="Resources\Mice\Minnie01.jpg" />
