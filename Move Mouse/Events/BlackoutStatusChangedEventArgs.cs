@@ -2,7 +2,7 @@
 
 namespace Ellanet.Events
 {
-    public class BlackoutStatusChangeEventArgs : EventArgs
+    public class BlackoutStatusChangedEventArgs : EventArgs
     {
         public BlackoutStatus Status { get; internal set; }
         public TimeSpan StartTime { get; internal set; }
@@ -14,7 +14,7 @@ namespace Ellanet.Events
             Inactive
         }
 
-        public BlackoutStatusChangeEventArgs(BlackoutStatus status, TimeSpan startTime, TimeSpan endTime)
+        public BlackoutStatusChangedEventArgs(BlackoutStatus status, TimeSpan startTime, TimeSpan endTime)
         {
             Status = status;
             StartTime = startTime;

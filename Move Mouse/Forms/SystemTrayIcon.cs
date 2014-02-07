@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Ellanet.Events;
+using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Management;
 using System.Windows.Forms;
-using Ellanet.Events;
 
 namespace Ellanet.Forms
 {
@@ -30,7 +30,7 @@ namespace Ellanet.Forms
             _sysTrayIcon.Visible = true;
             _sysTrayIcon.BalloonTipClicked += sysTrayIcon_BalloonTipClicked;
             _sysTrayIcon.BalloonTipClosed += sysTrayIcon_BalloonTipClosed;
-            
+
             try
             {
                 if (Is64BitWindows8Point1() && (GetCurrentDpi() > 120))
@@ -103,7 +103,7 @@ namespace Ellanet.Forms
             if ((_moveMouse == null) || (_moveMouse.IsDisposed))
             {
                 _moveMouse = new MouseForm(suppressAutoStart);
-                _moveMouse.BlackoutStatusChange += _moveMouse_BlackoutStatusChange;
+                _moveMouse.BlackoutStatusChanged += _moveMouse_BlackoutStatusChanged;
                 _moveMouse.NewVersionAvailable += _moveMouse_NewVersionAvailable;
                 _moveMouse.ScheduleArrived += _moveMouse_ScheduleArrived;
                 _moveMouse.FormClosing += _moveMouse_FormClosing;
@@ -162,16 +162,16 @@ namespace Ellanet.Forms
             }
         }
 
-        private void _moveMouse_BlackoutStatusChange(object sender, BlackoutStatusChangeEventArgs e)
+        private void _moveMouse_BlackoutStatusChanged(object sender, BlackoutStatusChangedEventArgs e)
         {
             try
             {
                 switch (e.Status)
                 {
-                    case BlackoutStatusChangeEventArgs.BlackoutStatus.Active:
+                    case BlackoutStatusChangedEventArgs.BlackoutStatus.Active:
                         _sysTrayIcon.ShowBalloonTip(BalloonTipTimeout, "Blackout Schedule Started", String.Format("Move Mouse has now entered into a blackout schedule, and will suspend all operations until {0}.", e.EndTime), ToolTipIcon.Info);
                         break;
-                    case BlackoutStatusChangeEventArgs.BlackoutStatus.Inactive:
+                    case BlackoutStatusChangedEventArgs.BlackoutStatus.Inactive:
                         _sysTrayIcon.ShowBalloonTip(BalloonTipTimeout, "Blackout Schedule Ended", String.Format("Move Mouse has now left the blackout schedule, and will resume all operations until {0}.", e.StartTime), ToolTipIcon.Info);
                         break;
                 }
@@ -182,10 +182,10 @@ namespace Ellanet.Forms
             }
         }
 
-        void _moveMouse_ScheduleArrived(object sender, ScheduleArrivedEventArgs e)
+        private void _moveMouse_ScheduleArrived(object sender, ScheduleArrivedEventArgs e)
         {
-            //try
-            //{
+            try
+            {
                 switch (e.Action)
                 {
                     case ScheduleArrivedEventArgs.ScheduleAction.Start:
@@ -195,11 +195,11 @@ namespace Ellanet.Forms
                         _sysTrayIcon.ShowBalloonTip(BalloonTipTimeout, "Scheduled Pause", String.Format("Move Mouse automatically paused ({0}).", e.Time), ToolTipIcon.Info);
                         break;
                 }
-            //}
-            //catch (Exception ex)
-            //{
-            //    Debug.WriteLine(ex.Message);
-            //}
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
         }
 
         private int GetCurrentDpi()

@@ -30,6 +30,11 @@
     <tool_tip></tool_tip>
   </mouse>
   <mouse>
+    <name>Finger Mouse</name>
+    <image_name>FingerMouse01.jpg</image_name>
+    <tool_tip></tool_tip>
+  </mouse>
+  <mouse>
     <name>Gadget Hackwrench</name>
     <image_name>GadgetHackwrench01.png</image_name>
     <tool_tip></tool_tip>
@@ -80,18 +85,8 @@
     <tool_tip></tool_tip>
   </mouse>
   <mouse>
-    <name>Pinky &amp; Brain</name>
-    <image_name>PinkyAndBrain01.jpg</image_name>
-    <tool_tip></tool_tip>
-  </mouse>
-  <mouse>
     <name>Pixie &amp; Dixie</name>
     <image_name>PixieDixie01.jpg</image_name>
-    <tool_tip></tool_tip>
-  </mouse>
-  <mouse>
-    <name>Rizzo</name>
-    <image_name>Rizzo01.jpg</image_name>
     <tool_tip></tool_tip>
   </mouse>
   <mouse>

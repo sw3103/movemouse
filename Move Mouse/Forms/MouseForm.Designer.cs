@@ -112,9 +112,9 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.mousePictureBox.Image = global::Ellanet.Properties.Resources.Mouse_Image;
-            this.mousePictureBox.Location = new System.Drawing.Point(63, 24);
+            this.mousePictureBox.Location = new System.Drawing.Point(63, 25);
             this.mousePictureBox.Name = "mousePictureBox";
-            this.mousePictureBox.Size = new System.Drawing.Size(341, 192);
+            this.mousePictureBox.Size = new System.Drawing.Size(340, 190);
             this.mousePictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.mousePictureBox.TabIndex = 0;
             this.mousePictureBox.TabStop = false;

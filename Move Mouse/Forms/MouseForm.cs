@@ -1,5 +1,4 @@
-﻿using System.Net;
-using Ellanet.Classes;
+﻿using Ellanet.Classes;
 using Ellanet.Events;
 using Microsoft.VisualBasic;
 using System;
@@ -8,12 +7,12 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.Net;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
-using Microsoft.VisualBasic.Devices;
 
 namespace Ellanet.Forms
 {
@@ -47,7 +46,7 @@ namespace Ellanet.Forms
         private Point _startingMousePoint;
         private DateTime _traceTimeComplete = DateTime.MinValue;
         private Thread _traceMouseThread;
-        private BlackoutStatusChangeEventArgs.BlackoutStatus _blackoutStatus = BlackoutStatusChangeEventArgs.BlackoutStatus.Inactive;
+        private BlackoutStatusChangedEventArgs.BlackoutStatus _blackoutStatus = BlackoutStatusChangedEventArgs.BlackoutStatus.Inactive;
         private DateTime _lastUpdateCheck = DateTime.MinValue;
         private string _scriptEditor = Path.Combine(Environment.ExpandEnvironmentVariables("%WINDIR%"), @"System32\notepad.exe");
         private List<ScriptingLanguage> _scriptingLanguages;
@@ -88,13 +87,15 @@ namespace Ellanet.Forms
 
         private delegate bool IsWindowMinimisedDelegate(IntPtr handle);
 
-        public delegate void BlackoutStatusChangeHandler(object sender, BlackoutStatusChangeEventArgs e);
+        private delegate void ZeroParameterDelegate();
+
+        public delegate void BlackoutStatusChangedHandler(object sender, BlackoutStatusChangedEventArgs e);
 
         public delegate void NewVersionAvailableHandler(object sender, NewVersionAvailableEventArgs e);
 
         public delegate void ScheduleArrivedHandler(object sender, ScheduleArrivedEventArgs e);
 
-        public event BlackoutStatusChangeHandler BlackoutStatusChange;
+        public event BlackoutStatusChangedHandler BlackoutStatusChanged;
         public event NewVersionAvailableHandler NewVersionAvailable;
         public event ScheduleArrivedHandler ScheduleArrived;
 
@@ -315,14 +316,14 @@ namespace Ellanet.Forms
             SetButtonTag(ref traceButton, GetButtonText(ref traceButton));
         }
 
-        void mousePictureBox_DoubleClick(object sender, EventArgs e)
+        private void mousePictureBox_DoubleClick(object sender, EventArgs e)
         {
             ShowCelebrityMouse(true);
         }
 
         private void _autoPauseTimer_Tick(object sender, EventArgs e)
         {
-            Debug.WriteLine("_autoPauseTimer_Tick");
+            //Debug.WriteLine("_autoPauseTimer_Tick");
             var timeNow = new TimeSpan(DateTime.Now.TimeOfDay.Hours, DateTime.Now.TimeOfDay.Minutes, DateTime.Now.TimeOfDay.Seconds);
 
             if (_pauseSchedules.Contains(timeNow))
@@ -334,7 +335,7 @@ namespace Ellanet.Forms
 
         private void _autoStartTimer_Tick(object sender, EventArgs e)
         {
-            Debug.WriteLine("_autoStartTimer_Tick");
+            //Debug.WriteLine("_autoStartTimer_Tick");
             var timeNow = new TimeSpan(DateTime.Now.TimeOfDay.Hours, DateTime.Now.TimeOfDay.Minutes, DateTime.Now.TimeOfDay.Seconds);
 
             if (_startSchedules.Contains(timeNow))
@@ -872,11 +873,11 @@ namespace Ellanet.Forms
             }
         }
 
-        protected void OnBlackoutStatusChange(object sender, BlackoutStatusChangeEventArgs e)
+        protected void OnBlackoutStatusChanged(object sender, BlackoutStatusChangedEventArgs e)
         {
-            if (BlackoutStatusChange != null)
+            if (BlackoutStatusChanged != null)
             {
-                BlackoutStatusChange(this, e);
+                BlackoutStatusChanged(this, e);
             }
         }
 
@@ -924,34 +925,6 @@ namespace Ellanet.Forms
             }
         }
 
-        private void mousePictureBox_MouseClick(object sender, MouseEventArgs e)
-        {
-            try
-            {
-                Process.Start(HomeAddress);
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
-            }
-        }
-
-        private void mousePictureBox_MouseLeave(object sender, EventArgs e)
-        {
-            if (Cursor != Cursors.WaitCursor)
-            {
-                Cursor = Cursors.Default;
-            }
-        }
-
-        private void mousePictureBox_MouseEnter(object sender, EventArgs e)
-        {
-            if (Cursor != Cursors.WaitCursor)
-            {
-                Cursor = Cursors.Hand;
-            }
-        }
-
         private void appActivateCheckBox_CheckedChanged(object sender, EventArgs e)
         {
             processComboBox.Enabled = appActivateCheckBox.Checked;
@@ -986,16 +959,6 @@ namespace Ellanet.Forms
                 Debug.WriteLine(ex.Message);
             }
         }
-
-        //void minimiseOnStartCheckBox_CheckedChanged(object sender, EventArgs e)
-        //{
-        //    minimiseToSystemTrayCheckBox.Enabled = (minimiseOnStartCheckBox.Checked | minimiseOnPauseCheckBox.Checked);
-        //}
-
-        //void minimiseOnPauseCheckBox_CheckedChanged(object sender, EventArgs e)
-        //{
-        //    minimiseToSystemTrayCheckBox.Enabled = (minimiseOnStartCheckBox.Checked | minimiseOnPauseCheckBox.Checked);
-        //}
 
         private void MouseForm_Resize(object sender, EventArgs e)
         {
@@ -1047,10 +1010,6 @@ namespace Ellanet.Forms
             {
                 actionButton.PerformClick();
             }
-            //else
-            //{
-            //    _autoStartTimer.Start();
-            //}
 
             #region Loop for testing blackout schedules
 
@@ -1061,57 +1020,6 @@ namespace Ellanet.Forms
             //}
 
             #endregion
-        }
-
-        private void CheckForUpdate(object stateInfo)
-        {
-            // ReSharper disable PossibleNullReferenceException
-
-            try
-            {
-                if (_lastUpdateCheck.Add(_waitBetweenUpdateChecks) < DateTime.Now)
-                {
-                    _lastUpdateCheck = DateTime.Now;
-                    var versionXmlDoc = new XmlDocument();
-                    versionXmlDoc.Load(VersionXmlUrl);
-                    var availableVersion = new Version(Convert.ToInt32(versionXmlDoc.SelectSingleNode("version/major").InnerText), Convert.ToInt32(versionXmlDoc.SelectSingleNode("version/minor").InnerText), Convert.ToInt32(versionXmlDoc.SelectSingleNode("version/build").InnerText));
-
-                    if (availableVersion > Assembly.GetExecutingAssembly().GetName().Version)
-                    {
-                        var released = Convert.ToDateTime(versionXmlDoc.SelectSingleNode("version/released_date").InnerText);
-                        var advertised = Convert.ToDateTime(versionXmlDoc.SelectSingleNode("version/advertised_date").InnerText);
-                        var features = new List<string>();
-                        var fixes = new List<string>();
-
-                        if (versionXmlDoc.SelectSingleNode("version/features").ChildNodes.Count > 0)
-                        {
-                            foreach (XmlNode featureNode in versionXmlDoc.SelectSingleNode("version/features").ChildNodes)
-                            {
-                                features.Add(featureNode.InnerText);
-                            }
-                        }
-
-                        if (versionXmlDoc.SelectSingleNode("version/fixes").ChildNodes.Count > 0)
-                        {
-                            foreach (XmlNode fixNode in versionXmlDoc.SelectSingleNode("version/fixes").ChildNodes)
-                            {
-                                fixes.Add(fixNode.InnerText);
-                            }
-                        }
-
-                        if (advertised < DateTime.Now)
-                        {
-                            OnNewVersionAvailable(this, new NewVersionAvailableEventArgs(availableVersion, released, advertised, features.ToArray(), fixes.ToArray()));
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
-            }
-
-            // ReSharper restore PossibleNullReferenceException
         }
 
         private void UpdateCelebrityMiceList(object stateInfo)
@@ -1182,8 +1090,8 @@ namespace Ellanet.Forms
 
         private void _resumeTimer_Tick(object sender, EventArgs e)
         {
-            Debug.WriteLine("_resumeTimer_Tick");
-            Debug.WriteLine(String.Format("GetLastInputTime() = {0}", GetLastInputTime()));
+            //Debug.WriteLine("_resumeTimer_Tick");
+            //Debug.WriteLine(String.Format("GetLastInputTime() = {0}", GetLastInputTime()));
             //todo Something is happening after 4 seconds
 
             if (GetCheckBoxChecked(ref resumeCheckBox) && (GetLastInputTime() >= resumeNumericUpDown.Value))
@@ -1491,7 +1399,7 @@ namespace Ellanet.Forms
             }
 
             var placement = GetPlacement(handle);
-            return placement.showCmd == ShowWindowCommands.ShowMinimized;
+            return (placement.showCmd == ShowWindowCommands.ShowMinimized);
         }
 
         private void ShowCelebrityMouse(CelebrityMouse cb)
@@ -1502,7 +1410,6 @@ namespace Ellanet.Forms
             }
             else
             {
-                //todo try...catch
                 if (cb != null)
                 {
                     string imageLocalPath = Path.Combine(_moveMouseTempDirectory, cb.ImageName);
@@ -1569,8 +1476,6 @@ namespace Ellanet.Forms
             };
             SendInput(1, ref input, Marshal.SizeOf(input));
         }
-
-        // ReSharper disable PossibleNullReferenceException
 
         private void ReadSettings()
         {
@@ -1717,7 +1622,52 @@ namespace Ellanet.Forms
             }
         }
 
-        // ReSharper restore PossibleNullReferenceException
+        private void CheckForUpdate(object stateInfo)
+        {
+            try
+            {
+                if (_lastUpdateCheck.Add(_waitBetweenUpdateChecks) < DateTime.Now)
+                {
+                    _lastUpdateCheck = DateTime.Now;
+                    var versionXmlDoc = new XmlDocument();
+                    versionXmlDoc.Load(VersionXmlUrl);
+                    var availableVersion = new Version(Convert.ToInt32(versionXmlDoc.SelectSingleNode("version/major").InnerText), Convert.ToInt32(versionXmlDoc.SelectSingleNode("version/minor").InnerText), Convert.ToInt32(versionXmlDoc.SelectSingleNode("version/build").InnerText));
+
+                    if (availableVersion > Assembly.GetExecutingAssembly().GetName().Version)
+                    {
+                        var released = Convert.ToDateTime(versionXmlDoc.SelectSingleNode("version/released_date").InnerText);
+                        var advertised = Convert.ToDateTime(versionXmlDoc.SelectSingleNode("version/advertised_date").InnerText);
+                        var features = new List<string>();
+                        var fixes = new List<string>();
+
+                        if (versionXmlDoc.SelectSingleNode("version/features").ChildNodes.Count > 0)
+                        {
+                            foreach (XmlNode featureNode in versionXmlDoc.SelectSingleNode("version/features").ChildNodes)
+                            {
+                                features.Add(featureNode.InnerText);
+                            }
+                        }
+
+                        if (versionXmlDoc.SelectSingleNode("version/fixes").ChildNodes.Count > 0)
+                        {
+                            foreach (XmlNode fixNode in versionXmlDoc.SelectSingleNode("version/fixes").ChildNodes)
+                            {
+                                fixes.Add(fixNode.InnerText);
+                            }
+                        }
+
+                        if (advertised < DateTime.Now)
+                        {
+                            OnNewVersionAvailable(this, new NewVersionAvailableEventArgs(availableVersion, released, advertised, features.ToArray(), fixes.ToArray()));
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+        }
 
         private void actionButton_Click(object sender, EventArgs e)
         {
@@ -1728,6 +1678,7 @@ namespace Ellanet.Forms
                     _autoPauseTimer.Stop();
                     _resumeTimer.Start();
                     _autoStartTimer.Start();
+                    ResetMousePicture();
                     actionButton.Text = "Start";
                     countdownProgressBar.Value = 0;
                     optionsTabControl.Enabled = true;
@@ -1749,8 +1700,9 @@ namespace Ellanet.Forms
                 default:
                     _mouseTimerTicks = 0;
                     _mmStartTime = DateTime.Now;
-                    _blackoutStatus = BlackoutStatusChangeEventArgs.BlackoutStatus.Inactive;
+                    _blackoutStatus = BlackoutStatusChangedEventArgs.BlackoutStatus.Inactive;
                     _easterEggActive = new Random().Next(1, 100).Equals(31);
+                    ResetMousePicture();
 
                     if (!IsBlackoutActive(DateTime.Now.TimeOfDay))
                     {
@@ -1775,7 +1727,7 @@ namespace Ellanet.Forms
 
         private void _mouseTimer_Tick(object sender, EventArgs e)
         {
-            Debug.WriteLine("_mouseTimer_Tick");
+            //Debug.WriteLine("_mouseTimer_Tick");
 
             if (!IsBlackoutActive(DateTime.Now.TimeOfDay))
             {
@@ -1783,19 +1735,19 @@ namespace Ellanet.Forms
                 _mouseTimerTicks++;
                 AutoPauseIfMouseHasMoved();
 
-                if (_blackoutStatus == BlackoutStatusChangeEventArgs.BlackoutStatus.Active)
+                if (_blackoutStatus == BlackoutStatusChangedEventArgs.BlackoutStatus.Active)
                 {
-                    _blackoutStatus = BlackoutStatusChangeEventArgs.BlackoutStatus.Inactive;
+                    _blackoutStatus = BlackoutStatusChangedEventArgs.BlackoutStatus.Inactive;
                     TimeSpan startTime;
                     TimeSpan endTime;
                     GetNextBlackoutStatusChangeTime(out startTime, out endTime);
-                    OnBlackoutStatusChange(this, new BlackoutStatusChangeEventArgs(_blackoutStatus, startTime, endTime));
+                    OnBlackoutStatusChanged(this, new BlackoutStatusChangedEventArgs(_blackoutStatus, startTime, endTime));
                 }
 
                 if (_mouseTimerTicks > Convert.ToInt32(delayNumericUpDown.Value))
                 {
                     LaunchScript(Script.Interval);
-                    ShowCelebrityMouse(true);
+                    ShowCelebrityMouse(_easterEggActive);
                     SendKeystroke();
                     ClickMouse();
                     MoveMouse();
@@ -1804,13 +1756,13 @@ namespace Ellanet.Forms
             }
             else
             {
-                if (_blackoutStatus == BlackoutStatusChangeEventArgs.BlackoutStatus.Inactive)
+                if (_blackoutStatus == BlackoutStatusChangedEventArgs.BlackoutStatus.Inactive)
                 {
-                    _blackoutStatus = BlackoutStatusChangeEventArgs.BlackoutStatus.Active;
+                    _blackoutStatus = BlackoutStatusChangedEventArgs.BlackoutStatus.Active;
                     TimeSpan startTime;
                     TimeSpan endTime;
                     GetNextBlackoutStatusChangeTime(out startTime, out endTime);
-                    OnBlackoutStatusChange(this, new BlackoutStatusChangeEventArgs(_blackoutStatus, startTime, endTime));
+                    OnBlackoutStatusChanged(this, new BlackoutStatusChangedEventArgs(_blackoutStatus, startTime, endTime));
                 }
             }
         }
@@ -1923,28 +1875,53 @@ namespace Ellanet.Forms
 
         private void ShowCelebrityMouse(bool ignoreEasterEggState)
         {
-            //todo try...catch
-            if ((ignoreEasterEggState || _easterEggActive) && (_celebrityMice != null) && (_celebrityMice.Count > 0) && Directory.Exists(_moveMouseTempDirectory))
+            try
             {
-                ThreadPool.QueueUserWorkItem(ShowCelebrityMouseThread);
+                if ((ignoreEasterEggState || _easterEggActive) && (_celebrityMice != null) && (_celebrityMice.Count > 0) && Directory.Exists(_moveMouseTempDirectory))
+                {
+                    ThreadPool.QueueUserWorkItem(ShowCelebrityMouseThread);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
             }
         }
 
         private void ShowCelebrityMouseThread(object stateInfo)
         {
-            //todo try...catch
-            var mouse = _celebrityMice[new Random().Next(0, (_celebrityMice.Count - 1))];
+            try
+            {
+                var mouse = _celebrityMice[new Random().Next(0, (_celebrityMice.Count - 1))];
                 string imageLocalPath = Path.Combine(_moveMouseTempDirectory, mouse.ImageName);
 
                 if (!File.Exists(imageLocalPath))
                 {
-                              string imageUrl = String.Format("{0}{1}", MiceResourceUrlPrefix, mouse.ImageName);
-                                     Debug.WriteLine(imageUrl);
-   var wc = new WebClient();
+                    string imageUrl = String.Format("{0}{1}", MiceResourceUrlPrefix, mouse.ImageName);
+                    //Debug.WriteLine(imageUrl);
+                    var wc = new WebClient();
                     wc.DownloadFile(imageUrl, imageLocalPath);
                 }
 
-            ShowCelebrityMouse(mouse);
+                ShowCelebrityMouse(mouse);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+        }
+
+        private void ResetMousePicture()
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new ZeroParameterDelegate(ResetMousePicture), new object[] {});
+            }
+            else
+            {
+                mousePictureBox.Image = Properties.Resources.Mouse_Image;
+                mouseTabPage.Text = "Mouse";
+            }
         }
     }
 }

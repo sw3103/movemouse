@@ -8,7 +8,7 @@ namespace Ellanet.Forms
         public TimeSpan Start { get; internal set; }
         public TimeSpan End { get; internal set; }
 
-        public AddBlackoutForm() : this(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0))
+        public AddBlackoutForm() : this(new TimeSpan(17, 0, 0), new TimeSpan(9, 0, 0))
         {
         }
 

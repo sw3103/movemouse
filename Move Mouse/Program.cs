@@ -44,14 +44,8 @@ namespace Ellanet
             Application.Exit();
         }
 
-        //todo Show famous mice when double-clicking icon
-        //todo Balloon notifications when blackout starts and stops
-        //todo Balloon notifications when scheduling starts and stops
         //todo One time upgrade for XML
         //todo Sort tab ordering on all forms
-        //todo Use comboboxes instead of numericupdowns for scheduling
-        //todo Don't allow the same start and end blackout time
-        //todo Maybe rename "change" to "changed" in events
         //todo Use action enum for scheduling combobox
         //todo Remove all the possible null exceptions
     }
