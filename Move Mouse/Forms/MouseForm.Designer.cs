@@ -125,7 +125,7 @@
             this.actionButton.Location = new System.Drawing.Point(212, 297);
             this.actionButton.Name = "actionButton";
             this.actionButton.Size = new System.Drawing.Size(75, 23);
-            this.actionButton.TabIndex = 0;
+            this.actionButton.TabIndex = 1;
             this.actionButton.Text = "Start";
             this.actionButton.UseVisualStyleBackColor = true;
             // 
@@ -153,7 +153,7 @@
             0});
             this.delayNumericUpDown.Name = "delayNumericUpDown";
             this.delayNumericUpDown.Size = new System.Drawing.Size(53, 23);
-            this.delayNumericUpDown.TabIndex = 1;
+            this.delayNumericUpDown.TabIndex = 0;
             this.delayNumericUpDown.Value = new decimal(new int[] {
             30,
             0,
@@ -177,7 +177,7 @@
             this.moveMouseCheckBox.Location = new System.Drawing.Point(20, 50);
             this.moveMouseCheckBox.Name = "moveMouseCheckBox";
             this.moveMouseCheckBox.Size = new System.Drawing.Size(143, 20);
-            this.moveMouseCheckBox.TabIndex = 2;
+            this.moveMouseCheckBox.TabIndex = 1;
             this.moveMouseCheckBox.Text = "Move mouse pointer";
             this.moveMouseCheckBox.UseVisualStyleBackColor = true;
             // 
@@ -187,7 +187,7 @@
             this.clickMouseCheckBox.Location = new System.Drawing.Point(20, 140);
             this.clickMouseCheckBox.Name = "clickMouseCheckBox";
             this.clickMouseCheckBox.Size = new System.Drawing.Size(157, 20);
-            this.clickMouseCheckBox.TabIndex = 11;
+            this.clickMouseCheckBox.TabIndex = 7;
             this.clickMouseCheckBox.Text = "Click left mouse button";
             this.clickMouseCheckBox.UseVisualStyleBackColor = true;
             // 
@@ -197,7 +197,7 @@
             this.autoPauseCheckBox.Location = new System.Drawing.Point(20, 20);
             this.autoPauseCheckBox.Name = "autoPauseCheckBox";
             this.autoPauseCheckBox.Size = new System.Drawing.Size(224, 20);
-            this.autoPauseCheckBox.TabIndex = 20;
+            this.autoPauseCheckBox.TabIndex = 0;
             this.autoPauseCheckBox.Text = "Pause when mouse pointer moved";
             this.autoPauseCheckBox.UseVisualStyleBackColor = true;
             // 
@@ -207,7 +207,7 @@
             this.resumeCheckBox.Location = new System.Drawing.Point(20, 50);
             this.resumeCheckBox.Name = "resumeCheckBox";
             this.resumeCheckBox.Size = new System.Drawing.Size(359, 20);
-            this.resumeCheckBox.TabIndex = 21;
+            this.resumeCheckBox.TabIndex = 1;
             this.resumeCheckBox.Text = "Automatically resume after                seconds of inactivity";
             this.resumeCheckBox.UseVisualStyleBackColor = true;
             // 
@@ -227,7 +227,7 @@
             0});
             this.resumeNumericUpDown.Name = "resumeNumericUpDown";
             this.resumeNumericUpDown.Size = new System.Drawing.Size(53, 23);
-            this.resumeNumericUpDown.TabIndex = 22;
+            this.resumeNumericUpDown.TabIndex = 2;
             this.resumeNumericUpDown.Value = new decimal(new int[] {
             300,
             0,
@@ -240,7 +240,7 @@
             this.stealthCheckBox.Location = new System.Drawing.Point(20, 80);
             this.stealthCheckBox.Name = "stealthCheckBox";
             this.stealthCheckBox.Size = new System.Drawing.Size(282, 20);
-            this.stealthCheckBox.TabIndex = 3;
+            this.stealthCheckBox.TabIndex = 2;
             this.stealthCheckBox.Text = "Stealth mode (pointer movement not visible)";
             this.stealthCheckBox.UseVisualStyleBackColor = true;
             // 
@@ -250,7 +250,7 @@
             this.keystrokeCheckBox.Location = new System.Drawing.Point(20, 170);
             this.keystrokeCheckBox.Name = "keystrokeCheckBox";
             this.keystrokeCheckBox.Size = new System.Drawing.Size(114, 20);
-            this.keystrokeCheckBox.TabIndex = 14;
+            this.keystrokeCheckBox.TabIndex = 8;
             this.keystrokeCheckBox.Text = "Send keystroke";
             this.keystrokeCheckBox.UseVisualStyleBackColor = true;
             // 
@@ -259,6 +259,7 @@
             this.keystrokeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.keystrokeComboBox.Enabled = false;
             this.keystrokeComboBox.FormattingEnabled = true;
+            this.keystrokeComboBox.ItemHeight = 16;
             this.keystrokeComboBox.Items.AddRange(new object[] {
             "{BACKSPACE}",
             "{BREAK}",
@@ -311,7 +312,7 @@
             this.startOnLaunchCheckBox.Location = new System.Drawing.Point(20, 80);
             this.startOnLaunchCheckBox.Name = "startOnLaunchCheckBox";
             this.startOnLaunchCheckBox.Size = new System.Drawing.Size(267, 20);
-            this.startOnLaunchCheckBox.TabIndex = 23;
+            this.startOnLaunchCheckBox.TabIndex = 3;
             this.startOnLaunchCheckBox.Text = "Automatically start Move Mouse on launch";
             this.startOnLaunchCheckBox.UseVisualStyleBackColor = true;
             // 
@@ -321,7 +322,7 @@
             this.launchAtLogonCheckBox.Location = new System.Drawing.Point(20, 110);
             this.launchAtLogonCheckBox.Name = "launchAtLogonCheckBox";
             this.launchAtLogonCheckBox.Size = new System.Drawing.Size(325, 20);
-            this.launchAtLogonCheckBox.TabIndex = 24;
+            this.launchAtLogonCheckBox.TabIndex = 4;
             this.launchAtLogonCheckBox.Text = "Automatically launch Move Mouse at Windows logon";
             this.launchAtLogonCheckBox.UseVisualStyleBackColor = true;
             // 
@@ -331,7 +332,7 @@
             this.staticPositionCheckBox.Location = new System.Drawing.Point(20, 110);
             this.staticPositionCheckBox.Name = "staticPositionCheckBox";
             this.staticPositionCheckBox.Size = new System.Drawing.Size(289, 20);
-            this.staticPositionCheckBox.TabIndex = 7;
+            this.staticPositionCheckBox.TabIndex = 3;
             this.staticPositionCheckBox.Text = "Static mouse pointer position   x                  y";
             this.staticPositionCheckBox.UseVisualStyleBackColor = true;
             // 
@@ -346,7 +347,7 @@
             0});
             this.xNumericUpDown.Name = "xNumericUpDown";
             this.xNumericUpDown.Size = new System.Drawing.Size(53, 23);
-            this.xNumericUpDown.TabIndex = 8;
+            this.xNumericUpDown.TabIndex = 4;
             // 
             // yNumericUpDown
             // 
@@ -359,7 +360,7 @@
             0});
             this.yNumericUpDown.Name = "yNumericUpDown";
             this.yNumericUpDown.Size = new System.Drawing.Size(53, 23);
-            this.yNumericUpDown.TabIndex = 9;
+            this.yNumericUpDown.TabIndex = 5;
             // 
             // traceButton
             // 
@@ -367,7 +368,7 @@
             this.traceButton.Location = new System.Drawing.Point(375, 107);
             this.traceButton.Name = "traceButton";
             this.traceButton.Size = new System.Drawing.Size(75, 24);
-            this.traceButton.TabIndex = 10;
+            this.traceButton.TabIndex = 6;
             this.traceButton.Text = "Track";
             this.traceButton.UseVisualStyleBackColor = true;
             // 
@@ -377,7 +378,7 @@
             this.minimiseOnPauseCheckBox.Location = new System.Drawing.Point(20, 140);
             this.minimiseOnPauseCheckBox.Name = "minimiseOnPauseCheckBox";
             this.minimiseOnPauseCheckBox.Size = new System.Drawing.Size(133, 20);
-            this.minimiseOnPauseCheckBox.TabIndex = 25;
+            this.minimiseOnPauseCheckBox.TabIndex = 5;
             this.minimiseOnPauseCheckBox.Text = "Minimise on pause";
             this.minimiseOnPauseCheckBox.UseVisualStyleBackColor = true;
             // 
@@ -387,7 +388,7 @@
             this.minimiseOnStartCheckBox.Location = new System.Drawing.Point(20, 170);
             this.minimiseOnStartCheckBox.Name = "minimiseOnStartCheckBox";
             this.minimiseOnStartCheckBox.Size = new System.Drawing.Size(125, 20);
-            this.minimiseOnStartCheckBox.TabIndex = 26;
+            this.minimiseOnStartCheckBox.TabIndex = 6;
             this.minimiseOnStartCheckBox.Text = "Minimise on start";
             this.minimiseOnStartCheckBox.UseVisualStyleBackColor = true;
             // 
@@ -397,7 +398,7 @@
             this.minimiseToSystemTrayCheckBox.Location = new System.Drawing.Point(20, 200);
             this.minimiseToSystemTrayCheckBox.Name = "minimiseToSystemTrayCheckBox";
             this.minimiseToSystemTrayCheckBox.Size = new System.Drawing.Size(168, 20);
-            this.minimiseToSystemTrayCheckBox.TabIndex = 27;
+            this.minimiseToSystemTrayCheckBox.TabIndex = 7;
             this.minimiseToSystemTrayCheckBox.Text = "Minimise to System Tray";
             this.minimiseToSystemTrayCheckBox.UseVisualStyleBackColor = true;
             // 
@@ -410,7 +411,7 @@
             this.processComboBox.Name = "processComboBox";
             this.processComboBox.Size = new System.Drawing.Size(199, 24);
             this.processComboBox.Sorted = true;
-            this.processComboBox.TabIndex = 5;
+            this.processComboBox.TabIndex = 11;
             // 
             // appActivateCheckBox
             // 
@@ -418,7 +419,7 @@
             this.appActivateCheckBox.Location = new System.Drawing.Point(20, 200);
             this.appActivateCheckBox.Name = "appActivateCheckBox";
             this.appActivateCheckBox.Size = new System.Drawing.Size(137, 20);
-            this.appActivateCheckBox.TabIndex = 4;
+            this.appActivateCheckBox.TabIndex = 10;
             this.appActivateCheckBox.Text = "Activate application";
             this.appActivateCheckBox.UseVisualStyleBackColor = true;
             // 
@@ -457,7 +458,7 @@
             this.refreshButton.Location = new System.Drawing.Point(375, 198);
             this.refreshButton.Name = "refreshButton";
             this.refreshButton.Size = new System.Drawing.Size(75, 24);
-            this.refreshButton.TabIndex = 6;
+            this.refreshButton.TabIndex = 12;
             this.refreshButton.Text = "Refresh";
             this.refreshButton.UseVisualStyleBackColor = true;
             // 
@@ -486,7 +487,7 @@
             this.optionsTabControl.Name = "optionsTabControl";
             this.optionsTabControl.SelectedIndex = 0;
             this.optionsTabControl.Size = new System.Drawing.Size(475, 269);
-            this.optionsTabControl.TabIndex = 30;
+            this.optionsTabControl.TabIndex = 0;
             // 
             // mouseTabPage
             // 
@@ -571,7 +572,7 @@
             this.editPauseScriptButton.Location = new System.Drawing.Point(317, 78);
             this.editPauseScriptButton.Name = "editPauseScriptButton";
             this.editPauseScriptButton.Size = new System.Drawing.Size(75, 23);
-            this.editPauseScriptButton.TabIndex = 41;
+            this.editPauseScriptButton.TabIndex = 5;
             this.editPauseScriptButton.Text = "Edit";
             this.editPauseScriptButton.UseVisualStyleBackColor = true;
             // 
@@ -582,7 +583,7 @@
             this.editIntervalScriptButton.Location = new System.Drawing.Point(317, 48);
             this.editIntervalScriptButton.Name = "editIntervalScriptButton";
             this.editIntervalScriptButton.Size = new System.Drawing.Size(75, 23);
-            this.editIntervalScriptButton.TabIndex = 40;
+            this.editIntervalScriptButton.TabIndex = 3;
             this.editIntervalScriptButton.Text = "Edit";
             this.editIntervalScriptButton.UseVisualStyleBackColor = true;
             // 
@@ -593,7 +594,7 @@
             this.editStartScriptButton.Location = new System.Drawing.Point(317, 18);
             this.editStartScriptButton.Name = "editStartScriptButton";
             this.editStartScriptButton.Size = new System.Drawing.Size(75, 23);
-            this.editStartScriptButton.TabIndex = 39;
+            this.editStartScriptButton.TabIndex = 1;
             this.editStartScriptButton.Text = "Edit";
             this.editStartScriptButton.UseVisualStyleBackColor = true;
             // 
@@ -613,7 +614,7 @@
             this.changeScriptEditorButton.Location = new System.Drawing.Point(373, 167);
             this.changeScriptEditorButton.Name = "changeScriptEditorButton";
             this.changeScriptEditorButton.Size = new System.Drawing.Size(75, 23);
-            this.changeScriptEditorButton.TabIndex = 37;
+            this.changeScriptEditorButton.TabIndex = 8;
             this.changeScriptEditorButton.Text = "Change";
             this.changeScriptEditorButton.UseVisualStyleBackColor = true;
             // 
@@ -675,7 +676,7 @@
             this.scriptLanguageComboBox.Location = new System.Drawing.Point(142, 137);
             this.scriptLanguageComboBox.Name = "scriptLanguageComboBox";
             this.scriptLanguageComboBox.Size = new System.Drawing.Size(199, 24);
-            this.scriptLanguageComboBox.TabIndex = 35;
+            this.scriptLanguageComboBox.TabIndex = 7;
             // 
             // label2
             // 
@@ -693,7 +694,7 @@
             this.showScriptExecutionCheckBox.Location = new System.Drawing.Point(20, 110);
             this.showScriptExecutionCheckBox.Name = "showScriptExecutionCheckBox";
             this.showScriptExecutionCheckBox.Size = new System.Drawing.Size(358, 20);
-            this.showScriptExecutionCheckBox.TabIndex = 33;
+            this.showScriptExecutionCheckBox.TabIndex = 6;
             this.showScriptExecutionCheckBox.Text = "Show script execution (only recommended for debugging)";
             this.showScriptExecutionCheckBox.UseVisualStyleBackColor = true;
             // 
@@ -703,7 +704,7 @@
             this.executePauseScriptCheckBox.Location = new System.Drawing.Point(20, 80);
             this.executePauseScriptCheckBox.Name = "executePauseScriptCheckBox";
             this.executePauseScriptCheckBox.Size = new System.Drawing.Size(260, 20);
-            this.executePauseScriptCheckBox.TabIndex = 32;
+            this.executePauseScriptCheckBox.TabIndex = 4;
             this.executePauseScriptCheckBox.Text = "Execute script when Move Mouse pauses";
             this.executePauseScriptCheckBox.UseVisualStyleBackColor = true;
             // 
@@ -713,7 +714,7 @@
             this.executeIntervalScriptCheckBox.Location = new System.Drawing.Point(20, 50);
             this.executeIntervalScriptCheckBox.Name = "executeIntervalScriptCheckBox";
             this.executeIntervalScriptCheckBox.Size = new System.Drawing.Size(198, 20);
-            this.executeIntervalScriptCheckBox.TabIndex = 31;
+            this.executeIntervalScriptCheckBox.TabIndex = 2;
             this.executeIntervalScriptCheckBox.Text = "Execute script at each interval";
             this.executeIntervalScriptCheckBox.UseVisualStyleBackColor = true;
             // 
@@ -723,7 +724,7 @@
             this.executeStartScriptCheckBox.Location = new System.Drawing.Point(20, 20);
             this.executeStartScriptCheckBox.Name = "executeStartScriptCheckBox";
             this.executeStartScriptCheckBox.Size = new System.Drawing.Size(252, 20);
-            this.executeStartScriptCheckBox.TabIndex = 30;
+            this.executeStartScriptCheckBox.TabIndex = 0;
             this.executeStartScriptCheckBox.Text = "Execute script when Move Mouse starts";
             this.executeStartScriptCheckBox.UseVisualStyleBackColor = true;
             // 
@@ -817,7 +818,7 @@
             this.removeBlackoutButton.Location = new System.Drawing.Point(369, 152);
             this.removeBlackoutButton.Name = "removeBlackoutButton";
             this.removeBlackoutButton.Size = new System.Drawing.Size(75, 23);
-            this.removeBlackoutButton.TabIndex = 7;
+            this.removeBlackoutButton.TabIndex = 3;
             this.removeBlackoutButton.Text = "Remove";
             this.removeBlackoutButton.UseVisualStyleBackColor = true;
             // 
@@ -828,7 +829,7 @@
             this.editBlackoutButton.Location = new System.Drawing.Point(369, 109);
             this.editBlackoutButton.Name = "editBlackoutButton";
             this.editBlackoutButton.Size = new System.Drawing.Size(75, 23);
-            this.editBlackoutButton.TabIndex = 6;
+            this.editBlackoutButton.TabIndex = 2;
             this.editBlackoutButton.Text = "Edit";
             this.editBlackoutButton.UseVisualStyleBackColor = true;
             // 
@@ -838,7 +839,7 @@
             this.addBlackoutButton.Location = new System.Drawing.Point(369, 66);
             this.addBlackoutButton.Name = "addBlackoutButton";
             this.addBlackoutButton.Size = new System.Drawing.Size(75, 23);
-            this.addBlackoutButton.TabIndex = 5;
+            this.addBlackoutButton.TabIndex = 1;
             this.addBlackoutButton.Text = "Add";
             this.addBlackoutButton.UseVisualStyleBackColor = true;
             // 
@@ -852,7 +853,7 @@
             this.blackoutListView.Name = "blackoutListView";
             this.blackoutListView.Size = new System.Drawing.Size(327, 201);
             this.blackoutListView.Sorting = System.Windows.Forms.SortOrder.Ascending;
-            this.blackoutListView.TabIndex = 4;
+            this.blackoutListView.TabIndex = 0;
             this.blackoutListView.UseCompatibleStateImageBehavior = false;
             this.blackoutListView.View = System.Windows.Forms.View.Details;
             // 

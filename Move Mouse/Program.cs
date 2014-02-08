@@ -46,7 +46,5 @@ namespace Ellanet
 
         //todo One time upgrade for XML
         //todo Sort tab ordering on all forms
-        //todo Use action enum for scheduling combobox
-        //todo Remove all the possible null exceptions
     }
 }
