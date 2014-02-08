@@ -131,6 +131,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Mice\FingerMouse01.jpg" />
+    <None Include="Resources\EasterEgg.png" />
     <Content Include="Resources\Mice\Bernard01.jpg" />
     <Content Include="Resources\Mice\Bianca01.jpg" />
     <Content Include="Resources\Mice\Brain01.jpg" />

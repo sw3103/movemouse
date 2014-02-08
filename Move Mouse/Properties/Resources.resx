@@ -121,6 +121,9 @@
   <data name="Contact_Image" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Contact_Image.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="EasterEgg_Image" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\EasterEgg.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Help_Image" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Help_Image.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
