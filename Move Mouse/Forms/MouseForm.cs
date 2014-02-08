@@ -1602,7 +1602,7 @@ namespace Ellanet.Forms
                     yNumericUpDown.Value = ReadSingleNodeInnerTextAsDecimal(ref settingsXmlDoc, "settings/y_static_position");
                     clickMouseCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/click_left_mouse_button");
                     keystrokeCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/send_keystroke");
-                    keystrokeComboBox.Text = ReadSingleNodeInnerTextAsString(ref settingsXmlDoc, "settings/keystroke");
+                    keystrokeComboBox.SelectedItem = ReadSingleNodeInnerTextAsString(ref settingsXmlDoc, "settings/keystroke");
                     autoPauseCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/pause_when_mouse_moved");
                     resumeCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/automatically_resume");
                     resumeNumericUpDown.Value = ReadSingleNodeInnerTextAsDecimal(ref settingsXmlDoc, "settings/resume_seconds");
@@ -1662,6 +1662,58 @@ namespace Ellanet.Forms
                             }
                         }
                     }
+
+                    ReadLegacySettings(ref settingsXmlDoc);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+        }
+
+        private void ReadLegacySettings(ref XmlDocument xmlDoc)
+        {
+            try
+            {
+                if (ReadSingleNodeInnerTextAsBoolean(ref xmlDoc, "settings/blackout_schedule_enabled"))
+                {
+                    string start = null;
+                    string end = null;
+                    TimeSpan startTs;
+                    TimeSpan endTs;
+
+                    switch (ReadSingleNodeInnerTextAsString(ref xmlDoc, "settings/blackout_schedule_scope"))
+                    {
+                        case "outside":
+                            start = ReadSingleNodeInnerTextAsString(ref xmlDoc, "settings/blackout_schedule_end");
+                            end = ReadSingleNodeInnerTextAsString(ref xmlDoc, "settings/blackout_schedule_start");
+                            break;
+                        case "inside":
+                            start = ReadSingleNodeInnerTextAsString(ref xmlDoc, "settings/blackout_schedule_start");
+                            end = ReadSingleNodeInnerTextAsString(ref xmlDoc, "settings/blackout_schedule_end");
+                            break;
+                    }
+
+                    if (!String.IsNullOrEmpty(start) && !String.IsNullOrEmpty(end) && TimeSpan.TryParse(start, out startTs) && TimeSpan.TryParse(end, out endTs))
+                    {
+                        AddBlackoutToListView(startTs, endTs, -1, false);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            try
+            {
+                if (ReadSingleNodeInnerTextAsBoolean(ref xmlDoc, "settings/enable_custom_scripts"))
+                {
+                    scriptLanguageComboBox.SelectedItem = "VBScript";
+                    executeStartScriptCheckBox.Checked = File.Exists(Path.Combine(_moveMouseAppDirectory, String.Format("{0}.vbs", StartScriptName)));
+                    executeIntervalScriptCheckBox.Checked = File.Exists(Path.Combine(_moveMouseAppDirectory, String.Format("{0}.vbs", IntervalScriptName)));
+                    executePauseScriptCheckBox.Checked = File.Exists(Path.Combine(_moveMouseAppDirectory, String.Format("{0}.vbs", PauseScriptName)));
                 }
             }
             catch (Exception ex)
