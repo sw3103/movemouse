@@ -43,8 +43,5 @@ namespace Ellanet
             MessageBox.Show(exception, "Move Mouse - Generic Exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
             Application.Exit();
         }
-
-        //todo One time upgrade for XML
-        //todo Sort tab ordering on all forms
     }
 }

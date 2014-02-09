@@ -963,9 +963,13 @@ namespace Ellanet.Forms
 
         private void MouseForm_Resize(object sender, EventArgs e)
         {
-            if ((WindowState == FormWindowState.Minimized) && minimiseToSystemTrayCheckBox.Checked)
+            if (WindowState == FormWindowState.Minimized)
             {
-                ShowInTaskbar = false;
+                ShowInTaskbar = !minimiseToSystemTrayCheckBox.Checked;
+            }
+            else
+            {
+                Refresh();
             }
         }
 
