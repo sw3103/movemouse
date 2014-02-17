@@ -1,14 +1,16 @@
 <version>
-  <major>2</major>
-  <minor>6</minor>
-  <build>2</build>
-  <released_date>05-Dec-2013</released_date>
-  <advertised_date>08-Dec-2013</advertised_date>
+  <major>3</major>
+  <minor>0</minor>
+  <build>0</build>
+  <released_date>09-Feb-2014</released_date>
+  <advertised_date>17-Feb-2014</advertised_date>
   <features>
-    <feature>None.</feature>
+    <feature>Completely redesigned interface.</feature>
+    <feature>Support for more scripting languages.</feature>
+    <feature>Support for multiple blackout schedules.</feature>
+    <feature>Automatic Start and Pause schedules.</feature>
   </features>
   <fixes>
-    <fix>Activate Application feature handles minimised windows better.</fix>
     <fix>Minor bug fixes.</fix>
   </fixes>
 </version>
