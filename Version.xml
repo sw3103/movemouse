@@ -1,16 +1,13 @@
 <version>
   <major>3</major>
-  <minor>0</minor>
+  <minor>1</minor>
   <build>0</build>
-  <released_date>09-Feb-2014</released_date>
-  <advertised_date>17-Feb-2014</advertised_date>
+  <released_date>01-Mar-2014</released_date>
+  <advertised_date>01-Mar-2014</advertised_date>
   <features>
-    <feature>Completely redesigned interface.</feature>
-    <feature>Support for more scripting languages.</feature>
-    <feature>Support for multiple blackout schedules.</feature>
-    <feature>Automatic Start and Pause schedules.</feature>
+    <feature>Change working directory for XML/Scripts.</feature>
   </features>
   <fixes>
-    <fix>Minor bug fixes.</fix>
+    <fix>Minimise to System Tray.</fix>
   </fixes>
 </version>
