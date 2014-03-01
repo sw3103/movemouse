@@ -39,7 +39,6 @@ namespace Ellanet.Forms
         private readonly System.Windows.Forms.Timer _resumeTimer = new System.Windows.Forms.Timer();
         private readonly System.Windows.Forms.Timer _autoStartTimer = new System.Windows.Forms.Timer();
         private readonly System.Windows.Forms.Timer _autoPauseTimer = new System.Windows.Forms.Timer();
-        private readonly string _moveMouseAppDirectory = Environment.ExpandEnvironmentVariables(@"%AppData%\Ellanet\Move Mouse");
         private readonly string _moveMouseTempDirectory = Environment.ExpandEnvironmentVariables(@"%Temp%\Ellanet\Move Mouse");
         private readonly bool _suppressAutoStart;
         private DateTime _mmStartTime;
@@ -766,13 +765,13 @@ namespace Ellanet.Forms
                 switch (script)
                 {
                     case Script.Start:
-                        scriptPath = Path.Combine(_moveMouseAppDirectory, String.Format("{0}.{1}", StartScriptName, sl.FileExtension));
+                        scriptPath = Path.Combine(StaticCode.WorkingDirectory, String.Format("{0}.{1}", StartScriptName, sl.FileExtension));
                         break;
                     case Script.Interval:
-                        scriptPath = Path.Combine(_moveMouseAppDirectory, String.Format("{0}.{1}", IntervalScriptName, sl.FileExtension));
+                        scriptPath = Path.Combine(StaticCode.WorkingDirectory, String.Format("{0}.{1}", IntervalScriptName, sl.FileExtension));
                         break;
                     case Script.Pause:
-                        scriptPath = Path.Combine(_moveMouseAppDirectory, String.Format("{0}.{1}", PauseScriptName, sl.FileExtension));
+                        scriptPath = Path.Combine(StaticCode.WorkingDirectory, String.Format("{0}.{1}", PauseScriptName, sl.FileExtension));
                         break;
                 }
 
@@ -997,9 +996,9 @@ namespace Ellanet.Forms
 
         private void MouseForm_Load(object sender, EventArgs e)
         {
-            if (!Directory.Exists(_moveMouseAppDirectory))
+            if (!Directory.Exists(StaticCode.WorkingDirectory))
             {
-                Directory.CreateDirectory(_moveMouseAppDirectory);
+                Directory.CreateDirectory(StaticCode.WorkingDirectory);
             }
 
             if (!Directory.Exists(_moveMouseTempDirectory))
@@ -1183,7 +1182,7 @@ namespace Ellanet.Forms
 
                         if (GetCheckBoxChecked(ref executeStartScriptCheckBox))
                         {
-                            scriptPath = Path.Combine(_moveMouseAppDirectory, String.Format("{0}.{1}", StartScriptName, sl.FileExtension));
+                            scriptPath = Path.Combine(StaticCode.WorkingDirectory, String.Format("{0}.{1}", StartScriptName, sl.FileExtension));
                         }
 
                         break;
@@ -1191,7 +1190,7 @@ namespace Ellanet.Forms
 
                         if (GetCheckBoxChecked(ref executeIntervalScriptCheckBox))
                         {
-                            scriptPath = Path.Combine(_moveMouseAppDirectory, String.Format("{0}.{1}", IntervalScriptName, sl.FileExtension));
+                            scriptPath = Path.Combine(StaticCode.WorkingDirectory, String.Format("{0}.{1}", IntervalScriptName, sl.FileExtension));
                         }
 
                         break;
@@ -1199,7 +1198,7 @@ namespace Ellanet.Forms
 
                         if (GetCheckBoxChecked(ref executePauseScriptCheckBox))
                         {
-                            scriptPath = Path.Combine(_moveMouseAppDirectory, String.Format("{0}.{1}", PauseScriptName, sl.FileExtension));
+                            scriptPath = Path.Combine(StaticCode.WorkingDirectory, String.Format("{0}.{1}", PauseScriptName, sl.FileExtension));
                         }
 
                         break;
@@ -1594,10 +1593,10 @@ namespace Ellanet.Forms
         {
             try
             {
-                if (File.Exists(Path.Combine(_moveMouseAppDirectory, MoveMouseXmlName)))
+                if (File.Exists(Path.Combine(StaticCode.WorkingDirectory, MoveMouseXmlName)))
                 {
                     var settingsXmlDoc = new XmlDocument();
-                    settingsXmlDoc.Load(Path.Combine(_moveMouseAppDirectory, MoveMouseXmlName));
+                    settingsXmlDoc.Load(Path.Combine(StaticCode.WorkingDirectory, MoveMouseXmlName));
                     delayNumericUpDown.Value = ReadSingleNodeInnerTextAsDecimal(ref settingsXmlDoc, "settings/second_delay");
                     moveMouseCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/move_mouse_pointer");
                     stealthCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/stealth_mode");
@@ -1715,9 +1714,9 @@ namespace Ellanet.Forms
                 if (ReadSingleNodeInnerTextAsBoolean(ref xmlDoc, "settings/enable_custom_scripts"))
                 {
                     scriptLanguageComboBox.SelectedItem = "VBScript";
-                    executeStartScriptCheckBox.Checked = File.Exists(Path.Combine(_moveMouseAppDirectory, String.Format("{0}.vbs", StartScriptName)));
-                    executeIntervalScriptCheckBox.Checked = File.Exists(Path.Combine(_moveMouseAppDirectory, String.Format("{0}.vbs", IntervalScriptName)));
-                    executePauseScriptCheckBox.Checked = File.Exists(Path.Combine(_moveMouseAppDirectory, String.Format("{0}.vbs", PauseScriptName)));
+                    executeStartScriptCheckBox.Checked = File.Exists(Path.Combine(StaticCode.WorkingDirectory, String.Format("{0}.vbs", StartScriptName)));
+                    executeIntervalScriptCheckBox.Checked = File.Exists(Path.Combine(StaticCode.WorkingDirectory, String.Format("{0}.vbs", IntervalScriptName)));
+                    executePauseScriptCheckBox.Checked = File.Exists(Path.Combine(StaticCode.WorkingDirectory, String.Format("{0}.vbs", PauseScriptName)));
                 }
             }
             catch (Exception ex)
@@ -1792,7 +1791,7 @@ namespace Ellanet.Forms
                     }
                 }
 
-                settingsXmlDoc.Save(Path.Combine(_moveMouseAppDirectory, MoveMouseXmlName));
+                settingsXmlDoc.Save(Path.Combine(StaticCode.WorkingDirectory, MoveMouseXmlName));
                 processComboBox.Tag = processComboBox.Text;
             }
             catch (Exception ex)

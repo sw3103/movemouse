@@ -107,6 +107,7 @@ namespace Ellanet.Forms
                 _moveMouse.NewVersionAvailable += _moveMouse_NewVersionAvailable;
                 _moveMouse.ScheduleArrived += _moveMouse_ScheduleArrived;
                 _moveMouse.FormClosing += _moveMouse_FormClosing;
+                _moveMouse.FormBorderStyle = StaticCode.EnableToolWindowStyle ? FormBorderStyle.FixedToolWindow : FormBorderStyle.FixedSingle;
                 _moveMouse.Show();
             }
             else

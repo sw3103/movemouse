@@ -85,6 +85,7 @@
     <Compile Include="Forms\SystemTrayIcon.Designer.cs">
       <DependentUpon>SystemTrayIcon.cs</DependentUpon>
     </Compile>
+    <Compile Include="StaticCode.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.VisualBasic" />

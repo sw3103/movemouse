@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Ellanet.Forms;
 
 namespace Ellanet
 {
-    internal class Program
+    class Program
     {
         [STAThread]
-        private static void Main()
+        private static void Main(string[] args)
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             Application.ThreadException += Application_ThreadException;
@@ -17,6 +19,26 @@ namespace Ellanet
             {
                 if (Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName).Length < 2)
                 {
+                    if ((args != null) && (args.Length > 0))
+                    {
+                        foreach (string arg in args)
+                        {
+                            if (arg.StartsWith("/WorkingDirectory:", StringComparison.CurrentCultureIgnoreCase))
+                            {
+                                string alternateWd = arg.Substring(18);
+
+                                if (!String.IsNullOrEmpty(alternateWd) && Directory.Exists(alternateWd))
+                                {
+                                    StaticCode.WorkingDirectory = alternateWd;
+                                }
+                            }
+                            else if (arg.StartsWith("/EnableToolWindowStyle", StringComparison.CurrentCultureIgnoreCase))
+                            {
+                                StaticCode.EnableToolWindowStyle = true;
+                            }
+                        }
+                    }
+
                     Application.EnableVisualStyles();
                     Application.DoEvents();
                     Application.Run(new SystemTrayIcon());
