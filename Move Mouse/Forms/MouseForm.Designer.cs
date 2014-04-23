@@ -345,6 +345,11 @@
             0,
             0,
             0});
+            this.xNumericUpDown.Minimum = new decimal(new int[] {
+            999999,
+            0,
+            0,
+            -2147483648});
             this.xNumericUpDown.Name = "xNumericUpDown";
             this.xNumericUpDown.Size = new System.Drawing.Size(53, 23);
             this.xNumericUpDown.TabIndex = 4;
@@ -358,6 +363,11 @@
             0,
             0,
             0});
+            this.yNumericUpDown.Minimum = new decimal(new int[] {
+            999999,
+            0,
+            0,
+            -2147483648});
             this.yNumericUpDown.Name = "yNumericUpDown";
             this.yNumericUpDown.Size = new System.Drawing.Size(53, 23);
             this.yNumericUpDown.TabIndex = 5;
