@@ -3,6 +3,7 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Management;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace Ellanet.Forms
@@ -11,10 +12,46 @@ namespace Ellanet.Forms
     {
         private const int BalloonTipTimeout = 30000;
         private const string DownloadsUrl = "http://movemouse.codeplex.com/releases/";
+
+        // ReSharper disable InconsistentNaming
+
+        private const int WH_KEYBOARD_LL = 13;
+        private const int WM_KEYDOWN = 0x0100;
+
+        // ReSharper restore InconsistentNaming
+
         private readonly NotifyIcon _sysTrayIcon;
         private MouseForm _moveMouse;
         private bool _directUserToDownloadsOnBalloonClick;
         private bool _directUserToPowerShellExecutionPolicyFormOnBalloonClick;
+        private IntPtr _hookId = IntPtr.Zero;
+        private Keys _hookKey;
+        private LowLevelKeyboardProc _hookProc;
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern IntPtr SetWindowsHookEx(
+            int idHook,
+            LowLevelKeyboardProc lpfn,
+            IntPtr hMod,
+            uint dwThreadId);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool UnhookWindowsHookEx(
+            IntPtr hhk);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern IntPtr CallNextHookEx(
+            IntPtr hhk,
+            int nCode,
+            IntPtr wParam,
+            IntPtr lParam);
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern IntPtr GetModuleHandle(
+            string lpModuleName);
+
+        private delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
 
         public SystemTrayIcon()
         {
@@ -84,6 +121,7 @@ namespace Ellanet.Forms
 
         protected override void OnLoad(EventArgs e)
         {
+            _hookProc = HookCallback;
             ShowMoveMouse(false);
             Visible = false;
             ShowInTaskbar = false;
@@ -102,6 +140,11 @@ namespace Ellanet.Forms
                 _moveMouse.Close();
             }
 
+            if (_hookId != IntPtr.Zero)
+            {
+                UnhookWindowsHookEx(_hookId);
+            }
+
             _sysTrayIcon.Dispose();
             Close();
         }
@@ -117,6 +160,7 @@ namespace Ellanet.Forms
                 _moveMouse.FormClosing += _moveMouse_FormClosing;
                 _moveMouse.PowerLineStatusChanged += _moveMouse_PowerLineStatusChanged;
                 _moveMouse.PowerShellexecutionPolicyWarning += _moveMouse_PowerShellexecutionPolicyWarning;
+                _moveMouse.HookKeyStatusChanged += _moveMouse_HookKeyStatusChanged;
                 _moveMouse.FormBorderStyle = StaticCode.EnableToolWindowStyle ? FormBorderStyle.FixedToolWindow : FormBorderStyle.FixedSingle;
                 _moveMouse.Show();
             }
@@ -126,6 +170,22 @@ namespace Ellanet.Forms
                 _moveMouse.WindowState = FormWindowState.Normal;
                 _moveMouse.Activate();
                 _moveMouse.BringToFront();
+            }
+        }
+
+        private void _moveMouse_HookKeyStatusChanged(object sender, HookKeyStatusChangedEventArgs e)
+        {
+            if (_hookId != IntPtr.Zero)
+            {
+                Debug.WriteLine(String.Format("Unhooking {0}...", _hookKey));
+                UnhookWindowsHookEx(_hookId);
+            }
+
+            if (e.Enabled && !e.Key.Equals(Keys.None))
+            {
+                _hookKey = e.Key;
+                Debug.WriteLine(String.Format("Hooking {0}...", _hookKey));
+                _hookId = SetHook(_hookProc);
             }
         }
 
@@ -270,6 +330,46 @@ namespace Ellanet.Forms
             }
 
             return false;
+        }
+
+        private IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
+        {
+            try
+            {
+                if ((nCode >= 0) && (wParam == (IntPtr) WM_KEYDOWN))
+                {
+                    int vkCode = Marshal.ReadInt32(lParam);
+
+                    if ((_hookKey == (Keys) vkCode) && ((Keys.Control | Keys.Alt) == ModifierKeys))
+                    {
+                        Debug.WriteLine((Keys) vkCode);
+                        ShowMoveMouse(true);
+                        _moveMouse.StartStopToggle();
+                    }
+                }
+
+                return CallNextHookEx(_hookId, nCode, wParam, lParam);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            return IntPtr.Zero;
+        }
+
+        private IntPtr SetHook(LowLevelKeyboardProc proc)
+        {
+            try
+            {
+                return SetWindowsHookEx(WH_KEYBOARD_LL, proc, GetModuleHandle(Process.GetCurrentProcess().MainModule.ModuleName), 0);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            return IntPtr.Zero;
         }
     }
 }

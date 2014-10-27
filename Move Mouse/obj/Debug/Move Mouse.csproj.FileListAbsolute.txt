@@ -7,6 +7,6 @@ C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Debug\Move Mouse.pdb
 C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Debug\Ellanet.Forms.MouseForm.resources
 C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Debug\Ellanet.Forms.AddScheduleForm.resources
 C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Debug\Ellanet.Forms.AddBlackoutForm.resources
-C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Debug\Move Mouse.csprojResolveAssemblyReference.cache
 C:\Users\Steve\Desktop\movemouse\Move Mouse\bin\Debug\Move Mouse.exe.config
 C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Debug\Ellanet.Forms.PowerShellExecutionPolicyForm.resources
+C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Debug\Move Mouse.csprojResolveAssemblyReference.cache

@@ -55,6 +55,7 @@
     <Compile Include="Classes\CelebrityMouse.cs" />
     <Compile Include="Classes\ScriptingLanguage.cs" />
     <Compile Include="Events\BlackoutStatusChangedEventArgs.cs" />
+    <Compile Include="Events\HookKeyStatusChangedEventArgs.cs" />
     <Compile Include="Events\NewVersionAvailableEventArgs.cs" />
     <Compile Include="Events\PowerLineStatusChangedEventArgs.cs" />
     <Compile Include="Events\ScheduleArrivedEventArgs.cs" />

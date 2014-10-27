@@ -99,11 +99,14 @@ namespace Ellanet.Forms
 
         public delegate void PowerShellexecutionPolicyWarningHandler(object sender);
 
+        public delegate void HookKeyStatusChangedHandler(object sender, HookKeyStatusChangedEventArgs e);
+
         public event BlackoutStatusChangedHandler BlackoutStatusChanged;
         public event NewVersionAvailableHandler NewVersionAvailable;
         public event ScheduleArrivedHandler ScheduleArrived;
         public event PowerLineStatusChangedHandler PowerLineStatusChanged;
         public event PowerShellexecutionPolicyWarningHandler PowerShellexecutionPolicyWarning;
+        public event HookKeyStatusChangedHandler HookKeyStatusChanged;
 
         public bool MinimiseToSystemTrayWarningShown { get; private set; }
 
@@ -114,7 +117,7 @@ namespace Ellanet.Forms
             Pause
         }
 
-// ReSharper disable UnusedMember.Local
+        // ReSharper disable UnusedMember.Local
 
         private enum PowerShellExecutionPolicy
         {
@@ -280,6 +283,8 @@ namespace Ellanet.Forms
             executeStartScriptCheckBox.CheckedChanged += executeStartScriptCheckBox_CheckedChanged;
             executeIntervalScriptCheckBox.CheckedChanged += executeIntervalScriptCheckBox_CheckedChanged;
             executePauseScriptCheckBox.CheckedChanged += executePauseScriptCheckBox_CheckedChanged;
+            hotkeyCheckBox.CheckedChanged += hotkeyCheckBox_CheckedChanged;
+            hotkeyComboBox.SelectedIndexChanged += hotkeyComboBox_SelectedIndexChanged;
             scriptEditorLabel.TextChanged += scriptEditorLabel_TextChanged;
             ListScriptingLanguages();
             ReadSettings();
@@ -330,6 +335,17 @@ namespace Ellanet.Forms
             blackoutListView.DoubleClick += blackoutListView_DoubleClick;
             mousePictureBox.DoubleClick += mousePictureBox_DoubleClick;
             SetButtonTag(ref traceButton, GetButtonText(ref traceButton));
+        }
+
+        private void hotkeyComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateHookKeyStatus();
+        }
+
+        private void hotkeyCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            hotkeyComboBox.Enabled = hotkeyCheckBox.Checked;
+            UpdateHookKeyStatus();
         }
 
         private void mousePictureBox_DoubleClick(object sender, EventArgs e)
@@ -929,6 +945,29 @@ namespace Ellanet.Forms
             }
         }
 
+        protected void OnHookKeyStatusChanged(object sender, HookKeyStatusChangedEventArgs e)
+        {
+            if (HookKeyStatusChanged != null)
+            {
+                HookKeyStatusChanged(sender, e);
+            }
+        }
+
+        private void UpdateHookKeyStatus()
+        {
+            var key = Keys.None;
+            bool enabled = GetCheckBoxChecked(ref hotkeyCheckBox);
+            object hookKey = GetComboBoxSelectedItem(ref hotkeyComboBox);
+
+            if ((hookKey != null) && !String.IsNullOrEmpty(hookKey.ToString()))
+            {
+                key = (Keys) Enum.Parse(typeof (Keys), hookKey.ToString(), true);
+            }
+
+            var eventArgs = new HookKeyStatusChangedEventArgs(enabled, key);
+            OnHookKeyStatusChanged(this, eventArgs);
+        }
+
         private void helpPictureBox_MouseClick(object sender, MouseEventArgs e)
         {
             try
@@ -1047,6 +1086,9 @@ namespace Ellanet.Forms
                 actionButton.PerformClick();
             }
 
+            //todo Remove before release
+            UpdateHookKeyStatus();
+
             #region Loop for testing blackout schedules
 
             //for (int i = 0; i < Convert.ToInt32(new TimeSpan(24, 0, 0).TotalSeconds); i++)
@@ -1056,6 +1098,11 @@ namespace Ellanet.Forms
             //}
 
             #endregion
+        }
+
+        public void StartStopToggle()
+        {
+            actionButton.PerformClick();
         }
 
         private void UpdateCelebrityMiceList(object stateInfo)
@@ -1642,6 +1689,8 @@ namespace Ellanet.Forms
                     resumeCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/automatically_resume");
                     resumeNumericUpDown.Value = ReadSingleNodeInnerTextAsDecimal(ref settingsXmlDoc, "settings/resume_seconds");
                     disableOnBatteryCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/disable_on_battery");
+                    hotkeyCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/enable_hotkey");
+                    hotkeyComboBox.SelectedItem = ReadSingleNodeInnerTextAsString(ref settingsXmlDoc, "settings/hotkey");
                     startOnLaunchCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/automatically_start_on_launch");
                     launchAtLogonCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/automatically_launch_on_logon");
                     minimiseOnPauseCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/minimise_on_pause");
@@ -1763,7 +1812,7 @@ namespace Ellanet.Forms
             try
             {
                 var settingsXmlDoc = new XmlDocument();
-                settingsXmlDoc.LoadXml("<settings><second_delay /><move_mouse_pointer /><stealth_mode /><enable_static_position /><x_static_position /><y_static_position /><click_left_mouse_button /><send_keystroke /><keystroke /><pause_when_mouse_moved /><automatically_resume /><resume_seconds /><disable_on_battery /><automatically_start_on_launch /><automatically_launch_on_logon /><minimise_on_pause /><minimise_on_start /><minimise_to_system_tray /><activate_application /><activate_application_title /><last_update_check /><system_tray_warning_shown /><execute_start_script /><execute_interval_script /><execute_pause_script /><show_script_execution /><script_language /><script_editor /><schedules /><blackouts /></settings>");
+                settingsXmlDoc.LoadXml("<settings><second_delay /><move_mouse_pointer /><stealth_mode /><enable_static_position /><x_static_position /><y_static_position /><click_left_mouse_button /><send_keystroke /><keystroke /><pause_when_mouse_moved /><automatically_resume /><resume_seconds /><disable_on_battery /><enable_hotkey /><hotkey /><automatically_start_on_launch /><automatically_launch_on_logon /><minimise_on_pause /><minimise_on_start /><minimise_to_system_tray /><activate_application /><activate_application_title /><last_update_check /><system_tray_warning_shown /><execute_start_script /><execute_interval_script /><execute_pause_script /><show_script_execution /><script_language /><script_editor /><schedules /><blackouts /></settings>");
                 WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/second_delay", Convert.ToDecimal(delayNumericUpDown.Value).ToString(CultureInfo.InvariantCulture));
                 WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/move_mouse_pointer", moveMouseCheckBox.Checked.ToString());
                 WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/stealth_mode", stealthCheckBox.Checked.ToString());
@@ -1777,6 +1826,8 @@ namespace Ellanet.Forms
                 WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/automatically_resume", resumeCheckBox.Checked.ToString());
                 WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/resume_seconds", Convert.ToDecimal(resumeNumericUpDown.Value).ToString(CultureInfo.InvariantCulture));
                 WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/disable_on_battery", disableOnBatteryCheckBox.Checked.ToString());
+                WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/enable_hotkey", hotkeyCheckBox.Checked.ToString());
+                WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/hotkey", (hotkeyComboBox.SelectedItem == null) ? String.Empty : hotkeyComboBox.SelectedItem.ToString());
                 WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/automatically_start_on_launch", startOnLaunchCheckBox.Checked.ToString());
                 WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/automatically_launch_on_logon", launchAtLogonCheckBox.Checked.ToString());
                 WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/minimise_on_pause", minimiseOnPauseCheckBox.Checked.ToString());

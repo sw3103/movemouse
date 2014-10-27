@@ -4,8 +4,8 @@ namespace Ellanet.Events
 {
     public class ScheduleArrivedEventArgs : EventArgs
     {
-        public ScheduleAction Action { get; private set; }
-        public TimeSpan Time { get; private set; }
+        public ScheduleAction Action { get; internal set; }
+        public TimeSpan Time { get; internal set; }
 
         public enum ScheduleAction
         {
