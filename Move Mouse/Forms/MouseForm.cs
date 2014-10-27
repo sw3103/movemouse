@@ -55,6 +55,7 @@ namespace Ellanet.Forms
         private List<TimeSpan> _pauseSchedules;
         private List<CelebrityMouse> _celebrityMice;
         private bool _easterEggActive;
+        private PowerLineStatusChangedEventArgs.PowerLineStatus _powerLineStatus = PowerLineStatusChangedEventArgs.PowerLineStatus.Online;
 
         private delegate void UpdateCountdownProgressBarDelegate(ref ProgressBar pb, int delay, int elapsed);
 
@@ -94,9 +95,15 @@ namespace Ellanet.Forms
 
         public delegate void ScheduleArrivedHandler(object sender, ScheduleArrivedEventArgs e);
 
+        public delegate void PowerLineStatusChangedHandler(object sender, PowerLineStatusChangedEventArgs e);
+
+        public delegate void PowerShellexecutionPolicyWarningHandler(object sender);
+
         public event BlackoutStatusChangedHandler BlackoutStatusChanged;
         public event NewVersionAvailableHandler NewVersionAvailable;
         public event ScheduleArrivedHandler ScheduleArrived;
+        public event PowerLineStatusChangedHandler PowerLineStatusChanged;
+        public event PowerShellexecutionPolicyWarningHandler PowerShellexecutionPolicyWarning;
 
         public bool MinimiseToSystemTrayWarningShown { get; private set; }
 
@@ -107,7 +114,16 @@ namespace Ellanet.Forms
             Pause
         }
 
-        // ReSharper disable UnusedMember.Local
+// ReSharper disable UnusedMember.Local
+
+        private enum PowerShellExecutionPolicy
+        {
+            Restricted,
+            AllSigned,
+            RemoteSigned,
+            Unrestricted
+        }
+
         // ReSharper disable InconsistentNaming
 
         [Flags]
@@ -877,7 +893,7 @@ namespace Ellanet.Forms
         {
             if (BlackoutStatusChanged != null)
             {
-                BlackoutStatusChanged(this, e);
+                BlackoutStatusChanged(sender, e);
             }
         }
 
@@ -885,7 +901,7 @@ namespace Ellanet.Forms
         {
             if (NewVersionAvailable != null)
             {
-                NewVersionAvailable(this, e);
+                NewVersionAvailable(sender, e);
             }
         }
 
@@ -893,7 +909,23 @@ namespace Ellanet.Forms
         {
             if (ScheduleArrived != null)
             {
-                ScheduleArrived(this, e);
+                ScheduleArrived(sender, e);
+            }
+        }
+
+        protected void OnPowerLineStatusChanged(object sender, PowerLineStatusChangedEventArgs e)
+        {
+            if (PowerLineStatusChanged != null)
+            {
+                PowerLineStatusChanged(sender, e);
+            }
+        }
+
+        protected void OnPowerShellexecutionPolicyWarning(object sender)
+        {
+            if (PowerShellexecutionPolicyWarning != null)
+            {
+                PowerShellexecutionPolicyWarning(sender);
             }
         }
 
@@ -1609,6 +1641,7 @@ namespace Ellanet.Forms
                     autoPauseCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/pause_when_mouse_moved");
                     resumeCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/automatically_resume");
                     resumeNumericUpDown.Value = ReadSingleNodeInnerTextAsDecimal(ref settingsXmlDoc, "settings/resume_seconds");
+                    disableOnBatteryCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/disable_on_battery");
                     startOnLaunchCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/automatically_start_on_launch");
                     launchAtLogonCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/automatically_launch_on_logon");
                     minimiseOnPauseCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/minimise_on_pause");
@@ -1730,7 +1763,7 @@ namespace Ellanet.Forms
             try
             {
                 var settingsXmlDoc = new XmlDocument();
-                settingsXmlDoc.LoadXml("<settings><second_delay /><move_mouse_pointer /><stealth_mode /><enable_static_position /><x_static_position /><y_static_position /><click_left_mouse_button /><send_keystroke /><keystroke /><pause_when_mouse_moved /><automatically_resume /><resume_seconds /><automatically_start_on_launch /><automatically_launch_on_logon /><minimise_on_pause /><minimise_on_start /><minimise_to_system_tray /><activate_application /><activate_application_title /><last_update_check /><system_tray_warning_shown /><execute_start_script /><execute_interval_script /><execute_pause_script /><show_script_execution /><script_language /><script_editor /><schedules /><blackouts /></settings>");
+                settingsXmlDoc.LoadXml("<settings><second_delay /><move_mouse_pointer /><stealth_mode /><enable_static_position /><x_static_position /><y_static_position /><click_left_mouse_button /><send_keystroke /><keystroke /><pause_when_mouse_moved /><automatically_resume /><resume_seconds /><disable_on_battery /><automatically_start_on_launch /><automatically_launch_on_logon /><minimise_on_pause /><minimise_on_start /><minimise_to_system_tray /><activate_application /><activate_application_title /><last_update_check /><system_tray_warning_shown /><execute_start_script /><execute_interval_script /><execute_pause_script /><show_script_execution /><script_language /><script_editor /><schedules /><blackouts /></settings>");
                 WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/second_delay", Convert.ToDecimal(delayNumericUpDown.Value).ToString(CultureInfo.InvariantCulture));
                 WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/move_mouse_pointer", moveMouseCheckBox.Checked.ToString());
                 WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/stealth_mode", stealthCheckBox.Checked.ToString());
@@ -1743,6 +1776,7 @@ namespace Ellanet.Forms
                 WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/pause_when_mouse_moved", autoPauseCheckBox.Checked.ToString());
                 WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/automatically_resume", resumeCheckBox.Checked.ToString());
                 WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/resume_seconds", Convert.ToDecimal(resumeNumericUpDown.Value).ToString(CultureInfo.InvariantCulture));
+                WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/disable_on_battery", disableOnBatteryCheckBox.Checked.ToString());
                 WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/automatically_start_on_launch", startOnLaunchCheckBox.Checked.ToString());
                 WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/automatically_launch_on_logon", launchAtLogonCheckBox.Checked.ToString());
                 WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/minimise_on_pause", minimiseOnPauseCheckBox.Checked.ToString());
@@ -1882,8 +1916,10 @@ namespace Ellanet.Forms
                     _mouseTimerTicks = 0;
                     _mmStartTime = DateTime.Now;
                     _blackoutStatus = BlackoutStatusChangedEventArgs.BlackoutStatus.Inactive;
+                    _powerLineStatus = PowerLineStatusChangedEventArgs.PowerLineStatus.Online;
                     _easterEggActive = new Random().Next(1, 100).Equals(31);
                     ResetMousePicture();
+                    RaisePowerShellExecutionPolicyWarning();
 
                     if (!IsBlackoutActive(DateTime.Now.TimeOfDay))
                     {
@@ -1906,11 +1942,21 @@ namespace Ellanet.Forms
             }
         }
 
+        private void RaisePowerShellExecutionPolicyWarning()
+        {
+            var sl = GetScriptingLanguage(GetComboBoxSelectedItem(ref scriptLanguageComboBox).ToString());
+
+            if ((sl != null) && sl.Name.Equals("PowerShell", StringComparison.CurrentCultureIgnoreCase) && (GetCheckBoxChecked(ref executeStartScriptCheckBox) || GetCheckBoxChecked(ref executeIntervalScriptCheckBox) || GetCheckBoxChecked(ref executePauseScriptCheckBox)) && GetCurrentPsExecutionPolicy().Equals(PowerShellExecutionPolicy.Restricted))
+            {
+                OnPowerShellexecutionPolicyWarning(this);
+            }
+        }
+
         private void _mouseTimer_Tick(object sender, EventArgs e)
         {
             //Debug.WriteLine("_mouseTimer_Tick");
 
-            if (!IsBlackoutActive(DateTime.Now.TimeOfDay))
+            if (!IsBlackoutActive(DateTime.Now.TimeOfDay) && (!GetCheckBoxChecked(ref disableOnBatteryCheckBox) || !IsRunningOnBattery()))
             {
                 UpdateCountdownProgressBar(ref countdownProgressBar, Convert.ToInt32(delayNumericUpDown.Value), _mouseTimerTicks);
                 _mouseTimerTicks++;
@@ -1925,6 +1971,12 @@ namespace Ellanet.Forms
                     OnBlackoutStatusChanged(this, new BlackoutStatusChangedEventArgs(_blackoutStatus, startTime, endTime));
                 }
 
+                if (_powerLineStatus == PowerLineStatusChangedEventArgs.PowerLineStatus.Offline)
+                {
+                    _powerLineStatus = PowerLineStatusChangedEventArgs.PowerLineStatus.Online;
+                    OnPowerLineStatusChanged(this, new PowerLineStatusChangedEventArgs(_powerLineStatus));
+                }
+
                 if (_mouseTimerTicks > Convert.ToInt32(delayNumericUpDown.Value))
                 {
                     LaunchScript(Script.Interval);
@@ -1937,13 +1989,19 @@ namespace Ellanet.Forms
             }
             else
             {
-                if (_blackoutStatus == BlackoutStatusChangedEventArgs.BlackoutStatus.Inactive)
+                if (IsBlackoutActive(DateTime.Now.TimeOfDay) && (_blackoutStatus == BlackoutStatusChangedEventArgs.BlackoutStatus.Inactive))
                 {
                     _blackoutStatus = BlackoutStatusChangedEventArgs.BlackoutStatus.Active;
                     TimeSpan startTime;
                     TimeSpan endTime;
                     GetNextBlackoutStatusChangeTime(out startTime, out endTime);
                     OnBlackoutStatusChanged(this, new BlackoutStatusChangedEventArgs(_blackoutStatus, startTime, endTime));
+                }
+
+                if (GetCheckBoxChecked(ref disableOnBatteryCheckBox) && IsRunningOnBattery() && (_powerLineStatus == PowerLineStatusChangedEventArgs.PowerLineStatus.Online))
+                {
+                    _powerLineStatus = PowerLineStatusChangedEventArgs.PowerLineStatus.Offline;
+                    OnPowerLineStatusChanged(this, new PowerLineStatusChangedEventArgs(_powerLineStatus));
                 }
             }
         }
@@ -2103,6 +2161,28 @@ namespace Ellanet.Forms
                 mousePictureBox.Image = _easterEggActive ? Properties.Resources.EasterEgg_Image : Properties.Resources.Mouse_Image;
                 mouseTabPage.Text = _easterEggActive ? "Easter Egg" : "Mouse";
             }
+        }
+
+        private bool IsRunningOnBattery()
+        {
+            return SystemInformation.PowerStatus.PowerLineStatus.Equals(PowerLineStatus.Offline);
+        }
+
+        private PowerShellExecutionPolicy GetCurrentPsExecutionPolicy()
+        {
+            var psKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\PowerShell\1\ShellIds\Microsoft.PowerShell");
+
+            if (psKey != null)
+            {
+                var executionPolicy = psKey.GetValue("ExecutionPolicy");
+
+                if (executionPolicy != null)
+                {
+                    return (PowerShellExecutionPolicy) Enum.Parse(typeof (PowerShellExecutionPolicy), executionPolicy.ToString(), true);
+                }
+            }
+
+            return PowerShellExecutionPolicy.Restricted;
         }
     }
 }

@@ -14,6 +14,7 @@ namespace Ellanet.Forms
         private readonly NotifyIcon _sysTrayIcon;
         private MouseForm _moveMouse;
         private bool _directUserToDownloadsOnBalloonClick;
+        private bool _directUserToPowerShellExecutionPolicyFormOnBalloonClick;
 
         public SystemTrayIcon()
         {
@@ -52,6 +53,7 @@ namespace Ellanet.Forms
         private void sysTrayIcon_BalloonTipClosed(object sender, EventArgs e)
         {
             _directUserToDownloadsOnBalloonClick = false;
+            _directUserToPowerShellExecutionPolicyFormOnBalloonClick = false;
         }
 
         private void sysTrayIcon_BalloonTipClicked(object sender, EventArgs e)
@@ -61,6 +63,12 @@ namespace Ellanet.Forms
                 if (_directUserToDownloadsOnBalloonClick)
                 {
                     Process.Start(DownloadsUrl);
+                }
+
+                if (_directUserToPowerShellExecutionPolicyFormOnBalloonClick)
+                {
+                    var psForm = new PowerShellExecutionPolicyForm();
+                    psForm.ShowDialog();
                 }
             }
             catch (Exception ex)
@@ -107,6 +115,8 @@ namespace Ellanet.Forms
                 _moveMouse.NewVersionAvailable += _moveMouse_NewVersionAvailable;
                 _moveMouse.ScheduleArrived += _moveMouse_ScheduleArrived;
                 _moveMouse.FormClosing += _moveMouse_FormClosing;
+                _moveMouse.PowerLineStatusChanged += _moveMouse_PowerLineStatusChanged;
+                _moveMouse.PowerShellexecutionPolicyWarning += _moveMouse_PowerShellexecutionPolicyWarning;
                 _moveMouse.FormBorderStyle = StaticCode.EnableToolWindowStyle ? FormBorderStyle.FixedToolWindow : FormBorderStyle.FixedSingle;
                 _moveMouse.Show();
             }
@@ -116,6 +126,32 @@ namespace Ellanet.Forms
                 _moveMouse.WindowState = FormWindowState.Normal;
                 _moveMouse.Activate();
                 _moveMouse.BringToFront();
+            }
+        }
+
+        private void _moveMouse_PowerShellexecutionPolicyWarning(object sender)
+        {
+            _directUserToPowerShellExecutionPolicyFormOnBalloonClick = true;
+            _sysTrayIcon.ShowBalloonTip(BalloonTipTimeout, "PowerShell Execution Policy", String.Format("Move Mouse has detected that your PowerShell execution policy will not allow you to run scripts.\r\n\r\nPlease click here to resolve this."), ToolTipIcon.Warning);
+        }
+
+        private void _moveMouse_PowerLineStatusChanged(object sender, PowerLineStatusChangedEventArgs e)
+        {
+            try
+            {
+                switch (e.Status)
+                {
+                    case PowerLineStatusChangedEventArgs.PowerLineStatus.Offline:
+                        _sysTrayIcon.ShowBalloonTip(BalloonTipTimeout, "Battery Mode Enabled", String.Format("Move Mouse has detected that you are now running on battery, and will suspend all operations until you reconnect to mains power."), ToolTipIcon.Info);
+                        break;
+                    case PowerLineStatusChangedEventArgs.PowerLineStatus.Online:
+                        _sysTrayIcon.ShowBalloonTip(BalloonTipTimeout, "Battery Mode Disabled", String.Format("Move Mouse will resume all operations now that you are reconnected to mains power."), ToolTipIcon.Info);
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
             }
         }
 

@@ -88,6 +88,7 @@
             this.blackoutListView = new System.Windows.Forms.ListView();
             this.startColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.endColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.disableOnBatteryCheckBox = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.mousePictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.delayNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.resumeNumericUpDown)).BeginInit();
@@ -122,7 +123,7 @@
             // actionButton
             // 
             this.actionButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.actionButton.Location = new System.Drawing.Point(212, 297);
+            this.actionButton.Location = new System.Drawing.Point(212, 327);
             this.actionButton.Name = "actionButton";
             this.actionButton.Size = new System.Drawing.Size(75, 23);
             this.actionButton.TabIndex = 1;
@@ -133,7 +134,7 @@
             // 
             this.countdownProgressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.countdownProgressBar.Location = new System.Drawing.Point(12, 337);
+            this.countdownProgressBar.Location = new System.Drawing.Point(12, 367);
             this.countdownProgressBar.Name = "countdownProgressBar";
             this.countdownProgressBar.Size = new System.Drawing.Size(475, 17);
             this.countdownProgressBar.TabIndex = 2;
@@ -309,20 +310,20 @@
             // startOnLaunchCheckBox
             // 
             this.startOnLaunchCheckBox.AutoSize = true;
-            this.startOnLaunchCheckBox.Location = new System.Drawing.Point(20, 80);
+            this.startOnLaunchCheckBox.Location = new System.Drawing.Point(20, 110);
             this.startOnLaunchCheckBox.Name = "startOnLaunchCheckBox";
             this.startOnLaunchCheckBox.Size = new System.Drawing.Size(267, 20);
-            this.startOnLaunchCheckBox.TabIndex = 3;
+            this.startOnLaunchCheckBox.TabIndex = 4;
             this.startOnLaunchCheckBox.Text = "Automatically start Move Mouse on launch";
             this.startOnLaunchCheckBox.UseVisualStyleBackColor = true;
             // 
             // launchAtLogonCheckBox
             // 
             this.launchAtLogonCheckBox.AutoSize = true;
-            this.launchAtLogonCheckBox.Location = new System.Drawing.Point(20, 110);
+            this.launchAtLogonCheckBox.Location = new System.Drawing.Point(20, 140);
             this.launchAtLogonCheckBox.Name = "launchAtLogonCheckBox";
             this.launchAtLogonCheckBox.Size = new System.Drawing.Size(325, 20);
-            this.launchAtLogonCheckBox.TabIndex = 4;
+            this.launchAtLogonCheckBox.TabIndex = 5;
             this.launchAtLogonCheckBox.Text = "Automatically launch Move Mouse at Windows logon";
             this.launchAtLogonCheckBox.UseVisualStyleBackColor = true;
             // 
@@ -385,30 +386,30 @@
             // minimiseOnPauseCheckBox
             // 
             this.minimiseOnPauseCheckBox.AutoSize = true;
-            this.minimiseOnPauseCheckBox.Location = new System.Drawing.Point(20, 140);
+            this.minimiseOnPauseCheckBox.Location = new System.Drawing.Point(20, 170);
             this.minimiseOnPauseCheckBox.Name = "minimiseOnPauseCheckBox";
             this.minimiseOnPauseCheckBox.Size = new System.Drawing.Size(133, 20);
-            this.minimiseOnPauseCheckBox.TabIndex = 5;
+            this.minimiseOnPauseCheckBox.TabIndex = 6;
             this.minimiseOnPauseCheckBox.Text = "Minimise on pause";
             this.minimiseOnPauseCheckBox.UseVisualStyleBackColor = true;
             // 
             // minimiseOnStartCheckBox
             // 
             this.minimiseOnStartCheckBox.AutoSize = true;
-            this.minimiseOnStartCheckBox.Location = new System.Drawing.Point(20, 170);
+            this.minimiseOnStartCheckBox.Location = new System.Drawing.Point(20, 200);
             this.minimiseOnStartCheckBox.Name = "minimiseOnStartCheckBox";
             this.minimiseOnStartCheckBox.Size = new System.Drawing.Size(125, 20);
-            this.minimiseOnStartCheckBox.TabIndex = 6;
+            this.minimiseOnStartCheckBox.TabIndex = 7;
             this.minimiseOnStartCheckBox.Text = "Minimise on start";
             this.minimiseOnStartCheckBox.UseVisualStyleBackColor = true;
             // 
             // minimiseToSystemTrayCheckBox
             // 
             this.minimiseToSystemTrayCheckBox.AutoSize = true;
-            this.minimiseToSystemTrayCheckBox.Location = new System.Drawing.Point(20, 200);
+            this.minimiseToSystemTrayCheckBox.Location = new System.Drawing.Point(20, 230);
             this.minimiseToSystemTrayCheckBox.Name = "minimiseToSystemTrayCheckBox";
             this.minimiseToSystemTrayCheckBox.Size = new System.Drawing.Size(168, 20);
-            this.minimiseToSystemTrayCheckBox.TabIndex = 7;
+            this.minimiseToSystemTrayCheckBox.TabIndex = 8;
             this.minimiseToSystemTrayCheckBox.Text = "Minimise to System Tray";
             this.minimiseToSystemTrayCheckBox.UseVisualStyleBackColor = true;
             // 
@@ -496,7 +497,7 @@
             this.optionsTabControl.Location = new System.Drawing.Point(12, 12);
             this.optionsTabControl.Name = "optionsTabControl";
             this.optionsTabControl.SelectedIndex = 0;
-            this.optionsTabControl.Size = new System.Drawing.Size(475, 269);
+            this.optionsTabControl.Size = new System.Drawing.Size(475, 299);
             this.optionsTabControl.TabIndex = 0;
             // 
             // mouseTabPage
@@ -538,6 +539,7 @@
             // 
             // behaviourTabPage
             // 
+            this.behaviourTabPage.Controls.Add(this.disableOnBatteryCheckBox);
             this.behaviourTabPage.Controls.Add(this.autoPauseCheckBox);
             this.behaviourTabPage.Controls.Add(this.resumeNumericUpDown);
             this.behaviourTabPage.Controls.Add(this.startOnLaunchCheckBox);
@@ -548,7 +550,7 @@
             this.behaviourTabPage.Controls.Add(this.resumeCheckBox);
             this.behaviourTabPage.Location = new System.Drawing.Point(4, 25);
             this.behaviourTabPage.Name = "behaviourTabPage";
-            this.behaviourTabPage.Size = new System.Drawing.Size(467, 240);
+            this.behaviourTabPage.Size = new System.Drawing.Size(467, 270);
             this.behaviourTabPage.TabIndex = 3;
             this.behaviourTabPage.Text = "Behaviour";
             this.behaviourTabPage.UseVisualStyleBackColor = true;
@@ -877,11 +879,21 @@
             this.endColumnHeader.Text = "End";
             this.endColumnHeader.Width = 125;
             // 
+            // disableOnBatteryCheckBox
+            // 
+            this.disableOnBatteryCheckBox.AutoSize = true;
+            this.disableOnBatteryCheckBox.Location = new System.Drawing.Point(20, 80);
+            this.disableOnBatteryCheckBox.Name = "disableOnBatteryCheckBox";
+            this.disableOnBatteryCheckBox.Size = new System.Drawing.Size(212, 20);
+            this.disableOnBatteryCheckBox.TabIndex = 3;
+            this.disableOnBatteryCheckBox.Text = "Disable when running on battery";
+            this.disableOnBatteryCheckBox.UseVisualStyleBackColor = true;
+            // 
             // MouseForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(499, 366);
+            this.ClientSize = new System.Drawing.Size(499, 396);
             this.Controls.Add(this.optionsTabControl);
             this.Controls.Add(this.countdownProgressBar);
             this.Controls.Add(this.actionButton);
@@ -977,5 +989,6 @@
         private System.Windows.Forms.Button editStartScriptButton;
         private System.Windows.Forms.Button editPauseScriptButton;
         private System.Windows.Forms.Button editIntervalScriptButton;
+        private System.Windows.Forms.CheckBox disableOnBatteryCheckBox;
     }
 }

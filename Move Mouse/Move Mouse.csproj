@@ -19,6 +19,7 @@
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation />
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -30,6 +31,7 @@
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -39,6 +41,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -53,6 +56,7 @@
     <Compile Include="Classes\ScriptingLanguage.cs" />
     <Compile Include="Events\BlackoutStatusChangedEventArgs.cs" />
     <Compile Include="Events\NewVersionAvailableEventArgs.cs" />
+    <Compile Include="Events\PowerLineStatusChangedEventArgs.cs" />
     <Compile Include="Events\ScheduleArrivedEventArgs.cs" />
     <Compile Include="Forms\AddScheduleForm.cs">
       <SubType>Form</SubType>
@@ -71,6 +75,12 @@
     </Compile>
     <Compile Include="Forms\MouseForm.Designer.cs">
       <DependentUpon>MouseForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\PowerShellExecutionPolicyForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\PowerShellExecutionPolicyForm.Designer.cs">
+      <DependentUpon>PowerShellExecutionPolicyForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -107,12 +117,16 @@
       <DependentUpon>MouseForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\PowerShellExecutionPolicyForm.resx">
+      <DependentUpon>PowerShellExecutionPolicyForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="Resources\Mouse_Image.png" />
   </ItemGroup>
   <ItemGroup>
