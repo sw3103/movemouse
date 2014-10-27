@@ -61,6 +61,8 @@
             this.mouseTabPage = new System.Windows.Forms.TabPage();
             this.actionsTabPage = new System.Windows.Forms.TabPage();
             this.behaviourTabPage = new System.Windows.Forms.TabPage();
+            this.hotkeyComboBox = new System.Windows.Forms.ComboBox();
+            this.hotkeyCheckBox = new System.Windows.Forms.CheckBox();
             this.disableOnBatteryCheckBox = new System.Windows.Forms.CheckBox();
             this.scriptsTabPage = new System.Windows.Forms.TabPage();
             this.editPauseScriptButton = new System.Windows.Forms.Button();
@@ -89,8 +91,6 @@
             this.blackoutListView = new System.Windows.Forms.ListView();
             this.startColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.endColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.hotkeyCheckBox = new System.Windows.Forms.CheckBox();
-            this.hotkeyComboBox = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.mousePictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.delayNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.resumeNumericUpDown)).BeginInit();
@@ -559,6 +559,55 @@
             this.behaviourTabPage.Text = "Behaviour";
             this.behaviourTabPage.UseVisualStyleBackColor = true;
             // 
+            // hotkeyComboBox
+            // 
+            this.hotkeyComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.hotkeyComboBox.Enabled = false;
+            this.hotkeyComboBox.FormattingEnabled = true;
+            this.hotkeyComboBox.ItemHeight = 16;
+            this.hotkeyComboBox.Items.AddRange(new object[] {
+            "A",
+            "B",
+            "C",
+            "D",
+            "E",
+            "F",
+            "G",
+            "H",
+            "I",
+            "J",
+            "K",
+            "L",
+            "M",
+            "N",
+            "O",
+            "P",
+            "Q",
+            "R",
+            "S",
+            "T",
+            "U",
+            "V",
+            "W",
+            "X",
+            "Y",
+            "Z"});
+            this.hotkeyComboBox.Location = new System.Drawing.Point(290, 108);
+            this.hotkeyComboBox.Name = "hotkeyComboBox";
+            this.hotkeyComboBox.Size = new System.Drawing.Size(48, 24);
+            this.hotkeyComboBox.Sorted = true;
+            this.hotkeyComboBox.TabIndex = 17;
+            // 
+            // hotkeyCheckBox
+            // 
+            this.hotkeyCheckBox.AutoSize = true;
+            this.hotkeyCheckBox.Location = new System.Drawing.Point(20, 110);
+            this.hotkeyCheckBox.Name = "hotkeyCheckBox";
+            this.hotkeyCheckBox.Size = new System.Drawing.Size(273, 20);
+            this.hotkeyCheckBox.TabIndex = 16;
+            this.hotkeyCheckBox.Text = "Enable start/pause hotkeys      CTRL+ALT+";
+            this.hotkeyCheckBox.UseVisualStyleBackColor = true;
+            // 
             // disableOnBatteryCheckBox
             // 
             this.disableOnBatteryCheckBox.AutoSize = true;
@@ -898,55 +947,6 @@
             // 
             this.endColumnHeader.Text = "End";
             this.endColumnHeader.Width = 125;
-            // 
-            // hotkeyCheckBox
-            // 
-            this.hotkeyCheckBox.AutoSize = true;
-            this.hotkeyCheckBox.Location = new System.Drawing.Point(20, 110);
-            this.hotkeyCheckBox.Name = "hotkeyCheckBox";
-            this.hotkeyCheckBox.Size = new System.Drawing.Size(263, 20);
-            this.hotkeyCheckBox.TabIndex = 16;
-            this.hotkeyCheckBox.Text = "Enable start/stop hotkeys      CTRL+ALT+";
-            this.hotkeyCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // hotkeyComboBox
-            // 
-            this.hotkeyComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.hotkeyComboBox.Enabled = false;
-            this.hotkeyComboBox.FormattingEnabled = true;
-            this.hotkeyComboBox.ItemHeight = 16;
-            this.hotkeyComboBox.Items.AddRange(new object[] {
-            "A",
-            "B",
-            "C",
-            "D",
-            "E",
-            "F",
-            "G",
-            "H",
-            "I",
-            "J",
-            "K",
-            "L",
-            "M",
-            "N",
-            "O",
-            "P",
-            "Q",
-            "R",
-            "S",
-            "T",
-            "U",
-            "V",
-            "W",
-            "X",
-            "Y",
-            "Z"});
-            this.hotkeyComboBox.Location = new System.Drawing.Point(280, 108);
-            this.hotkeyComboBox.Name = "hotkeyComboBox";
-            this.hotkeyComboBox.Size = new System.Drawing.Size(48, 24);
-            this.hotkeyComboBox.Sorted = true;
-            this.hotkeyComboBox.TabIndex = 17;
             // 
             // MouseForm
             // 

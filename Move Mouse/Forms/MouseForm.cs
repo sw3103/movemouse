@@ -1080,14 +1080,12 @@ namespace Ellanet.Forms
             ThreadPool.QueueUserWorkItem(CheckForUpdate);
             ThreadPool.QueueUserWorkItem(ListOpenWindows);
             ThreadPool.QueueUserWorkItem(UpdateCelebrityMiceList);
+            UpdateHookKeyStatus();
 
             if (startOnLaunchCheckBox.Checked && !_suppressAutoStart)
             {
                 actionButton.PerformClick();
             }
-
-            //todo Remove before release
-            UpdateHookKeyStatus();
 
             #region Loop for testing blackout schedules
 
@@ -1670,90 +1668,97 @@ namespace Ellanet.Forms
 
         private void ReadSettings()
         {
-            try
+            if (InvokeRequired)
             {
-                if (File.Exists(Path.Combine(StaticCode.WorkingDirectory, MoveMouseXmlName)))
-                {
-                    var settingsXmlDoc = new XmlDocument();
-                    settingsXmlDoc.Load(Path.Combine(StaticCode.WorkingDirectory, MoveMouseXmlName));
-                    delayNumericUpDown.Value = ReadSingleNodeInnerTextAsDecimal(ref settingsXmlDoc, "settings/second_delay");
-                    moveMouseCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/move_mouse_pointer");
-                    stealthCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/stealth_mode");
-                    staticPositionCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/enable_static_position");
-                    xNumericUpDown.Value = ReadSingleNodeInnerTextAsDecimal(ref settingsXmlDoc, "settings/x_static_position");
-                    yNumericUpDown.Value = ReadSingleNodeInnerTextAsDecimal(ref settingsXmlDoc, "settings/y_static_position");
-                    clickMouseCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/click_left_mouse_button");
-                    keystrokeCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/send_keystroke");
-                    keystrokeComboBox.SelectedItem = ReadSingleNodeInnerTextAsString(ref settingsXmlDoc, "settings/keystroke");
-                    autoPauseCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/pause_when_mouse_moved");
-                    resumeCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/automatically_resume");
-                    resumeNumericUpDown.Value = ReadSingleNodeInnerTextAsDecimal(ref settingsXmlDoc, "settings/resume_seconds");
-                    disableOnBatteryCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/disable_on_battery");
-                    hotkeyCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/enable_hotkey");
-                    hotkeyComboBox.SelectedItem = ReadSingleNodeInnerTextAsString(ref settingsXmlDoc, "settings/hotkey");
-                    startOnLaunchCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/automatically_start_on_launch");
-                    launchAtLogonCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/automatically_launch_on_logon");
-                    minimiseOnPauseCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/minimise_on_pause");
-                    minimiseOnStartCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/minimise_on_start");
-                    minimiseToSystemTrayCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/minimise_to_system_tray");
-                    appActivateCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/activate_application");
-
-                    if (!String.IsNullOrEmpty(ReadSingleNodeInnerTextAsString(ref settingsXmlDoc, "settings/activate_application_title")))
-                    {
-                        processComboBox.Tag = ReadSingleNodeInnerTextAsString(ref settingsXmlDoc, "settings/activate_application_title");
-                    }
-
-                    _lastUpdateCheck = ReadSingleNodeInnerTextAsDateTime(ref settingsXmlDoc, "settings/last_update_check");
-                    MinimiseToSystemTrayWarningShown = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/system_tray_warning_shown");
-                    executeStartScriptCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/execute_start_script");
-                    executeIntervalScriptCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/execute_interval_script");
-                    executePauseScriptCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/execute_pause_script");
-                    showScriptExecutionCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/show_script_execution");
-                    scriptLanguageComboBox.SelectedItem = ReadSingleNodeInnerTextAsString(ref settingsXmlDoc, "settings/script_language");
-                    string scriptEditor = ReadSingleNodeInnerTextAsString(ref settingsXmlDoc, "settings/script_editor");
-                    scriptEditorLabel.Text = String.IsNullOrEmpty(scriptEditor) ? _scriptEditor : scriptEditor;
-                    var scheduleNodes = settingsXmlDoc.SelectNodes("settings/schedules/schedule");
-                    var blackoutNodes = settingsXmlDoc.SelectNodes("settings/blackouts/blackout");
-                    scheduleListView.Items.Clear();
-                    blackoutListView.Items.Clear();
-
-                    if ((scheduleNodes != null) && (scheduleNodes.Count > 0))
-                    {
-                        foreach (XmlNode scheduleNode in scheduleNodes)
-                        {
-                            TimeSpan ts;
-                            var timeNode = scheduleNode.SelectSingleNode("time");
-                            var actionNode = scheduleNode.SelectSingleNode("action");
-
-                            if ((timeNode != null) && (actionNode != null) && TimeSpan.TryParse(timeNode.InnerText, out ts))
-                            {
-                                AddScheduleToListView(ts, actionNode.InnerText, -1, false);
-                            }
-                        }
-                    }
-
-                    if ((blackoutNodes != null) && (blackoutNodes.Count > 0))
-                    {
-                        foreach (XmlNode blackoutNode in blackoutNodes)
-                        {
-                            TimeSpan startTs;
-                            TimeSpan endTs;
-                            var startNode = blackoutNode.SelectSingleNode("start");
-                            var endNode = blackoutNode.SelectSingleNode("end");
-
-                            if ((startNode != null) && (endNode != null) && TimeSpan.TryParse(startNode.InnerText, out startTs) && TimeSpan.TryParse(endNode.InnerText, out endTs))
-                            {
-                                AddBlackoutToListView(startTs, endTs, -1, false);
-                            }
-                        }
-                    }
-
-                    ReadLegacySettings(ref settingsXmlDoc);
-                }
+                Invoke(new ZeroParameterDelegate(ReadSettings));
             }
-            catch (Exception ex)
+            else
             {
-                Debug.WriteLine(ex.Message);
+                try
+                {
+                    if (File.Exists(Path.Combine(StaticCode.WorkingDirectory, MoveMouseXmlName)))
+                    {
+                        var settingsXmlDoc = new XmlDocument();
+                        settingsXmlDoc.Load(Path.Combine(StaticCode.WorkingDirectory, MoveMouseXmlName));
+                        delayNumericUpDown.Value = ReadSingleNodeInnerTextAsDecimal(ref settingsXmlDoc, "settings/second_delay");
+                        moveMouseCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/move_mouse_pointer");
+                        stealthCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/stealth_mode");
+                        staticPositionCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/enable_static_position");
+                        xNumericUpDown.Value = ReadSingleNodeInnerTextAsDecimal(ref settingsXmlDoc, "settings/x_static_position");
+                        yNumericUpDown.Value = ReadSingleNodeInnerTextAsDecimal(ref settingsXmlDoc, "settings/y_static_position");
+                        clickMouseCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/click_left_mouse_button");
+                        keystrokeCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/send_keystroke");
+                        keystrokeComboBox.SelectedItem = ReadSingleNodeInnerTextAsString(ref settingsXmlDoc, "settings/keystroke");
+                        autoPauseCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/pause_when_mouse_moved");
+                        resumeCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/automatically_resume");
+                        resumeNumericUpDown.Value = ReadSingleNodeInnerTextAsDecimal(ref settingsXmlDoc, "settings/resume_seconds");
+                        disableOnBatteryCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/disable_on_battery");
+                        hotkeyCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/enable_hotkey");
+                        hotkeyComboBox.SelectedItem = ReadSingleNodeInnerTextAsString(ref settingsXmlDoc, "settings/hotkey");
+                        startOnLaunchCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/automatically_start_on_launch");
+                        launchAtLogonCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/automatically_launch_on_logon");
+                        minimiseOnPauseCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/minimise_on_pause");
+                        minimiseOnStartCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/minimise_on_start");
+                        minimiseToSystemTrayCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/minimise_to_system_tray");
+                        appActivateCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/activate_application");
+
+                        if (!String.IsNullOrEmpty(ReadSingleNodeInnerTextAsString(ref settingsXmlDoc, "settings/activate_application_title")))
+                        {
+                            processComboBox.Tag = ReadSingleNodeInnerTextAsString(ref settingsXmlDoc, "settings/activate_application_title");
+                        }
+
+                        _lastUpdateCheck = ReadSingleNodeInnerTextAsDateTime(ref settingsXmlDoc, "settings/last_update_check");
+                        MinimiseToSystemTrayWarningShown = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/system_tray_warning_shown");
+                        executeStartScriptCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/execute_start_script");
+                        executeIntervalScriptCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/execute_interval_script");
+                        executePauseScriptCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/execute_pause_script");
+                        showScriptExecutionCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/show_script_execution");
+                        scriptLanguageComboBox.SelectedItem = ReadSingleNodeInnerTextAsString(ref settingsXmlDoc, "settings/script_language");
+                        string scriptEditor = ReadSingleNodeInnerTextAsString(ref settingsXmlDoc, "settings/script_editor");
+                        scriptEditorLabel.Text = String.IsNullOrEmpty(scriptEditor) ? _scriptEditor : scriptEditor;
+                        var scheduleNodes = settingsXmlDoc.SelectNodes("settings/schedules/schedule");
+                        var blackoutNodes = settingsXmlDoc.SelectNodes("settings/blackouts/blackout");
+                        scheduleListView.Items.Clear();
+                        blackoutListView.Items.Clear();
+
+                        if ((scheduleNodes != null) && (scheduleNodes.Count > 0))
+                        {
+                            foreach (XmlNode scheduleNode in scheduleNodes)
+                            {
+                                TimeSpan ts;
+                                var timeNode = scheduleNode.SelectSingleNode("time");
+                                var actionNode = scheduleNode.SelectSingleNode("action");
+
+                                if ((timeNode != null) && (actionNode != null) && TimeSpan.TryParse(timeNode.InnerText, out ts))
+                                {
+                                    AddScheduleToListView(ts, actionNode.InnerText, -1, false);
+                                }
+                            }
+                        }
+
+                        if ((blackoutNodes != null) && (blackoutNodes.Count > 0))
+                        {
+                            foreach (XmlNode blackoutNode in blackoutNodes)
+                            {
+                                TimeSpan startTs;
+                                TimeSpan endTs;
+                                var startNode = blackoutNode.SelectSingleNode("start");
+                                var endNode = blackoutNode.SelectSingleNode("end");
+
+                                if ((startNode != null) && (endNode != null) && TimeSpan.TryParse(startNode.InnerText, out startTs) && TimeSpan.TryParse(endNode.InnerText, out endTs))
+                                {
+                                    AddBlackoutToListView(startTs, endTs, -1, false);
+                                }
+                            }
+                        }
+
+                        ReadLegacySettings(ref settingsXmlDoc);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.Message);
+                }
             }
         }
 
@@ -2030,6 +2035,7 @@ namespace Ellanet.Forms
 
                 if (_mouseTimerTicks > Convert.ToInt32(delayNumericUpDown.Value))
                 {
+                    ReadSettings();
                     LaunchScript(Script.Interval);
                     ShowCelebrityMouse(_easterEggActive);
                     SendKeystroke();

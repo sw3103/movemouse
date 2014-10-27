@@ -1,0 +1,12 @@
+C:\Users\Steve\Desktop\movemouse\Move Mouse\bin\Release\Move Mouse.exe.config
+C:\Users\Steve\Desktop\movemouse\Move Mouse\bin\Release\Move Mouse.exe
+C:\Users\Steve\Desktop\movemouse\Move Mouse\bin\Release\Move Mouse.pdb
+C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Release\Move Mouse.csprojResolveAssemblyReference.cache
+C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Release\Ellanet.Forms.AddScheduleForm.resources
+C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Release\Ellanet.Forms.AddBlackoutForm.resources
+C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Release\Ellanet.Forms.MouseForm.resources
+C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Release\Ellanet.Forms.PowerShellExecutionPolicyForm.resources
+C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Release\Ellanet.Properties.Resources.resources
+C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Release\Move Mouse.csproj.GenerateResource.Cache
+C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Release\Move Mouse.exe
+C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Release\Move Mouse.pdb
