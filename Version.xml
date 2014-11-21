@@ -1,13 +1,16 @@
 <version>
   <major>3</major>
-  <minor>1</minor>
+  <minor>2</minor>
   <build>0</build>
-  <released_date>01-Mar-2014</released_date>
-  <advertised_date>01-Mar-2014</advertised_date>
+  <released_date>27-Oct-2014</released_date>
+  <advertised_date>21-Nov-2014</advertised_date>
   <features>
-    <feature>Change working directory for XML/Scripts.</feature>
+    <feature>Hotkey support to start/pause.</feature>
+    <feature>Disable on battery option.</feature>
+    <feature>Ability to change settings on the fly.</feature>
+    <feature>PowerShell execution policy detection.</feature>
   </features>
   <fixes>
-    <fix>Minimise to System Tray.</fix>
+    <fix>Minor improvements.</fix>
   </fixes>
 </version>
