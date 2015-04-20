@@ -59,6 +59,8 @@
             this.scriptsHelpPictureBox = new System.Windows.Forms.PictureBox();
             this.optionsTabControl = new System.Windows.Forms.TabControl();
             this.mouseTabPage = new System.Windows.Forms.TabPage();
+            this.homePictureBox = new System.Windows.Forms.PictureBox();
+            this.twitterPictureBox = new System.Windows.Forms.PictureBox();
             this.actionsTabPage = new System.Windows.Forms.TabPage();
             this.behaviourTabPage = new System.Windows.Forms.TabPage();
             this.hotkeyComboBox = new System.Windows.Forms.ComboBox();
@@ -102,6 +104,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.scriptsHelpPictureBox)).BeginInit();
             this.optionsTabControl.SuspendLayout();
             this.mouseTabPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.homePictureBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.twitterPictureBox)).BeginInit();
             this.actionsTabPage.SuspendLayout();
             this.behaviourTabPage.SuspendLayout();
             this.scriptsTabPage.SuspendLayout();
@@ -439,21 +443,23 @@
             // helpPictureBox
             // 
             this.helpPictureBox.Image = global::Ellanet.Properties.Resources.Help_Image;
-            this.helpPictureBox.Location = new System.Drawing.Point(19, 91);
+            this.helpPictureBox.Location = new System.Drawing.Point(15, 244);
             this.helpPictureBox.Name = "helpPictureBox";
             this.helpPictureBox.Size = new System.Drawing.Size(32, 32);
             this.helpPictureBox.TabIndex = 21;
             this.helpPictureBox.TabStop = false;
+            this.helpPictureBox.Visible = false;
             // 
             // contactPictureBox
             // 
             this.contactPictureBox.Image = global::Ellanet.Properties.Resources.Contact_Image;
-            this.contactPictureBox.Location = new System.Drawing.Point(19, 55);
+            this.contactPictureBox.Location = new System.Drawing.Point(15, 208);
             this.contactPictureBox.Name = "contactPictureBox";
             this.contactPictureBox.Size = new System.Drawing.Size(32, 23);
             this.contactPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.contactPictureBox.TabIndex = 25;
             this.contactPictureBox.TabStop = false;
+            this.contactPictureBox.Visible = false;
             // 
             // paypalPictureBox
             // 
@@ -504,6 +510,8 @@
             // 
             // mouseTabPage
             // 
+            this.mouseTabPage.Controls.Add(this.homePictureBox);
+            this.mouseTabPage.Controls.Add(this.twitterPictureBox);
             this.mouseTabPage.Controls.Add(this.paypalPictureBox);
             this.mouseTabPage.Controls.Add(this.contactPictureBox);
             this.mouseTabPage.Controls.Add(this.helpPictureBox);
@@ -514,6 +522,26 @@
             this.mouseTabPage.TabIndex = 4;
             this.mouseTabPage.Text = "Mouse";
             this.mouseTabPage.UseVisualStyleBackColor = true;
+            // 
+            // homePictureBox
+            // 
+            this.homePictureBox.Image = global::Ellanet.Properties.Resources.MouseHole_Image;
+            this.homePictureBox.Location = new System.Drawing.Point(15, 104);
+            this.homePictureBox.Name = "homePictureBox";
+            this.homePictureBox.Size = new System.Drawing.Size(41, 28);
+            this.homePictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.homePictureBox.TabIndex = 28;
+            this.homePictureBox.TabStop = false;
+            // 
+            // twitterPictureBox
+            // 
+            this.twitterPictureBox.Image = global::Ellanet.Properties.Resources.Twitter_Image;
+            this.twitterPictureBox.Location = new System.Drawing.Point(19, 57);
+            this.twitterPictureBox.Name = "twitterPictureBox";
+            this.twitterPictureBox.Size = new System.Drawing.Size(32, 32);
+            this.twitterPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.twitterPictureBox.TabIndex = 27;
+            this.twitterPictureBox.TabStop = false;
             // 
             // actionsTabPage
             // 
@@ -974,6 +1002,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.scriptsHelpPictureBox)).EndInit();
             this.optionsTabControl.ResumeLayout(false);
             this.mouseTabPage.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.homePictureBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.twitterPictureBox)).EndInit();
             this.actionsTabPage.ResumeLayout(false);
             this.actionsTabPage.PerformLayout();
             this.behaviourTabPage.ResumeLayout(false);
@@ -1051,5 +1081,7 @@
         private System.Windows.Forms.CheckBox disableOnBatteryCheckBox;
         private System.Windows.Forms.ComboBox hotkeyComboBox;
         private System.Windows.Forms.CheckBox hotkeyCheckBox;
+        private System.Windows.Forms.PictureBox twitterPictureBox;
+        private System.Windows.Forms.PictureBox homePictureBox;
     }
 }

@@ -27,6 +27,7 @@ namespace Ellanet.Forms
         private const string PayPalAddress = "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=QZTWHD9CRW5XN";
         private const string VersionXmlUrl = "https://movemouse.svn.codeplex.com/svn/Version.xml";
         private const string MiceResourceUrlPrefix = "https://movemouse.svn.codeplex.com/svn/Move%20Mouse/Resources/Mice/";
+        private const string TwitterAddress = "https://twitter.com/movemouse";
         private const string MiceXmlName = "Mice.xml";
         private const string StartScriptName = "Move Mouse - Start";
         private const string IntervalScriptName = "Move Mouse - Interval";
@@ -315,6 +316,12 @@ namespace Ellanet.Forms
             paypalPictureBox.MouseEnter += paypalPictureBox_MouseEnter;
             paypalPictureBox.MouseLeave += paypalPictureBox_MouseLeave;
             paypalPictureBox.MouseClick += paypalPictureBox_MouseClick;
+            twitterPictureBox.MouseEnter += twitterPictureBox_MouseEnter;
+            twitterPictureBox.MouseLeave += twitterPictureBox_MouseLeave;
+            twitterPictureBox.MouseClick += twitterPictureBox_MouseClick;
+            homePictureBox.MouseEnter += homePictureBox_MouseEnter;
+            homePictureBox.MouseLeave += homePictureBox_MouseLeave;
+            homePictureBox.MouseClick += homePictureBox_MouseClick;
             refreshButton.Click += refreshButton_Click;
             scriptsHelpPictureBox.MouseEnter += scriptsHelpPictureBox_MouseEnter;
             scriptsHelpPictureBox.MouseLeave += scriptsHelpPictureBox_MouseLeave;
@@ -335,6 +342,68 @@ namespace Ellanet.Forms
             blackoutListView.DoubleClick += blackoutListView_DoubleClick;
             mousePictureBox.DoubleClick += mousePictureBox_DoubleClick;
             SetButtonTag(ref traceButton, GetButtonText(ref traceButton));
+            ToolTip paypalToolTip = new ToolTip();
+            paypalToolTip.SetToolTip(paypalPictureBox, "Donate to the Move Mouse project using PayPal");
+            ToolTip twitterToolTip = new ToolTip();
+            twitterToolTip.SetToolTip(twitterPictureBox, "Follow Move Mouse on Twitter");
+            ToolTip homeToolTip = new ToolTip();
+            homeToolTip.SetToolTip(homePictureBox, "Move Mouse project home on CodePlex (home...mousehole...get it!?!?)");
+        }
+
+        void homePictureBox_MouseClick(object sender, MouseEventArgs e)
+        {
+            try
+            {
+                Process.Start(HomeAddress);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+        }
+
+        void homePictureBox_MouseLeave(object sender, EventArgs e)
+        {
+            if (Cursor != Cursors.WaitCursor)
+            {
+                Cursor = Cursors.Default;
+            }
+        }
+
+        void homePictureBox_MouseEnter(object sender, EventArgs e)
+        {
+            if (Cursor != Cursors.WaitCursor)
+            {
+                Cursor = Cursors.Hand;
+            }
+        }
+
+        void twitterPictureBox_MouseClick(object sender, MouseEventArgs e)
+        {
+            try
+            {
+                Process.Start(TwitterAddress);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+        }
+
+        void twitterPictureBox_MouseLeave(object sender, EventArgs e)
+        {
+            if (Cursor != Cursors.WaitCursor)
+            {
+                Cursor = Cursors.Default;
+            }
+        }
+
+        void twitterPictureBox_MouseEnter(object sender, EventArgs e)
+        {
+            if (Cursor != Cursors.WaitCursor)
+            {
+                Cursor = Cursors.Hand;
+            }
         }
 
         private void hotkeyComboBox_SelectedIndexChanged(object sender, EventArgs e)
