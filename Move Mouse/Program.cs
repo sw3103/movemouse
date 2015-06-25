@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows.Forms;
 using Ellanet.Forms;
+using Microsoft.VisualBasic;
 
 namespace Ellanet
 {
-    class Program
+    internal class Program
     {
         [STAThread]
         private static void Main(string[] args)
@@ -20,31 +21,47 @@ namespace Ellanet
 
             try
             {
-                if (Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName).Length < 2)
-                {
-                    if ((args != null) && (args.Length > 0))
-                    {
-                        foreach (string arg in args)
-                        {
-                            if (arg.StartsWith("/WorkingDirectory:", StringComparison.CurrentCultureIgnoreCase))
-                            {
-                                string alternateWd = arg.Substring(18);
+                bool createdNew;
 
-                                if (!String.IsNullOrEmpty(alternateWd) && Directory.Exists(alternateWd))
+                using (new Mutex(true, "d45b30b9-9e65-4d33-a2bc-d6ba6a7500bd", out createdNew))
+                {
+                    if (createdNew)
+                    {
+                        if ((args != null) && (args.Length > 0))
+                        {
+                            foreach (string arg in args)
+                            {
+                                if (arg.StartsWith("/WorkingDirectory:", StringComparison.CurrentCultureIgnoreCase))
                                 {
-                                    StaticCode.WorkingDirectory = alternateWd;
+                                    string alternateWd = arg.Substring(18);
+
+                                    if (!String.IsNullOrEmpty(alternateWd) && Directory.Exists(alternateWd))
+                                    {
+                                        StaticCode.WorkingDirectory = alternateWd;
+                                    }
+                                }
+                                else if (arg.StartsWith("/EnableToolWindowStyle", StringComparison.CurrentCultureIgnoreCase))
+                                {
+                                    StaticCode.EnableToolWindowStyle = true;
                                 }
                             }
-                            else if (arg.StartsWith("/EnableToolWindowStyle", StringComparison.CurrentCultureIgnoreCase))
+                        }
+
+                        Application.EnableVisualStyles();
+                        Application.DoEvents();
+                        Application.Run(new SystemTrayIcon());
+                    }
+                    else
+                    {
+                        foreach (var process in Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName))
+                        {
+                            if (process.Id != Process.GetCurrentProcess().Id)
                             {
-                                StaticCode.EnableToolWindowStyle = true;
+                                Interaction.AppActivate(process.MainWindowTitle);
+                                break;
                             }
                         }
                     }
-
-                    Application.EnableVisualStyles();
-                    Application.DoEvents();
-                    Application.Run(new SystemTrayIcon());
                 }
             }
             catch (Exception ex)
@@ -53,7 +70,7 @@ namespace Ellanet
             }
         }
 
-        private static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
+        private static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
         {
             CloseMoveMouseWithException(e.Exception.Message);
         }

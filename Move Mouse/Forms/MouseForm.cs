@@ -13,6 +13,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
+#pragma warning disable 414
 
 namespace Ellanet.Forms
 {
