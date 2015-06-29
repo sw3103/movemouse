@@ -1,10 +1,12 @@
-﻿using Ellanet.Events;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Management;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using Ellanet.Events;
+using Ellanet.Properties;
+using Microsoft.Win32;
 
 namespace Ellanet.Forms
 {
@@ -53,6 +55,8 @@ namespace Ellanet.Forms
 
         private delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
 
+        private delegate void SetMouseIconDelegate(Icon icon);
+
         public SystemTrayIcon()
         {
             InitializeComponent();
@@ -63,7 +67,7 @@ namespace Ellanet.Forms
             _sysTrayIcon = new NotifyIcon();
             _sysTrayIcon.DoubleClick += _sysTrayIcon_DoubleClick;
             _sysTrayIcon.Text = "Move Mouse";
-            _sysTrayIcon.Icon = new Icon(Properties.Resources.Mouse_Icon, new Size(16, 16));
+            _sysTrayIcon.Icon = new Icon(Resources.Mouse_Icon, new Size(16, 16));
             _sysTrayIcon.ContextMenu = sysTrayMenu;
             _sysTrayIcon.Visible = true;
             _sysTrayIcon.BalloonTipClicked += sysTrayIcon_BalloonTipClicked;
@@ -73,7 +77,7 @@ namespace Ellanet.Forms
             {
                 if (Is64BitWindows8Point1() && (GetCurrentDpi() > 120))
                 {
-                    var layersRegKey = Microsoft.Win32.Registry.CurrentUser.CreateSubKey(@"Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers");
+                    var layersRegKey = Registry.CurrentUser.CreateSubKey(@"Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers");
 
                     if (layersRegKey != null)
                     {
@@ -137,6 +141,16 @@ namespace Ellanet.Forms
         {
             if ((_moveMouse != null) && (!_moveMouse.IsDisposed))
             {
+                _moveMouse.BlackoutStatusChanged -= _moveMouse_BlackoutStatusChanged;
+                _moveMouse.NewVersionAvailable -= _moveMouse_NewVersionAvailable;
+                _moveMouse.ScheduleArrived -= _moveMouse_ScheduleArrived;
+                _moveMouse.FormClosing -= _moveMouse_FormClosing;
+                _moveMouse.PowerLineStatusChanged -= _moveMouse_PowerLineStatusChanged;
+                _moveMouse.PowerShellexecutionPolicyWarning -= _moveMouse_PowerShellexecutionPolicyWarning;
+                _moveMouse.HookKeyStatusChanged -= _moveMouse_HookKeyStatusChanged;
+                _moveMouse.MoveMouseStarted -= _moveMouse_MoveMouseStarted;
+                _moveMouse.MoveMousePaused -= _moveMouse_MoveMousePaused;
+                _moveMouse.MoveMouseStopped -= _moveMouse_MoveMouseStopped;
                 _moveMouse.Close();
             }
 
@@ -161,6 +175,9 @@ namespace Ellanet.Forms
                 _moveMouse.PowerLineStatusChanged += _moveMouse_PowerLineStatusChanged;
                 _moveMouse.PowerShellexecutionPolicyWarning += _moveMouse_PowerShellexecutionPolicyWarning;
                 _moveMouse.HookKeyStatusChanged += _moveMouse_HookKeyStatusChanged;
+                _moveMouse.MoveMouseStarted += _moveMouse_MoveMouseStarted;
+                _moveMouse.MoveMousePaused += _moveMouse_MoveMousePaused;
+                _moveMouse.MoveMouseStopped += _moveMouse_MoveMouseStopped;
                 _moveMouse.FormBorderStyle = StaticCode.EnableToolWindowStyle ? FormBorderStyle.FixedToolWindow : FormBorderStyle.FixedSingle;
                 _moveMouse.Show();
             }
@@ -171,6 +188,21 @@ namespace Ellanet.Forms
                 _moveMouse.Activate();
                 _moveMouse.BringToFront();
             }
+        }
+
+        void _moveMouse_MoveMouseStopped()
+        {
+            SetMouseIcon(Resources.Mouse_Stop_Icon);
+        }
+
+        void _moveMouse_MoveMousePaused()
+        {
+            SetMouseIcon(Resources.Mouse_Pause_Icon);
+        }
+
+        void _moveMouse_MoveMouseStarted()
+        {
+            SetMouseIcon(Resources.Mouse_Play_Icon);
         }
 
         private void _moveMouse_HookKeyStatusChanged(object sender, HookKeyStatusChangedEventArgs e)
@@ -192,7 +224,7 @@ namespace Ellanet.Forms
         private void _moveMouse_PowerShellexecutionPolicyWarning(object sender)
         {
             _directUserToPowerShellExecutionPolicyFormOnBalloonClick = true;
-            _sysTrayIcon.ShowBalloonTip(BalloonTipTimeout, "PowerShell Execution Policy", String.Format("Move Mouse has detected that your PowerShell execution policy will not allow you to run scripts.\r\n\r\nPlease click here to resolve this."), ToolTipIcon.Warning);
+            _sysTrayIcon.ShowBalloonTip(BalloonTipTimeout, "PowerShell Execution Policy", "Move Mouse has detected that your PowerShell execution policy will not allow you to run scripts.\r\n\r\nPlease click here to resolve this.", ToolTipIcon.Warning);
         }
 
         private void _moveMouse_PowerLineStatusChanged(object sender, PowerLineStatusChangedEventArgs e)
@@ -202,10 +234,10 @@ namespace Ellanet.Forms
                 switch (e.Status)
                 {
                     case PowerLineStatusChangedEventArgs.PowerLineStatus.Offline:
-                        _sysTrayIcon.ShowBalloonTip(BalloonTipTimeout, "Battery Mode Enabled", String.Format("Move Mouse has detected that you are now running on battery, and will suspend all operations until you reconnect to mains power."), ToolTipIcon.Info);
+                        _sysTrayIcon.ShowBalloonTip(BalloonTipTimeout, "Battery Mode Enabled", "Move Mouse has detected that you are now running on battery, and will suspend all operations until you reconnect to mains power.", ToolTipIcon.Info);
                         break;
                     case PowerLineStatusChangedEventArgs.PowerLineStatus.Online:
-                        _sysTrayIcon.ShowBalloonTip(BalloonTipTimeout, "Battery Mode Disabled", String.Format("Move Mouse will resume all operations now that you are reconnected to mains power."), ToolTipIcon.Info);
+                        _sysTrayIcon.ShowBalloonTip(BalloonTipTimeout, "Battery Mode Disabled", "Move Mouse will resume all operations now that you are reconnected to mains power.", ToolTipIcon.Info);
                         break;
                 }
             }
@@ -232,7 +264,7 @@ namespace Ellanet.Forms
 
                 if ((e.Features != null) && (e.Features.Length > 0))
                 {
-                    balloonText += String.Format("\r\nNew Features\r\n");
+                    balloonText += "\r\nNew Features\r\n";
 
                     foreach (string feature in e.Features)
                     {
@@ -242,7 +274,7 @@ namespace Ellanet.Forms
 
                 if ((e.Fixes != null) && (e.Fixes.Length > 0))
                 {
-                    balloonText += String.Format("\r\nFixes\r\n");
+                    balloonText += "\r\nFixes\r\n";
 
                     foreach (string fix in e.Fixes)
                     {
@@ -250,7 +282,7 @@ namespace Ellanet.Forms
                     }
                 }
 
-                balloonText += String.Format("\r\nPlease click here to visit the downloads page.");
+                balloonText += "\r\nPlease click here to visit the downloads page.";
                 _sysTrayIcon.ShowBalloonTip(BalloonTipTimeout, "New Version Available", balloonText, ToolTipIcon.Info);
             }
             catch (Exception ex)
@@ -370,6 +402,19 @@ namespace Ellanet.Forms
             }
 
             return IntPtr.Zero;
+        }
+
+        private void SetMouseIcon(Icon icon)
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new SetMouseIconDelegate(SetMouseIcon), icon);
+            }
+            else
+            {
+                _sysTrayIcon.Icon = new Icon(icon, new Size(16, 16));
+                _moveMouse.Icon = icon;
+            }
         }
     }
 }

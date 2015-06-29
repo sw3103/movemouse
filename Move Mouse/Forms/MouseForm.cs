@@ -103,12 +103,21 @@ namespace Ellanet.Forms
 
         public delegate void HookKeyStatusChangedHandler(object sender, HookKeyStatusChangedEventArgs e);
 
+        public delegate void MoveMouseStartedHandler();
+
+        public delegate void MoveMousePausedHandler();
+
+        public delegate void MoveMouseStoppedHandler();
+
         public event BlackoutStatusChangedHandler BlackoutStatusChanged;
         public event NewVersionAvailableHandler NewVersionAvailable;
         public event ScheduleArrivedHandler ScheduleArrived;
         public event PowerLineStatusChangedHandler PowerLineStatusChanged;
         public event PowerShellexecutionPolicyWarningHandler PowerShellexecutionPolicyWarning;
         public event HookKeyStatusChangedHandler HookKeyStatusChanged;
+        public event MoveMouseStartedHandler MoveMouseStarted;
+        public event MoveMousePausedHandler MoveMousePaused;
+        public event MoveMouseStoppedHandler MoveMouseStopped;
 
         public bool MinimiseToSystemTrayWarningShown { get; private set; }
 
@@ -351,7 +360,7 @@ namespace Ellanet.Forms
             homeToolTip.SetToolTip(homePictureBox, "Move Mouse project home on CodePlex (home...mousehole...get it!?!?)");
         }
 
-        void homePictureBox_MouseClick(object sender, MouseEventArgs e)
+        private void homePictureBox_MouseClick(object sender, MouseEventArgs e)
         {
             try
             {
@@ -363,7 +372,7 @@ namespace Ellanet.Forms
             }
         }
 
-        void homePictureBox_MouseLeave(object sender, EventArgs e)
+        private void homePictureBox_MouseLeave(object sender, EventArgs e)
         {
             if (Cursor != Cursors.WaitCursor)
             {
@@ -371,7 +380,7 @@ namespace Ellanet.Forms
             }
         }
 
-        void homePictureBox_MouseEnter(object sender, EventArgs e)
+        private void homePictureBox_MouseEnter(object sender, EventArgs e)
         {
             if (Cursor != Cursors.WaitCursor)
             {
@@ -379,7 +388,7 @@ namespace Ellanet.Forms
             }
         }
 
-        void twitterPictureBox_MouseClick(object sender, MouseEventArgs e)
+        private void twitterPictureBox_MouseClick(object sender, MouseEventArgs e)
         {
             try
             {
@@ -391,7 +400,7 @@ namespace Ellanet.Forms
             }
         }
 
-        void twitterPictureBox_MouseLeave(object sender, EventArgs e)
+        private void twitterPictureBox_MouseLeave(object sender, EventArgs e)
         {
             if (Cursor != Cursors.WaitCursor)
             {
@@ -399,7 +408,7 @@ namespace Ellanet.Forms
             }
         }
 
-        void twitterPictureBox_MouseEnter(object sender, EventArgs e)
+        private void twitterPictureBox_MouseEnter(object sender, EventArgs e)
         {
             if (Cursor != Cursors.WaitCursor)
             {
@@ -975,54 +984,6 @@ namespace Ellanet.Forms
             }
         }
 
-        protected void OnBlackoutStatusChanged(object sender, BlackoutStatusChangedEventArgs e)
-        {
-            if (BlackoutStatusChanged != null)
-            {
-                BlackoutStatusChanged(sender, e);
-            }
-        }
-
-        protected void OnNewVersionAvailable(object sender, NewVersionAvailableEventArgs e)
-        {
-            if (NewVersionAvailable != null)
-            {
-                NewVersionAvailable(sender, e);
-            }
-        }
-
-        protected void OnScheduleArrived(object sender, ScheduleArrivedEventArgs e)
-        {
-            if (ScheduleArrived != null)
-            {
-                ScheduleArrived(sender, e);
-            }
-        }
-
-        protected void OnPowerLineStatusChanged(object sender, PowerLineStatusChangedEventArgs e)
-        {
-            if (PowerLineStatusChanged != null)
-            {
-                PowerLineStatusChanged(sender, e);
-            }
-        }
-
-        protected void OnPowerShellexecutionPolicyWarning(object sender)
-        {
-            if (PowerShellexecutionPolicyWarning != null)
-            {
-                PowerShellexecutionPolicyWarning(sender);
-            }
-        }
-
-        protected void OnHookKeyStatusChanged(object sender, HookKeyStatusChangedEventArgs e)
-        {
-            if (HookKeyStatusChanged != null)
-            {
-                HookKeyStatusChanged(sender, e);
-            }
-        }
-
         private void UpdateHookKeyStatus()
         {
             var key = Keys.None;
@@ -1072,7 +1033,7 @@ namespace Ellanet.Forms
             refreshButton.Enabled = appActivateCheckBox.Checked;
         }
 
-        private void ListOpenWindows(object stareInfo)
+        private void ListOpenWindows(object stateInfo)
         {
             try
             {
@@ -1258,38 +1219,38 @@ namespace Ellanet.Forms
 
         private void clickMouseCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            if (!AtLeastOneActionIsEnabled())
-            {
-                clickMouseCheckBox.Checked = true;
-            }
+            //if (!AtLeastOneActionIsEnabled())
+            //{
+            //    clickMouseCheckBox.Checked = true;
+            //}
 
             DetermineActionsTabControlState();
         }
 
         private void moveMouseCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            if (!AtLeastOneActionIsEnabled())
-            {
-                moveMouseCheckBox.Checked = true;
-            }
+            //if (!AtLeastOneActionIsEnabled())
+            //{
+            //    moveMouseCheckBox.Checked = true;
+            //}
 
             DetermineActionsTabControlState();
         }
 
         private void keystrokeCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            if (!AtLeastOneActionIsEnabled())
-            {
-                keystrokeCheckBox.Checked = true;
-            }
+            //if (!AtLeastOneActionIsEnabled())
+            //{
+            //    keystrokeCheckBox.Checked = true;
+            //}
 
             DetermineActionsTabControlState();
         }
 
-        private bool AtLeastOneActionIsEnabled()
-        {
-            return (moveMouseCheckBox.Checked || clickMouseCheckBox.Checked || keystrokeCheckBox.Checked);
-        }
+        //private bool AtLeastOneActionIsEnabled()
+        //{
+        //    return (moveMouseCheckBox.Checked || clickMouseCheckBox.Checked || keystrokeCheckBox.Checked);
+        //}
 
         private void DetermineActionsTabControlState()
         {
@@ -1387,7 +1348,7 @@ namespace Ellanet.Forms
         {
             if (InvokeRequired)
             {
-                Invoke(new UpdateCountdownProgressBarDelegate(UpdateCountdownProgressBar), new object[] {pb, delay, elapsed});
+                Invoke(new UpdateCountdownProgressBarDelegate(UpdateCountdownProgressBar), pb, delay, elapsed);
             }
             else
             {
@@ -1409,7 +1370,7 @@ namespace Ellanet.Forms
         {
             if (InvokeRequired)
             {
-                Invoke(new ButtonPerformClickDelegate(ButtonPerformClick), new object[] {b});
+                Invoke(new ButtonPerformClickDelegate(ButtonPerformClick), b);
             }
             else
             {
@@ -1421,7 +1382,7 @@ namespace Ellanet.Forms
         {
             if (InvokeRequired)
             {
-                return Invoke(new GetComboBoxSelectedItemDelegate(GetComboBoxSelectedItem), new object[] {cb});
+                return Invoke(new GetComboBoxSelectedItemDelegate(GetComboBoxSelectedItem), cb);
             }
 
             return cb.SelectedItem;
@@ -1431,7 +1392,7 @@ namespace Ellanet.Forms
         {
             if (InvokeRequired)
             {
-                return (int) Invoke(new GetComboBoxSelectedIndexDelegate(GetComboBoxSelectedIndex), new object[] {cb});
+                return (int) Invoke(new GetComboBoxSelectedIndexDelegate(GetComboBoxSelectedIndex), cb);
             }
 
             return cb.SelectedIndex;
@@ -1441,7 +1402,7 @@ namespace Ellanet.Forms
         {
             if (InvokeRequired)
             {
-                Invoke(new SetNumericUpDownValueDelegate(SetNumericUpDownValue), new object[] {nud, value});
+                Invoke(new SetNumericUpDownValueDelegate(SetNumericUpDownValue), nud, value);
             }
             else
             {
@@ -1453,7 +1414,7 @@ namespace Ellanet.Forms
         {
             if (InvokeRequired)
             {
-                Invoke(new SetButtonTextDelegate(SetButtonText), new object[] {b, text});
+                Invoke(new SetButtonTextDelegate(SetButtonText), b, text);
             }
             else
             {
@@ -1465,7 +1426,7 @@ namespace Ellanet.Forms
         {
             if (InvokeRequired)
             {
-                Invoke(new SetButtonTagDelegate(SetButtonTag), new[] {b, o});
+                Invoke(new SetButtonTagDelegate(SetButtonTag), b, o);
             }
             else
             {
@@ -1477,7 +1438,7 @@ namespace Ellanet.Forms
         {
             if (InvokeRequired)
             {
-                return Invoke(new GetButtonTagDelegate(GetButtonTag), new object[] {b});
+                return Invoke(new GetButtonTagDelegate(GetButtonTag), b);
             }
 
             return b.Tag;
@@ -1487,7 +1448,7 @@ namespace Ellanet.Forms
         {
             if (InvokeRequired)
             {
-                return Convert.ToString(Invoke(new GetButtonTextDelegate(GetButtonText), new object[] {b}));
+                return Convert.ToString(Invoke(new GetButtonTextDelegate(GetButtonText), b));
             }
 
             return b.Text;
@@ -1497,7 +1458,7 @@ namespace Ellanet.Forms
         {
             if (InvokeRequired)
             {
-                return Convert.ToBoolean(Invoke(new GetCheckBoxCheckedDelegate(GetCheckBoxChecked), new object[] {cb}));
+                return Convert.ToBoolean(Invoke(new GetCheckBoxCheckedDelegate(GetCheckBoxChecked), cb));
             }
 
             return cb.Checked;
@@ -1507,7 +1468,7 @@ namespace Ellanet.Forms
         {
             if (InvokeRequired)
             {
-                Invoke(new AddComboBoxItemDelegate(AddComboBoxItem), new object[] {cb, item, selected});
+                Invoke(new AddComboBoxItemDelegate(AddComboBoxItem), cb, item, selected);
             }
             else
             {
@@ -1524,7 +1485,7 @@ namespace Ellanet.Forms
         {
             if (InvokeRequired)
             {
-                return Invoke(new GetComboBoxTagDelegate(GetComboBoxTag), new object[] {cb});
+                return Invoke(new GetComboBoxTagDelegate(GetComboBoxTag), cb);
             }
 
             return cb.Tag;
@@ -1534,7 +1495,7 @@ namespace Ellanet.Forms
         {
             if (InvokeRequired)
             {
-                Invoke(new ClearComboBoxItemsDelegate(ClearComboBoxItems), new object[] {cb});
+                Invoke(new ClearComboBoxItemsDelegate(ClearComboBoxItems), cb);
             }
             else
             {
@@ -1546,7 +1507,7 @@ namespace Ellanet.Forms
         {
             if (InvokeRequired)
             {
-                return Convert.ToBoolean(Invoke(new IsWindowMinimisedDelegate(IsWindowMinimised), new object[] {handle}));
+                return Convert.ToBoolean(Invoke(new IsWindowMinimisedDelegate(IsWindowMinimised), handle));
             }
 
             var placement = GetPlacement(handle);
@@ -1557,7 +1518,7 @@ namespace Ellanet.Forms
         {
             if (InvokeRequired)
             {
-                Invoke(new ShowCelebrityMouseDelegate(ShowCelebrityMouse), new object[] {cb});
+                Invoke(new ShowCelebrityMouseDelegate(ShowCelebrityMouse), cb);
             }
             else
             {
@@ -2014,6 +1975,7 @@ namespace Ellanet.Forms
             switch (actionButton.Text)
             {
                 case "Pause":
+                    OnMoveMouseStopped();
                     _mouseTimer.Stop();
                     _autoPauseTimer.Stop();
                     _resumeTimer.Start();
@@ -2039,6 +2001,7 @@ namespace Ellanet.Forms
 
                     break;
                 default:
+                    OnMoveMouseStarted();
                     _mouseTimerTicks = 0;
                     _mmStartTime = DateTime.Now;
                     _blackoutStatus = BlackoutStatusChangedEventArgs.BlackoutStatus.Inactive;
@@ -2095,12 +2058,14 @@ namespace Ellanet.Forms
                     TimeSpan endTime;
                     GetNextBlackoutStatusChangeTime(out startTime, out endTime);
                     OnBlackoutStatusChanged(this, new BlackoutStatusChangedEventArgs(_blackoutStatus, startTime, endTime));
+                    OnMoveMouseStarted();
                 }
 
                 if (_powerLineStatus == PowerLineStatusChangedEventArgs.PowerLineStatus.Offline)
                 {
                     _powerLineStatus = PowerLineStatusChangedEventArgs.PowerLineStatus.Online;
                     OnPowerLineStatusChanged(this, new PowerLineStatusChangedEventArgs(_powerLineStatus));
+                    OnMoveMouseStarted();
                 }
 
                 if (_mouseTimerTicks > Convert.ToInt32(delayNumericUpDown.Value))
@@ -2123,12 +2088,14 @@ namespace Ellanet.Forms
                     TimeSpan endTime;
                     GetNextBlackoutStatusChangeTime(out startTime, out endTime);
                     OnBlackoutStatusChanged(this, new BlackoutStatusChangedEventArgs(_blackoutStatus, startTime, endTime));
+                    OnMoveMousePaused();
                 }
 
                 if (GetCheckBoxChecked(ref disableOnBatteryCheckBox) && IsRunningOnBattery() && (_powerLineStatus == PowerLineStatusChangedEventArgs.PowerLineStatus.Online))
                 {
                     _powerLineStatus = PowerLineStatusChangedEventArgs.PowerLineStatus.Offline;
                     OnPowerLineStatusChanged(this, new PowerLineStatusChangedEventArgs(_powerLineStatus));
+                    OnMoveMousePaused();
                 }
             }
         }
@@ -2310,6 +2277,78 @@ namespace Ellanet.Forms
             }
 
             return PowerShellExecutionPolicy.Restricted;
+        }
+
+        protected void OnBlackoutStatusChanged(object sender, BlackoutStatusChangedEventArgs e)
+        {
+            if (BlackoutStatusChanged != null)
+            {
+                BlackoutStatusChanged(sender, e);
+            }
+        }
+
+        protected void OnNewVersionAvailable(object sender, NewVersionAvailableEventArgs e)
+        {
+            if (NewVersionAvailable != null)
+            {
+                NewVersionAvailable(sender, e);
+            }
+        }
+
+        protected void OnScheduleArrived(object sender, ScheduleArrivedEventArgs e)
+        {
+            if (ScheduleArrived != null)
+            {
+                ScheduleArrived(sender, e);
+            }
+        }
+
+        protected void OnPowerLineStatusChanged(object sender, PowerLineStatusChangedEventArgs e)
+        {
+            if (PowerLineStatusChanged != null)
+            {
+                PowerLineStatusChanged(sender, e);
+            }
+        }
+
+        protected void OnPowerShellexecutionPolicyWarning(object sender)
+        {
+            if (PowerShellexecutionPolicyWarning != null)
+            {
+                PowerShellexecutionPolicyWarning(sender);
+            }
+        }
+
+        protected void OnHookKeyStatusChanged(object sender, HookKeyStatusChangedEventArgs e)
+        {
+            if (HookKeyStatusChanged != null)
+            {
+                HookKeyStatusChanged(sender, e);
+            }
+        }
+
+        protected void OnMoveMouseStarted()
+        {
+            if (MoveMouseStarted != null)
+            {
+                MoveMouseStarted();
+            }
+        }
+
+        protected void OnMoveMousePaused()
+        {
+            if (MoveMousePaused != null)
+            {
+                MoveMousePaused();
+            }
+        }
+
+        protected void OnMoveMouseStopped()
+        {
+            if (MoveMouseStopped != null)
+            {
+                MoveMouseStopped();
+            }
         }
     }
 }

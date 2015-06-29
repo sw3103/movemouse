@@ -146,6 +146,9 @@
     <None Include="Resources\ScriptEditor_Icon.ico" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\Mouse-Stop.ico" />
+    <None Include="Resources\Mouse-Play.ico" />
+    <None Include="Resources\Mouse-Pause.ico" />
     <None Include="Resources\MouseHole_Image.gif" />
     <None Include="Resources\Twitter_logo_blue.png" />
     <None Include="Resources\Mice\FingerMouse01.jpg" />

@@ -1,14 +1,13 @@
 <version>
   <major>3</major>
-  <minor>2</minor>
+  <minor>3</minor>
   <build>0</build>
-  <released_date>27-Oct-2014</released_date>
-  <advertised_date>21-Nov-2014</advertised_date>
+  <released_date>29-Jun-2015</released_date>
+  <advertised_date>07-Jul-2015</advertised_date>
   <features>
-    <feature>Hotkey support to start/pause.</feature>
-    <feature>Disable on battery option.</feature>
-    <feature>Ability to change settings on the fly.</feature>
-    <feature>PowerShell execution policy detection.</feature>
+    <feature>Move Mouse icon shows active state.</feature>
+    <feature>Better single instance handling.</feature>
+    <feature>Can be used purely for script execution.</feature>
   </features>
   <fixes>
     <fix>Minor improvements.</fix>
