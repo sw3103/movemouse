@@ -29,6 +29,7 @@ namespace Ellanet.Forms
         private IntPtr _hookId = IntPtr.Zero;
         private Keys _hookKey;
         private LowLevelKeyboardProc _hookProc;
+        private MenuItem _startStopMenuItem;
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         private static extern IntPtr SetWindowsHookEx(
@@ -62,6 +63,7 @@ namespace Ellanet.Forms
             InitializeComponent();
             var sysTrayMenu = new ContextMenu();
             sysTrayMenu.MenuItems.Add("Open", OpenMoveMouse);
+            _startStopMenuItem = sysTrayMenu.MenuItems.Add("Start", StopStartMoveMouse);
             sysTrayMenu.MenuItems.Add("-");
             sysTrayMenu.MenuItems.Add("Close", CloseMoveMouse);
             _sysTrayIcon = new NotifyIcon();
@@ -137,6 +139,12 @@ namespace Ellanet.Forms
             ShowMoveMouse(true);
         }
 
+        private void StopStartMoveMouse(object sender, EventArgs e)
+        {
+            ShowMoveMouse(true);
+            _moveMouse.StartStopToggle();
+        }
+
         private void CloseMoveMouse(object sender, EventArgs e)
         {
             if ((_moveMouse != null) && (!_moveMouse.IsDisposed))
@@ -190,19 +198,21 @@ namespace Ellanet.Forms
             }
         }
 
-        void _moveMouse_MoveMouseStopped()
+        private void _moveMouse_MoveMouseStopped()
         {
             SetMouseIcon(Resources.Mouse_Stop_Icon);
+            _startStopMenuItem.Text = "Start";
         }
 
-        void _moveMouse_MoveMousePaused()
+        private void _moveMouse_MoveMousePaused()
         {
             SetMouseIcon(Resources.Mouse_Pause_Icon);
         }
 
-        void _moveMouse_MoveMouseStarted()
+        private void _moveMouse_MoveMouseStarted()
         {
             SetMouseIcon(Resources.Mouse_Play_Icon);
+            _startStopMenuItem.Text = "Pause";
         }
 
         private void _moveMouse_HookKeyStatusChanged(object sender, HookKeyStatusChangedEventArgs e)

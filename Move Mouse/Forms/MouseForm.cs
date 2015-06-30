@@ -1269,6 +1269,7 @@ namespace Ellanet.Forms
 
         private void MouseForm_FormClosing(object sender, FormClosingEventArgs e)
         {
+            OnMoveMouseStopped();
             _mouseTimer.Stop();
             _resumeTimer.Stop();
             _autoStartTimer.Stop();
@@ -2001,7 +2002,6 @@ namespace Ellanet.Forms
 
                     break;
                 default:
-                    OnMoveMouseStarted();
                     _mouseTimerTicks = 0;
                     _mmStartTime = DateTime.Now;
                     _blackoutStatus = BlackoutStatusChangedEventArgs.BlackoutStatus.Inactive;
@@ -2020,6 +2020,7 @@ namespace Ellanet.Forms
 
                     _resumeTimer.Stop();
                     _autoStartTimer.Stop();
+                    OnMoveMouseStarted();
                     _mouseTimer.Start();
                     _autoPauseTimer.Start();
                     actionButton.Text = "Pause";
