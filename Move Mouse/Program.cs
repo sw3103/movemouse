@@ -55,7 +55,7 @@ namespace Ellanet
                     {
                         foreach (var process in Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName))
                         {
-                            if (process.Id != Process.GetCurrentProcess().Id)
+                            if ((process.Id != Process.GetCurrentProcess().Id) && !String.IsNullOrEmpty(process.MainWindowTitle))
                             {
                                 Interaction.AppActivate(process.MainWindowTitle);
                                 break;

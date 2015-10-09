@@ -29,7 +29,7 @@ namespace Ellanet.Forms
         private IntPtr _hookId = IntPtr.Zero;
         private Keys _hookKey;
         private LowLevelKeyboardProc _hookProc;
-        private MenuItem _startStopMenuItem;
+        private readonly MenuItem _startStopMenuItem;
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         private static extern IntPtr SetWindowsHookEx(
@@ -80,11 +80,7 @@ namespace Ellanet.Forms
                 if (Is64BitWindows8Point1() && (GetCurrentDpi() > 120))
                 {
                     var layersRegKey = Registry.CurrentUser.CreateSubKey(@"Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers");
-
-                    if (layersRegKey != null)
-                    {
-                        layersRegKey.SetValue(Application.ExecutablePath, "HIGHDPIAWARE");
-                    }
+                    layersRegKey?.SetValue(Application.ExecutablePath, "HIGHDPIAWARE");
                 }
             }
             catch (Exception ex)

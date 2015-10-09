@@ -93,6 +93,9 @@
             this.blackoutListView = new System.Windows.Forms.ListView();
             this.startColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.endColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.importPauseScriptButton = new System.Windows.Forms.Button();
+            this.importIntervalScriptButton = new System.Windows.Forms.Button();
+            this.importStartScriptButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.mousePictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.delayNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.resumeNumericUpDown)).BeginInit();
@@ -484,9 +487,9 @@
             // scriptsHelpPictureBox
             // 
             this.scriptsHelpPictureBox.Image = global::Ellanet.Properties.Resources.Help_Image;
-            this.scriptsHelpPictureBox.Location = new System.Drawing.Point(429, 20);
+            this.scriptsHelpPictureBox.Location = new System.Drawing.Point(15, 244);
             this.scriptsHelpPictureBox.Name = "scriptsHelpPictureBox";
-            this.scriptsHelpPictureBox.Size = new System.Drawing.Size(19, 20);
+            this.scriptsHelpPictureBox.Size = new System.Drawing.Size(32, 32);
             this.scriptsHelpPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.scriptsHelpPictureBox.TabIndex = 29;
             this.scriptsHelpPictureBox.TabStop = false;
@@ -648,6 +651,9 @@
             // 
             // scriptsTabPage
             // 
+            this.scriptsTabPage.Controls.Add(this.importPauseScriptButton);
+            this.scriptsTabPage.Controls.Add(this.importIntervalScriptButton);
+            this.scriptsTabPage.Controls.Add(this.importStartScriptButton);
             this.scriptsTabPage.Controls.Add(this.editPauseScriptButton);
             this.scriptsTabPage.Controls.Add(this.editIntervalScriptButton);
             this.scriptsTabPage.Controls.Add(this.editStartScriptButton);
@@ -672,7 +678,7 @@
             // 
             this.editPauseScriptButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.editPauseScriptButton.Enabled = false;
-            this.editPauseScriptButton.Location = new System.Drawing.Point(317, 78);
+            this.editPauseScriptButton.Location = new System.Drawing.Point(286, 78);
             this.editPauseScriptButton.Name = "editPauseScriptButton";
             this.editPauseScriptButton.Size = new System.Drawing.Size(75, 23);
             this.editPauseScriptButton.TabIndex = 5;
@@ -683,7 +689,7 @@
             // 
             this.editIntervalScriptButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.editIntervalScriptButton.Enabled = false;
-            this.editIntervalScriptButton.Location = new System.Drawing.Point(317, 48);
+            this.editIntervalScriptButton.Location = new System.Drawing.Point(286, 48);
             this.editIntervalScriptButton.Name = "editIntervalScriptButton";
             this.editIntervalScriptButton.Size = new System.Drawing.Size(75, 23);
             this.editIntervalScriptButton.TabIndex = 3;
@@ -694,7 +700,7 @@
             // 
             this.editStartScriptButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.editStartScriptButton.Enabled = false;
-            this.editStartScriptButton.Location = new System.Drawing.Point(317, 18);
+            this.editStartScriptButton.Location = new System.Drawing.Point(286, 18);
             this.editStartScriptButton.Name = "editStartScriptButton";
             this.editStartScriptButton.Size = new System.Drawing.Size(75, 23);
             this.editStartScriptButton.TabIndex = 1;
@@ -976,6 +982,39 @@
             this.endColumnHeader.Text = "End";
             this.endColumnHeader.Width = 125;
             // 
+            // importPauseScriptButton
+            // 
+            this.importPauseScriptButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.importPauseScriptButton.Enabled = false;
+            this.importPauseScriptButton.Location = new System.Drawing.Point(373, 78);
+            this.importPauseScriptButton.Name = "importPauseScriptButton";
+            this.importPauseScriptButton.Size = new System.Drawing.Size(75, 23);
+            this.importPauseScriptButton.TabIndex = 41;
+            this.importPauseScriptButton.Text = "Import";
+            this.importPauseScriptButton.UseVisualStyleBackColor = true;
+            // 
+            // importIntervalScriptButton
+            // 
+            this.importIntervalScriptButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.importIntervalScriptButton.Enabled = false;
+            this.importIntervalScriptButton.Location = new System.Drawing.Point(373, 48);
+            this.importIntervalScriptButton.Name = "importIntervalScriptButton";
+            this.importIntervalScriptButton.Size = new System.Drawing.Size(75, 23);
+            this.importIntervalScriptButton.TabIndex = 40;
+            this.importIntervalScriptButton.Text = "Import";
+            this.importIntervalScriptButton.UseVisualStyleBackColor = true;
+            // 
+            // importStartScriptButton
+            // 
+            this.importStartScriptButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.importStartScriptButton.Enabled = false;
+            this.importStartScriptButton.Location = new System.Drawing.Point(373, 18);
+            this.importStartScriptButton.Name = "importStartScriptButton";
+            this.importStartScriptButton.Size = new System.Drawing.Size(75, 23);
+            this.importStartScriptButton.TabIndex = 39;
+            this.importStartScriptButton.Text = "Import";
+            this.importStartScriptButton.UseVisualStyleBackColor = true;
+            // 
             // MouseForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
@@ -1083,5 +1122,8 @@
         private System.Windows.Forms.CheckBox hotkeyCheckBox;
         private System.Windows.Forms.PictureBox twitterPictureBox;
         private System.Windows.Forms.PictureBox homePictureBox;
+        private System.Windows.Forms.Button importPauseScriptButton;
+        private System.Windows.Forms.Button importIntervalScriptButton;
+        private System.Windows.Forms.Button importStartScriptButton;
     }
 }

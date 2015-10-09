@@ -1,15 +1,15 @@
 <version>
   <major>3</major>
-  <minor>3</minor>
+  <minor>4</minor>
   <build>0</build>
-  <released_date>29-Jun-2015</released_date>
-  <advertised_date>07-Jul-2015</advertised_date>
+  <released_date>09-Oct-2015</released_date>
+  <advertised_date>23-Oct-2015</advertised_date>
   <features>
-    <feature>Move Mouse icon shows active state.</feature>
-    <feature>Better single instance handling.</feature>
-    <feature>Can be used purely for script execution.</feature>
+    <feature>Import function for scripts.</feature>
+    <feature>Start Move Mouse from the System Tray menu.</feature>
   </features>
   <fixes>
-    <fix>Minor improvements.</fix>
+    <fix>Process {0} exception when multiple instances running.</fix>
+    <fix>Distorted System Tray icons.</fix>
   </fixes>
 </version>

@@ -346,6 +346,9 @@ namespace Ellanet.Forms
             editStartScriptButton.Click += editStartScriptButton_Click;
             editIntervalScriptButton.Click += editIntervalScriptButton_Click;
             editPauseScriptButton.Click += editPauseScriptButton_Click;
+            importStartScriptButton.Click += ImportStartScriptButton_Click;
+            importIntervalScriptButton.Click += ImportIntervalScriptButton_Click;
+            importPauseScriptButton.Click += ImportPauseScriptButton_Click;
             scheduleListView.SelectedIndexChanged += scheduleListView_SelectedIndexChanged;
             scheduleListView.DoubleClick += scheduleListView_DoubleClick;
             blackoutListView.SelectedIndexChanged += blackoutListView_SelectedIndexChanged;
@@ -358,6 +361,48 @@ namespace Ellanet.Forms
             twitterToolTip.SetToolTip(twitterPictureBox, "Follow Move Mouse on Twitter");
             ToolTip homeToolTip = new ToolTip();
             homeToolTip.SetToolTip(homePictureBox, "Move Mouse project home on CodePlex (home...mousehole...get it!?!?)");
+        }
+
+        private void ImportPauseScriptButton_Click(object sender, EventArgs e)
+        {
+            ImportScript(Script.Pause);
+        }
+
+        private void ImportIntervalScriptButton_Click(object sender, EventArgs e)
+        {
+            ImportScript(Script.Interval);
+        }
+
+        private void ImportStartScriptButton_Click(object sender, EventArgs e)
+        {
+            ImportScript(Script.Start);
+        }
+
+        private void ImportScript(Script script)
+        {
+            var sl = GetScriptingLanguage(GetComboBoxSelectedItem(ref scriptLanguageComboBox).ToString());
+
+            if (sl != null)
+            {
+                var ofd = new OpenFileDialog
+                {
+                    CheckFileExists = true,
+                    Multiselect = false,
+                    DefaultExt = sl.FileExtension,
+                    Filter = String.Format("{1} Script (*.{0})|*.{0}", sl.FileExtension, sl.Name)
+                };
+                var dr = ofd.ShowDialog();
+
+                if (dr == DialogResult.OK)
+                {
+                    string scriptPath = GetScriptPath(script, sl.FileExtension);
+
+                    if (!String.IsNullOrEmpty(scriptPath) && !String.IsNullOrEmpty(ofd.FileName))
+                    {
+                        File.Copy(ofd.FileName, scriptPath, true);
+                    }
+                }
+            }
         }
 
         private void homePictureBox_MouseClick(object sender, MouseEventArgs e)
@@ -476,6 +521,9 @@ namespace Ellanet.Forms
             editStartScriptButton.Enabled = executeStartScriptCheckBox.Checked;
             editIntervalScriptButton.Enabled = executeIntervalScriptCheckBox.Checked;
             editPauseScriptButton.Enabled = executePauseScriptCheckBox.Checked;
+            importStartScriptButton.Enabled = executeStartScriptCheckBox.Checked;
+            importIntervalScriptButton.Enabled = executeIntervalScriptCheckBox.Checked;
+            importPauseScriptButton.Enabled = executePauseScriptCheckBox.Checked;
             showScriptExecutionCheckBox.Enabled = (executeStartScriptCheckBox.Checked || executeIntervalScriptCheckBox.Checked || executePauseScriptCheckBox.Checked);
             scriptLanguageComboBox.Enabled = (executeStartScriptCheckBox.Checked || executeIntervalScriptCheckBox.Checked || executePauseScriptCheckBox.Checked);
             changeScriptEditorButton.Enabled = (executeStartScriptCheckBox.Checked || executeIntervalScriptCheckBox.Checked || executePauseScriptCheckBox.Checked);
@@ -871,20 +919,7 @@ namespace Ellanet.Forms
 
             if (sl != null)
             {
-                string scriptPath = null;
-
-                switch (script)
-                {
-                    case Script.Start:
-                        scriptPath = Path.Combine(StaticCode.WorkingDirectory, String.Format("{0}.{1}", StartScriptName, sl.FileExtension));
-                        break;
-                    case Script.Interval:
-                        scriptPath = Path.Combine(StaticCode.WorkingDirectory, String.Format("{0}.{1}", IntervalScriptName, sl.FileExtension));
-                        break;
-                    case Script.Pause:
-                        scriptPath = Path.Combine(StaticCode.WorkingDirectory, String.Format("{0}.{1}", PauseScriptName, sl.FileExtension));
-                        break;
-                }
+                string scriptPath = GetScriptPath(script, sl.FileExtension);
 
                 if (!String.IsNullOrEmpty(scriptPath) && !File.Exists(scriptPath))
                 {
@@ -902,6 +937,21 @@ namespace Ellanet.Forms
                 p.Exited += p_Exited;
                 p.Start();
             }
+        }
+
+        private string GetScriptPath(Script script, string extension)
+        {
+            switch (script)
+            {
+                case Script.Start:
+                    return Path.Combine(StaticCode.WorkingDirectory, String.Format("{0}.{1}", StartScriptName, extension));
+                case Script.Interval:
+                    return Path.Combine(StaticCode.WorkingDirectory, String.Format("{0}.{1}", IntervalScriptName, extension));
+                case Script.Pause:
+                    return Path.Combine(StaticCode.WorkingDirectory, String.Format("{0}.{1}", PauseScriptName, extension));
+            }
+
+            return null;
         }
 
         private void p_Exited(object sender, EventArgs e)
@@ -990,7 +1040,7 @@ namespace Ellanet.Forms
             bool enabled = GetCheckBoxChecked(ref hotkeyCheckBox);
             object hookKey = GetComboBoxSelectedItem(ref hotkeyComboBox);
 
-            if ((hookKey != null) && !String.IsNullOrEmpty(hookKey.ToString()))
+            if (!String.IsNullOrEmpty(hookKey?.ToString()))
             {
                 key = (Keys) Enum.Parse(typeof (Keys), hookKey.ToString(), true);
             }
@@ -1079,20 +1129,12 @@ namespace Ellanet.Forms
             if (launchAtLogonCheckBox.Checked)
             {
                 var key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
-
-                if (key != null)
-                {
-                    key.SetValue("Move Mouse", Application.ExecutablePath);
-                }
+                key?.SetValue("Move Mouse", Application.ExecutablePath);
             }
             else
             {
                 var key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
-
-                if (key != null)
-                {
-                    key.DeleteValue("Move Mouse");
-                }
+                key?.DeleteValue("Move Mouse");
             }
         }
 
@@ -1592,27 +1634,21 @@ namespace Ellanet.Forms
 
         private void WriteSingleNodeInnerText(ref XmlDocument xmlDoc, string nodePath, string text)
         {
-            if (xmlDoc != null)
-            {
-                var node = xmlDoc.SelectSingleNode(nodePath);
+            var node = xmlDoc?.SelectSingleNode(nodePath);
 
-                if (node != null)
-                {
-                    node.InnerText = text;
-                }
+            if (node != null)
+            {
+                node.InnerText = text;
             }
         }
 
         private string ReadSingleNodeInnerTextAsString(ref XmlDocument xmlDoc, string nodePath)
         {
-            if (xmlDoc != null)
-            {
-                var node = xmlDoc.SelectSingleNode(nodePath);
+            var node = xmlDoc?.SelectSingleNode(nodePath);
 
-                if (node != null)
-                {
-                    return node.InnerText;
-                }
+            if (node != null)
+            {
+                return node.InnerText;
             }
 
             return String.Empty;
@@ -1620,18 +1656,15 @@ namespace Ellanet.Forms
 
         private bool ReadSingleNodeInnerTextAsBoolean(ref XmlDocument xmlDoc, string nodePath)
         {
-            if (xmlDoc != null)
+            var node = xmlDoc?.SelectSingleNode(nodePath);
+
+            if (node != null)
             {
-                var node = xmlDoc.SelectSingleNode(nodePath);
+                bool b;
 
-                if (node != null)
+                if (Boolean.TryParse(node.InnerText, out b))
                 {
-                    bool b;
-
-                    if (Boolean.TryParse(node.InnerText, out b))
-                    {
-                        return b;
-                    }
+                    return b;
                 }
             }
 
@@ -1640,18 +1673,15 @@ namespace Ellanet.Forms
 
         private decimal ReadSingleNodeInnerTextAsDecimal(ref XmlDocument xmlDoc, string nodePath)
         {
-            if (xmlDoc != null)
+            var node = xmlDoc?.SelectSingleNode(nodePath);
+
+            if (node != null)
             {
-                var node = xmlDoc.SelectSingleNode(nodePath);
+                decimal d;
 
-                if (node != null)
+                if (Decimal.TryParse(node.InnerText, out d))
                 {
-                    decimal d;
-
-                    if (Decimal.TryParse(node.InnerText, out d))
-                    {
-                        return d;
-                    }
+                    return d;
                 }
             }
 
@@ -1660,18 +1690,15 @@ namespace Ellanet.Forms
 
         private DateTime ReadSingleNodeInnerTextAsDateTime(ref XmlDocument xmlDoc, string nodePath)
         {
-            if (xmlDoc != null)
+            var node = xmlDoc?.SelectSingleNode(nodePath);
+
+            if (node != null)
             {
-                var node = xmlDoc.SelectSingleNode(nodePath);
+                DateTime dt;
 
-                if (node != null)
+                if (DateTime.TryParse(node.InnerText, out dt))
                 {
-                    DateTime dt;
-
-                    if (DateTime.TryParse(node.InnerText, out dt))
-                    {
-                        return dt;
-                    }
+                    return dt;
                 }
             }
 
@@ -1680,18 +1707,15 @@ namespace Ellanet.Forms
 
         private Int32 ReadSingleNodeInnerTextAsInt32(ref XmlDocument xmlDoc, string nodePath)
         {
-            if (xmlDoc != null)
+            var node = xmlDoc?.SelectSingleNode(nodePath);
+
+            if (node != null)
             {
-                var node = xmlDoc.SelectSingleNode(nodePath);
+                Int32 i;
 
-                if (node != null)
+                if (Int32.TryParse(node.InnerText, out i))
                 {
-                    Int32 i;
-
-                    if (Int32.TryParse(node.InnerText, out i))
-                    {
-                        return i;
-                    }
+                    return i;
                 }
             }
 
@@ -1858,20 +1882,20 @@ namespace Ellanet.Forms
                 WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/y_static_position", Convert.ToDecimal(yNumericUpDown.Value).ToString(CultureInfo.InvariantCulture));
                 WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/click_left_mouse_button", clickMouseCheckBox.Checked.ToString());
                 WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/send_keystroke", keystrokeCheckBox.Checked.ToString());
-                WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/keystroke", (keystrokeComboBox.SelectedItem == null) ? String.Empty : keystrokeComboBox.SelectedItem.ToString());
+                WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/keystroke", keystrokeComboBox.SelectedItem?.ToString() ?? String.Empty);
                 WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/pause_when_mouse_moved", autoPauseCheckBox.Checked.ToString());
                 WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/automatically_resume", resumeCheckBox.Checked.ToString());
                 WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/resume_seconds", Convert.ToDecimal(resumeNumericUpDown.Value).ToString(CultureInfo.InvariantCulture));
                 WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/disable_on_battery", disableOnBatteryCheckBox.Checked.ToString());
                 WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/enable_hotkey", hotkeyCheckBox.Checked.ToString());
-                WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/hotkey", (hotkeyComboBox.SelectedItem == null) ? String.Empty : hotkeyComboBox.SelectedItem.ToString());
+                WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/hotkey", hotkeyComboBox.SelectedItem?.ToString() ?? String.Empty);
                 WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/automatically_start_on_launch", startOnLaunchCheckBox.Checked.ToString());
                 WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/automatically_launch_on_logon", launchAtLogonCheckBox.Checked.ToString());
                 WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/minimise_on_pause", minimiseOnPauseCheckBox.Checked.ToString());
                 WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/minimise_on_start", minimiseOnStartCheckBox.Checked.ToString());
                 WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/minimise_to_system_tray", minimiseToSystemTrayCheckBox.Checked.ToString());
                 WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/activate_application", appActivateCheckBox.Checked.ToString());
-                WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/activate_application_title", (processComboBox.SelectedItem == null) ? String.Empty : processComboBox.SelectedItem.ToString());
+                WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/activate_application_title", processComboBox.SelectedItem?.ToString() ?? String.Empty);
                 WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/last_update_check", _lastUpdateCheck.ToString("yyyy-MMM-dd HH:mm:ss"));
                 WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/system_tray_warning_shown", "True");
                 WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/execute_start_script", executeStartScriptCheckBox.Checked.ToString());
@@ -2266,15 +2290,11 @@ namespace Ellanet.Forms
         private PowerShellExecutionPolicy GetCurrentPsExecutionPolicy()
         {
             var psKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\PowerShell\1\ShellIds\Microsoft.PowerShell");
+            var executionPolicy = psKey?.GetValue("ExecutionPolicy");
 
-            if (psKey != null)
+            if (executionPolicy != null)
             {
-                var executionPolicy = psKey.GetValue("ExecutionPolicy");
-
-                if (executionPolicy != null)
-                {
-                    return (PowerShellExecutionPolicy) Enum.Parse(typeof (PowerShellExecutionPolicy), executionPolicy.ToString(), true);
-                }
+                return (PowerShellExecutionPolicy) Enum.Parse(typeof (PowerShellExecutionPolicy), executionPolicy.ToString(), true);
             }
 
             return PowerShellExecutionPolicy.Restricted;
@@ -2282,74 +2302,47 @@ namespace Ellanet.Forms
 
         protected void OnBlackoutStatusChanged(object sender, BlackoutStatusChangedEventArgs e)
         {
-            if (BlackoutStatusChanged != null)
-            {
-                BlackoutStatusChanged(sender, e);
-            }
+            BlackoutStatusChanged?.Invoke(sender, e);
         }
 
         protected void OnNewVersionAvailable(object sender, NewVersionAvailableEventArgs e)
         {
-            if (NewVersionAvailable != null)
-            {
-                NewVersionAvailable(sender, e);
-            }
+            NewVersionAvailable?.Invoke(sender, e);
         }
 
         protected void OnScheduleArrived(object sender, ScheduleArrivedEventArgs e)
         {
-            if (ScheduleArrived != null)
-            {
-                ScheduleArrived(sender, e);
-            }
+            ScheduleArrived?.Invoke(sender, e);
         }
 
         protected void OnPowerLineStatusChanged(object sender, PowerLineStatusChangedEventArgs e)
         {
-            if (PowerLineStatusChanged != null)
-            {
-                PowerLineStatusChanged(sender, e);
-            }
+            PowerLineStatusChanged?.Invoke(sender, e);
         }
 
         protected void OnPowerShellexecutionPolicyWarning(object sender)
         {
-            if (PowerShellexecutionPolicyWarning != null)
-            {
-                PowerShellexecutionPolicyWarning(sender);
-            }
+            PowerShellexecutionPolicyWarning?.Invoke(sender);
         }
 
         protected void OnHookKeyStatusChanged(object sender, HookKeyStatusChangedEventArgs e)
         {
-            if (HookKeyStatusChanged != null)
-            {
-                HookKeyStatusChanged(sender, e);
-            }
+            HookKeyStatusChanged?.Invoke(sender, e);
         }
 
         protected void OnMoveMouseStarted()
         {
-            if (MoveMouseStarted != null)
-            {
-                MoveMouseStarted();
-            }
+            MoveMouseStarted?.Invoke();
         }
 
         protected void OnMoveMousePaused()
         {
-            if (MoveMousePaused != null)
-            {
-                MoveMousePaused();
-            }
+            MoveMousePaused?.Invoke();
         }
 
         protected void OnMoveMouseStopped()
         {
-            if (MoveMouseStopped != null)
-            {
-                MoveMouseStopped();
-            }
+            MoveMouseStopped?.Invoke();
         }
     }
 }

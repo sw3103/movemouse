@@ -9,4 +9,3 @@ C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Release\Ellanet.Properties.Resou
 C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Release\Move Mouse.csproj.GenerateResource.Cache
 C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Release\Move Mouse.exe
 C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Release\Move Mouse.pdb
-C:\Users\Steve\Desktop\movemouse\Move Mouse\obj\Release\Move Mouse.csprojResolveAssemblyReference.cache
