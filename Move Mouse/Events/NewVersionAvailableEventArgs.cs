@@ -9,14 +9,16 @@ namespace Ellanet.Events
         public DateTime Advertised { get; internal set; }
         public string[] Features { get; internal set; }
         public string[] Fixes { get; internal set; }
+        public string DownloadUrl { get; internal set; }
 
-        public NewVersionAvailableEventArgs(Version version, DateTime released, DateTime advertised, string[] features, string[] fixes)
+        public NewVersionAvailableEventArgs(Version version, DateTime released, DateTime advertised, string[] features, string[] fixes, string downloadUrl)
         {
             Version = version;
             Released = released;
             Advertised = advertised;
             Features = features;
             Fixes = fixes;
+            DownloadUrl = downloadUrl;
         }
     }
 }

@@ -13,7 +13,7 @@ namespace Ellanet.Forms
     public partial class SystemTrayIcon : Form
     {
         private const int BalloonTipTimeout = 30000;
-        private const string DownloadsUrl = "http://movemouse.codeplex.com/releases/";
+        //private const string DownloadsUrl = "http://movemouse.codeplex.com/releases/";
 
         // ReSharper disable InconsistentNaming
 
@@ -30,6 +30,7 @@ namespace Ellanet.Forms
         private Keys _hookKey;
         private LowLevelKeyboardProc _hookProc;
         private readonly MenuItem _startStopMenuItem;
+        private string _downloadUrl;
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         private static extern IntPtr SetWindowsHookEx(
@@ -99,9 +100,9 @@ namespace Ellanet.Forms
         {
             try
             {
-                if (_directUserToDownloadsOnBalloonClick)
+                if (_directUserToDownloadsOnBalloonClick && !String.IsNullOrEmpty(_downloadUrl))
                 {
-                    Process.Start(DownloadsUrl);
+                    Process.Start(_downloadUrl);
                 }
 
                 if (_directUserToPowerShellExecutionPolicyFormOnBalloonClick)
@@ -288,7 +289,8 @@ namespace Ellanet.Forms
                     }
                 }
 
-                balloonText += "\r\nPlease click here to visit the downloads page.";
+                _downloadUrl = e.DownloadUrl;
+                if (!String.IsNullOrEmpty(_downloadUrl)) balloonText += "\r\nPlease click here to visit the downloads page.";
                 _sysTrayIcon.ShowBalloonTip(BalloonTipTimeout, "New Version Available", balloonText, ToolTipIcon.Info);
             }
             catch (Exception ex)
@@ -358,7 +360,7 @@ namespace Ellanet.Forms
         {
             try
             {
-                var mos = new ManagementObjectSearcher(@"\\.\root\CIMv2", "SELECT * FROM Win32_OperatingSystem WHERE Version > '6.3' AND OSArchitecture = '64-bit'");
+                var mos = new ManagementObjectSearcher(@"\\.\root\CIMv2", "SELECT * FROM Win32_OperatingSystem WHERE Version LIKE '6.3%' AND OSArchitecture = '64-bit'");
                 var moc = mos.Get();
                 return (moc.Count > 0);
             }

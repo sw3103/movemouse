@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.Management;
 using System.Net;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -21,12 +22,12 @@ namespace Ellanet.Forms
     {
         private const int TraceSeconds = 5;
         private const string MoveMouseXmlName = "Move Mouse.xml";
-        private const string HomeAddress = "http://movemouse.codeplex.com/";
+        //private const string HomeAddress = "http://movemouse.codeplex.com/";
         private const string ContactAddress = "http://www.codeplex.com/site/users/view/sw3103/";
         private const string HelpAddress = "http://movemouse.codeplex.com/documentation/";
         private const string ScriptsHelpAddress = "https://movemouse.codeplex.com/wikipage?title=Custom%20Scripts";
         private const string PayPalAddress = "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=QZTWHD9CRW5XN";
-        private const string VersionXmlUrl = "https://movemouse.svn.codeplex.com/svn/Version.xml";
+        private const string UpdateXmlUrl = "https://sites.google.com/a/windandkite.co.uk/movemouse/home/Update_3x.xml";
         private const string MiceResourceUrlPrefix = "https://movemouse.svn.codeplex.com/svn/Move%20Mouse/Resources/Mice/";
         private const string TwitterAddress = "https://twitter.com/movemouse";
         private const string MiceXmlName = "Mice.xml";
@@ -43,6 +44,7 @@ namespace Ellanet.Forms
         private readonly System.Windows.Forms.Timer _autoPauseTimer = new System.Windows.Forms.Timer();
         private readonly string _moveMouseTempDirectory = Environment.ExpandEnvironmentVariables(@"%Temp%\Ellanet\Move Mouse");
         private readonly bool _suppressAutoStart;
+        private readonly string _homeAddress;
         private DateTime _mmStartTime;
         private Point _startingMousePoint;
         private DateTime _traceTimeComplete = DateTime.MinValue;
@@ -185,7 +187,7 @@ namespace Ellanet.Forms
         [StructLayout(LayoutKind.Sequential)]
         private struct LASTINPUTINFO
         {
-            private static readonly int SizeOf = Marshal.SizeOf(typeof (LASTINPUTINFO));
+            private static readonly int SizeOf = Marshal.SizeOf(typeof(LASTINPUTINFO));
             [MarshalAs(UnmanagedType.U4)] public int cbSize;
             [MarshalAs(UnmanagedType.U4)] public int dwTime;
         }
@@ -299,8 +301,9 @@ namespace Ellanet.Forms
             scriptEditorLabel.TextChanged += scriptEditorLabel_TextChanged;
             ListScriptingLanguages();
             ReadSettings();
+            _homeAddress = IsWindows10() ? "http://www.movemouse.co.uk/" : "http://movemouse.codeplex.com/";
             Icon = Properties.Resources.Mouse_Icon;
-            Text = String.Format("Move Mouse ({0}.{1}.{2}) - {3}", Assembly.GetExecutingAssembly().GetName().Version.Major, Assembly.GetExecutingAssembly().GetName().Version.Minor, Assembly.GetExecutingAssembly().GetName().Version.Build, HomeAddress);
+            Text = String.Format("Move Mouse ({0}.{1}.{2}) - {3}", Assembly.GetExecutingAssembly().GetName().Version.Major, Assembly.GetExecutingAssembly().GetName().Version.Minor, Assembly.GetExecutingAssembly().GetName().Version.Build, _homeAddress);
             FormClosing += MouseForm_FormClosing;
             Load += MouseForm_Load;
             Resize += MouseForm_Resize;
@@ -409,7 +412,7 @@ namespace Ellanet.Forms
         {
             try
             {
-                Process.Start(HomeAddress);
+                Process.Start(_homeAddress);
             }
             catch (Exception ex)
             {
@@ -871,7 +874,7 @@ namespace Ellanet.Forms
 
                     if (TimeSpan.TryParse(lvi.SubItems[0].Text, out ts))
                     {
-                        switch ((ScheduleArrivedEventArgs.ScheduleAction) Enum.Parse(typeof (ScheduleArrivedEventArgs.ScheduleAction), lvi.SubItems[1].Text, true))
+                        switch ((ScheduleArrivedEventArgs.ScheduleAction) Enum.Parse(typeof(ScheduleArrivedEventArgs.ScheduleAction), lvi.SubItems[1].Text, true))
                         {
                             case ScheduleArrivedEventArgs.ScheduleAction.Start:
                                 _startSchedules.Add(ts);
@@ -972,7 +975,7 @@ namespace Ellanet.Forms
             ThreadPool.QueueUserWorkItem(ListOpenWindows);
         }
 
-        public override sealed string Text
+        public sealed override string Text
         {
             get { return base.Text; }
             set { base.Text = value; }
@@ -1042,7 +1045,7 @@ namespace Ellanet.Forms
 
             if (!String.IsNullOrEmpty(hookKey?.ToString()))
             {
-                key = (Keys) Enum.Parse(typeof (Keys), hookKey.ToString(), true);
+                key = (Keys) Enum.Parse(typeof(Keys), hookKey.ToString(), true);
             }
 
             var eventArgs = new HookKeyStatusChangedEventArgs(enabled, key);
@@ -1705,9 +1708,89 @@ namespace Ellanet.Forms
             return new DateTime();
         }
 
-        private Int32 ReadSingleNodeInnerTextAsInt32(ref XmlDocument xmlDoc, string nodePath)
+        //private Int32 ReadSingleNodeInnerTextAsInt32(ref XmlDocument xmlDoc, string nodePath)
+        //{
+        //    var node = xmlDoc?.SelectSingleNode(nodePath);
+
+        //    if (node != null)
+        //    {
+        //        Int32 i;
+
+        //        if (Int32.TryParse(node.InnerText, out i))
+        //        {
+        //            return i;
+        //        }
+        //    }
+
+        //    return 0;
+        //}
+
+        private string ReadSingleNodeInnerTextAsString(XmlNode parentNode, string nodePath)
         {
-            var node = xmlDoc?.SelectSingleNode(nodePath);
+            var node = parentNode?.SelectSingleNode(nodePath);
+
+            if (node != null)
+            {
+                return node.InnerText;
+            }
+
+            return String.Empty;
+        }
+
+        //private bool ReadSingleNodeInnerTextAsBoolean(XmlNode parentNode, string nodePath)
+        //{
+        //    var node = parentNode?.SelectSingleNode(nodePath);
+
+        //    if (node != null)
+        //    {
+        //        bool b;
+
+        //        if (Boolean.TryParse(node.InnerText, out b))
+        //        {
+        //            return b;
+        //        }
+        //    }
+
+        //    return false;
+        //}
+
+        //private decimal ReadSingleNodeInnerTextAsDecimal(XmlNode parentNode, string nodePath)
+        //{
+        //    var node = parentNode?.SelectSingleNode(nodePath);
+
+        //    if (node != null)
+        //    {
+        //        decimal d;
+
+        //        if (Decimal.TryParse(node.InnerText, out d))
+        //        {
+        //            return d;
+        //        }
+        //    }
+
+        //    return 0;
+        //}
+
+        private DateTime ReadSingleNodeInnerTextAsDateTime(XmlNode parentNode, string nodePath)
+        {
+            var node = parentNode?.SelectSingleNode(nodePath);
+
+            if (node != null)
+            {
+                DateTime dt;
+
+                if (DateTime.TryParse(node.InnerText, out dt))
+                {
+                    return dt;
+                }
+            }
+
+            return new DateTime();
+        }
+
+        private Int32 ReadSingleNodeInnerTextAsInt32(XmlNode parentNode, string nodePath)
+        {
+            var node = parentNode?.SelectSingleNode(nodePath);
 
             if (node != null)
             {
@@ -1954,37 +2037,51 @@ namespace Ellanet.Forms
                 {
                     _lastUpdateCheck = DateTime.Now;
                     var versionXmlDoc = new XmlDocument();
-                    versionXmlDoc.Load(VersionXmlUrl);
-                    var availableVersion = new Version(ReadSingleNodeInnerTextAsInt32(ref versionXmlDoc, "version/major"), ReadSingleNodeInnerTextAsInt32(ref versionXmlDoc, "version/minor"), ReadSingleNodeInnerTextAsInt32(ref versionXmlDoc, "version/build"));
+                    versionXmlDoc.Load(UpdateXmlUrl);
+                    var versionNodes = versionXmlDoc.SelectNodes("versions/version");
 
-                    if (availableVersion > Assembly.GetExecutingAssembly().GetName().Version)
+                    if ((versionNodes != null) && (versionNodes.Count > 0))
                     {
-                        var released = ReadSingleNodeInnerTextAsDateTime(ref versionXmlDoc, "version/released_date");
-                        var advertised = ReadSingleNodeInnerTextAsDateTime(ref versionXmlDoc, "version/advertised_date");
-                        var features = new List<string>();
-                        var fixes = new List<string>();
-                        var featureNodes = versionXmlDoc.SelectNodes("version/features/feature");
-                        var fixNodes = versionXmlDoc.SelectNodes("version/fixes/fix");
-
-                        if ((featureNodes != null) && (featureNodes.Count > 0))
+                        foreach (XmlNode versionNode in versionNodes)
                         {
-                            foreach (XmlNode featureNode in featureNodes)
+                            var wmiFilter = ReadSingleNodeInnerTextAsString(versionNode, "wmi_filter");
+
+                            if (String.IsNullOrEmpty(wmiFilter) || MatchWmiFilter(wmiFilter))
                             {
-                                features.Add(featureNode.InnerText);
-                            }
-                        }
+                                var availableVersion = new Version(ReadSingleNodeInnerTextAsInt32(versionNode, "major"), ReadSingleNodeInnerTextAsInt32(versionNode, "minor"), ReadSingleNodeInnerTextAsInt32(versionNode, "build"));
 
-                        if ((fixNodes != null) && (fixNodes.Count > 0))
-                        {
-                            foreach (XmlNode fixNode in fixNodes)
-                            {
-                                fixes.Add(fixNode.InnerText);
-                            }
-                        }
+                                if (availableVersion > Assembly.GetExecutingAssembly().GetName().Version)
+                                {
+                                    var released = ReadSingleNodeInnerTextAsDateTime(versionNode, "released_date");
+                                    var advertised = ReadSingleNodeInnerTextAsDateTime(versionNode, "advertised_date");
+                                    var downloadUrl = ReadSingleNodeInnerTextAsString(versionNode, "download_url");
+                                    var features = new List<string>();
+                                    var fixes = new List<string>();
+                                    var featureNodes = versionNode.SelectNodes("features/feature");
+                                    var fixNodes = versionNode.SelectNodes("fixes/fix");
 
-                        if (advertised < DateTime.Now)
-                        {
-                            OnNewVersionAvailable(this, new NewVersionAvailableEventArgs(availableVersion, released, advertised, features.ToArray(), fixes.ToArray()));
+                                    if ((featureNodes != null) && (featureNodes.Count > 0))
+                                    {
+                                        foreach (XmlNode featureNode in featureNodes)
+                                        {
+                                            features.Add(featureNode.InnerText);
+                                        }
+                                    }
+
+                                    if ((fixNodes != null) && (fixNodes.Count > 0))
+                                    {
+                                        foreach (XmlNode fixNode in fixNodes)
+                                        {
+                                            fixes.Add(fixNode.InnerText);
+                                        }
+                                    }
+
+                                    if (advertised < DateTime.Now)
+                                    {
+                                        OnNewVersionAvailable(this, new NewVersionAvailableEventArgs(availableVersion, released, advertised, features.ToArray(), fixes.ToArray(), downloadUrl));
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -2287,6 +2384,27 @@ namespace Ellanet.Forms
             return SystemInformation.PowerStatus.PowerLineStatus.Equals(PowerLineStatus.Offline);
         }
 
+        private bool IsWindows10()
+        {
+            return MatchWmiFilter("SELECT * FROM Win32_OperatingSystem WHERE Version LIKE '10.*'");
+        }
+
+        private bool MatchWmiFilter(string wql)
+        {
+            try
+            {
+                var mos = new ManagementObjectSearcher(@"\\.\root\CIMv2", wql);
+                var moc = mos.Get();
+                return (moc.Count > 0);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            return false;
+        }
+
         private PowerShellExecutionPolicy GetCurrentPsExecutionPolicy()
         {
             var psKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\PowerShell\1\ShellIds\Microsoft.PowerShell");
@@ -2294,7 +2412,7 @@ namespace Ellanet.Forms
 
             if (executionPolicy != null)
             {
-                return (PowerShellExecutionPolicy) Enum.Parse(typeof (PowerShellExecutionPolicy), executionPolicy.ToString(), true);
+                return (PowerShellExecutionPolicy) Enum.Parse(typeof(PowerShellExecutionPolicy), executionPolicy.ToString(), true);
             }
 
             return PowerShellExecutionPolicy.Restricted;
