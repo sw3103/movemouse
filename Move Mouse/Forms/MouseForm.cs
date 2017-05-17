@@ -2386,7 +2386,7 @@ namespace Ellanet.Forms
 
         private bool IsWindows10()
         {
-            return MatchWmiFilter("SELECT * FROM Win32_OperatingSystem WHERE Version LIKE '10.*'");
+            return MatchWmiFilter("SELECT * FROM Win32_OperatingSystem WHERE Version LIKE '10.%'");
         }
 
         private bool MatchWmiFilter(string wql)
