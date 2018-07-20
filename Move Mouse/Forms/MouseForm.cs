@@ -21,7 +21,9 @@ namespace Ellanet.Forms
     public partial class MouseForm : Form
     {
         private const int TraceSeconds = 5;
+
         private const string MoveMouseXmlName = "Move Mouse.xml";
+
         //private const string HomeAddress = "http://movemouse.codeplex.com/";
         private const string ContactAddress = "http://www.codeplex.com/site/users/view/sw3103/";
         private const string HelpAddress = "http://movemouse.codeplex.com/documentation/";
@@ -123,14 +125,17 @@ namespace Ellanet.Forms
 
         public bool MinimiseToSystemTrayWarningShown { get; private set; }
 
+        // ReSharper disable UnusedMember.Global
+        // ReSharper disable UnusedMember.Local
+        // ReSharper disable InconsistentNaming
+        // ReSharper disable NotAccessedField.Local
+
         private enum Script
         {
             Start,
             Interval,
             Pause
         }
-
-        // ReSharper disable UnusedMember.Local
 
         private enum PowerShellExecutionPolicy
         {
@@ -139,8 +144,6 @@ namespace Ellanet.Forms
             RemoteSigned,
             Unrestricted
         }
-
-        // ReSharper disable InconsistentNaming
 
         [Flags]
         private enum MouseEventFlags
@@ -181,8 +184,8 @@ namespace Ellanet.Forms
             ForceMinimize = 11
         }
 
+        // ReSharper restore UnusedMember.Global
         // ReSharper restore UnusedMember.Local
-        // ReSharper disable NotAccessedField.Local
 
         [StructLayout(LayoutKind.Sequential)]
         private struct LASTINPUTINFO
@@ -277,13 +280,13 @@ namespace Ellanet.Forms
 
             if (screenSaverTimeout > 0)
             {
-                if ((decimal) (screenSaverTimeout/2.0) > resumeNumericUpDown.Maximum)
+                if ((decimal) (screenSaverTimeout / 2.0) > resumeNumericUpDown.Maximum)
                 {
                     resumeNumericUpDown.Value = resumeNumericUpDown.Maximum;
                 }
                 else
                 {
-                    resumeNumericUpDown.Value = (decimal) (screenSaverTimeout/2.0);
+                    resumeNumericUpDown.Value = (decimal) (screenSaverTimeout / 2.0);
                 }
             }
 
@@ -1226,7 +1229,7 @@ namespace Ellanet.Forms
             {
                 SetNumericUpDownValue(ref xNumericUpDown, Cursor.Position.X);
                 SetNumericUpDownValue(ref yNumericUpDown, Cursor.Position.Y);
-                SetButtonText(ref traceButton, String.Format("{0}", _traceTimeComplete.Subtract(DateTime.Now).TotalSeconds.ToString("0.0")));
+                SetButtonText(ref traceButton, String.Format("{0:0.0}", _traceTimeComplete.Subtract(DateTime.Now).TotalSeconds));
                 Thread.Sleep(100);
             } while (_traceTimeComplete > DateTime.Now);
 
@@ -1603,7 +1606,7 @@ namespace Ellanet.Forms
                 idleTime = envTicks - lastInputTick;
             }
 
-            return (idleTime > 0) ? (idleTime/1000) : 0;
+            return (idleTime > 0) ? (idleTime / 1000) : 0;
         }
 
         private int GetScreenSaverTimeout()
@@ -2370,7 +2373,7 @@ namespace Ellanet.Forms
         {
             if (InvokeRequired)
             {
-                Invoke(new ZeroParameterDelegate(ResetMousePicture), new object[] {});
+                Invoke(new ZeroParameterDelegate(ResetMousePicture), new object[] { });
             }
             else
             {
