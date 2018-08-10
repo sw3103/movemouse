@@ -14,11 +14,13 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
+using ComponentFactory.Krypton.Toolkit;
+
 #pragma warning disable 414
 
 namespace Ellanet.Forms
 {
-    public partial class MouseForm : Form
+    public partial class MouseForm : KryptonForm
     {
         private const int TraceSeconds = 5;
 
@@ -67,6 +69,8 @@ namespace Ellanet.Forms
 
         private delegate void ButtonPerformClickDelegate(ref Button b);
 
+        private delegate void KryptonButtonPerformClickDelegate(ref KryptonButton kb);
+
         private delegate object GetComboBoxSelectedItemDelegate(ref ComboBox cb);
 
         private delegate int GetComboBoxSelectedIndexDelegate(ref ComboBox cb);
@@ -83,7 +87,7 @@ namespace Ellanet.Forms
 
         private delegate string GetButtonTextDelegate(ref Button b);
 
-        private delegate bool GetCheckBoxCheckedDelegate(ref CheckBox cb);
+        private delegate bool GetCheckBoxCheckedDelegate(ref KryptonCheckBox cb);
 
         private delegate void AddComboBoxItemDelegate(ref ComboBox cb, string item, bool selected);
 
@@ -490,7 +494,7 @@ namespace Ellanet.Forms
 
             if ((_pauseSchedules != null) && (_pauseSchedules.Contains(timeNow)))
             {
-                ButtonPerformClick(ref actionButton);
+                KryptonButtonPerformClick(ref actionButton);
                 OnScheduleArrived(this, new ScheduleArrivedEventArgs(ScheduleArrivedEventArgs.ScheduleAction.Pause, timeNow));
             }
         }
@@ -502,7 +506,7 @@ namespace Ellanet.Forms
 
             if ((_startSchedules != null) && (_startSchedules.Contains(timeNow)))
             {
-                ButtonPerformClick(ref actionButton);
+                KryptonButtonPerformClick(ref actionButton);
                 OnScheduleArrived(this, new ScheduleArrivedEventArgs(ScheduleArrivedEventArgs.ScheduleAction.Start, timeNow));
             }
         }
@@ -1256,7 +1260,7 @@ namespace Ellanet.Forms
 
             if (GetCheckBoxChecked(ref resumeCheckBox) && (GetLastInputTime() >= resumeNumericUpDown.Value))
             {
-                ButtonPerformClick(ref actionButton);
+                KryptonButtonPerformClick(ref actionButton);
             }
         }
 
@@ -1427,6 +1431,18 @@ namespace Ellanet.Forms
             }
         }
 
+        private void KryptonButtonPerformClick(ref KryptonButton kb)
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new KryptonButtonPerformClickDelegate(KryptonButtonPerformClick), kb);
+            }
+            else
+            {
+                kb.PerformClick();
+            }
+        }
+
         private object GetComboBoxSelectedItem(ref ComboBox cb)
         {
             if (InvokeRequired)
@@ -1503,7 +1519,7 @@ namespace Ellanet.Forms
             return b.Text;
         }
 
-        private bool GetCheckBoxChecked(ref CheckBox cb)
+        private bool GetCheckBoxChecked(ref KryptonCheckBox cb)
         {
             if (InvokeRequired)
             {
@@ -2290,7 +2306,7 @@ namespace Ellanet.Forms
         {
             if (GetCheckBoxChecked(ref autoPauseCheckBox) && (_mmStartTime.Add(_waitUntilAutoMoveDetect) < DateTime.Now) && (_startingMousePoint != Cursor.Position))
             {
-                ButtonPerformClick(ref actionButton);
+                KryptonButtonPerformClick(ref actionButton);
             }
             else
             {

@@ -1,4 +1,6 @@
-﻿namespace Ellanet.Forms
+﻿using ComponentFactory.Krypton.Toolkit;
+
+namespace Ellanet.Forms
 {
     partial class MouseForm
     {
@@ -29,29 +31,29 @@
         private void InitializeComponent()
         {
             this.mousePictureBox = new System.Windows.Forms.PictureBox();
-            this.actionButton = new System.Windows.Forms.Button();
+            this.actionButton = new ComponentFactory.Krypton.Toolkit.KryptonButton();
             this.countdownProgressBar = new System.Windows.Forms.ProgressBar();
             this.delayNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
-            this.moveMouseCheckBox = new System.Windows.Forms.CheckBox();
-            this.clickMouseCheckBox = new System.Windows.Forms.CheckBox();
-            this.autoPauseCheckBox = new System.Windows.Forms.CheckBox();
-            this.resumeCheckBox = new System.Windows.Forms.CheckBox();
+            this.moveMouseCheckBox = new ComponentFactory.Krypton.Toolkit.KryptonCheckBox();
+            this.clickMouseCheckBox = new ComponentFactory.Krypton.Toolkit.KryptonCheckBox();
+            this.autoPauseCheckBox = new ComponentFactory.Krypton.Toolkit.KryptonCheckBox();
+            this.resumeCheckBox = new ComponentFactory.Krypton.Toolkit.KryptonCheckBox();
             this.resumeNumericUpDown = new System.Windows.Forms.NumericUpDown();
-            this.stealthCheckBox = new System.Windows.Forms.CheckBox();
-            this.keystrokeCheckBox = new System.Windows.Forms.CheckBox();
+            this.stealthCheckBox = new ComponentFactory.Krypton.Toolkit.KryptonCheckBox();
+            this.keystrokeCheckBox = new ComponentFactory.Krypton.Toolkit.KryptonCheckBox();
             this.keystrokeComboBox = new System.Windows.Forms.ComboBox();
-            this.startOnLaunchCheckBox = new System.Windows.Forms.CheckBox();
-            this.launchAtLogonCheckBox = new System.Windows.Forms.CheckBox();
-            this.staticPositionCheckBox = new System.Windows.Forms.CheckBox();
+            this.startOnLaunchCheckBox = new ComponentFactory.Krypton.Toolkit.KryptonCheckBox();
+            this.launchAtLogonCheckBox = new ComponentFactory.Krypton.Toolkit.KryptonCheckBox();
+            this.staticPositionCheckBox = new ComponentFactory.Krypton.Toolkit.KryptonCheckBox();
             this.xNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.yNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.traceButton = new System.Windows.Forms.Button();
-            this.minimiseOnPauseCheckBox = new System.Windows.Forms.CheckBox();
-            this.minimiseOnStartCheckBox = new System.Windows.Forms.CheckBox();
-            this.minimiseToSystemTrayCheckBox = new System.Windows.Forms.CheckBox();
+            this.minimiseOnPauseCheckBox = new ComponentFactory.Krypton.Toolkit.KryptonCheckBox();
+            this.minimiseOnStartCheckBox = new ComponentFactory.Krypton.Toolkit.KryptonCheckBox();
+            this.minimiseToSystemTrayCheckBox = new ComponentFactory.Krypton.Toolkit.KryptonCheckBox();
             this.processComboBox = new System.Windows.Forms.ComboBox();
-            this.appActivateCheckBox = new System.Windows.Forms.CheckBox();
+            this.appActivateCheckBox = new ComponentFactory.Krypton.Toolkit.KryptonCheckBox();
             this.helpPictureBox = new System.Windows.Forms.PictureBox();
             this.contactPictureBox = new System.Windows.Forms.PictureBox();
             this.paypalPictureBox = new System.Windows.Forms.PictureBox();
@@ -63,10 +65,14 @@
             this.twitterPictureBox = new System.Windows.Forms.PictureBox();
             this.actionsTabPage = new System.Windows.Forms.TabPage();
             this.behaviourTabPage = new System.Windows.Forms.TabPage();
+            this.activeWhenLockedCheckBox = new ComponentFactory.Krypton.Toolkit.KryptonCheckBox();
             this.hotkeyComboBox = new System.Windows.Forms.ComboBox();
-            this.hotkeyCheckBox = new System.Windows.Forms.CheckBox();
-            this.disableOnBatteryCheckBox = new System.Windows.Forms.CheckBox();
+            this.hotkeyCheckBox = new ComponentFactory.Krypton.Toolkit.KryptonCheckBox();
+            this.disableOnBatteryCheckBox = new ComponentFactory.Krypton.Toolkit.KryptonCheckBox();
             this.scriptsTabPage = new System.Windows.Forms.TabPage();
+            this.importPauseScriptButton = new System.Windows.Forms.Button();
+            this.importIntervalScriptButton = new System.Windows.Forms.Button();
+            this.importStartScriptButton = new System.Windows.Forms.Button();
             this.editPauseScriptButton = new System.Windows.Forms.Button();
             this.editIntervalScriptButton = new System.Windows.Forms.Button();
             this.editStartScriptButton = new System.Windows.Forms.Button();
@@ -75,10 +81,10 @@
             this.label3 = new System.Windows.Forms.Label();
             this.scriptLanguageComboBox = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.showScriptExecutionCheckBox = new System.Windows.Forms.CheckBox();
-            this.executePauseScriptCheckBox = new System.Windows.Forms.CheckBox();
-            this.executeIntervalScriptCheckBox = new System.Windows.Forms.CheckBox();
-            this.executeStartScriptCheckBox = new System.Windows.Forms.CheckBox();
+            this.showScriptExecutionCheckBox = new ComponentFactory.Krypton.Toolkit.KryptonCheckBox();
+            this.executePauseScriptCheckBox = new ComponentFactory.Krypton.Toolkit.KryptonCheckBox();
+            this.executeIntervalScriptCheckBox = new ComponentFactory.Krypton.Toolkit.KryptonCheckBox();
+            this.executeStartScriptCheckBox = new ComponentFactory.Krypton.Toolkit.KryptonCheckBox();
             this.schedulesTabPage = new System.Windows.Forms.TabPage();
             this.removeScheduleButton = new System.Windows.Forms.Button();
             this.editScheduleButton = new System.Windows.Forms.Button();
@@ -93,9 +99,6 @@
             this.blackoutListView = new System.Windows.Forms.ListView();
             this.startColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.endColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.importPauseScriptButton = new System.Windows.Forms.Button();
-            this.importIntervalScriptButton = new System.Windows.Forms.Button();
-            this.importStartScriptButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.mousePictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.delayNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.resumeNumericUpDown)).BeginInit();
@@ -124,7 +127,7 @@
             this.mousePictureBox.Image = global::Ellanet.Properties.Resources.Mouse_Image;
             this.mousePictureBox.Location = new System.Drawing.Point(63, 25);
             this.mousePictureBox.Name = "mousePictureBox";
-            this.mousePictureBox.Size = new System.Drawing.Size(340, 251);
+            this.mousePictureBox.Size = new System.Drawing.Size(340, 239);
             this.mousePictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.mousePictureBox.TabIndex = 0;
             this.mousePictureBox.TabStop = false;
@@ -132,18 +135,18 @@
             // actionButton
             // 
             this.actionButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.actionButton.Location = new System.Drawing.Point(212, 357);
+            this.actionButton.Location = new System.Drawing.Point(212, 382);
             this.actionButton.Name = "actionButton";
-            this.actionButton.Size = new System.Drawing.Size(75, 23);
+            this.actionButton.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Office2010Black;
+            this.actionButton.Size = new System.Drawing.Size(75, 30);
             this.actionButton.TabIndex = 1;
-            this.actionButton.Text = "Start";
-            this.actionButton.UseVisualStyleBackColor = true;
+            this.actionButton.Values.Text = "Start";
             // 
             // countdownProgressBar
             // 
             this.countdownProgressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.countdownProgressBar.Location = new System.Drawing.Point(12, 397);
+            this.countdownProgressBar.Location = new System.Drawing.Point(12, 427);
             this.countdownProgressBar.Name = "countdownProgressBar";
             this.countdownProgressBar.Size = new System.Drawing.Size(475, 17);
             this.countdownProgressBar.TabIndex = 2;
@@ -181,50 +184,46 @@
             // 
             // moveMouseCheckBox
             // 
-            this.moveMouseCheckBox.AutoSize = true;
             this.moveMouseCheckBox.Checked = true;
             this.moveMouseCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.moveMouseCheckBox.Location = new System.Drawing.Point(20, 50);
             this.moveMouseCheckBox.Name = "moveMouseCheckBox";
-            this.moveMouseCheckBox.Size = new System.Drawing.Size(143, 20);
+            this.moveMouseCheckBox.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Office2010Black;
+            this.moveMouseCheckBox.Size = new System.Drawing.Size(137, 20);
             this.moveMouseCheckBox.TabIndex = 1;
-            this.moveMouseCheckBox.Text = "Move mouse pointer";
-            this.moveMouseCheckBox.UseVisualStyleBackColor = true;
+            this.moveMouseCheckBox.Values.Text = "Move mouse pointer";
             // 
             // clickMouseCheckBox
             // 
-            this.clickMouseCheckBox.AutoSize = true;
             this.clickMouseCheckBox.Location = new System.Drawing.Point(20, 140);
             this.clickMouseCheckBox.Name = "clickMouseCheckBox";
-            this.clickMouseCheckBox.Size = new System.Drawing.Size(157, 20);
+            this.clickMouseCheckBox.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Office2010Black;
+            this.clickMouseCheckBox.Size = new System.Drawing.Size(150, 20);
             this.clickMouseCheckBox.TabIndex = 7;
-            this.clickMouseCheckBox.Text = "Click left mouse button";
-            this.clickMouseCheckBox.UseVisualStyleBackColor = true;
+            this.clickMouseCheckBox.Values.Text = "Click left mouse button";
             // 
             // autoPauseCheckBox
             // 
-            this.autoPauseCheckBox.AutoSize = true;
             this.autoPauseCheckBox.Location = new System.Drawing.Point(20, 20);
             this.autoPauseCheckBox.Name = "autoPauseCheckBox";
-            this.autoPauseCheckBox.Size = new System.Drawing.Size(224, 20);
+            this.autoPauseCheckBox.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Office2010Black;
+            this.autoPauseCheckBox.Size = new System.Drawing.Size(212, 20);
             this.autoPauseCheckBox.TabIndex = 0;
-            this.autoPauseCheckBox.Text = "Pause when mouse pointer moved";
-            this.autoPauseCheckBox.UseVisualStyleBackColor = true;
+            this.autoPauseCheckBox.Values.Text = "Pause when mouse pointer moved";
             // 
             // resumeCheckBox
             // 
-            this.resumeCheckBox.AutoSize = true;
             this.resumeCheckBox.Location = new System.Drawing.Point(20, 50);
             this.resumeCheckBox.Name = "resumeCheckBox";
-            this.resumeCheckBox.Size = new System.Drawing.Size(359, 20);
+            this.resumeCheckBox.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Office2010Black;
+            this.resumeCheckBox.Size = new System.Drawing.Size(348, 20);
             this.resumeCheckBox.TabIndex = 1;
-            this.resumeCheckBox.Text = "Automatically resume after                seconds of inactivity";
-            this.resumeCheckBox.UseVisualStyleBackColor = true;
+            this.resumeCheckBox.Values.Text = "Automatically resume after                    seconds of inactivity";
             // 
             // resumeNumericUpDown
             // 
             this.resumeNumericUpDown.Enabled = false;
-            this.resumeNumericUpDown.Location = new System.Drawing.Point(199, 48);
+            this.resumeNumericUpDown.Location = new System.Drawing.Point(185, 48);
             this.resumeNumericUpDown.Maximum = new decimal(new int[] {
             9999,
             0,
@@ -246,23 +245,21 @@
             // 
             // stealthCheckBox
             // 
-            this.stealthCheckBox.AutoSize = true;
             this.stealthCheckBox.Location = new System.Drawing.Point(20, 80);
             this.stealthCheckBox.Name = "stealthCheckBox";
-            this.stealthCheckBox.Size = new System.Drawing.Size(282, 20);
+            this.stealthCheckBox.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Office2010Black;
+            this.stealthCheckBox.Size = new System.Drawing.Size(268, 20);
             this.stealthCheckBox.TabIndex = 2;
-            this.stealthCheckBox.Text = "Stealth mode (pointer movement not visible)";
-            this.stealthCheckBox.UseVisualStyleBackColor = true;
+            this.stealthCheckBox.Values.Text = "Stealth mode (pointer movement not visible)";
             // 
             // keystrokeCheckBox
             // 
-            this.keystrokeCheckBox.AutoSize = true;
             this.keystrokeCheckBox.Location = new System.Drawing.Point(20, 170);
             this.keystrokeCheckBox.Name = "keystrokeCheckBox";
-            this.keystrokeCheckBox.Size = new System.Drawing.Size(114, 20);
+            this.keystrokeCheckBox.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Office2010Black;
+            this.keystrokeCheckBox.Size = new System.Drawing.Size(106, 20);
             this.keystrokeCheckBox.TabIndex = 8;
-            this.keystrokeCheckBox.Text = "Send keystroke";
-            this.keystrokeCheckBox.UseVisualStyleBackColor = true;
+            this.keystrokeCheckBox.Values.Text = "Send keystroke";
             // 
             // keystrokeComboBox
             // 
@@ -318,33 +315,30 @@
             // 
             // startOnLaunchCheckBox
             // 
-            this.startOnLaunchCheckBox.AutoSize = true;
             this.startOnLaunchCheckBox.Location = new System.Drawing.Point(20, 140);
             this.startOnLaunchCheckBox.Name = "startOnLaunchCheckBox";
-            this.startOnLaunchCheckBox.Size = new System.Drawing.Size(267, 20);
+            this.startOnLaunchCheckBox.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Office2010Black;
+            this.startOnLaunchCheckBox.Size = new System.Drawing.Size(257, 20);
             this.startOnLaunchCheckBox.TabIndex = 4;
-            this.startOnLaunchCheckBox.Text = "Automatically start Move Mouse on launch";
-            this.startOnLaunchCheckBox.UseVisualStyleBackColor = true;
+            this.startOnLaunchCheckBox.Values.Text = "Automatically start Move Mouse on launch";
             // 
             // launchAtLogonCheckBox
             // 
-            this.launchAtLogonCheckBox.AutoSize = true;
             this.launchAtLogonCheckBox.Location = new System.Drawing.Point(20, 170);
             this.launchAtLogonCheckBox.Name = "launchAtLogonCheckBox";
-            this.launchAtLogonCheckBox.Size = new System.Drawing.Size(325, 20);
+            this.launchAtLogonCheckBox.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Office2010Black;
+            this.launchAtLogonCheckBox.Size = new System.Drawing.Size(314, 20);
             this.launchAtLogonCheckBox.TabIndex = 5;
-            this.launchAtLogonCheckBox.Text = "Automatically launch Move Mouse at Windows logon";
-            this.launchAtLogonCheckBox.UseVisualStyleBackColor = true;
+            this.launchAtLogonCheckBox.Values.Text = "Automatically launch Move Mouse at Windows logon";
             // 
             // staticPositionCheckBox
             // 
-            this.staticPositionCheckBox.AutoSize = true;
             this.staticPositionCheckBox.Location = new System.Drawing.Point(20, 110);
             this.staticPositionCheckBox.Name = "staticPositionCheckBox";
-            this.staticPositionCheckBox.Size = new System.Drawing.Size(289, 20);
+            this.staticPositionCheckBox.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Office2010Black;
+            this.staticPositionCheckBox.Size = new System.Drawing.Size(267, 20);
             this.staticPositionCheckBox.TabIndex = 3;
-            this.staticPositionCheckBox.Text = "Static mouse pointer position   x                  y";
-            this.staticPositionCheckBox.UseVisualStyleBackColor = true;
+            this.staticPositionCheckBox.Values.Text = "Static mouse pointer position   x                  y";
             // 
             // xNumericUpDown
             // 
@@ -394,33 +388,29 @@
             // 
             // minimiseOnPauseCheckBox
             // 
-            this.minimiseOnPauseCheckBox.AutoSize = true;
             this.minimiseOnPauseCheckBox.Location = new System.Drawing.Point(20, 200);
             this.minimiseOnPauseCheckBox.Name = "minimiseOnPauseCheckBox";
-            this.minimiseOnPauseCheckBox.Size = new System.Drawing.Size(133, 20);
+            this.minimiseOnPauseCheckBox.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Office2010Black;
+            this.minimiseOnPauseCheckBox.Size = new System.Drawing.Size(126, 20);
             this.minimiseOnPauseCheckBox.TabIndex = 6;
-            this.minimiseOnPauseCheckBox.Text = "Minimise on pause";
-            this.minimiseOnPauseCheckBox.UseVisualStyleBackColor = true;
+            this.minimiseOnPauseCheckBox.Values.Text = "Minimise on pause";
             // 
             // minimiseOnStartCheckBox
             // 
-            this.minimiseOnStartCheckBox.AutoSize = true;
             this.minimiseOnStartCheckBox.Location = new System.Drawing.Point(20, 230);
             this.minimiseOnStartCheckBox.Name = "minimiseOnStartCheckBox";
-            this.minimiseOnStartCheckBox.Size = new System.Drawing.Size(125, 20);
+            this.minimiseOnStartCheckBox.Size = new System.Drawing.Size(118, 20);
             this.minimiseOnStartCheckBox.TabIndex = 7;
-            this.minimiseOnStartCheckBox.Text = "Minimise on start";
-            this.minimiseOnStartCheckBox.UseVisualStyleBackColor = true;
+            this.minimiseOnStartCheckBox.Values.Text = "Minimise on start";
             // 
             // minimiseToSystemTrayCheckBox
             // 
-            this.minimiseToSystemTrayCheckBox.AutoSize = true;
             this.minimiseToSystemTrayCheckBox.Location = new System.Drawing.Point(20, 260);
             this.minimiseToSystemTrayCheckBox.Name = "minimiseToSystemTrayCheckBox";
-            this.minimiseToSystemTrayCheckBox.Size = new System.Drawing.Size(168, 20);
+            this.minimiseToSystemTrayCheckBox.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Office2010Black;
+            this.minimiseToSystemTrayCheckBox.Size = new System.Drawing.Size(157, 20);
             this.minimiseToSystemTrayCheckBox.TabIndex = 8;
-            this.minimiseToSystemTrayCheckBox.Text = "Minimise to System Tray";
-            this.minimiseToSystemTrayCheckBox.UseVisualStyleBackColor = true;
+            this.minimiseToSystemTrayCheckBox.Values.Text = "Minimise to System Tray";
             // 
             // processComboBox
             // 
@@ -435,18 +425,17 @@
             // 
             // appActivateCheckBox
             // 
-            this.appActivateCheckBox.AutoSize = true;
             this.appActivateCheckBox.Location = new System.Drawing.Point(20, 200);
             this.appActivateCheckBox.Name = "appActivateCheckBox";
-            this.appActivateCheckBox.Size = new System.Drawing.Size(137, 20);
+            this.appActivateCheckBox.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Office2010Black;
+            this.appActivateCheckBox.Size = new System.Drawing.Size(131, 20);
             this.appActivateCheckBox.TabIndex = 10;
-            this.appActivateCheckBox.Text = "Activate application";
-            this.appActivateCheckBox.UseVisualStyleBackColor = true;
+            this.appActivateCheckBox.Values.Text = "Activate application";
             // 
             // helpPictureBox
             // 
             this.helpPictureBox.Image = global::Ellanet.Properties.Resources.Help_Image;
-            this.helpPictureBox.Location = new System.Drawing.Point(15, 244);
+            this.helpPictureBox.Location = new System.Drawing.Point(432, 3);
             this.helpPictureBox.Name = "helpPictureBox";
             this.helpPictureBox.Size = new System.Drawing.Size(32, 32);
             this.helpPictureBox.TabIndex = 21;
@@ -455,22 +444,23 @@
             // 
             // contactPictureBox
             // 
-            this.contactPictureBox.Image = global::Ellanet.Properties.Resources.Contact_Image;
-            this.contactPictureBox.Location = new System.Drawing.Point(15, 208);
+            this.contactPictureBox.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.contactPictureBox.Image = global::Ellanet.Properties.Resources.Mail_Dark_64x64;
+            this.contactPictureBox.Location = new System.Drawing.Point(288, 270);
             this.contactPictureBox.Name = "contactPictureBox";
-            this.contactPictureBox.Size = new System.Drawing.Size(32, 23);
-            this.contactPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.contactPictureBox.Size = new System.Drawing.Size(32, 32);
+            this.contactPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.contactPictureBox.TabIndex = 25;
             this.contactPictureBox.TabStop = false;
-            this.contactPictureBox.Visible = false;
             // 
             // paypalPictureBox
             // 
-            this.paypalPictureBox.Image = global::Ellanet.Properties.Resources.PayPal_Image;
-            this.paypalPictureBox.Location = new System.Drawing.Point(15, 15);
+            this.paypalPictureBox.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.paypalPictureBox.Image = global::Ellanet.Properties.Resources.PayPal_Dark_64x64;
+            this.paypalPictureBox.Location = new System.Drawing.Point(147, 270);
             this.paypalPictureBox.Name = "paypalPictureBox";
-            this.paypalPictureBox.Size = new System.Drawing.Size(41, 27);
-            this.paypalPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.paypalPictureBox.Size = new System.Drawing.Size(32, 32);
+            this.paypalPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.paypalPictureBox.TabIndex = 26;
             this.paypalPictureBox.TabStop = false;
             // 
@@ -508,7 +498,7 @@
             this.optionsTabControl.Location = new System.Drawing.Point(12, 12);
             this.optionsTabControl.Name = "optionsTabControl";
             this.optionsTabControl.SelectedIndex = 0;
-            this.optionsTabControl.Size = new System.Drawing.Size(475, 329);
+            this.optionsTabControl.Size = new System.Drawing.Size(475, 356);
             this.optionsTabControl.TabIndex = 0;
             // 
             // mouseTabPage
@@ -521,25 +511,27 @@
             this.mouseTabPage.Controls.Add(this.mousePictureBox);
             this.mouseTabPage.Location = new System.Drawing.Point(4, 25);
             this.mouseTabPage.Name = "mouseTabPage";
-            this.mouseTabPage.Size = new System.Drawing.Size(467, 300);
+            this.mouseTabPage.Size = new System.Drawing.Size(467, 327);
             this.mouseTabPage.TabIndex = 4;
             this.mouseTabPage.Text = "Mouse";
             this.mouseTabPage.UseVisualStyleBackColor = true;
             // 
             // homePictureBox
             // 
-            this.homePictureBox.Image = global::Ellanet.Properties.Resources.MouseHole_Image;
-            this.homePictureBox.Location = new System.Drawing.Point(15, 104);
+            this.homePictureBox.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.homePictureBox.Image = global::Ellanet.Properties.Resources.Home_Dark_64x64;
+            this.homePictureBox.Location = new System.Drawing.Point(194, 270);
             this.homePictureBox.Name = "homePictureBox";
-            this.homePictureBox.Size = new System.Drawing.Size(41, 28);
+            this.homePictureBox.Size = new System.Drawing.Size(32, 32);
             this.homePictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.homePictureBox.TabIndex = 28;
             this.homePictureBox.TabStop = false;
             // 
             // twitterPictureBox
             // 
-            this.twitterPictureBox.Image = global::Ellanet.Properties.Resources.Twitter_Image;
-            this.twitterPictureBox.Location = new System.Drawing.Point(19, 57);
+            this.twitterPictureBox.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.twitterPictureBox.Image = global::Ellanet.Properties.Resources.Twitter_Dark_64x64;
+            this.twitterPictureBox.Location = new System.Drawing.Point(241, 270);
             this.twitterPictureBox.Name = "twitterPictureBox";
             this.twitterPictureBox.Size = new System.Drawing.Size(32, 32);
             this.twitterPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -565,13 +557,14 @@
             this.actionsTabPage.Location = new System.Drawing.Point(4, 25);
             this.actionsTabPage.Name = "actionsTabPage";
             this.actionsTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.actionsTabPage.Size = new System.Drawing.Size(467, 300);
+            this.actionsTabPage.Size = new System.Drawing.Size(467, 327);
             this.actionsTabPage.TabIndex = 0;
             this.actionsTabPage.Text = "Actions";
             this.actionsTabPage.UseVisualStyleBackColor = true;
             // 
             // behaviourTabPage
             // 
+            this.behaviourTabPage.Controls.Add(this.activeWhenLockedCheckBox);
             this.behaviourTabPage.Controls.Add(this.hotkeyComboBox);
             this.behaviourTabPage.Controls.Add(this.hotkeyCheckBox);
             this.behaviourTabPage.Controls.Add(this.disableOnBatteryCheckBox);
@@ -585,10 +578,19 @@
             this.behaviourTabPage.Controls.Add(this.resumeCheckBox);
             this.behaviourTabPage.Location = new System.Drawing.Point(4, 25);
             this.behaviourTabPage.Name = "behaviourTabPage";
-            this.behaviourTabPage.Size = new System.Drawing.Size(467, 300);
+            this.behaviourTabPage.Size = new System.Drawing.Size(467, 327);
             this.behaviourTabPage.TabIndex = 3;
             this.behaviourTabPage.Text = "Behaviour";
             this.behaviourTabPage.UseVisualStyleBackColor = true;
+            // 
+            // activeWhenLockedCheckBox
+            // 
+            this.activeWhenLockedCheckBox.Location = new System.Drawing.Point(20, 289);
+            this.activeWhenLockedCheckBox.Name = "activeWhenLockedCheckBox";
+            this.activeWhenLockedCheckBox.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Office2010Black;
+            this.activeWhenLockedCheckBox.Size = new System.Drawing.Size(306, 20);
+            this.activeWhenLockedCheckBox.TabIndex = 18;
+            this.activeWhenLockedCheckBox.Values.Text = "Continue performing actions when session is locked";
             // 
             // hotkeyComboBox
             // 
@@ -623,7 +625,7 @@
             "X",
             "Y",
             "Z"});
-            this.hotkeyComboBox.Location = new System.Drawing.Point(290, 108);
+            this.hotkeyComboBox.Location = new System.Drawing.Point(266, 108);
             this.hotkeyComboBox.Name = "hotkeyComboBox";
             this.hotkeyComboBox.Size = new System.Drawing.Size(48, 24);
             this.hotkeyComboBox.Sorted = true;
@@ -631,23 +633,21 @@
             // 
             // hotkeyCheckBox
             // 
-            this.hotkeyCheckBox.AutoSize = true;
             this.hotkeyCheckBox.Location = new System.Drawing.Point(20, 110);
             this.hotkeyCheckBox.Name = "hotkeyCheckBox";
-            this.hotkeyCheckBox.Size = new System.Drawing.Size(273, 20);
+            this.hotkeyCheckBox.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Office2010Black;
+            this.hotkeyCheckBox.Size = new System.Drawing.Size(255, 20);
             this.hotkeyCheckBox.TabIndex = 16;
-            this.hotkeyCheckBox.Text = "Enable start/pause hotkeys      CTRL+ALT+";
-            this.hotkeyCheckBox.UseVisualStyleBackColor = true;
+            this.hotkeyCheckBox.Values.Text = "Enable start/pause hotkeys      CTRL+ALT+";
             // 
             // disableOnBatteryCheckBox
             // 
-            this.disableOnBatteryCheckBox.AutoSize = true;
             this.disableOnBatteryCheckBox.Location = new System.Drawing.Point(20, 80);
             this.disableOnBatteryCheckBox.Name = "disableOnBatteryCheckBox";
-            this.disableOnBatteryCheckBox.Size = new System.Drawing.Size(212, 20);
+            this.disableOnBatteryCheckBox.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Office2010Black;
+            this.disableOnBatteryCheckBox.Size = new System.Drawing.Size(202, 20);
             this.disableOnBatteryCheckBox.TabIndex = 3;
-            this.disableOnBatteryCheckBox.Text = "Disable when running on battery";
-            this.disableOnBatteryCheckBox.UseVisualStyleBackColor = true;
+            this.disableOnBatteryCheckBox.Values.Text = "Disable when running on battery";
             // 
             // scriptsTabPage
             // 
@@ -669,10 +669,43 @@
             this.scriptsTabPage.Controls.Add(this.scriptsHelpPictureBox);
             this.scriptsTabPage.Location = new System.Drawing.Point(4, 25);
             this.scriptsTabPage.Name = "scriptsTabPage";
-            this.scriptsTabPage.Size = new System.Drawing.Size(467, 300);
+            this.scriptsTabPage.Size = new System.Drawing.Size(467, 327);
             this.scriptsTabPage.TabIndex = 2;
             this.scriptsTabPage.Text = "Scripts";
             this.scriptsTabPage.UseVisualStyleBackColor = true;
+            // 
+            // importPauseScriptButton
+            // 
+            this.importPauseScriptButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.importPauseScriptButton.Enabled = false;
+            this.importPauseScriptButton.Location = new System.Drawing.Point(373, 78);
+            this.importPauseScriptButton.Name = "importPauseScriptButton";
+            this.importPauseScriptButton.Size = new System.Drawing.Size(75, 23);
+            this.importPauseScriptButton.TabIndex = 41;
+            this.importPauseScriptButton.Text = "Import";
+            this.importPauseScriptButton.UseVisualStyleBackColor = true;
+            // 
+            // importIntervalScriptButton
+            // 
+            this.importIntervalScriptButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.importIntervalScriptButton.Enabled = false;
+            this.importIntervalScriptButton.Location = new System.Drawing.Point(373, 48);
+            this.importIntervalScriptButton.Name = "importIntervalScriptButton";
+            this.importIntervalScriptButton.Size = new System.Drawing.Size(75, 23);
+            this.importIntervalScriptButton.TabIndex = 40;
+            this.importIntervalScriptButton.Text = "Import";
+            this.importIntervalScriptButton.UseVisualStyleBackColor = true;
+            // 
+            // importStartScriptButton
+            // 
+            this.importStartScriptButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.importStartScriptButton.Enabled = false;
+            this.importStartScriptButton.Location = new System.Drawing.Point(373, 18);
+            this.importStartScriptButton.Name = "importStartScriptButton";
+            this.importStartScriptButton.Size = new System.Drawing.Size(75, 23);
+            this.importStartScriptButton.TabIndex = 39;
+            this.importStartScriptButton.Text = "Import";
+            this.importStartScriptButton.UseVisualStyleBackColor = true;
             // 
             // editPauseScriptButton
             // 
@@ -798,44 +831,39 @@
             // 
             // showScriptExecutionCheckBox
             // 
-            this.showScriptExecutionCheckBox.AutoSize = true;
             this.showScriptExecutionCheckBox.Enabled = false;
             this.showScriptExecutionCheckBox.Location = new System.Drawing.Point(20, 110);
             this.showScriptExecutionCheckBox.Name = "showScriptExecutionCheckBox";
-            this.showScriptExecutionCheckBox.Size = new System.Drawing.Size(358, 20);
+            this.showScriptExecutionCheckBox.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Office2010Black;
+            this.showScriptExecutionCheckBox.Size = new System.Drawing.Size(341, 20);
             this.showScriptExecutionCheckBox.TabIndex = 6;
-            this.showScriptExecutionCheckBox.Text = "Show script execution (only recommended for debugging)";
-            this.showScriptExecutionCheckBox.UseVisualStyleBackColor = true;
+            this.showScriptExecutionCheckBox.Values.Text = "Show script execution (only recommended for debugging)";
             // 
             // executePauseScriptCheckBox
             // 
-            this.executePauseScriptCheckBox.AutoSize = true;
             this.executePauseScriptCheckBox.Location = new System.Drawing.Point(20, 80);
             this.executePauseScriptCheckBox.Name = "executePauseScriptCheckBox";
-            this.executePauseScriptCheckBox.Size = new System.Drawing.Size(260, 20);
+            this.executePauseScriptCheckBox.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Office2010Black;
+            this.executePauseScriptCheckBox.Size = new System.Drawing.Size(247, 20);
             this.executePauseScriptCheckBox.TabIndex = 4;
-            this.executePauseScriptCheckBox.Text = "Execute script when Move Mouse pauses";
-            this.executePauseScriptCheckBox.UseVisualStyleBackColor = true;
+            this.executePauseScriptCheckBox.Values.Text = "Execute script when Move Mouse pauses";
             // 
             // executeIntervalScriptCheckBox
             // 
-            this.executeIntervalScriptCheckBox.AutoSize = true;
             this.executeIntervalScriptCheckBox.Location = new System.Drawing.Point(20, 50);
             this.executeIntervalScriptCheckBox.Name = "executeIntervalScriptCheckBox";
-            this.executeIntervalScriptCheckBox.Size = new System.Drawing.Size(198, 20);
+            this.executeIntervalScriptCheckBox.Size = new System.Drawing.Size(185, 20);
             this.executeIntervalScriptCheckBox.TabIndex = 2;
-            this.executeIntervalScriptCheckBox.Text = "Execute script at each interval";
-            this.executeIntervalScriptCheckBox.UseVisualStyleBackColor = true;
+            this.executeIntervalScriptCheckBox.Values.Text = "Execute script at each interval";
             // 
             // executeStartScriptCheckBox
             // 
-            this.executeStartScriptCheckBox.AutoSize = true;
             this.executeStartScriptCheckBox.Location = new System.Drawing.Point(20, 20);
             this.executeStartScriptCheckBox.Name = "executeStartScriptCheckBox";
-            this.executeStartScriptCheckBox.Size = new System.Drawing.Size(252, 20);
+            this.executeStartScriptCheckBox.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Office2010Black;
+            this.executeStartScriptCheckBox.Size = new System.Drawing.Size(238, 20);
             this.executeStartScriptCheckBox.TabIndex = 0;
-            this.executeStartScriptCheckBox.Text = "Execute script when Move Mouse starts";
-            this.executeStartScriptCheckBox.UseVisualStyleBackColor = true;
+            this.executeStartScriptCheckBox.Values.Text = "Execute script when Move Mouse starts";
             // 
             // schedulesTabPage
             // 
@@ -845,7 +873,7 @@
             this.schedulesTabPage.Controls.Add(this.scheduleListView);
             this.schedulesTabPage.Location = new System.Drawing.Point(4, 25);
             this.schedulesTabPage.Name = "schedulesTabPage";
-            this.schedulesTabPage.Size = new System.Drawing.Size(467, 300);
+            this.schedulesTabPage.Size = new System.Drawing.Size(467, 327);
             this.schedulesTabPage.TabIndex = 5;
             this.schedulesTabPage.Text = "Schedules";
             this.schedulesTabPage.UseVisualStyleBackColor = true;
@@ -918,7 +946,7 @@
             this.blackoutsTabPage.Location = new System.Drawing.Point(4, 25);
             this.blackoutsTabPage.Name = "blackoutsTabPage";
             this.blackoutsTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.blackoutsTabPage.Size = new System.Drawing.Size(467, 300);
+            this.blackoutsTabPage.Size = new System.Drawing.Size(467, 327);
             this.blackoutsTabPage.TabIndex = 1;
             this.blackoutsTabPage.Text = "Blackouts";
             this.blackoutsTabPage.UseVisualStyleBackColor = true;
@@ -982,44 +1010,11 @@
             this.endColumnHeader.Text = "End";
             this.endColumnHeader.Width = 125;
             // 
-            // importPauseScriptButton
-            // 
-            this.importPauseScriptButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.importPauseScriptButton.Enabled = false;
-            this.importPauseScriptButton.Location = new System.Drawing.Point(373, 78);
-            this.importPauseScriptButton.Name = "importPauseScriptButton";
-            this.importPauseScriptButton.Size = new System.Drawing.Size(75, 23);
-            this.importPauseScriptButton.TabIndex = 41;
-            this.importPauseScriptButton.Text = "Import";
-            this.importPauseScriptButton.UseVisualStyleBackColor = true;
-            // 
-            // importIntervalScriptButton
-            // 
-            this.importIntervalScriptButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.importIntervalScriptButton.Enabled = false;
-            this.importIntervalScriptButton.Location = new System.Drawing.Point(373, 48);
-            this.importIntervalScriptButton.Name = "importIntervalScriptButton";
-            this.importIntervalScriptButton.Size = new System.Drawing.Size(75, 23);
-            this.importIntervalScriptButton.TabIndex = 40;
-            this.importIntervalScriptButton.Text = "Import";
-            this.importIntervalScriptButton.UseVisualStyleBackColor = true;
-            // 
-            // importStartScriptButton
-            // 
-            this.importStartScriptButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.importStartScriptButton.Enabled = false;
-            this.importStartScriptButton.Location = new System.Drawing.Point(373, 18);
-            this.importStartScriptButton.Name = "importStartScriptButton";
-            this.importStartScriptButton.Size = new System.Drawing.Size(75, 23);
-            this.importStartScriptButton.TabIndex = 39;
-            this.importStartScriptButton.Text = "Import";
-            this.importStartScriptButton.UseVisualStyleBackColor = true;
-            // 
             // MouseForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(499, 426);
+            this.ClientSize = new System.Drawing.Size(499, 456);
             this.Controls.Add(this.optionsTabControl);
             this.Controls.Add(this.countdownProgressBar);
             this.Controls.Add(this.actionButton);
@@ -1028,6 +1023,7 @@
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.MaximizeBox = false;
             this.Name = "MouseForm";
+            this.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Office2010Black;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "MouseForm";
             ((System.ComponentModel.ISupportInitialize)(this.mousePictureBox)).EndInit();
@@ -1058,29 +1054,29 @@
         #endregion
 
         private System.Windows.Forms.PictureBox mousePictureBox;
-        private System.Windows.Forms.Button actionButton;
+        private KryptonButton actionButton;
         private System.Windows.Forms.ProgressBar countdownProgressBar;
         private System.Windows.Forms.NumericUpDown delayNumericUpDown;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.CheckBox moveMouseCheckBox;
-        private System.Windows.Forms.CheckBox clickMouseCheckBox;
-        private System.Windows.Forms.CheckBox autoPauseCheckBox;
-        private System.Windows.Forms.CheckBox resumeCheckBox;
+        private KryptonCheckBox moveMouseCheckBox;
+        private KryptonCheckBox clickMouseCheckBox;
+        private KryptonCheckBox autoPauseCheckBox;
+        private KryptonCheckBox resumeCheckBox;
         private System.Windows.Forms.NumericUpDown resumeNumericUpDown;
-        private System.Windows.Forms.CheckBox stealthCheckBox;
-        private System.Windows.Forms.CheckBox keystrokeCheckBox;
+        private KryptonCheckBox stealthCheckBox;
+        private KryptonCheckBox keystrokeCheckBox;
         private System.Windows.Forms.ComboBox keystrokeComboBox;
-        private System.Windows.Forms.CheckBox startOnLaunchCheckBox;
-        private System.Windows.Forms.CheckBox launchAtLogonCheckBox;
-        private System.Windows.Forms.CheckBox staticPositionCheckBox;
+        private KryptonCheckBox startOnLaunchCheckBox;
+        private KryptonCheckBox launchAtLogonCheckBox;
+        private KryptonCheckBox staticPositionCheckBox;
         private System.Windows.Forms.NumericUpDown xNumericUpDown;
         private System.Windows.Forms.NumericUpDown yNumericUpDown;
         private System.Windows.Forms.Button traceButton;
-        private System.Windows.Forms.CheckBox minimiseOnPauseCheckBox;
-        private System.Windows.Forms.CheckBox minimiseOnStartCheckBox;
-        private System.Windows.Forms.CheckBox minimiseToSystemTrayCheckBox;
+        private KryptonCheckBox minimiseOnPauseCheckBox;
+        private KryptonCheckBox minimiseOnStartCheckBox;
+        private KryptonCheckBox minimiseToSystemTrayCheckBox;
         private System.Windows.Forms.ComboBox processComboBox;
-        private System.Windows.Forms.CheckBox appActivateCheckBox;
+        private KryptonCheckBox appActivateCheckBox;
         private System.Windows.Forms.PictureBox helpPictureBox;
         private System.Windows.Forms.PictureBox contactPictureBox;
         private System.Windows.Forms.PictureBox paypalPictureBox;
@@ -1105,10 +1101,10 @@
         private System.Windows.Forms.ListView blackoutListView;
         private System.Windows.Forms.ColumnHeader startColumnHeader;
         private System.Windows.Forms.ColumnHeader endColumnHeader;
-        private System.Windows.Forms.CheckBox executePauseScriptCheckBox;
-        private System.Windows.Forms.CheckBox executeIntervalScriptCheckBox;
-        private System.Windows.Forms.CheckBox executeStartScriptCheckBox;
-        private System.Windows.Forms.CheckBox showScriptExecutionCheckBox;
+        private KryptonCheckBox executePauseScriptCheckBox;
+        private KryptonCheckBox executeIntervalScriptCheckBox;
+        private KryptonCheckBox executeStartScriptCheckBox;
+        private KryptonCheckBox showScriptExecutionCheckBox;
         private System.Windows.Forms.ComboBox scriptLanguageComboBox;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label scriptEditorLabel;
@@ -1117,13 +1113,14 @@
         private System.Windows.Forms.Button editStartScriptButton;
         private System.Windows.Forms.Button editPauseScriptButton;
         private System.Windows.Forms.Button editIntervalScriptButton;
-        private System.Windows.Forms.CheckBox disableOnBatteryCheckBox;
+        private KryptonCheckBox disableOnBatteryCheckBox;
         private System.Windows.Forms.ComboBox hotkeyComboBox;
-        private System.Windows.Forms.CheckBox hotkeyCheckBox;
+        private KryptonCheckBox hotkeyCheckBox;
         private System.Windows.Forms.PictureBox twitterPictureBox;
         private System.Windows.Forms.PictureBox homePictureBox;
         private System.Windows.Forms.Button importPauseScriptButton;
         private System.Windows.Forms.Button importIntervalScriptButton;
         private System.Windows.Forms.Button importStartScriptButton;
+        private KryptonCheckBox activeWhenLockedCheckBox;
     }
 }
