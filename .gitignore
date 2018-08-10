@@ -1,1 +1,4 @@
 packages/
+.vs/
+Move Mouse/bin/
+Move Mouse/obj/
