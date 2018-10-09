@@ -31,7 +31,7 @@ namespace Ellanet.Forms
         private void InitializeComponent()
         {
             this.mousePictureBox = new System.Windows.Forms.PictureBox();
-            this.actionButton = new ComponentFactory.Krypton.Toolkit.KryptonButton();
+            this.actionButton = new System.Windows.Forms.Button();
             this.countdownProgressBar = new System.Windows.Forms.ProgressBar();
             this.delayNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
@@ -137,10 +137,9 @@ namespace Ellanet.Forms
             this.actionButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.actionButton.Location = new System.Drawing.Point(212, 382);
             this.actionButton.Name = "actionButton";
-            this.actionButton.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Office2010Black;
             this.actionButton.Size = new System.Drawing.Size(75, 30);
             this.actionButton.TabIndex = 1;
-            this.actionButton.Values.Text = "Start";
+            this.actionButton.Text = "Start";
             // 
             // countdownProgressBar
             // 
@@ -189,7 +188,8 @@ namespace Ellanet.Forms
             this.moveMouseCheckBox.Location = new System.Drawing.Point(20, 50);
             this.moveMouseCheckBox.Name = "moveMouseCheckBox";
             this.moveMouseCheckBox.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Office2010Black;
-            this.moveMouseCheckBox.Size = new System.Drawing.Size(137, 20);
+            this.moveMouseCheckBox.Size = new System.Drawing.Size(144, 20);
+            this.moveMouseCheckBox.StateNormal.ShortText.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(2)));
             this.moveMouseCheckBox.TabIndex = 1;
             this.moveMouseCheckBox.Values.Text = "Move mouse pointer";
             // 
@@ -198,7 +198,8 @@ namespace Ellanet.Forms
             this.clickMouseCheckBox.Location = new System.Drawing.Point(20, 140);
             this.clickMouseCheckBox.Name = "clickMouseCheckBox";
             this.clickMouseCheckBox.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Office2010Black;
-            this.clickMouseCheckBox.Size = new System.Drawing.Size(150, 20);
+            this.clickMouseCheckBox.Size = new System.Drawing.Size(160, 20);
+            this.clickMouseCheckBox.StateNormal.ShortText.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(2)));
             this.clickMouseCheckBox.TabIndex = 7;
             this.clickMouseCheckBox.Values.Text = "Click left mouse button";
             // 
@@ -207,7 +208,8 @@ namespace Ellanet.Forms
             this.autoPauseCheckBox.Location = new System.Drawing.Point(20, 20);
             this.autoPauseCheckBox.Name = "autoPauseCheckBox";
             this.autoPauseCheckBox.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Office2010Black;
-            this.autoPauseCheckBox.Size = new System.Drawing.Size(212, 20);
+            this.autoPauseCheckBox.Size = new System.Drawing.Size(228, 20);
+            this.autoPauseCheckBox.StateNormal.ShortText.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(2)));
             this.autoPauseCheckBox.TabIndex = 0;
             this.autoPauseCheckBox.Values.Text = "Pause when mouse pointer moved";
             // 
@@ -216,14 +218,15 @@ namespace Ellanet.Forms
             this.resumeCheckBox.Location = new System.Drawing.Point(20, 50);
             this.resumeCheckBox.Name = "resumeCheckBox";
             this.resumeCheckBox.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Office2010Black;
-            this.resumeCheckBox.Size = new System.Drawing.Size(348, 20);
+            this.resumeCheckBox.Size = new System.Drawing.Size(386, 20);
+            this.resumeCheckBox.StateNormal.ShortText.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(2)));
             this.resumeCheckBox.TabIndex = 1;
             this.resumeCheckBox.Values.Text = "Automatically resume after                    seconds of inactivity";
             // 
             // resumeNumericUpDown
             // 
             this.resumeNumericUpDown.Enabled = false;
-            this.resumeNumericUpDown.Location = new System.Drawing.Point(185, 48);
+            this.resumeNumericUpDown.Location = new System.Drawing.Point(206, 48);
             this.resumeNumericUpDown.Maximum = new decimal(new int[] {
             9999,
             0,
@@ -248,7 +251,8 @@ namespace Ellanet.Forms
             this.stealthCheckBox.Location = new System.Drawing.Point(20, 80);
             this.stealthCheckBox.Name = "stealthCheckBox";
             this.stealthCheckBox.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Office2010Black;
-            this.stealthCheckBox.Size = new System.Drawing.Size(268, 20);
+            this.stealthCheckBox.Size = new System.Drawing.Size(288, 20);
+            this.stealthCheckBox.StateNormal.ShortText.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(2)));
             this.stealthCheckBox.TabIndex = 2;
             this.stealthCheckBox.Values.Text = "Stealth mode (pointer movement not visible)";
             // 
@@ -257,7 +261,8 @@ namespace Ellanet.Forms
             this.keystrokeCheckBox.Location = new System.Drawing.Point(20, 170);
             this.keystrokeCheckBox.Name = "keystrokeCheckBox";
             this.keystrokeCheckBox.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Office2010Black;
-            this.keystrokeCheckBox.Size = new System.Drawing.Size(106, 20);
+            this.keystrokeCheckBox.Size = new System.Drawing.Size(114, 20);
+            this.keystrokeCheckBox.StateNormal.ShortText.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(2)));
             this.keystrokeCheckBox.TabIndex = 8;
             this.keystrokeCheckBox.Values.Text = "Send keystroke";
             // 
@@ -318,7 +323,8 @@ namespace Ellanet.Forms
             this.startOnLaunchCheckBox.Location = new System.Drawing.Point(20, 140);
             this.startOnLaunchCheckBox.Name = "startOnLaunchCheckBox";
             this.startOnLaunchCheckBox.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Office2010Black;
-            this.startOnLaunchCheckBox.Size = new System.Drawing.Size(257, 20);
+            this.startOnLaunchCheckBox.Size = new System.Drawing.Size(273, 20);
+            this.startOnLaunchCheckBox.StateNormal.ShortText.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(2)));
             this.startOnLaunchCheckBox.TabIndex = 4;
             this.startOnLaunchCheckBox.Values.Text = "Automatically start Move Mouse on launch";
             // 
@@ -327,7 +333,8 @@ namespace Ellanet.Forms
             this.launchAtLogonCheckBox.Location = new System.Drawing.Point(20, 170);
             this.launchAtLogonCheckBox.Name = "launchAtLogonCheckBox";
             this.launchAtLogonCheckBox.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Office2010Black;
-            this.launchAtLogonCheckBox.Size = new System.Drawing.Size(314, 20);
+            this.launchAtLogonCheckBox.Size = new System.Drawing.Size(333, 20);
+            this.launchAtLogonCheckBox.StateNormal.ShortText.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(2)));
             this.launchAtLogonCheckBox.TabIndex = 5;
             this.launchAtLogonCheckBox.Values.Text = "Automatically launch Move Mouse at Windows logon";
             // 
@@ -336,7 +343,8 @@ namespace Ellanet.Forms
             this.staticPositionCheckBox.Location = new System.Drawing.Point(20, 110);
             this.staticPositionCheckBox.Name = "staticPositionCheckBox";
             this.staticPositionCheckBox.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Office2010Black;
-            this.staticPositionCheckBox.Size = new System.Drawing.Size(267, 20);
+            this.staticPositionCheckBox.Size = new System.Drawing.Size(297, 20);
+            this.staticPositionCheckBox.StateNormal.ShortText.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(2)));
             this.staticPositionCheckBox.TabIndex = 3;
             this.staticPositionCheckBox.Values.Text = "Static mouse pointer position   x                  y";
             // 
@@ -391,7 +399,8 @@ namespace Ellanet.Forms
             this.minimiseOnPauseCheckBox.Location = new System.Drawing.Point(20, 200);
             this.minimiseOnPauseCheckBox.Name = "minimiseOnPauseCheckBox";
             this.minimiseOnPauseCheckBox.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Office2010Black;
-            this.minimiseOnPauseCheckBox.Size = new System.Drawing.Size(126, 20);
+            this.minimiseOnPauseCheckBox.Size = new System.Drawing.Size(133, 20);
+            this.minimiseOnPauseCheckBox.StateNormal.ShortText.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(2)));
             this.minimiseOnPauseCheckBox.TabIndex = 6;
             this.minimiseOnPauseCheckBox.Values.Text = "Minimise on pause";
             // 
@@ -399,7 +408,8 @@ namespace Ellanet.Forms
             // 
             this.minimiseOnStartCheckBox.Location = new System.Drawing.Point(20, 230);
             this.minimiseOnStartCheckBox.Name = "minimiseOnStartCheckBox";
-            this.minimiseOnStartCheckBox.Size = new System.Drawing.Size(118, 20);
+            this.minimiseOnStartCheckBox.Size = new System.Drawing.Size(125, 20);
+            this.minimiseOnStartCheckBox.StateNormal.ShortText.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(2)));
             this.minimiseOnStartCheckBox.TabIndex = 7;
             this.minimiseOnStartCheckBox.Values.Text = "Minimise on start";
             // 
@@ -408,7 +418,8 @@ namespace Ellanet.Forms
             this.minimiseToSystemTrayCheckBox.Location = new System.Drawing.Point(20, 260);
             this.minimiseToSystemTrayCheckBox.Name = "minimiseToSystemTrayCheckBox";
             this.minimiseToSystemTrayCheckBox.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Office2010Black;
-            this.minimiseToSystemTrayCheckBox.Size = new System.Drawing.Size(157, 20);
+            this.minimiseToSystemTrayCheckBox.Size = new System.Drawing.Size(169, 20);
+            this.minimiseToSystemTrayCheckBox.StateNormal.ShortText.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(2)));
             this.minimiseToSystemTrayCheckBox.TabIndex = 8;
             this.minimiseToSystemTrayCheckBox.Values.Text = "Minimise to System Tray";
             // 
@@ -428,7 +439,8 @@ namespace Ellanet.Forms
             this.appActivateCheckBox.Location = new System.Drawing.Point(20, 200);
             this.appActivateCheckBox.Name = "appActivateCheckBox";
             this.appActivateCheckBox.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Office2010Black;
-            this.appActivateCheckBox.Size = new System.Drawing.Size(131, 20);
+            this.appActivateCheckBox.Size = new System.Drawing.Size(138, 20);
+            this.appActivateCheckBox.StateNormal.ShortText.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(2)));
             this.appActivateCheckBox.TabIndex = 10;
             this.appActivateCheckBox.Values.Text = "Activate application";
             // 
@@ -483,6 +495,7 @@ namespace Ellanet.Forms
             this.scriptsHelpPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.scriptsHelpPictureBox.TabIndex = 29;
             this.scriptsHelpPictureBox.TabStop = false;
+            this.scriptsHelpPictureBox.Visible = false;
             // 
             // optionsTabControl
             // 
@@ -588,7 +601,8 @@ namespace Ellanet.Forms
             this.activeWhenLockedCheckBox.Location = new System.Drawing.Point(20, 289);
             this.activeWhenLockedCheckBox.Name = "activeWhenLockedCheckBox";
             this.activeWhenLockedCheckBox.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Office2010Black;
-            this.activeWhenLockedCheckBox.Size = new System.Drawing.Size(306, 20);
+            this.activeWhenLockedCheckBox.Size = new System.Drawing.Size(329, 20);
+            this.activeWhenLockedCheckBox.StateNormal.ShortText.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(2)));
             this.activeWhenLockedCheckBox.TabIndex = 18;
             this.activeWhenLockedCheckBox.Values.Text = "Continue performing actions when session is locked";
             // 
@@ -625,7 +639,7 @@ namespace Ellanet.Forms
             "X",
             "Y",
             "Z"});
-            this.hotkeyComboBox.Location = new System.Drawing.Point(266, 108);
+            this.hotkeyComboBox.Location = new System.Drawing.Point(295, 108);
             this.hotkeyComboBox.Name = "hotkeyComboBox";
             this.hotkeyComboBox.Size = new System.Drawing.Size(48, 24);
             this.hotkeyComboBox.Sorted = true;
@@ -636,7 +650,8 @@ namespace Ellanet.Forms
             this.hotkeyCheckBox.Location = new System.Drawing.Point(20, 110);
             this.hotkeyCheckBox.Name = "hotkeyCheckBox";
             this.hotkeyCheckBox.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Office2010Black;
-            this.hotkeyCheckBox.Size = new System.Drawing.Size(255, 20);
+            this.hotkeyCheckBox.Size = new System.Drawing.Size(282, 20);
+            this.hotkeyCheckBox.StateNormal.ShortText.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(2)));
             this.hotkeyCheckBox.TabIndex = 16;
             this.hotkeyCheckBox.Values.Text = "Enable start/pause hotkeys      CTRL+ALT+";
             // 
@@ -645,7 +660,8 @@ namespace Ellanet.Forms
             this.disableOnBatteryCheckBox.Location = new System.Drawing.Point(20, 80);
             this.disableOnBatteryCheckBox.Name = "disableOnBatteryCheckBox";
             this.disableOnBatteryCheckBox.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Office2010Black;
-            this.disableOnBatteryCheckBox.Size = new System.Drawing.Size(202, 20);
+            this.disableOnBatteryCheckBox.Size = new System.Drawing.Size(217, 20);
+            this.disableOnBatteryCheckBox.StateNormal.ShortText.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(2)));
             this.disableOnBatteryCheckBox.TabIndex = 3;
             this.disableOnBatteryCheckBox.Values.Text = "Disable when running on battery";
             // 
@@ -836,6 +852,7 @@ namespace Ellanet.Forms
             this.showScriptExecutionCheckBox.Name = "showScriptExecutionCheckBox";
             this.showScriptExecutionCheckBox.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Office2010Black;
             this.showScriptExecutionCheckBox.Size = new System.Drawing.Size(341, 20);
+            this.showScriptExecutionCheckBox.StateNormal.ShortText.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(2)));
             this.showScriptExecutionCheckBox.TabIndex = 6;
             this.showScriptExecutionCheckBox.Values.Text = "Show script execution (only recommended for debugging)";
             // 
@@ -844,7 +861,8 @@ namespace Ellanet.Forms
             this.executePauseScriptCheckBox.Location = new System.Drawing.Point(20, 80);
             this.executePauseScriptCheckBox.Name = "executePauseScriptCheckBox";
             this.executePauseScriptCheckBox.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Office2010Black;
-            this.executePauseScriptCheckBox.Size = new System.Drawing.Size(247, 20);
+            this.executePauseScriptCheckBox.Size = new System.Drawing.Size(265, 20);
+            this.executePauseScriptCheckBox.StateNormal.ShortText.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(2)));
             this.executePauseScriptCheckBox.TabIndex = 4;
             this.executePauseScriptCheckBox.Values.Text = "Execute script when Move Mouse pauses";
             // 
@@ -852,7 +870,8 @@ namespace Ellanet.Forms
             // 
             this.executeIntervalScriptCheckBox.Location = new System.Drawing.Point(20, 50);
             this.executeIntervalScriptCheckBox.Name = "executeIntervalScriptCheckBox";
-            this.executeIntervalScriptCheckBox.Size = new System.Drawing.Size(185, 20);
+            this.executeIntervalScriptCheckBox.Size = new System.Drawing.Size(202, 20);
+            this.executeIntervalScriptCheckBox.StateNormal.ShortText.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(2)));
             this.executeIntervalScriptCheckBox.TabIndex = 2;
             this.executeIntervalScriptCheckBox.Values.Text = "Execute script at each interval";
             // 
@@ -861,7 +880,8 @@ namespace Ellanet.Forms
             this.executeStartScriptCheckBox.Location = new System.Drawing.Point(20, 20);
             this.executeStartScriptCheckBox.Name = "executeStartScriptCheckBox";
             this.executeStartScriptCheckBox.PaletteMode = ComponentFactory.Krypton.Toolkit.PaletteMode.Office2010Black;
-            this.executeStartScriptCheckBox.Size = new System.Drawing.Size(238, 20);
+            this.executeStartScriptCheckBox.Size = new System.Drawing.Size(257, 20);
+            this.executeStartScriptCheckBox.StateNormal.ShortText.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(2)));
             this.executeStartScriptCheckBox.TabIndex = 0;
             this.executeStartScriptCheckBox.Values.Text = "Execute script when Move Mouse starts";
             // 
@@ -882,7 +902,7 @@ namespace Ellanet.Forms
             // 
             this.removeScheduleButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.removeScheduleButton.Enabled = false;
-            this.removeScheduleButton.Location = new System.Drawing.Point(369, 182);
+            this.removeScheduleButton.Location = new System.Drawing.Point(369, 195);
             this.removeScheduleButton.Name = "removeScheduleButton";
             this.removeScheduleButton.Size = new System.Drawing.Size(75, 23);
             this.removeScheduleButton.TabIndex = 3;
@@ -893,7 +913,7 @@ namespace Ellanet.Forms
             // 
             this.editScheduleButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.editScheduleButton.Enabled = false;
-            this.editScheduleButton.Location = new System.Drawing.Point(369, 139);
+            this.editScheduleButton.Location = new System.Drawing.Point(369, 152);
             this.editScheduleButton.Name = "editScheduleButton";
             this.editScheduleButton.Size = new System.Drawing.Size(75, 23);
             this.editScheduleButton.TabIndex = 2;
@@ -903,7 +923,7 @@ namespace Ellanet.Forms
             // addScheduleButton
             // 
             this.addScheduleButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.addScheduleButton.Location = new System.Drawing.Point(369, 96);
+            this.addScheduleButton.Location = new System.Drawing.Point(369, 109);
             this.addScheduleButton.Name = "addScheduleButton";
             this.addScheduleButton.Size = new System.Drawing.Size(75, 23);
             this.addScheduleButton.TabIndex = 1;
@@ -921,7 +941,7 @@ namespace Ellanet.Forms
             this.scheduleListView.FullRowSelect = true;
             this.scheduleListView.Location = new System.Drawing.Point(20, 20);
             this.scheduleListView.Name = "scheduleListView";
-            this.scheduleListView.Size = new System.Drawing.Size(327, 261);
+            this.scheduleListView.Size = new System.Drawing.Size(327, 286);
             this.scheduleListView.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.scheduleListView.TabIndex = 0;
             this.scheduleListView.UseCompatibleStateImageBehavior = false;
@@ -955,7 +975,7 @@ namespace Ellanet.Forms
             // 
             this.removeBlackoutButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.removeBlackoutButton.Enabled = false;
-            this.removeBlackoutButton.Location = new System.Drawing.Point(369, 182);
+            this.removeBlackoutButton.Location = new System.Drawing.Point(369, 195);
             this.removeBlackoutButton.Name = "removeBlackoutButton";
             this.removeBlackoutButton.Size = new System.Drawing.Size(75, 23);
             this.removeBlackoutButton.TabIndex = 3;
@@ -966,7 +986,7 @@ namespace Ellanet.Forms
             // 
             this.editBlackoutButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.editBlackoutButton.Enabled = false;
-            this.editBlackoutButton.Location = new System.Drawing.Point(369, 139);
+            this.editBlackoutButton.Location = new System.Drawing.Point(369, 152);
             this.editBlackoutButton.Name = "editBlackoutButton";
             this.editBlackoutButton.Size = new System.Drawing.Size(75, 23);
             this.editBlackoutButton.TabIndex = 2;
@@ -976,7 +996,7 @@ namespace Ellanet.Forms
             // addBlackoutButton
             // 
             this.addBlackoutButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.addBlackoutButton.Location = new System.Drawing.Point(369, 96);
+            this.addBlackoutButton.Location = new System.Drawing.Point(369, 109);
             this.addBlackoutButton.Name = "addBlackoutButton";
             this.addBlackoutButton.Size = new System.Drawing.Size(75, 23);
             this.addBlackoutButton.TabIndex = 1;
@@ -994,7 +1014,7 @@ namespace Ellanet.Forms
             this.blackoutListView.FullRowSelect = true;
             this.blackoutListView.Location = new System.Drawing.Point(20, 20);
             this.blackoutListView.Name = "blackoutListView";
-            this.blackoutListView.Size = new System.Drawing.Size(327, 261);
+            this.blackoutListView.Size = new System.Drawing.Size(327, 286);
             this.blackoutListView.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.blackoutListView.TabIndex = 0;
             this.blackoutListView.UseCompatibleStateImageBehavior = false;
@@ -1054,7 +1074,7 @@ namespace Ellanet.Forms
         #endregion
 
         private System.Windows.Forms.PictureBox mousePictureBox;
-        private KryptonButton actionButton;
+        private System.Windows.Forms.Button actionButton;
         private System.Windows.Forms.ProgressBar countdownProgressBar;
         private System.Windows.Forms.NumericUpDown delayNumericUpDown;
         private System.Windows.Forms.Label label1;

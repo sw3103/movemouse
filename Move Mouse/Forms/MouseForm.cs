@@ -308,7 +308,7 @@ namespace Ellanet.Forms
             scriptEditorLabel.TextChanged += scriptEditorLabel_TextChanged;
             ListScriptingLanguages();
             ReadSettings();
-            _homeAddress = IsWindows10() ? "http://www.movemouse.co.uk/" : "http://movemouse.codeplex.com/";
+            _homeAddress = IsWindows10() ? "http://www.movemouse.co.uk/" : "https://github.com/sw3103/movemouse/";
             Icon = Properties.Resources.Mouse_Icon;
             Text = String.Format("Move Mouse ({0}.{1}.{2}) - {3}", Assembly.GetExecutingAssembly().GetName().Version.Major, Assembly.GetExecutingAssembly().GetName().Version.Minor, Assembly.GetExecutingAssembly().GetName().Version.Build, _homeAddress);
             FormClosing += MouseForm_FormClosing;
@@ -494,7 +494,7 @@ namespace Ellanet.Forms
 
             if ((_pauseSchedules != null) && (_pauseSchedules.Contains(timeNow)))
             {
-                KryptonButtonPerformClick(ref actionButton);
+                ButtonPerformClick(ref actionButton);
                 OnScheduleArrived(this, new ScheduleArrivedEventArgs(ScheduleArrivedEventArgs.ScheduleAction.Pause, timeNow));
             }
         }
@@ -506,7 +506,7 @@ namespace Ellanet.Forms
 
             if ((_startSchedules != null) && (_startSchedules.Contains(timeNow)))
             {
-                KryptonButtonPerformClick(ref actionButton);
+                ButtonPerformClick(ref actionButton);
                 OnScheduleArrived(this, new ScheduleArrivedEventArgs(ScheduleArrivedEventArgs.ScheduleAction.Start, timeNow));
             }
         }
@@ -1260,7 +1260,7 @@ namespace Ellanet.Forms
 
             if (GetCheckBoxChecked(ref resumeCheckBox) && (GetLastInputTime() >= resumeNumericUpDown.Value))
             {
-                KryptonButtonPerformClick(ref actionButton);
+                ButtonPerformClick(ref actionButton);
             }
         }
 
@@ -2306,7 +2306,7 @@ namespace Ellanet.Forms
         {
             if (GetCheckBoxChecked(ref autoPauseCheckBox) && (_mmStartTime.Add(_waitUntilAutoMoveDetect) < DateTime.Now) && (_startingMousePoint != Cursor.Position))
             {
-                KryptonButtonPerformClick(ref actionButton);
+                ButtonPerformClick(ref actionButton);
             }
             else
             {
