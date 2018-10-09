@@ -27,12 +27,12 @@ namespace Ellanet.Forms
         private const string MoveMouseXmlName = "Move Mouse.xml";
 
         //private const string HomeAddress = "http://movemouse.codeplex.com/";
-        private const string ContactAddress = "http://www.codeplex.com/site/users/view/sw3103/";
-        private const string HelpAddress = "http://movemouse.codeplex.com/documentation/";
-        private const string ScriptsHelpAddress = "https://movemouse.codeplex.com/wikipage?title=Custom%20Scripts";
+        private const string ContactAddress = "mailto:contact@movemouse.co.uk?subject=Move%20Mouse%20Feedback";
+        //private const string HelpAddress = "http://movemouse.codeplex.com/documentation/";
+        //private const string ScriptsHelpAddress = "https://movemouse.codeplex.com/wikipage?title=Custom%20Scripts";
         private const string PayPalAddress = "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=QZTWHD9CRW5XN";
-        private const string UpdateXmlUrl = "https://sites.google.com/a/windandkite.co.uk/movemouse/home/Update_3x.xml";
-        private const string MiceResourceUrlPrefix = "https://movemouse.svn.codeplex.com/svn/Move%20Mouse/Resources/Mice/";
+        private const string UpdateXmlUrl = "https://raw.githubusercontent.com/sw3103/movemouse/master/Update_3x.xml";
+        private const string MiceResourceUrlPrefix = "https://raw.githubusercontent.com/sw3103/movemouse/master/Mice/";
         private const string TwitterAddress = "https://twitter.com/movemouse";
         private const string MiceXmlName = "Mice.xml";
         private const string StartScriptName = "Move Mouse - Start";
@@ -329,7 +329,7 @@ namespace Ellanet.Forms
             traceButton.Click += traceButton_Click;
             helpPictureBox.MouseEnter += helpPictureBox_MouseEnter;
             helpPictureBox.MouseLeave += helpPictureBox_MouseLeave;
-            helpPictureBox.MouseClick += helpPictureBox_MouseClick;
+            //helpPictureBox.MouseClick += helpPictureBox_MouseClick;
             contactPictureBox.MouseEnter += contactPictureBox_MouseEnter;
             contactPictureBox.MouseLeave += contactPictureBox_MouseLeave;
             contactPictureBox.MouseClick += contactPictureBox_MouseClick;
@@ -345,7 +345,7 @@ namespace Ellanet.Forms
             refreshButton.Click += refreshButton_Click;
             scriptsHelpPictureBox.MouseEnter += scriptsHelpPictureBox_MouseEnter;
             scriptsHelpPictureBox.MouseLeave += scriptsHelpPictureBox_MouseLeave;
-            scriptsHelpPictureBox.MouseClick += scriptsHelpPictureBox_MouseClick;
+            //scriptsHelpPictureBox.MouseClick += scriptsHelpPictureBox_MouseClick;
             addScheduleButton.Click += addScheduleButton_Click;
             editScheduleButton.Click += editScheduleButton_Click;
             removeScheduleButton.Click += removeScheduleButton_Click;
@@ -895,17 +895,17 @@ namespace Ellanet.Forms
             }
         }
 
-        private void scriptsHelpPictureBox_MouseClick(object sender, MouseEventArgs e)
-        {
-            try
-            {
-                Process.Start(ScriptsHelpAddress);
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
-            }
-        }
+        //private void scriptsHelpPictureBox_MouseClick(object sender, MouseEventArgs e)
+        //{
+        //    try
+        //    {
+        //        Process.Start(ScriptsHelpAddress);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Debug.WriteLine(ex.Message);
+        //    }
+        //}
 
         private void scriptsHelpPictureBox_MouseLeave(object sender, EventArgs e)
         {
@@ -1059,17 +1059,17 @@ namespace Ellanet.Forms
             OnHookKeyStatusChanged(this, eventArgs);
         }
 
-        private void helpPictureBox_MouseClick(object sender, MouseEventArgs e)
-        {
-            try
-            {
-                Process.Start(HelpAddress);
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
-            }
-        }
+        //private void helpPictureBox_MouseClick(object sender, MouseEventArgs e)
+        //{
+        //    try
+        //    {
+        //        Process.Start(HelpAddress);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Debug.WriteLine(ex.Message);
+        //    }
+        //}
 
         private void helpPictureBox_MouseLeave(object sender, EventArgs e)
         {

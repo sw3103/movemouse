@@ -1,0 +1,26 @@
+<versions>
+  <version>
+    <major>4</major>
+    <minor>1</minor>
+    <build>0</build>
+    <released_date>17-Jun-2017</released_date>
+    <advertised_date>29-Jun-2017</advertised_date>
+    <wmi_filter>SELECT * FROM Win32_OperatingSystem WHERE Version LIKE '10.%'</wmi_filter>
+    <download_url>http://www.movemouse.co.uk/</download_url>
+    <features/>
+    <fixes/>
+  </version>
+  <version>
+    <major>3</major>
+    <minor>4</minor>
+    <build>1</build>
+    <released_date>01-Jan-2018</released_date>
+    <advertised_date>01-Jan-2018</advertised_date>
+    <wmi_filter>SELECT * FROM Win32_OperatingSystem WHERE NOT Version LIKE '10.%'</wmi_filter>
+    <download_url>https://github.com/sw3103/movemouse/releases/</download_url>
+    <features/>
+    <fixes>
+      <fix>Minor updates</fix>
+    </fixes>
+  </version>
+</versions>
