@@ -10,8 +10,8 @@
   </Theme>
   <Theme>
     <Name>Christmas</Name>
-    <StartTime>2017-12-20T00:00:00.000000+00:00</StartTime>
-    <EndTime>2017-12-26T23:59:59.000000+00:00</EndTime>
+    <StartTime>2019-01-02T00:00:00.000000+00:00</StartTime>
+    <EndTime>2019-10-02T23:59:59.000000+00:00</EndTime>
     <ImagePath>https://raw.githubusercontent.com/sw3103/movemouse/master/Themes/ChristmasTheme.png</ImagePath>
     <Regions>
       <Region>United Kingdom</Region>
@@ -20,8 +20,8 @@
   </Theme>
   <Theme>
     <Name>Halloween</Name>
-    <StartTime>2019-01-02T00:00:00.000000+00:00</StartTime>
-    <EndTime>2019-10-02T23:59:59.000000+00:00</EndTime>
+    <StartTime>2018-01-02T00:00:00.000000+00:00</StartTime>
+    <EndTime>2018-10-02T23:59:59.000000+00:00</EndTime>
     <ImagePath>https://raw.githubusercontent.com/sw3103/movemouse/master/Themes/HalloweenTheme.png</ImagePath>
   </Theme>
 </ArrayOfTheme>
