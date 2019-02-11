@@ -1,23 +1,23 @@
 <ArrayOfTheme>
   <Theme>
     <Name>US Independence Day</Name>
-    <StartTime>2017-07-04T00:00:00.000000+00:00</StartTime>
-    <EndTime>2017-07-04T23:59:59.000000+00:00</EndTime>
-    <ImagePath>https://sites.google.com/a/windandkite.co.uk/movemouse/themes/UsIndependenceTheme.png</ImagePath>
+    <StartTime>2019-07-04T00:00:00.000000+00:00</StartTime>
+    <EndTime>2019-07-04T23:59:59.000000+00:00</EndTime>
+    <ImagePath>https://raw.githubusercontent.com/sw3103/movemouse/master/Themes/UsIndependenceTheme.png</ImagePath>
     <Regions>
       <Region>United States</Region>
     </Regions>
   </Theme>
   <Theme>
     <Name>Christmas</Name>
-    <StartTime>2017-12-20T00:00:00.000000+00:00</StartTime>
-    <EndTime>2017-12-26T23:59:59.000000+00:00</EndTime>
-    <ImagePath>https://sites.google.com/a/windandkite.co.uk/movemouse/themes/ChristmasTheme.png</ImagePath>
+    <StartTime>2019-12-20T00:00:00.000000+00:00</StartTime>
+    <EndTime>2019-12-26T23:59:59.000000+00:00</EndTime>
+    <ImagePath>https://raw.githubusercontent.com/sw3103/movemouse/master/Themes/ChristmasTheme.png</ImagePath>
   </Theme>
   <Theme>
     <Name>Halloween</Name>
-    <StartTime>2017-10-31T00:00:00.000000+00:00</StartTime>
-    <EndTime>2017-10-31T23:59:59.000000+00:00</EndTime>
-    <ImagePath>https://sites.google.com/a/windandkite.co.uk/movemouse/themes/HalloweenTheme.png</ImagePath>
+    <StartTime>2019-10-30T00:00:00.000000+00:00</StartTime>
+    <EndTime>2019-10-31T23:59:59.000000+00:00</EndTime>
+    <ImagePath>https://raw.githubusercontent.com/sw3103/movemouse/master/Themes/HalloweenTheme.png</ImagePath>
   </Theme>
 </ArrayOfTheme>
