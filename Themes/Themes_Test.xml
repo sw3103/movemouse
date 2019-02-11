@@ -3,7 +3,7 @@
     <Name>US Independence Day</Name>
     <StartTime>2017-07-04T00:00:00.000000+00:00</StartTime>
     <EndTime>2017-07-04T23:59:59.000000+00:00</EndTime>
-    <ImagePath>https://raw.githubusercontent.com/sw3103/movemouse/master/Themes//UsIndependenceTheme.png</ImagePath>
+    <ImagePath>https://raw.githubusercontent.com/sw3103/movemouse/master/Themes/UsIndependenceTheme.png</ImagePath>
     <Regions>
       <Region>United States</Region>
     </Regions>
@@ -12,7 +12,7 @@
     <Name>Christmas</Name>
     <StartTime>2017-12-20T00:00:00.000000+00:00</StartTime>
     <EndTime>2017-12-26T23:59:59.000000+00:00</EndTime>
-    <ImagePath>https://raw.githubusercontent.com/sw3103/movemouse/master/Themes//ChristmasTheme.png</ImagePath>
+    <ImagePath>https://raw.githubusercontent.com/sw3103/movemouse/master/Themes/ChristmasTheme.png</ImagePath>
     <Regions>
       <Region>United Kingdom</Region>
       <Region>United States</Region>
@@ -22,6 +22,6 @@
     <Name>Halloween</Name>
     <StartTime>2019-01-02T00:00:00.000000+00:00</StartTime>
     <EndTime>2019-10-02T23:59:59.000000+00:00</EndTime>
-    <ImagePath>https://raw.githubusercontent.com/sw3103/movemouse/master/Themes//HalloweenTheme.png</ImagePath>
+    <ImagePath>https://raw.githubusercontent.com/sw3103/movemouse/master/Themes/HalloweenTheme.png</ImagePath>
   </Theme>
 </ArrayOfTheme>
