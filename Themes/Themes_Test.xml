@@ -19,7 +19,8 @@
     <StartTime>2019-10-30T00:00:00.000000+00:00</StartTime>
     <EndTime>2019-10-31T23:59:59.000000+00:00</EndTime>
     <ImagePath>https://raw.githubusercontent.com/sw3103/movemouse/master/Themes/HalloweenTheme.png</ImagePath>
-  </Theme>  <Theme>
+  </Theme>
+  <Theme>
     <Name>St David's Day</Name>
     <StartTime>2019-02-01T00:00:00.000000+00:00</StartTime>
     <EndTime>2019-03-02T23:59:59.000000+00:00</EndTime>
