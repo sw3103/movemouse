@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Ellanet</RootNamespace>
     <AssemblyName>Move Mouse</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <StartupObject>
     </StartupObject>
@@ -24,8 +24,6 @@
     <SccLocalPath>SAK</SccLocalPath>
     <SccAuxPath>SAK</SccAuxPath>
     <SccProvider>SAK</SccProvider>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -105,9 +103,6 @@
     <Compile Include="StaticCode.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="ComponentFactory.Krypton.Toolkit, Version=4.4.1.0, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e, processorArchitecture=MSIL">
-      <HintPath>..\packages\KryptonWinFormControls.4.4.1.0\lib\net40\ComponentFactory.Krypton.Toolkit.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
@@ -136,7 +131,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="packages.config" />
     <None Include="Resources\Mouse_Image.png" />
   </ItemGroup>
   <ItemGroup>
@@ -155,10 +149,6 @@
     <None Include="Resources\ScriptEditor_Icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Twitter_Dark_64x64.png" />
-    <None Include="Resources\ScriptAction_Dark_128x128.png" />
-    <None Include="Resources\Refresh_Dark_64x64.png" />
-    <None Include="Resources\PayPal_Dark_64x64.png" />
     <None Include="Resources\Mouse-Stop.ico" />
     <None Include="Resources\Mouse-Play.ico" />
     <None Include="Resources\Mouse-Pause.ico" />
@@ -167,11 +157,6 @@
     <None Include="Resources\Mice\FingerMouse01.jpg" />
     <None Include="Resources\EasterEgg.png" />
     <None Include="Resources\codeplex.png" />
-    <Content Include="FodyWeavers.xml" />
-    <None Include="Resources\FileOpen_Dark_64x64.png" />
-    <None Include="Resources\Help_Dark_64x64.png" />
-    <None Include="Resources\Home_Dark_64x64.png" />
-    <None Include="Resources\Mail_Dark_64x64.png" />
     <Content Include="Resources\Mice\Bernard01.jpg" />
     <Content Include="Resources\Mice\Bianca01.jpg" />
     <Content Include="Resources\Mice\Brain01.jpg" />
@@ -197,13 +182,4 @@
     <Content Include="Resources\Mice\StuartLittle01.jpg" />
     <Content Include="Resources\Mice\Timothy01.JPG" />
   </ItemGroup>
-  <Import Project="..\packages\Costura.Fody.3.1.0\build\Costura.Fody.targets" Condition="Exists('..\packages\Costura.Fody.3.1.0\build\Costura.Fody.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Costura.Fody.3.1.0\build\Costura.Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Costura.Fody.3.1.0\build\Costura.Fody.targets'))" />
-    <Error Condition="!Exists('..\packages\Fody.3.1.3\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.3.1.3\build\Fody.targets'))" />
-  </Target>
-  <Import Project="..\packages\Fody.3.1.3\build\Fody.targets" Condition="Exists('..\packages\Fody.3.1.3\build\Fody.targets')" />
 </Project>

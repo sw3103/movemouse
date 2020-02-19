@@ -15,12 +15,8 @@ namespace Ellanet.Forms
         private const int BalloonTipTimeout = 30000;
         //private const string DownloadsUrl = "http://movemouse.codeplex.com/releases/";
 
-        // ReSharper disable InconsistentNaming
-
         private const int WH_KEYBOARD_LL = 13;
         private const int WM_KEYDOWN = 0x0100;
-
-        // ReSharper restore InconsistentNaming
 
         private readonly NotifyIcon _sysTrayIcon;
         private MouseForm _moveMouse;
@@ -345,7 +341,7 @@ namespace Ellanet.Forms
             {
                 using (Graphics g = CreateGraphics())
                 {
-                    return (int) g.DpiX;
+                    return (int)g.DpiX;
                 }
             }
             catch (Exception ex)
@@ -376,13 +372,13 @@ namespace Ellanet.Forms
         {
             try
             {
-                if ((nCode >= 0) && (wParam == (IntPtr) WM_KEYDOWN))
+                if ((nCode >= 0) && (wParam == (IntPtr)WM_KEYDOWN))
                 {
                     int vkCode = Marshal.ReadInt32(lParam);
 
-                    if ((_hookKey == (Keys) vkCode) && ((Keys.Control | Keys.Alt) == ModifierKeys))
+                    if ((_hookKey == (Keys)vkCode) && ((Keys.Control | Keys.Alt) == ModifierKeys))
                     {
-                        Debug.WriteLine((Keys) vkCode);
+                        Debug.WriteLine((Keys)vkCode);
                         ShowMoveMouse(true);
                         _moveMouse.StartStopToggle();
                     }

@@ -14,22 +14,17 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
-using ComponentFactory.Krypton.Toolkit;
-
-#pragma warning disable 414
 
 namespace Ellanet.Forms
 {
-    public partial class MouseForm : KryptonForm
+    public partial class MouseForm : Form
     {
         private const int TraceSeconds = 5;
-
         private const string MoveMouseXmlName = "Move Mouse.xml";
-
         //private const string HomeAddress = "http://movemouse.codeplex.com/";
         private const string ContactAddress = "mailto:contact@movemouse.co.uk?subject=Move%20Mouse%20Feedback";
-        //private const string HelpAddress = "http://movemouse.codeplex.com/documentation/";
-        //private const string ScriptsHelpAddress = "https://movemouse.codeplex.com/wikipage?title=Custom%20Scripts";
+        private const string HelpAddress = "http://www.movemouse.co.uk";
+        private const string ScriptsHelpAddress = "https://sites.google.com/a/windandkite.co.uk/movemouse/help/settings/actions/powershell-script/snippets";
         private const string PayPalAddress = "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=QZTWHD9CRW5XN";
         private const string UpdateXmlUrl = "https://raw.githubusercontent.com/sw3103/movemouse/master/Update_3x.xml";
         private const string MiceResourceUrlPrefix = "https://raw.githubusercontent.com/sw3103/movemouse/master/Mice/";
@@ -69,8 +64,6 @@ namespace Ellanet.Forms
 
         private delegate void ButtonPerformClickDelegate(ref Button b);
 
-        private delegate void KryptonButtonPerformClickDelegate(ref KryptonButton kb);
-
         private delegate object GetComboBoxSelectedItemDelegate(ref ComboBox cb);
 
         private delegate int GetComboBoxSelectedIndexDelegate(ref ComboBox cb);
@@ -87,7 +80,7 @@ namespace Ellanet.Forms
 
         private delegate string GetButtonTextDelegate(ref Button b);
 
-        private delegate bool GetCheckBoxCheckedDelegate(ref KryptonCheckBox cb);
+        private delegate bool GetCheckBoxCheckedDelegate(ref CheckBox cb);
 
         private delegate void AddComboBoxItemDelegate(ref ComboBox cb, string item, bool selected);
 
@@ -128,11 +121,6 @@ namespace Ellanet.Forms
         public event MoveMouseStoppedHandler MoveMouseStopped;
 
         public bool MinimiseToSystemTrayWarningShown { get; private set; }
-
-        // ReSharper disable UnusedMember.Global
-        // ReSharper disable UnusedMember.Local
-        // ReSharper disable InconsistentNaming
-        // ReSharper disable NotAccessedField.Local
 
         private enum Script
         {
@@ -188,9 +176,6 @@ namespace Ellanet.Forms
             ForceMinimize = 11
         }
 
-        // ReSharper restore UnusedMember.Global
-        // ReSharper restore UnusedMember.Local
-
         [StructLayout(LayoutKind.Sequential)]
         private struct LASTINPUTINFO
         {
@@ -216,8 +201,6 @@ namespace Ellanet.Forms
             public UIntPtr dwExtraInfo;
         }
 
-        // ReSharper disable MemberCanBePrivate.Local
-
         [Serializable]
         [StructLayout(LayoutKind.Sequential)]
         private struct WINDOWPLACEMENT
@@ -229,10 +212,6 @@ namespace Ellanet.Forms
             public readonly Point ptMaxPosition;
             public readonly Rectangle rcNormalPosition;
         }
-
-        // ReSharper restore MemberCanBePrivate.Local
-        // ReSharper restore NotAccessedField.Local
-        // ReSharper restore InconsistentNaming
 
         [DllImport("user32.dll")]
         private static extern void mouse_event(
@@ -284,13 +263,13 @@ namespace Ellanet.Forms
 
             if (screenSaverTimeout > 0)
             {
-                if ((decimal) (screenSaverTimeout / 2.0) > resumeNumericUpDown.Maximum)
+                if ((decimal)(screenSaverTimeout / 2.0) > resumeNumericUpDown.Maximum)
                 {
                     resumeNumericUpDown.Value = resumeNumericUpDown.Maximum;
                 }
                 else
                 {
-                    resumeNumericUpDown.Value = (decimal) (screenSaverTimeout / 2.0);
+                    resumeNumericUpDown.Value = (decimal)(screenSaverTimeout / 2.0);
                 }
             }
 
@@ -329,7 +308,7 @@ namespace Ellanet.Forms
             traceButton.Click += traceButton_Click;
             helpPictureBox.MouseEnter += helpPictureBox_MouseEnter;
             helpPictureBox.MouseLeave += helpPictureBox_MouseLeave;
-            //helpPictureBox.MouseClick += helpPictureBox_MouseClick;
+            helpPictureBox.MouseClick += helpPictureBox_MouseClick;
             contactPictureBox.MouseEnter += contactPictureBox_MouseEnter;
             contactPictureBox.MouseLeave += contactPictureBox_MouseLeave;
             contactPictureBox.MouseClick += contactPictureBox_MouseClick;
@@ -345,7 +324,7 @@ namespace Ellanet.Forms
             refreshButton.Click += refreshButton_Click;
             scriptsHelpPictureBox.MouseEnter += scriptsHelpPictureBox_MouseEnter;
             scriptsHelpPictureBox.MouseLeave += scriptsHelpPictureBox_MouseLeave;
-            //scriptsHelpPictureBox.MouseClick += scriptsHelpPictureBox_MouseClick;
+            scriptsHelpPictureBox.MouseClick += scriptsHelpPictureBox_MouseClick;
             addScheduleButton.Click += addScheduleButton_Click;
             editScheduleButton.Click += editScheduleButton_Click;
             removeScheduleButton.Click += removeScheduleButton_Click;
@@ -881,7 +860,7 @@ namespace Ellanet.Forms
 
                     if (TimeSpan.TryParse(lvi.SubItems[0].Text, out ts))
                     {
-                        switch ((ScheduleArrivedEventArgs.ScheduleAction) Enum.Parse(typeof(ScheduleArrivedEventArgs.ScheduleAction), lvi.SubItems[1].Text, true))
+                        switch ((ScheduleArrivedEventArgs.ScheduleAction)Enum.Parse(typeof(ScheduleArrivedEventArgs.ScheduleAction), lvi.SubItems[1].Text, true))
                         {
                             case ScheduleArrivedEventArgs.ScheduleAction.Start:
                                 _startSchedules.Add(ts);
@@ -895,17 +874,17 @@ namespace Ellanet.Forms
             }
         }
 
-        //private void scriptsHelpPictureBox_MouseClick(object sender, MouseEventArgs e)
-        //{
-        //    try
-        //    {
-        //        Process.Start(ScriptsHelpAddress);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Debug.WriteLine(ex.Message);
-        //    }
-        //}
+        private void scriptsHelpPictureBox_MouseClick(object sender, MouseEventArgs e)
+        {
+            try
+            {
+                Process.Start(ScriptsHelpAddress);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+        }
 
         private void scriptsHelpPictureBox_MouseLeave(object sender, EventArgs e)
         {
@@ -1052,24 +1031,24 @@ namespace Ellanet.Forms
 
             if (!String.IsNullOrEmpty(hookKey?.ToString()))
             {
-                key = (Keys) Enum.Parse(typeof(Keys), hookKey.ToString(), true);
+                key = (Keys)Enum.Parse(typeof(Keys), hookKey.ToString(), true);
             }
 
             var eventArgs = new HookKeyStatusChangedEventArgs(enabled, key);
             OnHookKeyStatusChanged(this, eventArgs);
         }
 
-        //private void helpPictureBox_MouseClick(object sender, MouseEventArgs e)
-        //{
-        //    try
-        //    {
-        //        Process.Start(HelpAddress);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Debug.WriteLine(ex.Message);
-        //    }
-        //}
+        private void helpPictureBox_MouseClick(object sender, MouseEventArgs e)
+        {
+            try
+            {
+                Process.Start(HelpAddress);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+        }
 
         private void helpPictureBox_MouseLeave(object sender, EventArgs e)
         {
@@ -1205,7 +1184,7 @@ namespace Ellanet.Forms
 
                         if ((nameNode != null) && (imageNameNode != null) && (toolTipNode != null))
                         {
-                            _celebrityMice.Add(new CelebrityMouse {Name = nameNode.InnerText, ImageName = imageNameNode.InnerText, ToolTip = toolTipNode.InnerText});
+                            _celebrityMice.Add(new CelebrityMouse { Name = nameNode.InnerText, ImageName = imageNameNode.InnerText, ToolTip = toolTipNode.InnerText });
                         }
                     }
                 }
@@ -1233,7 +1212,7 @@ namespace Ellanet.Forms
             {
                 SetNumericUpDownValue(ref xNumericUpDown, Cursor.Position.X);
                 SetNumericUpDownValue(ref yNumericUpDown, Cursor.Position.Y);
-                SetButtonText(ref traceButton, String.Format("{0:0.0}", _traceTimeComplete.Subtract(DateTime.Now).TotalSeconds));
+                SetButtonText(ref traceButton, String.Format("{0}", _traceTimeComplete.Subtract(DateTime.Now).TotalSeconds.ToString("0.0")));
                 Thread.Sleep(100);
             } while (_traceTimeComplete > DateTime.Now);
 
@@ -1431,18 +1410,6 @@ namespace Ellanet.Forms
             }
         }
 
-        private void KryptonButtonPerformClick(ref KryptonButton kb)
-        {
-            if (InvokeRequired)
-            {
-                Invoke(new KryptonButtonPerformClickDelegate(KryptonButtonPerformClick), kb);
-            }
-            else
-            {
-                kb.PerformClick();
-            }
-        }
-
         private object GetComboBoxSelectedItem(ref ComboBox cb)
         {
             if (InvokeRequired)
@@ -1457,7 +1424,7 @@ namespace Ellanet.Forms
         {
             if (InvokeRequired)
             {
-                return (int) Invoke(new GetComboBoxSelectedIndexDelegate(GetComboBoxSelectedIndex), cb);
+                return (int)Invoke(new GetComboBoxSelectedIndexDelegate(GetComboBoxSelectedIndex), cb);
             }
 
             return cb.SelectedIndex;
@@ -1519,7 +1486,7 @@ namespace Ellanet.Forms
             return b.Text;
         }
 
-        private bool GetCheckBoxChecked(ref KryptonCheckBox cb)
+        private bool GetCheckBoxChecked(ref CheckBox cb)
         {
             if (InvokeRequired)
             {
@@ -1627,9 +1594,7 @@ namespace Ellanet.Forms
 
         private int GetScreenSaverTimeout()
         {
-            // ReSharper disable InconsistentNaming
             const int SPI_GETSCREENSAVERTIMEOUT = 14;
-            // ReSharper restore InconsistentNaming
             int value = 0;
             SystemParametersInfo(SPI_GETSCREENSAVERTIMEOUT, 0, ref value, 0);
             return value;
@@ -2245,8 +2210,8 @@ namespace Ellanet.Forms
         {
             if (GetCheckBoxChecked(ref clickMouseCheckBox))
             {
-                mouse_event((int) MouseEventFlags.LEFTDOWN, 0, 0, 0, 0);
-                mouse_event((int) MouseEventFlags.LEFTUP, 0, 0, 0, 0);
+                mouse_event((int)MouseEventFlags.LEFTDOWN, 0, 0, 0, 0);
+                mouse_event((int)MouseEventFlags.LEFTUP, 0, 0, 0, 0);
             }
         }
 
@@ -2431,7 +2396,7 @@ namespace Ellanet.Forms
 
             if (executionPolicy != null)
             {
-                return (PowerShellExecutionPolicy) Enum.Parse(typeof(PowerShellExecutionPolicy), executionPolicy.ToString(), true);
+                return (PowerShellExecutionPolicy)Enum.Parse(typeof(PowerShellExecutionPolicy), executionPolicy.ToString(), true);
             }
 
             return PowerShellExecutionPolicy.Restricted;
