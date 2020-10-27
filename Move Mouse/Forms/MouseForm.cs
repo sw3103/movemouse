@@ -70,6 +70,10 @@ namespace Ellanet.Forms
 
         private delegate object GetComboBoxTagDelegate(ref ComboBox cb);
 
+        private delegate int GetComboBoxItemsCountDelegate(ref ComboBox cb);
+
+        private delegate object GetComboBoxItemDelegate(ref ComboBox cb, int index);
+
         private delegate void SetNumericUpDownValueDelegate(ref NumericUpDown nud, int value);
 
         private delegate void SetButtonTextDelegate(ref Button b, string text);
@@ -276,6 +280,7 @@ namespace Ellanet.Forms
             scriptEditorLabel.Text = _scriptEditor;
             keystrokeCheckBox.CheckedChanged += keystrokeCheckBox_CheckedChanged;
             appActivateCheckBox.CheckedChanged += appActivateCheckBox_CheckedChanged;
+            appActivateAppCycle.CheckedChanged += appActivateAppCycle_CheckedChanged;
             staticPositionCheckBox.CheckedChanged += startPositionCheckBox_CheckedChanged;
             resumeCheckBox.CheckedChanged += resumeCheckBox_CheckedChanged;
             launchAtLogonCheckBox.CheckedChanged += launchAtLogonCheckBox_CheckedChanged;
@@ -1068,8 +1073,17 @@ namespace Ellanet.Forms
 
         private void appActivateCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            processComboBox.Enabled = appActivateCheckBox.Checked;
-            refreshButton.Enabled = appActivateCheckBox.Checked;
+            if (!appActivateAppCycle.Checked)
+            {
+                processComboBox.Enabled = appActivateCheckBox.Checked;
+                refreshButton.Enabled = appActivateCheckBox.Checked;
+            }
+        }
+
+        private void appActivateAppCycle_CheckedChanged(object sender, EventArgs e)
+        {
+            processComboBox.Enabled = false;
+            refreshButton.Enabled = false;
         }
 
         private void ListOpenWindows(object stateInfo)
@@ -1428,6 +1442,26 @@ namespace Ellanet.Forms
             }
 
             return cb.SelectedIndex;
+        }
+
+        private int GetComboBoxItemsCount(ref ComboBox cb)
+        {
+            if (InvokeRequired)
+            {
+                return (int)Invoke(new GetComboBoxItemsCountDelegate(GetComboBoxItemsCount), cb);
+            }
+
+            return cb.Items.Count;
+        }
+
+        private object GetComboBoxItem(ref ComboBox cb, int index)
+        {
+            if (InvokeRequired)
+            {
+                return (int)Invoke(new GetComboBoxItemDelegate(GetComboBoxItem), cb);
+            }
+
+            return cb.Items[index];
         }
 
         private void SetNumericUpDownValue(ref NumericUpDown nud, int value)
@@ -1830,6 +1864,8 @@ namespace Ellanet.Forms
                             processComboBox.Tag = ReadSingleNodeInnerTextAsString(ref settingsXmlDoc, "settings/activate_application_title");
                         }
 
+                        appActivateAppCycle.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/cycle_applications");
+
                         _lastUpdateCheck = ReadSingleNodeInnerTextAsDateTime(ref settingsXmlDoc, "settings/last_update_check");
                         MinimiseToSystemTrayWarningShown = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/system_tray_warning_shown");
                         executeStartScriptCheckBox.Checked = ReadSingleNodeInnerTextAsBoolean(ref settingsXmlDoc, "settings/execute_start_script");
@@ -1940,7 +1976,7 @@ namespace Ellanet.Forms
             try
             {
                 var settingsXmlDoc = new XmlDocument();
-                settingsXmlDoc.LoadXml("<settings><second_delay /><move_mouse_pointer /><stealth_mode /><enable_static_position /><x_static_position /><y_static_position /><click_left_mouse_button /><send_keystroke /><keystroke /><pause_when_mouse_moved /><automatically_resume /><resume_seconds /><disable_on_battery /><enable_hotkey /><hotkey /><automatically_start_on_launch /><automatically_launch_on_logon /><minimise_on_pause /><minimise_on_start /><minimise_to_system_tray /><activate_application /><activate_application_title /><last_update_check /><system_tray_warning_shown /><execute_start_script /><execute_interval_script /><execute_pause_script /><show_script_execution /><script_language /><script_editor /><schedules /><blackouts /></settings>");
+                settingsXmlDoc.LoadXml("<settings><second_delay /><move_mouse_pointer /><stealth_mode /><enable_static_position /><x_static_position /><y_static_position /><click_left_mouse_button /><send_keystroke /><keystroke /><pause_when_mouse_moved /><automatically_resume /><resume_seconds /><disable_on_battery /><enable_hotkey /><hotkey /><automatically_start_on_launch /><automatically_launch_on_logon /><minimise_on_pause /><minimise_on_start /><minimise_to_system_tray /><activate_application /><activate_application_title /><cycle_applications /><last_update_check /><system_tray_warning_shown /><execute_start_script /><execute_interval_script /><execute_pause_script /><show_script_execution /><script_language /><script_editor /><schedules /><blackouts /></settings>");
                 WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/second_delay", Convert.ToDecimal(delayNumericUpDown.Value).ToString(CultureInfo.InvariantCulture));
                 WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/move_mouse_pointer", moveMouseCheckBox.Checked.ToString());
                 WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/stealth_mode", stealthCheckBox.Checked.ToString());
@@ -1963,6 +1999,7 @@ namespace Ellanet.Forms
                 WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/minimise_to_system_tray", minimiseToSystemTrayCheckBox.Checked.ToString());
                 WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/activate_application", appActivateCheckBox.Checked.ToString());
                 WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/activate_application_title", processComboBox.SelectedItem?.ToString() ?? String.Empty);
+                WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/cycle_applications", appActivateAppCycle.Checked.ToString());
                 WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/last_update_check", _lastUpdateCheck.ToString("yyyy-MMM-dd HH:mm:ss"));
                 WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/system_tray_warning_shown", "True");
                 WriteSingleNodeInnerText(ref settingsXmlDoc, "settings/execute_start_script", executeStartScriptCheckBox.Checked.ToString());
@@ -2177,6 +2214,8 @@ namespace Ellanet.Forms
                 if (_mouseTimerTicks > Convert.ToInt32(delayNumericUpDown.Value))
                 {
                     ReadSettings();
+                    ThreadPool.QueueUserWorkItem(ListOpenWindows);
+                    CycleApplications();
                     LaunchScript(Script.Interval);
                     ShowCelebrityMouse(_easterEggActive);
                     SendKeystroke();
@@ -2303,6 +2342,38 @@ namespace Ellanet.Forms
                         }
 
                         Interaction.AppActivate(GetComboBoxSelectedItem(ref processComboBox).ToString());
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.Message);
+                }
+            }
+        }
+
+        private void CycleApplications()
+        {
+            if (GetCheckBoxChecked(ref appActivateCheckBox) && (GetComboBoxItemsCount(ref processComboBox) > 0))
+            {
+                try
+                {
+                    for (int i = 0; i < GetComboBoxItemsCount(ref processComboBox); i++)
+                    {
+                        object processName = GetComboBoxItem(ref processComboBox, i);
+
+                        IntPtr handle = FindWindow(null, processName.ToString());
+
+                        if (handle != IntPtr.Zero)
+                        {
+                            if (IsWindowMinimised(handle))
+                            {
+                                ShowWindow(handle, ShowWindowCommands.Restore);
+                            }
+
+                            Interaction.AppActivate(processName.ToString());
+                        }
+
+                        Thread.Sleep(3000);
                     }
                 }
                 catch (Exception ex)
