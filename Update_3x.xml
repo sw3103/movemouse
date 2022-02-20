@@ -1,40 +1,15 @@
 <versions>
-  <!--<version>
+  <version>
     <major>4</major>
-    <minor>1</minor>
+    <minor>13</minor>
     <build>0</build>
-    <released_date>17-Jun-2017</released_date>
-    <advertised_date>29-Jun-2017</advertised_date>
-    <wmi_filter>SELECT * FROM Win32_OperatingSystem WHERE Version LIKE '10.%'</wmi_filter>
-    <download_url>http://www.movemouse.co.uk/</download_url>
-    <features/>
-    <fixes/>
-  </version>
-  <version>
-    <major>3</major>
-    <minor>5</minor>
-    <build>0</build>
-    <released_date>01-Jan-2018</released_date>
-    <advertised_date>01-Jan-2018</advertised_date>
-    <wmi_filter>SELECT * FROM Win32_OperatingSystem WHERE NOT Version LIKE '10.%'</wmi_filter>
-    <download_url>https://github.com/sw3103/movemouse/releases/</download_url>
-    <features/>
-    <fixes>
-      <fix>Minor UI updates</fix>
-      <fix>Refactored for GitHub hosting</fix>
-    </fixes>
-  </version>-->
-  <version>
-    <major>3</major>
-    <minor>6</minor>
-    <build>0</build>
-    <released_date>19-Feb-2020</released_date>
-    <advertised_date>19-Feb-2020</advertised_date>
+    <released_date>20-Feb-2022</released_date>
+    <advertised_date>20-Feb-2022</advertised_date>
     <wmi_filter>SELECT * FROM Win32_OperatingSystem</wmi_filter>
-    <download_url>https://github.com/sw3103/movemouse/releases/</download_url>
+    <download_url>https://github.com/sw3103/movemouse/releases/tag/v4.13.0</download_url>
     <features/>
     <fixes>
-      <fix>Removed Krypton WinForm components that were causing instability issues</fix>
+      <fix>Now the version that was previously only available on the Microsoft Store is downloadable on GitHub</fix>
     </fixes>
   </version>
 </versions>

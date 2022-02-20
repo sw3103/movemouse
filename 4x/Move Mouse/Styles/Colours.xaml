@@ -1,0 +1,26 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Color x:Key="StandardLightControlColor">#9BB9E3</Color>
+    <Color x:Key="StandardDarkControlColor">#437CAF</Color>
+    <Color x:Key="StandardLightBackgroundColor">#23262D</Color>
+    <Color x:Key="StandardDarkBackgroundColor">#101216</Color>
+    <Color x:Key="StandardLightTextColor">White</Color>
+    <!--<Color x:Key="StandardLightBackgroundColor">White</Color>
+    <Color x:Key="StandardDarkBackgroundColor">White</Color>
+    <Color x:Key="StandardLightTextColor">#101216</Color>-->
+    <Color x:Key="StandardDisabledControlColor">#888888</Color>
+    <SolidColorBrush x:Key="StandardLightControlSolidColorBrush" Color="{StaticResource StandardLightControlColor}"/>
+    <SolidColorBrush x:Key="StandardDarkControlSolidColorBrush" Color="{StaticResource StandardDarkControlColor}"/>
+    <SolidColorBrush x:Key="StandardLightBackgroundSolidColorBrush" Color="{StaticResource StandardLightBackgroundColor}"/>
+    <SolidColorBrush x:Key="StandardDarkBackgroundSolidColorBrush" Color="{StaticResource StandardDarkBackgroundColor}"/>
+    <SolidColorBrush x:Key="StandardLightTextSolidColorBrush" Color="{StaticResource StandardLightTextColor}"/>
+    <SolidColorBrush x:Key="StandardDisabledControlColorBrush" Color="{StaticResource StandardDisabledControlColor}"/>
+    <LinearGradientBrush x:Key="StandardWindowBackground" StartPoint="0.5,0" EndPoint="0.5,1">
+        <GradientStop Color="{StaticResource StandardDarkBackgroundColor}" Offset="0.0"/>
+        <GradientStop Color="{StaticResource StandardLightBackgroundColor}" Offset="1.0"/>
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="StandardBorderBrush" StartPoint="0.5,0" EndPoint="0.5,1">
+        <GradientStop Color="{StaticResource StandardLightControlColor}" Offset="0.0"/>
+        <GradientStop Color="{StaticResource StandardDarkControlColor}" Offset="1.0"/>
+    </LinearGradientBrush>
+</ResourceDictionary>

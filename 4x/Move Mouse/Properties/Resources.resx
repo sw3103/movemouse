@@ -1,0 +1,325 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="ActionsAdd_Dark_64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ActionsAdd_Dark_64x64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ActionsAdd_Light_64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ActionsAdd_Light_64x64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ActionsRemove_Dark_64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ActionsRemove_Dark_64x64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ActionsRemove_Light_64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ActionsRemove_Light_64x64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Actions_Dark_64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Actions_Dark_64x64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Actions_Light_64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Actions_Light_64x64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Appearance_Dark_64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Appearance_Dark_64x64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Appearance_Light_64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Appearance_Light_64x64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Behaviour_Dark_64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Behaviour_Dark_64x64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Behaviour_Light_64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Behaviour_Light_64x64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ClickMouseAction_Dark_128x128" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ClickMouseAction_Dark_128x128.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ClickMouseAction_Light_128x128" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ClickMouseAction_Light_128x128.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Close_Dark_64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Close_Dark_64x64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Close_Light_64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Close_Light_64x64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CommandAction_Dark_128x128" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\CommandAction_Dark_128x128.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CommandAction_Light_128x128" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\CommandAction_Light_128x128.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Console_Dark_64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Console_Dark_64x64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Console_Light_64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Console_Light_64x64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Copyright_Dark_64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Copyright_Dark_64x64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Copyright_Light_64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Copyright_Light_64x64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DownArrow_Dark_64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DownArrow_Dark_64x64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DownArrow_Light_64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DownArrow_Light_64x64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="FileOpen_Dark_64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\FileOpen_Dark_64x64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="FileOpen_Light_64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\FileOpen_Light_64x64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="GitHub_Dark_64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\GitHub_Dark_64x64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="GitHub_Light_64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\GitHub_Light_64x64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Help_Dark_64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Help_Dark_64x64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Help_Light_64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Help_Light_64x64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Home_Dark_64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Home_Dark_64x64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Home_Light_64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Home_Light_64x64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Information_Dark_64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Information_Dark_64x64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Information_Light_64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Information_Light_64x64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Mail_Dark_64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Mail_Dark_64x64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Mail_Light_64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Mail_Light_64x64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Moon_Dark_128x128" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Moon_Dark_128x128.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Moon_Light_128x128" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Moon_Light_128x128.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Mouse" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Mouse.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MouseClosedEyes_128x128" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\MouseClosedEyes_128x128.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Mouse_SystemTray_Active" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Mouse-SystemTray-Active.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Mouse_SystemTray_Execute" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Mouse-SystemTray-Execute.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Mouse_SystemTray_Pause" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Mouse-SystemTray-Pause.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Mouse_SystemTray_Sleep" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Mouse-SystemTray-Sleep.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MoveMouseCursorAction_Dark_128x128" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\MoveMouseCursorAction_Dark_128x128.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MoveMouseCursorAction_Light_128x128" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\MoveMouseCursorAction_Light_128x128.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PayPal_Dark_64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PayPal_Dark_64x64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PayPal_Light_64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PayPal_Light_64x64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PositionMouseCursorAction_Dark_128x128" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PositionMouseCursorAction_Dark_128x128.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PositionMouseCursorAction_Light_128x128" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PositionMouseCursorAction_Light_128x128.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Refresh_Dark_64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Refresh_Dark_64x64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Refresh_Light_64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Refresh_Light_64x64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Schedules_Dark_64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Schedules_Dark_64x64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Schedules_Light_64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Schedules_Light_64x64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ScriptAction_Dark_128x128" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ScriptAction_Dark_128x128.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ScriptAction_Light_128x128" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ScriptAction_Light_128x128.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ScrollMouseWheelAction_Dark_128x128" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ScrollMouseWheelAction_Dark_128x128.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ScrollMouseWheelAction_Light_128x128" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ScrollMouseWheelAction_Light_128x128.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Settings_Dark_64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Settings_Dark_64x64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Settings_Light_64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Settings_Light_64x64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SleepAction_Dark_128x128" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SleepAction_Dark_128x128.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SleepAction_Light_128x128" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SleepAction_Light_128x128.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Twitter_Dark_64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Twitter_Dark_64x64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Twitter_Light_64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Twitter_Light_64x64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="UpArrow_Dark_64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\UpArrow_Dark_64x64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="UpArrow_Light_64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\UpArrow_Light_64x64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Volume_Dark_64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Volume_Dark_64x64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Volume_Light_64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Volume_Light_64x64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Warning_128x128" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Warning_128x128.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Windows_Title" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Windows_Title.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+</root>

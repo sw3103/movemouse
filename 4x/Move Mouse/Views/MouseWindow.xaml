@@ -1,0 +1,666 @@
+﻿<Window x:Class="ellabi.Views.MouseWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:tb="http://www.hardcodet.net/taskbar"
+        xmlns:converters="clr-namespace:ellabi.Converters"
+        xmlns:classes="clr-namespace:ellabi.Classes"
+        xmlns:ed="http://schemas.microsoft.com/expression/2010/drawing"
+        mc:Ignorable="d"
+        Height="600" Width="600" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize" WindowStyle="None" MouseDown="Window_OnMouseDown" ShowActivated="True" AllowsTransparency="True" Background="Transparent" Cursor="SizeAll" Closing="MouseWindow_OnClosing">
+    <Window.Resources>
+        <converters:ProgressToAngleConverter x:Key="ProgressConverter"/>
+        <converters:MouseStateIsSleepingConverter x:Key="MouseStateIsSleepingConverter"/>
+        <converters:StringToFileExistsConverter x:Key="StringToFileExistsConverter"/>
+        <Style TargetType="Image" x:Key="StandardImageStyle">
+            <Setter Property="RenderOptions.BitmapScalingMode" Value="HighQuality"/>
+        </Style>
+        <Style x:Key="FlyingButtonStyle" TargetType="Button" BasedOn="{StaticResource NoChromeButton}">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Height" Value="50"/>
+            <Setter Property="Width" Value="50"/>
+            <Setter Property="Margin" Value="-300,0,0,0"/>
+            <Setter Property="Opacity" Value="0.0"/>
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <RotateTransform CenterX="175" CenterY="25"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="Image" x:Key="FlyingImageStyle" BasedOn="{StaticResource StandardImageStyle}">
+            <Setter Property="Stretch" Value="Uniform"/>
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <RotateTransform CenterX="25" CenterY="25"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Storyboard x:Key="FlyingButtonAnimation1">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0.0" To="1.0" Duration="0:0:1.75"/>
+            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.Angle" From="0" To="414" Duration="0:0:1.75" AccelerationRatio="0.5" DecelerationRatio="0.5"/>
+        </Storyboard>
+        <Storyboard x:Key="FlyingImageAnimation1">
+            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.Angle" From="360" To="-54" Duration="0:0:1.75" AccelerationRatio="0.5" DecelerationRatio="0.5"/>
+        </Storyboard>
+        <Storyboard x:Key="FlyingButtonAnimation2">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0.0" To="1.0" Duration="0:0:1.6" BeginTime="0:0:0.15"/>
+            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.Angle" From="0" To="342" Duration="0:0:1.6" BeginTime="0:0:0.15" AccelerationRatio="0.5" DecelerationRatio="0.5"/>
+        </Storyboard>
+        <Storyboard x:Key="FlyingImageAnimation2">
+            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.Angle" From="360" To="18" Duration="0:0:1.6" BeginTime="0:0:0.15" AccelerationRatio="0.5" DecelerationRatio="0.5"/>
+        </Storyboard>
+        <Storyboard x:Key="FlyingButtonAnimation3">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0.0" To="1.0" Duration="0:0:1.45" BeginTime="0:0:0.3"/>
+            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.Angle" From="0" To="270" Duration="0:0:1.45" BeginTime="0:0:0.3" AccelerationRatio="0.5" DecelerationRatio="0.5"/>
+        </Storyboard>
+        <Storyboard x:Key="FlyingImageAnimation3">
+            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.Angle" From="360" To="90" Duration="0:0:1.45" BeginTime="0:0:0.3" AccelerationRatio="0.5" DecelerationRatio="0.5"/>
+        </Storyboard>
+        <Storyboard x:Key="FlyingButtonAnimation4">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0.0" To="1.0" Duration="0:0:1.3" BeginTime="0:0:0.45"/>
+            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.Angle" From="0" To="198" Duration="0:0:1.3" BeginTime="0:0:0.45" AccelerationRatio="0.5" DecelerationRatio="0.5"/>
+        </Storyboard>
+        <Storyboard x:Key="FlyingImageAnimation4">
+            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.Angle" From="360" To="162" Duration="0:0:1.3" BeginTime="0:0:0.45" AccelerationRatio="0.5" DecelerationRatio="0.5"/>
+        </Storyboard>
+        <Storyboard x:Key="FlyingButtonAnimation5">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0.0" To="1.0" Duration="0:0:1.15" BeginTime="0:0:0.6"/>
+            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.Angle" From="0" To="126" Duration="0:0:1.15" BeginTime="0:0:0.6" AccelerationRatio="0.5" DecelerationRatio="0.5"/>
+        </Storyboard>
+        <Storyboard x:Key="FlyingImageAnimation5">
+            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.Angle" From="360" To="234" Duration="0:0:1.15" BeginTime="0:0:0.6" AccelerationRatio="0.5" DecelerationRatio="0.5"/>
+        </Storyboard>
+        <Storyboard x:Key="InstantButtonAnimation1">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0.0" To="1.0" Duration="0:0:0"/>
+            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.Angle" From="0" To="414" Duration="0:0:0" AccelerationRatio="0.5" DecelerationRatio="0.5"/>
+        </Storyboard>
+        <Storyboard x:Key="InstantImageAnimation1">
+            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.Angle" From="360" To="-54" Duration="0:0:0" AccelerationRatio="0.5" DecelerationRatio="0.5"/>
+        </Storyboard>
+        <Storyboard x:Key="InstantButtonAnimation2">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0.0" To="1.0" Duration="0:0:0"/>
+            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.Angle" From="0" To="342" Duration="0:0:0" AccelerationRatio="0.5" DecelerationRatio="0.5"/>
+        </Storyboard>
+        <Storyboard x:Key="InstantImageAnimation2">
+            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.Angle" From="360" To="18" Duration="0:0:0" AccelerationRatio="0.5" DecelerationRatio="0.5"/>
+        </Storyboard>
+        <Storyboard x:Key="InstantButtonAnimation3">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0.0" To="1.0" Duration="0:0:0"/>
+            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.Angle" From="0" To="270" Duration="0:0:0" AccelerationRatio="0.5" DecelerationRatio="0.5"/>
+        </Storyboard>
+        <Storyboard x:Key="InstantImageAnimation3">
+            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.Angle" From="360" To="90" Duration="0:0:0" AccelerationRatio="0.5" DecelerationRatio="0.5"/>
+        </Storyboard>
+        <Storyboard x:Key="InstantButtonAnimation4">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0.0" To="1.0" Duration="0:0:0"/>
+            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.Angle" From="0" To="198" Duration="0:0:0" AccelerationRatio="0.5" DecelerationRatio="0.5"/>
+        </Storyboard>
+        <Storyboard x:Key="InstantImageAnimation4">
+            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.Angle" From="360" To="162" Duration="0:0:0" AccelerationRatio="0.5" DecelerationRatio="0.5"/>
+        </Storyboard>
+        <Storyboard x:Key="InstantButtonAnimation5">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0.0" To="1.0" Duration="0:0:0"/>
+            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.Angle" From="0" To="126" Duration="0:0:0" AccelerationRatio="0.5" DecelerationRatio="0.5"/>
+        </Storyboard>
+        <Storyboard x:Key="InstantImageAnimation5">
+            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.Angle" From="360" To="234" Duration="0:0:0" AccelerationRatio="0.5" DecelerationRatio="0.5"/>
+        </Storyboard>
+        <!--<Storyboard x:Key="ButtonFadeInAnimation">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0.0" To="1.0" Duration="0:0:0.5"/>
+        </Storyboard>-->
+        <Storyboard x:Key="ButtonFadeOutAnimation">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1.0" To="0.0" Duration="0:0:0.5"/>
+        </Storyboard>
+        <Storyboard x:Key="ButtonInstantFadeOutAnimation">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1.0" To="0.0" Duration="0:0:0"/>
+        </Storyboard>
+        <Style TargetType="ProgressBar" x:Key="CircularProgressBarStyle">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ProgressBar">
+                        <Grid>
+                            <Ellipse Fill="{StaticResource StandardWindowBackground}"/>
+                            <classes:Arc StrokeThickness="15">
+                                <classes:Arc.Style>
+                                    <Style TargetType="classes:Arc">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Path=CurrentState, NotifyOnTargetUpdated=True}" Value="Idle">
+                                                <Setter Property="Stroke" Value="{StaticResource StandardBorderBrush}"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Path=CurrentState, NotifyOnTargetUpdated=True}" Value="Running">
+                                                <Setter Property="Stroke">
+                                                    <Setter.Value>
+                                                        <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                                                            <GradientStop Color="LawnGreen" Offset="0.0"/>
+                                                            <GradientStop Color="Green" Offset="1.0"/>
+                                                        </LinearGradientBrush>
+                                                    </Setter.Value>
+                                                </Setter>
+                                                <!--<DataTrigger.EnterActions>
+                                                    <BeginStoryboard>
+                                                        <Storyboard x:Name="PulseStoryboard">
+                                                            <DoubleAnimation Storyboard.TargetProperty="StrokeThickness" From="20" To="15" Duration="0:0:0.5" AutoReverse="True" RepeatBehavior="Forever"/>
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </DataTrigger.EnterActions>-->
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Path=CurrentState, NotifyOnTargetUpdated=True}" Value="Executing">
+                                                <Setter Property="Stroke">
+                                                    <Setter.Value>
+                                                        <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                                                            <GradientStop Color="OrangeRed" Offset="0.0"/>
+                                                            <GradientStop Color="DarkRed" Offset="1.0"/>
+                                                        </LinearGradientBrush>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Path=CurrentState, NotifyOnTargetUpdated=True}" Value="Paused">
+                                                <Setter Property="Stroke">
+                                                    <Setter.Value>
+                                                        <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                                                            <GradientStop Color="#FFE93D" Offset="0.0"/>
+                                                            <GradientStop Color="#FFC200" Offset="1.0"/>
+                                                        </LinearGradientBrush>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Path=CurrentState, NotifyOnTargetUpdated=True}" Value="Sleeping">
+                                                <Setter Property="Stroke">
+                                                    <Setter.Value>
+                                                        <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                                                            <GradientStop Color="DarkSlateBlue" Offset="0.0"/>
+                                                            <GradientStop Color="Purple" Offset="1.0"/>
+                                                        </LinearGradientBrush>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </classes:Arc.Style>
+                                <classes:Arc.StartAngle>
+                                    <MultiBinding Converter="{StaticResource ProgressConverter}">
+                                        <Binding Path="Minimum" RelativeSource="{RelativeSource TemplatedParent}"/>
+                                        <Binding Path="." RelativeSource="{RelativeSource TemplatedParent}"/>
+                                    </MultiBinding>
+                                </classes:Arc.StartAngle>
+                                <classes:Arc.EndAngle>
+                                    <MultiBinding Converter="{StaticResource ProgressConverter}">
+                                        <Binding Path="Value" RelativeSource="{RelativeSource TemplatedParent}"/>
+                                        <Binding Path="." RelativeSource="{RelativeSource TemplatedParent}"/>
+                                    </MultiBinding>
+                                </classes:Arc.EndAngle>
+                            </classes:Arc>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <Window.Style>
+        <Style TargetType="Window">
+            <Setter Property="Title" Value="Move Mouse">
+                <!--<Setter.Value>
+                    <MultiBinding StringFormat="Move Mouse ({0})">
+                        <Binding Path="SettingsVm.Version" Mode="OneWay"/>
+                        <Binding Path="SettingsVm.HomePage" Mode="OneWay"/>
+                    </MultiBinding>
+                </Setter.Value>-->
+            </Setter>
+            <Setter Property="Topmost" Value="False"/>
+            <Setter Property="ShowInTaskbar" Value="False"/>
+            <Setter Property="Icon" Value="/Resources/Mouse.ico"/>
+            <Setter Property="Opacity" Value="0.0"/>
+            <Setter Property="Visibility" Value="Visible"/>
+            <Style.Triggers>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding Path=SettingsVm.Settings.HideMainWindow, NotifyOnTargetUpdated=True}" Value="False"/>
+                        <Condition Binding="{Binding Path=SettingsVm.Settings.TopmostWhenRunning, NotifyOnTargetUpdated=True}" Value="True"/>
+                        <Condition Binding="{Binding Path=CurrentState, NotifyOnTargetUpdated=True}" Value="Running"/>
+                    </MultiDataTrigger.Conditions>
+                    <Setter Property="Topmost" Value="True"/>
+                </MultiDataTrigger>
+                <!--todo This is slow for some reason-->
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding Path=SettingsVm.Settings.HideMainWindow, NotifyOnTargetUpdated=True}" Value="False"/>
+                        <Condition Binding="{Binding Path=SettingsVm.Settings.HideFromTaskbar, NotifyOnTargetUpdated=True}" Value="False"/>
+                    </MultiDataTrigger.Conditions>
+                    <Setter Property="ShowInTaskbar" Value="True"/>
+                </MultiDataTrigger>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding Path=SettingsVm.Settings.HideMainWindow, NotifyOnTargetUpdated=True}" Value="False"/>
+                        <Condition Binding="{Binding Path=SettingsVm.Settings.PreventScreenBurn, NotifyOnTargetUpdated=True}" Value="True"/>
+                        <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsMouseOver}" Value="False"/>
+                    </MultiDataTrigger.Conditions>
+                    <MultiDataTrigger.EnterActions>
+                        <BeginStoryboard Name="SlowMoveStoryboard">
+                            <Storyboard>
+                                <DoubleAnimation Storyboard.TargetProperty="(Window.Top)" By="10" AutoReverse="True" Duration="0:15:0" RepeatBehavior="Forever"/>
+                                <DoubleAnimation Storyboard.TargetProperty="(Window.Left)" By="20" AutoReverse="True" Duration="1:0:0" RepeatBehavior="Forever"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </MultiDataTrigger.EnterActions>
+                    <MultiDataTrigger.ExitActions>
+                        <StopStoryboard BeginStoryboardName="SlowMoveStoryboard"/>
+                    </MultiDataTrigger.ExitActions>
+                </MultiDataTrigger>
+                <DataTrigger Binding="{Binding Path=SettingsVm.Settings.HideMainWindow, NotifyOnTargetUpdated=True}" Value="False">
+                    <Setter Property="Opacity" Value="1.0"/>
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Path=SettingsVm.Settings.HideMainWindow, NotifyOnTargetUpdated=True, Mode=OneWay}" Value="True">
+                    <Setter Property="Visibility" Value="Hidden"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Path=SettingsVm.Settings.OverrideWindowTitle, NotifyOnTargetUpdated=True, Mode=OneWay}" Value="True">
+                    <Setter Property="Title" Value="{Binding Path=SettingsVm.Settings.WindowTitle, NotifyOnTargetUpdated=True}"/>
+                </DataTrigger>
+                <!--#region Moved to code to handle exceptions.-->
+                <!--<DataTrigger Binding="{Binding Path=CurrentState, NotifyOnTargetUpdated=True}" Value="Running">
+                    --><!--<Setter Property="Icon" Value="/Resources/Mouse-Play.ico"/>--><!--
+                    <Setter Property="TaskbarItemInfo">
+                        <Setter.Value>
+                            <TaskbarItemInfo ProgressValue="1" ProgressState="Normal"/>
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Path=CurrentState, NotifyOnTargetUpdated=True}" Value="Paused">
+                    --><!--<Setter Property="Icon" Value="/Resources/Mouse-Pause.ico"/>--><!--
+                    <Setter Property="TaskbarItemInfo">
+                        <Setter.Value>
+                            <TaskbarItemInfo ProgressValue="1" ProgressState="Paused"/>
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Path=CurrentState, NotifyOnTargetUpdated=True}" Value="Sleeping">
+                    <Setter Property="Icon" Value="/Resources/Mouse-Sleep.ico"/>
+                    <Setter Property="TaskbarItemInfo">
+                        <Setter.Value>
+                            <TaskbarItemInfo ProgressValue="1" ProgressState="Paused"/>
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Path=CurrentState, NotifyOnTargetUpdated=True}" Value="Executing">
+                    <Setter Property="TaskbarItemInfo">
+                        <Setter.Value>
+                            <TaskbarItemInfo ProgressValue="1" ProgressState="Error"/>
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>-->
+                <!--#endregion-->
+                <DataTrigger Binding="{Binding Path=SettingsVm.Settings.OverrideWindowTitle, NotifyOnTargetUpdated=True}" Value="Sleeping">
+                    <Setter Property="Icon" Value="/Resources/Mouse-Sleep.ico"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Style>
+    <Grid>
+        <Grid Width="200" Height="200" MouseEnter="MouseGrid_OnMouseEnter" MouseLeave="UIElement_OnMouseLeave">
+            <!--IconSource="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=Icon}"-->
+            <tb:TaskbarIcon Name="MouseTaskbarIcon" ToolTipText="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=Title}" PopupActivation="RightClick" DoubleClickCommand="{Binding Path=StartStopToggleCommand, NotifyOnTargetUpdated=True}" LeftClickCommand="{Binding Path=ShowMoveMouseCommand}">
+                <tb:TaskbarIcon.Style>
+                    <Style TargetType="tb:TaskbarIcon">
+                        <Setter Property="Visibility" Value="Hidden"/>
+                        <Style.Triggers>
+                            <!--<MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding Path=SettingsVm.Settings.HideSystemTrayIcon, NotifyOnTargetUpdated=True}" Value="False"/>
+                                    <Condition Binding="{Binding Path=SettingsVm.Settings.HideSystemTrayIcon, NotifyOnTargetUpdated=True}" Value="False"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </MultiDataTrigger>-->
+                            <DataTrigger Binding="{Binding Path=SettingsVm.Settings.HideSystemTrayIcon, NotifyOnTargetUpdated=True}" Value="False">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Path=ForceSystrayIconVisibility, NotifyOnTargetUpdated=True}" Value="True">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Path=CurrentState, NotifyOnTargetUpdated=True}" Value="Idle">
+                                <Setter Property="IconSource" Value="/Resources/Mouse.ico"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Path=CurrentState, NotifyOnTargetUpdated=True}" Value="Running">
+                                <Setter Property="IconSource" Value="/Resources/Mouse-SystemTray-Active.ico"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Path=CurrentState, NotifyOnTargetUpdated=True}" Value="Executing">
+                                <Setter Property="IconSource" Value="/Resources/Mouse-SystemTray-Execute.ico"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Path=CurrentState, NotifyOnTargetUpdated=True}" Value="Paused">
+                                <Setter Property="IconSource" Value="/Resources/Mouse-SystemTray-Pause.ico"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Path=CurrentState, NotifyOnTargetUpdated=True}" Value="Sleeping">
+                                <Setter Property="IconSource" Value="/Resources/Mouse-SystemTray-Sleep.ico"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </tb:TaskbarIcon.Style>
+                <tb:TaskbarIcon.TrayPopup>
+                    <Grid Background="{StaticResource StandardDarkBackgroundSolidColorBrush}" Width="323.5" Height="76">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <StackPanel.Resources>
+                                <Style TargetType="Button" BasedOn="{StaticResource NoChromeButton}">
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                                    <Setter Property="Cursor" Value="Hand"/>
+                                    <Setter Property="Width" Value="36"/>
+                                    <Setter Property="Height" Value="36"/>
+                                    <Setter Property="Margin" Value="7.5"/>
+                                </Style>
+                            </StackPanel.Resources>
+                            <Button Click="SettingsButton_OnClick">
+                                <Image>
+                                    <Image.Style>
+                                        <Style TargetType="Image" BasedOn="{StaticResource StandardImageStyle}">
+                                            <Setter Property="Source" Value="/Resources/Settings_Dark_64x64.png"/>
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="Source" Value="/Resources/Settings_Light_64x64.png"/>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Image.Style>
+                                </Image>
+                            </Button>
+                            <Button Click="HelpButton_OnClick">
+                                <Image>
+                                    <Image.Style>
+                                        <Style TargetType="Image" BasedOn="{StaticResource StandardImageStyle}">
+                                            <Setter Property="Source" Value="/Resources/Help_Dark_64x64.png"/>
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="Source" Value="/Resources/Help_Light_64x64.png"/>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Image.Style>
+                                </Image>
+                            </Button>
+                            <Button Click="PayPalButton_OnClick">
+                                <Image>
+                                    <Image.Style>
+                                        <Style TargetType="Image" BasedOn="{StaticResource StandardImageStyle}">
+                                            <Setter Property="Source" Value="/Resources/PayPal_Dark_64x64.png"/>
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="Source" Value="/Resources/PayPal_Light_64x64.png"/>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Image.Style>
+                                </Image>
+                            </Button>
+                            <Button Click="TwitterButton_OnClick">
+                                <Image>
+                                    <Image.Style>
+                                        <Style TargetType="Image" BasedOn="{StaticResource StandardImageStyle}">
+                                            <Setter Property="Source" Value="/Resources/Twitter_Dark_64x64.png"/>
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="Source" Value="/Resources/Twitter_Light_64x64.png"/>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Image.Style>
+                                </Image>
+                            </Button>
+                            <Button Click="HomeButton_OnClick">
+                                <Image>
+                                    <Image.Style>
+                                        <Style TargetType="Image" BasedOn="{StaticResource StandardImageStyle}">
+                                            <Setter Property="Source" Value="/Resources/Home_Dark_64x64.png"/>
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="Source" Value="/Resources/Home_Light_64x64.png"/>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Image.Style>
+                                </Image>
+                            </Button>
+                            <Button Click="CloseButton_OnClick">
+                                <Image>
+                                    <Image.Style>
+                                        <Style TargetType="Image" BasedOn="{StaticResource StandardImageStyle}">
+                                            <Setter Property="Source" Value="/Resources/Close_Dark_64x64.png"/>
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="Source" Value="/Resources/Close_Light_64x64.png"/>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Image.Style>
+                                </Image>
+                            </Button>
+                        </StackPanel>
+                        <Border VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0,0,0,0" BorderThickness="5" BorderBrush="{StaticResource StandardBorderBrush}"/>
+                    </Grid>
+                </tb:TaskbarIcon.TrayPopup>
+            </tb:TaskbarIcon>
+            <Viewbox>
+                <ProgressBar Name="CountDownProgressBar" Width="300" Height="300" RenderTransformOrigin="0.5,0.5" ValueChanged="CountDownProgressBar_ValueChanged">
+                    <ProgressBar.RenderTransform>
+                        <ScaleTransform ScaleX="-1"/>
+                    </ProgressBar.RenderTransform>
+                    <ProgressBar.Style>
+                        <Style TargetType="ProgressBar" BasedOn="{StaticResource CircularProgressBarStyle}">
+                            <Setter Property="Value" Value="100"/>
+                        </Style>
+                    </ProgressBar.Style>
+                </ProgressBar>
+            </Viewbox>
+            <Grid VerticalAlignment="Center" HorizontalAlignment="Center" Margin="35">
+                <Image Source="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=Icon}" Style="{StaticResource StandardImageStyle}"/>
+                <Image Source="/Resources/MouseClosedEyes_128x128.png">
+                    <Image.Style>
+                        <Style TargetType="Image" BasedOn="{StaticResource StandardImageStyle}">
+                            <Setter Property="Opacity" Value="0.0"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Path=CurrentState, NotifyOnTargetUpdated=True, Converter={StaticResource MouseStateIsSleepingConverter}}" Value="False">
+                                    <DataTrigger.EnterActions>
+                                        <BeginStoryboard Name="BlinkStoryBoard">
+                                            <Storyboard RepeatBehavior="Forever">
+                                                <DoubleAnimation Storyboard.TargetProperty="Opacity" To="1.0" Duration="0:0:0:0.05" BeginTime="0:0:0:7"/>
+                                                <DoubleAnimation Storyboard.TargetProperty="Opacity" To="0.0" Duration="0:0:0:0.05" BeginTime="0:0:0:7.15"/>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </DataTrigger.EnterActions>
+                                    <DataTrigger.ExitActions>
+                                        <StopStoryboard BeginStoryboardName="BlinkStoryBoard"/>
+                                    </DataTrigger.ExitActions>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Path=CurrentState, NotifyOnTargetUpdated=True}" Value="Sleeping">
+                                    <Setter Property="Opacity" Value="1.0"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Image.Style>
+                </Image>
+                <!-- todo Can't move window if theme image showing -->
+                <!--<Image Source="{Binding Path=ThemeImage, NotifyOnTargetUpdated=True}" Margin="-35"/>-->
+                <Button Command="{Binding Path=StartStopToggleCommand, NotifyOnTargetUpdated=True}" Style="{StaticResource NoChromeButton}" Cursor="Hand" PreviewMouseDown="MouseButton_OnPreviewMouseDown" FocusVisualStyle="{x:Null}"/>
+            </Grid>
+            <TextBlock Text="{Binding Path=CurrentState, NotifyOnTargetUpdated=True}" Foreground="{StaticResource StandardLightTextSolidColorBrush}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,20">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Visibility" Value="Visible"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Path=SettingsVm.Settings.ShowMoveMouseStatus, NotifyOnTargetUpdated=True}" Value="False">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+        </Grid>
+        <Button Name="FlyingTwitterButton" Style="{StaticResource FlyingButtonStyle}" MouseEnter="UIElement_OnMouseEnter" MouseLeave="UIElement_OnMouseLeave" Click="TwitterButton_OnClick">
+            <Image Name="FlyingTwitterImage">
+                <Image.Style>
+                    <Style TargetType="Image" BasedOn="{StaticResource FlyingImageStyle}">
+                        <Setter Property="Source" Value="/Resources/Twitter_Dark_64x64.png"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Source" Value="/Resources/Twitter_Light_64x64.png"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Image.Style>
+            </Image>
+        </Button>
+        <Button Name="FlyingSettingsButton" Style="{StaticResource FlyingButtonStyle}" MouseEnter="UIElement_OnMouseEnter" MouseLeave="UIElement_OnMouseLeave" Click="SettingsButton_OnClick">
+            <Image Name="FlyingSettingsImage">
+                <Image.Style>
+                    <Style TargetType="Image" BasedOn="{StaticResource FlyingImageStyle}">
+                        <Setter Property="Source" Value="/Resources/Settings_Dark_64x64.png"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Source" Value="/Resources/Settings_Light_64x64.png"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Image.Style>
+            </Image>
+        </Button>
+        <Button Name="FlyingCloseButton" Style="{StaticResource FlyingButtonStyle}" MouseEnter="UIElement_OnMouseEnter" MouseLeave="UIElement_OnMouseLeave" Click="CloseButton_OnClick">
+            <Image Name="FlyingCloseImage">
+                <Image.Style>
+                    <Style TargetType="Image" BasedOn="{StaticResource FlyingImageStyle}">
+                        <Setter Property="Source" Value="/Resources/Close_Dark_64x64.png"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Source" Value="/Resources/Close_Light_64x64.png"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Image.Style>
+            </Image>
+        </Button>
+        <Button Name="FlyingPayPalButton" Style="{StaticResource FlyingButtonStyle}" MouseEnter="UIElement_OnMouseEnter" MouseLeave="UIElement_OnMouseLeave" Click="PayPalButton_OnClick">
+            <Image Name="FlyingPayPalImage">
+                <Image.Style>
+                    <Style TargetType="Image" BasedOn="{StaticResource FlyingImageStyle}">
+                        <Setter Property="Source" Value="/Resources/PayPal_Dark_64x64.png"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Source" Value="/Resources/PayPal_Light_64x64.png"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Image.Style>
+            </Image>
+        </Button>
+        <!--<Button Name="FlyingContactButton" Style="{StaticResource FlyingButtonStyle}" MouseEnter="UIElement_OnMouseEnter" MouseLeave="UIElement_OnMouseLeave" Click="ContactButton_OnClick">
+            <Image Name="FlyingContactImage">
+                <Image.Style>
+                    <Style TargetType="Image" BasedOn="{StaticResource FlyingImageStyle}">
+                        <Setter Property="Source" Value="/Resources/Mail_Dark_64x64.png"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Source" Value="/Resources/Mail_Light_64x64.png"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Image.Style>
+            </Image>
+        </Button>-->
+        <!--<Button Name="FlyingHomeButton" Style="{StaticResource FlyingButtonStyle}" MouseEnter="UIElement_OnMouseEnter" MouseLeave="UIElement_OnMouseLeave" Click="HomeButton_OnClick">
+            <Image Name="FlyingHomeImage">
+                <Image.Style>
+                    <Style TargetType="Image" BasedOn="{StaticResource FlyingImageStyle}">
+                        <Setter Property="Source" Value="/Resources/Home_Dark_64x64.png"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Source" Value="/Resources/Home_Light_64x64.png"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Image.Style>
+            </Image>
+        </Button>-->
+        <Button Name="FlyingHelpButton" Style="{StaticResource FlyingButtonStyle}" MouseEnter="UIElement_OnMouseEnter" MouseLeave="UIElement_OnMouseLeave" Click="HelpButton_OnClick">
+            <Image Name="FlyingHomeImage">
+                <Image.Style>
+                    <Style TargetType="Image" BasedOn="{StaticResource FlyingImageStyle}">
+                        <Setter Property="Source" Value="/Resources/Help_Dark_64x64.png"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Source" Value="/Resources/Help_Light_64x64.png"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Image.Style>
+            </Image>
+        </Button>
+        <ed:Callout AnchorPoint="-0.171,1.118" CalloutStyle="RoundedRectangle" Fill="{StaticResource StandardWindowBackground}" VerticalAlignment="Bottom" FontSize="14" Height="58" Margin="334,0,95,311" Stroke="{StaticResource StandardLightTextSolidColorBrush}" StrokeThickness="3" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Cursor="Hand" MouseDown="UpdateCallout_OnMouseDown">
+            <ed:Callout.Content>
+                <StackPanel>
+                    <TextBlock Text="Click here to download a new version of me" Foreground="{StaticResource StandardLightTextSolidColorBrush}" Background="Transparent" HorizontalAlignment="Center" TextWrapping="Wrap" Margin="10"/>
+                </StackPanel>
+            </ed:Callout.Content>
+            <ed:Callout.Style>
+                <Style TargetType="ed:Callout">
+                    <Setter Property="Opacity" Value="0.0"/>
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding Path=UpdateAvailable, NotifyOnTargetUpdated=True}" Value="True"/>
+                                <Condition Binding="{Binding Path=SettingsVm.Settings.MoveMouseHasBeenClicked, NotifyOnTargetUpdated=True}" Value="True"/>
+                            </MultiDataTrigger.Conditions>
+                            <MultiDataTrigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0.0" To="1.0" Duration="0:0:1"/>
+                                        <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1.0" To="0.0" Duration="0:0:1" BeginTime="0:0:11"/>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty = "Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Visible}"/>
+                                            <DiscreteObjectKeyFrame KeyTime="0:0:12" Value="{x:Static Visibility.Collapsed}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </MultiDataTrigger.EnterActions>
+                        </MultiDataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ed:Callout.Style>
+        </ed:Callout>
+        <ed:Callout AnchorPoint="-0.171,1.118" CalloutStyle="RoundedRectangle" Fill="{StaticResource StandardWindowBackground}" VerticalAlignment="Bottom" FontSize="14" Height="58" Margin="334,0,120,311" Stroke="{StaticResource StandardLightTextSolidColorBrush}" StrokeThickness="3" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
+            <ed:Callout.Content>
+                <StackPanel>
+                    <TextBlock Text="Click here to start Move Mouse" Foreground="{StaticResource StandardLightTextSolidColorBrush}" Background="Transparent" HorizontalAlignment="Center" TextWrapping="Wrap" Margin="10"/>
+                </StackPanel>
+            </ed:Callout.Content>
+            <ed:Callout.Style>
+                <Style TargetType="ed:Callout">
+                    <Setter Property="Opacity" Value="0.0"/>
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Path=SettingsVm.Settings.MoveMouseHasBeenClicked, NotifyOnTargetUpdated=True}" Value="False">
+                            <DataTrigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0.0" To="1.0" Duration="0:0:1"/>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty = "Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Visible}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </DataTrigger.EnterActions>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Path=SettingsVm.Settings.MoveMouseHasBeenClicked, NotifyOnTargetUpdated=True}" Value="True">
+                            <DataTrigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty = "Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Collapsed}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </DataTrigger.EnterActions>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ed:Callout.Style>
+        </ed:Callout>
+    </Grid>
+</Window>
