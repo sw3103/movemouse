@@ -1,0 +1,112 @@
+﻿<mice>
+  <mouse>
+    <name>Bernard</name>
+    <image_name>Bernard01.jpg</image_name>
+    <tool_tip></tool_tip>
+  </mouse>
+  <mouse>
+    <name>Bianca</name>
+    <image_name>Bianca01.jpg</image_name>
+    <tool_tip></tool_tip>
+  </mouse>
+  <mouse>
+    <name>Brain</name>
+    <image_name>Brain01.jpg</image_name>
+    <tool_tip></tool_tip>
+  </mouse>
+  <mouse>
+    <name>Danger Mouse</name>
+    <image_name>Danger01.png</image_name>
+    <tool_tip></tool_tip>
+  </mouse>
+  <mouse>
+    <name>Despereaux</name>
+    <image_name>Despereaux01.jpg</image_name>
+    <tool_tip></tool_tip>
+  </mouse>
+  <mouse>
+    <name>Fievel Mousekewitz</name>
+    <image_name>FievelMousekewitz01.png</image_name>
+    <tool_tip></tool_tip>
+  </mouse>
+  <mouse>
+    <name>Finger Mouse</name>
+    <image_name>FingerMouse01.jpg</image_name>
+    <tool_tip></tool_tip>
+  </mouse>
+  <mouse>
+    <name>Gadget Hackwrench</name>
+    <image_name>GadgetHackwrench01.png</image_name>
+    <tool_tip></tool_tip>
+  </mouse>
+  <mouse>
+    <name>Itchy</name>
+    <image_name>Itchy01.png</image_name>
+    <tool_tip></tool_tip>
+  </mouse>
+  <mouse>
+    <name>Jaq &amp; Gus</name>
+    <image_name>JaqGus01.jpg</image_name>
+    <tool_tip></tool_tip>
+  </mouse>
+  <mouse>
+    <name>Jerry</name>
+    <image_name>Jerry01.png</image_name>
+    <tool_tip></tool_tip>
+  </mouse>
+  <mouse>
+    <name>Mickey</name>
+    <image_name>Mickey01.jpg</image_name>
+    <tool_tip></tool_tip>
+  </mouse>
+  <mouse>
+    <name>Mighty Mouse</name>
+    <image_name>Mighty01.jpg</image_name>
+    <tool_tip></tool_tip>
+  </mouse>
+  <mouse>
+    <name>Minnie</name>
+    <image_name>Minnie01.jpg</image_name>
+    <tool_tip></tool_tip>
+  </mouse>
+  <mouse>
+    <name>Monterey Jack</name>
+    <image_name>MontereyJack01.jpg</image_name>
+    <tool_tip></tool_tip>
+  </mouse>
+  <mouse>
+    <name>Pikachu</name>
+    <image_name>Pikachu01.jpg</image_name>
+    <tool_tip></tool_tip>
+  </mouse>
+  <mouse>
+    <name>Pinky</name>
+    <image_name>Pinky01.jpg</image_name>
+    <tool_tip></tool_tip>
+  </mouse>
+  <mouse>
+    <name>Pixie &amp; Dixie</name>
+    <image_name>PixieDixie01.jpg</image_name>
+    <tool_tip></tool_tip>
+  </mouse>
+  <mouse>
+    <name>Roquefort</name>
+    <image_name>Roquefort01.gif</image_name>
+    <tool_tip></tool_tip>
+  </mouse>
+  <mouse>
+    <name>Speedy Gonzales</name>
+    <image_name>Speedy01.jpg</image_name>
+    <tool_tip></tool_tip>
+  </mouse>
+  <mouse>
+    <name>Stuart Little</name>
+    <image_name>StuartLittle01.jpg</image_name>
+    <tool_tip></tool_tip>
+  </mouse>
+  <mouse>
+    <name>Timothy</name>
+    <image_name>Timothy01.JPG</image_name>
+    <tool_tip></tool_tip>
+  </mouse>
+</mice>

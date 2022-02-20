@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Move Mouse", "Move Mouse\Move Mouse.csproj", "{5F138C5F-255A-4B0F-BFFD-7F49993571E7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5F138C5F-255A-4B0F-BFFD-7F49993571E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F138C5F-255A-4B0F-BFFD-7F49993571E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F138C5F-255A-4B0F-BFFD-7F49993571E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F138C5F-255A-4B0F-BFFD-7F49993571E7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 2
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs08
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = Move\u0020Mouse\\Move\u0020Mouse.csproj
+		SccProjectName1 = Move\u0020Mouse
+		SccLocalPath1 = Move\u0020Mouse
+	EndGlobalSection
+EndGlobal

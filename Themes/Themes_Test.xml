@@ -1,8 +1,8 @@
 <ArrayOfTheme>
   <Theme>
     <Name>US Independence Day</Name>
-    <StartTime>2019-07-04T00:00:00.000000+00:00</StartTime>
-    <EndTime>2019-07-04T23:59:59.000000+00:00</EndTime>
+    <StartTime>2021-07-04T00:00:00.000000+00:00</StartTime>
+    <EndTime>2021-07-04T23:59:59.000000+00:00</EndTime>
     <ImagePath>https://raw.githubusercontent.com/sw3103/movemouse/master/Themes/UsIndependenceTheme.png</ImagePath>
     <Regions>
       <Region>United States</Region>
@@ -10,20 +10,20 @@
   </Theme>
   <Theme>
     <Name>Christmas</Name>
-    <StartTime>2019-12-20T00:00:00.000000+00:00</StartTime>
-    <EndTime>2019-12-26T23:59:59.000000+00:00</EndTime>
+    <StartTime>2020-12-20T00:00:00.000000+00:00</StartTime>
+    <EndTime>2020-12-26T23:59:59.000000+00:00</EndTime>
     <ImagePath>https://raw.githubusercontent.com/sw3103/movemouse/master/Themes/ChristmasTheme.png</ImagePath>
   </Theme>
   <Theme>
     <Name>Halloween</Name>
-    <StartTime>2020-10-22T00:00:00.000000+00:00</StartTime>
-    <EndTime>2020-10-31T23:59:59.000000+00:00</EndTime>
-    <ImagePath>https://raw.githubusercontent.com/sw3103/movemouse/master/Themes/HalloweenTheme.png</ImagePath>
+    <StartTime>2020-10-26T00:00:00.000000+00:00</StartTime>
+    <EndTime>2021-11-01T23:59:59.000000+00:00</EndTime>
+    <ImagePath>https://razw.githubusercontent.com/sw3103/movemouse/master/Themes/HalloweenTheme_.png</ImagePath>
   </Theme>
   <Theme>
     <Name>St David's Day</Name>
-    <StartTime>2019-02-01T00:00:00.000000+00:00</StartTime>
-    <EndTime>2019-03-02T23:59:59.000000+00:00</EndTime>
+    <StartTime>2021-03-01T00:00:00.000000+00:00</StartTime>
+    <EndTime>2021-03-01T23:59:59.000000+00:00</EndTime>
     <ImagePath>https://raw.githubusercontent.com/sw3103/movemouse/master/Themes/StDavidsDayTheme.png</ImagePath>
     <Regions>
       <Region>United Kingdom</Region>

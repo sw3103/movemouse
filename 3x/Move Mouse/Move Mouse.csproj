@@ -1,0 +1,185 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{5F138C5F-255A-4B0F-BFFD-7F49993571E7}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Ellanet</RootNamespace>
+    <AssemblyName>Move Mouse</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <StartupObject>
+    </StartupObject>
+    <ApplicationIcon>Resources\Mouse_Icon.ico</ApplicationIcon>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <TargetFrameworkProfile />
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <ItemGroup>
+    <Compile Include="Classes\CelebrityMouse.cs" />
+    <Compile Include="Classes\ScriptingLanguage.cs" />
+    <Compile Include="Events\BlackoutStatusChangedEventArgs.cs" />
+    <Compile Include="Events\HookKeyStatusChangedEventArgs.cs" />
+    <Compile Include="Events\NewVersionAvailableEventArgs.cs" />
+    <Compile Include="Events\PowerLineStatusChangedEventArgs.cs" />
+    <Compile Include="Events\ScheduleArrivedEventArgs.cs" />
+    <Compile Include="Forms\AddScheduleForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\AddScheduleForm.Designer.cs">
+      <DependentUpon>AddScheduleForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\AddBlackoutForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\AddBlackoutForm.Designer.cs">
+      <DependentUpon>AddBlackoutForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\MouseForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MouseForm.Designer.cs">
+      <DependentUpon>MouseForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\PowerShellExecutionPolicyForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\PowerShellExecutionPolicyForm.Designer.cs">
+      <DependentUpon>PowerShellExecutionPolicyForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\SystemTrayIcon.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SystemTrayIcon.Designer.cs">
+      <DependentUpon>SystemTrayIcon.cs</DependentUpon>
+    </Compile>
+    <Compile Include="StaticCode.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Forms\AddScheduleForm.resx">
+      <DependentUpon>AddScheduleForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\AddBlackoutForm.resx">
+      <DependentUpon>AddBlackoutForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\MouseForm.resx">
+      <DependentUpon>MouseForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\PowerShellExecutionPolicyForm.resx">
+      <DependentUpon>PowerShellExecutionPolicyForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Resources\Mouse_Image.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Mouse_Icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Help_Image.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Contact_Image.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\PayPal_Image.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ScriptEditor_Icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Mouse-Stop.ico" />
+    <None Include="Resources\Mouse-Play.ico" />
+    <None Include="Resources\Mouse-Pause.ico" />
+    <None Include="Resources\MouseHole_Image.gif" />
+    <None Include="Resources\Twitter_logo_blue.png" />
+    <None Include="Resources\Mice\FingerMouse01.jpg" />
+    <None Include="Resources\EasterEgg.png" />
+    <None Include="Resources\codeplex.png" />
+    <Content Include="Resources\Mice\Bernard01.jpg" />
+    <Content Include="Resources\Mice\Bianca01.jpg" />
+    <Content Include="Resources\Mice\Brain01.jpg" />
+    <Content Include="Resources\Mice\Danger01.png" />
+    <Content Include="Resources\Mice\Despereaux01.jpg" />
+    <Content Include="Resources\Mice\FievelMousekewitz01.png" />
+    <Content Include="Resources\Mice\GadgetHackwrench01.png" />
+    <Content Include="Resources\Mice\Itchy01.png" />
+    <Content Include="Resources\Mice\JaqGus01.jpg" />
+    <Content Include="Resources\Mice\Jerry01.png" />
+    <Content Include="Resources\Mice\Mice.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Resources\Mice\Mickey01.jpg" />
+    <Content Include="Resources\Mice\Mighty01.jpg" />
+    <Content Include="Resources\Mice\Minnie01.jpg" />
+    <Content Include="Resources\Mice\MontereyJack01.jpg" />
+    <Content Include="Resources\Mice\Pikachu01.jpg" />
+    <Content Include="Resources\Mice\Pinky01.jpg" />
+    <Content Include="Resources\Mice\PixieDixie01.jpg" />
+    <Content Include="Resources\Mice\Roquefort01.gif" />
+    <Content Include="Resources\Mice\Speedy01.jpg" />
+    <Content Include="Resources\Mice\StuartLittle01.jpg" />
+    <Content Include="Resources\Mice\Timothy01.JPG" />
+  </ItemGroup>
+</Project>
