@@ -2206,11 +2206,9 @@
                                 <Grid.RowDefinitions>
                                     <RowDefinition/>
                                     <RowDefinition/>
-                                    <RowDefinition/>
                                 </Grid.RowDefinitions>
-                                <Rectangle Grid.Row="0" Fill="#FFFFFF"/>
-                                <Rectangle Grid.Row="1" Fill="#0039A6"/>
-                                <Rectangle Grid.Row="2" Fill="#D52B1E"/>
+                                <Rectangle Grid.Row="0" Fill="#0057b7"/>
+                                <Rectangle Grid.Row="1" Fill="#ffd700"/>
                             </Grid>
                         </StackPanel>
                         <!--<Grid Height="22">

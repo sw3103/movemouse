@@ -383,7 +383,7 @@ namespace ellabi.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap Keyboard_icon_128 {
+        internal static System.Drawing.Bitmap Keyboard_icon_128 {
             get {
                 object obj = ResourceManager.GetObject("Keyboard_icon_128", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -393,7 +393,7 @@ namespace ellabi.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap Keyboard_icon_Light_128 {
+        internal static System.Drawing.Bitmap Keyboard_icon_Light_128 {
             get {
                 object obj = ResourceManager.GetObject("Keyboard_icon_Light_128", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -403,7 +403,7 @@ namespace ellabi.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap Mail_Dark_64x64 {
+        internal static System.Drawing.Bitmap Mail_Dark_64x64 {
             get {
                 object obj = ResourceManager.GetObject("Mail_Dark_64x64", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
