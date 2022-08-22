@@ -3,11 +3,9 @@ using ellabi.Wrappers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.Linq;
 using System.Xml.Serialization;
 using System.Runtime.InteropServices;
-using Microsoft.VisualBasic;
 using System.Xml.Linq;
 
 namespace ellabi.Actions
@@ -50,10 +48,22 @@ namespace ellabi.Actions
             }
         }
 
-        public override bool IsValid => !String.IsNullOrWhiteSpace(Application);
+        public override bool IsValid
+        { 
+            get 
+            {
+                if (String.IsNullOrWhiteSpace(Application))
+                    return false;
+
+                if (string.IsNullOrEmpty(_combination))
+                    return false;
+
+                return true;
+            }
+        }
 
 
-        public KeyboardPressAction()
+    public KeyboardPressAction()
         {
             _combination = "";
             RefreshApplicationsCommand = new RelayCommand(param => RefreshApplications());
