@@ -150,6 +150,9 @@ namespace ellabi.Wrappers
             string lpWindowName);
 
         [DllImport("user32.dll")]
+        public static extern bool SetForegroundWindow(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
         public static extern bool ShowWindow(
             IntPtr hWnd,
             ShowWindowCommands nCmdShow);

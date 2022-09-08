@@ -65,6 +65,20 @@ namespace ellabi.Views
             }
         }
 
+        private void AddKeyboardPressAction_OnClick(object sender, RoutedEventArgs e)
+        {
+            StaticCode.Logger?.Here().Debug(String.Empty);
+
+            try
+            {
+                ((SettingsWindowViewModel)DataContext).AddAction(typeof(KeyboardPressAction));
+            }
+            catch (Exception ex)
+            {
+                StaticCode.Logger?.Here().Error(ex.Message);
+            }
+        }
+
         private void AddClickMouseAction_OnClick(object sender, RoutedEventArgs e)
         {
             StaticCode.Logger?.Here().Debug(String.Empty);

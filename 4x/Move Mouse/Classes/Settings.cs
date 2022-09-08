@@ -495,6 +495,7 @@ namespace ellabi.Classes
          XmlArrayItem(Type = typeof(ScriptAction)),
          XmlArrayItem(Type = typeof(PositionMouseCursorAction)),
          XmlArrayItem(Type = typeof(ActivateApplicationAction)),
+         XmlArrayItem(Type = typeof(KeyboardPressAction)),
          XmlArrayItem(Type = typeof(CommandAction)),
          XmlArrayItem(Type = typeof(ScrollMouseAction)),
          XmlArrayItem(Type = typeof(SleepAction))]

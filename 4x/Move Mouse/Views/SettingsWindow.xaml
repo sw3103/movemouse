@@ -261,6 +261,34 @@
                             </TextBlock>
                         </StackPanel>
                     </DataTemplate>
+                    <DataTemplate DataType="{x:Type actions:KeyboardPressAction}">
+                        <StackPanel Style="{StaticResource ActionStackPanelStyle}">
+                            <Image>
+                                <Image.Style>
+                                    <Style TargetType="Image" BasedOn="{StaticResource ActionStackPanelImageStyle}">
+                                        <Setter Property="Source" Value="/Resources/Keyboard_icon_Light_128.png"/>
+                                        <!--<Style.Triggers>
+                                        <DataTrigger Binding="{Binding Path=IsValid}" Value="False">
+                                            <Setter Property="Source" Value="/Resources/Exclamation_64x64.png"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>-->
+                                    </Style>
+                                </Image.Style>
+                            </Image>
+                            <TextBlock>
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock" BasedOn="{StaticResource ActionStackPanelTextStyle}">
+                                        <Setter Property="Text" Value="{Binding Path=Name, NotifyOnTargetUpdated=True}"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Path=Name, NotifyOnTargetUpdated=True}" Value="{x:Null}">
+                                                <Setter Property="Text" Value="Keyboard press"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </StackPanel>
+                    </DataTemplate>
                     <DataTemplate DataType="{x:Type actions:ActivateApplicationAction}">
                         <StackPanel Style="{StaticResource ActionStackPanelStyle}">
                             <Image>
@@ -446,6 +474,11 @@
                                         <MenuItem Header="Move Mouse Cursor" Click="AddMoveMouseCursorAction_OnClick" Style="{StaticResource TaskActionButtonMenuItemStyle}">
                                             <MenuItem.Icon>
                                                 <Image Source="/Resources/MoveMouseCursorAction_Light_128x128.png" Style="{StaticResource TaskActionButtonMenuImageStyle}"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Header="Keyboard press" Click="AddKeyboardPressAction_OnClick" Style="{StaticResource TaskActionButtonMenuItemStyle}">
+                                            <MenuItem.Icon>
+                                                <Image Source="/Resources/Keyboard_icon_Light_128.png" Style="{StaticResource TaskActionButtonMenuImageStyle}"/>
                                             </MenuItem.Icon>
                                         </MenuItem>
                                         <MenuItem Header="Click Mouse Button" Click="AddClickMouseAction_OnClick" Style="{StaticResource TaskActionButtonMenuItemStyle}">
@@ -677,6 +710,247 @@
                                 <DataTemplate DataType="{x:Type actions:ActivateApplicationAction}">
                                     <StackPanel Orientation="Vertical">
                                         <ContentPresenter Content="{StaticResource NameGrid}"/>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="{StaticResource LabelColumnHeight}"/>
+                                                <RowDefinition Height="10"/>
+                                            </Grid.RowDefinitions>
+                                            <TextBlock Grid.Column="0" Grid.Row="0" Text="Mode" Style="{StaticResource LabelTextBlockStyle}"/>
+                                            <Grid Grid.Column="1" Grid.Row="0">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="10"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <ComboBox Grid.Column="0" SelectedItem="{Binding Path=Mode, NotifyOnTargetUpdated=True}" ItemsSource="{Binding Path=SearchModeValues}" IsEnabled="{Binding Path=IsEnabled, NotifyOnTargetUpdated=True}"/>
+                                                <Image Grid.Column="2" Source="/Resources/Help_Dark_64x64.png" Stretch="Uniform" RenderOptions.BitmapScalingMode="HighQuality" ToolTipService.ShowDuration="{x:Static sys:Int32.MaxValue}" ToolTip="Window - Uses the window name to locate the application. This&#xD;&#xA;will give finer control when you have multiple instances of the&#xD;&#xA;same application open.&#xD;&#xA;&#xD;&#xA;Process - Uses the process name to locate the application. A&#xD;&#xA;good option if your application's window name frequently&#xD;&#xA;changes, such as a web browser."/>
+                                            </Grid>
+                                        </Grid>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="{StaticResource LabelColumnHeight}"/>
+                                                <RowDefinition Height="10"/>
+                                            </Grid.RowDefinitions>
+                                            <TextBlock Grid.Column="0" Grid.Row="0" Text="Name" Style="{StaticResource LabelTextBlockStyle}"/>
+                                            <Grid Grid.Column="1" Grid.Row="0">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="10"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <ComboBox Grid.Column="0" ItemsSource="{Binding Path=AvailableApplications, NotifyOnTargetUpdated=True}" Text="{Binding Path=Application, NotifyOnTargetUpdated=True}" IsEnabled="{Binding Path=IsEnabled, NotifyOnTargetUpdated=True}">
+                                                    <ComboBox.Style>
+                                                        <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
+                                                            <Setter Property="IsEditable" Value="False"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding Path=Mode}" Value="Window">
+                                                                    <Setter Property="IsEditable" Value="True"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </ComboBox.Style>
+                                                </ComboBox>
+                                                <Image Grid.Column="2" Source="/Resources/Help_Dark_64x64.png" Stretch="Uniform" RenderOptions.BitmapScalingMode="HighQuality" ToolTipService.ShowDuration="{x:Static sys:Int32.MaxValue}">
+                                                    <Image.ToolTip>
+                                                        <Grid Width="440">
+                                                            <Grid.RowDefinitions>
+                                                                <RowDefinition/>
+                                                                <RowDefinition Height="20"/>
+                                                                <RowDefinition/>
+                                                                <RowDefinition Height="20"/>
+                                                                <RowDefinition/>
+                                                            </Grid.RowDefinitions>
+                                                            <TextBlock Grid.Row="0" Text="If the application's window title changes frequently, consider using a wildcard search pattern, for example:" TextWrapping="Wrap"/>
+                                                            <Image Grid.Row="2" Source="/Resources/Windows_Title.png" Stretch="Uniform" RenderOptions.BitmapScalingMode="HighQuality"/>
+                                                            <TextBlock Grid.Row="4" TextWrapping="Wrap">
+                                                                <Run Text="This window can be found by using "/>
+                                                                <Run Text="Move Mouse*" Foreground="{StaticResource StandardLightControlSolidColorBrush}"/>
+                                                                <Run Text=" or "/>
+                                                                <Run Text="*Privacy Policy*" Foreground="{StaticResource StandardLightControlSolidColorBrush}"/>
+                                                                <Run Text=" or "/>
+                                                                <Run Text="*Word" Foreground="{StaticResource StandardLightControlSolidColorBrush}"/>
+                                                                <Run Text="."/>
+                                                            </TextBlock>
+                                                        </Grid>
+                                                    </Image.ToolTip>
+                                                </Image>
+                                                <!--<Button Grid.Column="2" HorizontalAlignment="Left" Style="{StaticResource NoChromeButton}" Command="{Binding Path=RefreshApplicationsCommand}" ToolTip="Refresh applications" Cursor="Hand" IsEnabled="{Binding Path=IsEnabled, NotifyOnTargetUpdated=True}">
+                                                    <Image Name="RefreshImage" Stretch="Uniform" RenderOptions.BitmapScalingMode="HighQuality">
+                                                        <Image.RenderTransform>
+                                                            <RotateTransform CenterX="{Binding ElementName=RefreshImage, Path=ActualWidth, Converter={StaticResource DoubleDividedByTwoConverter}}" CenterY="{Binding ElementName=RefreshImage, Path=ActualHeight, Converter={StaticResource DoubleDividedByTwoConverter}}"/>
+                                                        </Image.RenderTransform>
+                                                        <Image.Style>
+                                                            <Style TargetType="Image">
+                                                                <Setter Property="Source" Value="/Resources/Refresh_Dark_64x64.png"/>
+                                                                <Style.Triggers>
+                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                        <Setter Property="Source" Value="/Resources/Refresh_Light_64x64.png"/>
+                                                                    </Trigger>
+                                                                    <EventTrigger RoutedEvent="Image.MouseDown">
+                                                                        <BeginStoryboard>
+                                                                            <Storyboard>
+                                                                                <DoubleAnimation Storyboard.TargetProperty="RenderTransform.Angle" From="0" To="360" Duration="0:0:0.75" RepeatBehavior="1.5x"/>
+                                                                            </Storyboard>
+                                                                        </BeginStoryboard>
+                                                                    </EventTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Image.Style>
+                                                    </Image>
+                                                </Button>-->
+                                            </Grid>
+                                        </Grid>
+                                        <ContentPresenter Content="{StaticResource TriggerGrid}"/>
+                                        <ContentPresenter Content="{StaticResource RepeatGrid}"/>
+                                        <ContentPresenter Content="{StaticResource EnabledGrid}"/>
+                                        <ContentPresenter Content="{StaticResource TestButtonGrid}"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                                <DataTemplate DataType="{x:Type actions:KeyboardPressAction}">
+                                    <StackPanel Orientation="Vertical">
+                                        <ContentPresenter Content="{StaticResource NameGrid}"/>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="{StaticResource LabelColumnHeight}"/>
+                                                <RowDefinition Height="10"/>
+                                            </Grid.RowDefinitions>
+                                            <TextBlock Grid.Column="0" Grid.Row="0" Text="Input" Style="{StaticResource LabelTextBlockStyle}"/>
+                                            <Grid Grid.Column="1" Grid.Row="0">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="10"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <xctk:WatermarkTextBox Grid.Column="0" Grid.Row="0" Text="{Binding Path=Input, NotifyOnTargetUpdated=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding Path=IsEnabled, NotifyOnTargetUpdated=True}" Watermark="Input"/>
+                                                <Image Grid.Column="2" Source="/Resources/Help_Dark_64x64.png" Stretch="Uniform" 
+                                                       RenderOptions.BitmapScalingMode="HighQuality" ToolTipService.ShowDuration="{x:Static sys:Int32.MaxValue}" >
+                                                    <Image.ToolTip>
+    <Grid Width="440">
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="5"/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+                                                                <RowDefinition/>
+                                                                <RowDefinition/>
+                                                                <RowDefinition/>
+                                                                <RowDefinition/>
+                                                                <RowDefinition/>
+                                                                <RowDefinition/>
+                                                                <RowDefinition/>
+                                                                <RowDefinition/>
+                                                                <RowDefinition/>
+
+                                                                <RowDefinition Height="5"/>
+                                                                <RowDefinition/>
+                                                                <RowDefinition Height="5"/>
+                                                                <RowDefinition/>
+                                                                <RowDefinition/>
+                                                                <RowDefinition/>
+                                                                <RowDefinition/>
+                                                                <RowDefinition Height="5"/>
+                                                                <RowDefinition/>
+                                                            </Grid.RowDefinitions>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="2*"></ColumnDefinition>
+                                                                <ColumnDefinition Width="3*"></ColumnDefinition>
+                                                                <ColumnDefinition Width="2*"></ColumnDefinition>
+                                                                <ColumnDefinition Width="3*"></ColumnDefinition>
+                                                            </Grid.ColumnDefinitions>
+                                                            <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4" Text="To specify characters that aren't displayed when you press a key, such as ENTER or TAB, and keys that represent actions rather than characters, use the codes in the following table." TextWrapping="Wrap"/>
+                                                            <TextBlock Grid.Row="2" Grid.Column="0" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="Key"></TextBlock>
+                                                            <TextBlock Grid.Row="2" Grid.Column="1" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="Code"></TextBlock>
+                                                            <TextBlock Grid.Row="2" Grid.Column="2" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="Key"></TextBlock>
+                                                            <TextBlock Grid.Row="2" Grid.Column="3" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="Code"></TextBlock>
+                                                            <TextBlock Grid.Row="3" Grid.Column="0" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="BACKSPACE"></TextBlock>
+                                                            <TextBlock Grid.Row="3" Grid.Column="1" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="{}{BACKSPACE},{BS},or{BKSP}"></TextBlock>
+                                                            <TextBlock Grid.Row="3" Grid.Column="2" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="BREAK"></TextBlock>
+                                                            <TextBlock Grid.Row="3" Grid.Column="3" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="{}{BREAK}"></TextBlock>
+                                                            <TextBlock Grid.Row="4" Grid.Column="0" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="CAPS LOCK"></TextBlock>
+                                                            <TextBlock Grid.Row="4" Grid.Column="1" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="{}{CAPSLOCK}"></TextBlock>
+                                                            <TextBlock Grid.Row="4" Grid.Column="2" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="DEL or DELETE"></TextBlock>
+                                                            <TextBlock Grid.Row="4" Grid.Column="3" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="{}{DELETE} or {DEL}"></TextBlock>
+                                                            <TextBlock Grid.Row="5" Grid.Column="0" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="DOWN ARROW"></TextBlock>
+                                                            <TextBlock Grid.Row="5" Grid.Column="1" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="{}{DOWN}"></TextBlock>
+                                                            <TextBlock Grid.Row="5" Grid.Column="2" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="END"></TextBlock>
+                                                            <TextBlock Grid.Row="5" Grid.Column="3" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="{}{END}"></TextBlock>
+                                                            <TextBlock Grid.Row="6" Grid.Column="0" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="ENTER"></TextBlock>
+                                                            <TextBlock Grid.Row="6" Grid.Column="1" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="{}{ENTER} or ~"></TextBlock>
+                                                            <TextBlock Grid.Row="6" Grid.Column="2" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="ESC"></TextBlock>
+                                                            <TextBlock Grid.Row="6" Grid.Column="3" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="{}{ESC}"></TextBlock>
+                                                            <TextBlock Grid.Row="7" Grid.Column="0" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="HELP"></TextBlock>
+                                                            <TextBlock Grid.Row="7" Grid.Column="1" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="{}{HELP}"></TextBlock>
+                                                            <TextBlock Grid.Row="7" Grid.Column="2" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="HOME"></TextBlock>
+                                                            <TextBlock Grid.Row="7" Grid.Column="3" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="{}{HOME}"></TextBlock>
+                                                            <TextBlock Grid.Row="8" Grid.Column="0" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="INS or INSERT"></TextBlock>
+                                                            <TextBlock Grid.Row="8" Grid.Column="1" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="{}{INSERT} or {INS}"></TextBlock>
+                                                            <TextBlock Grid.Row="8" Grid.Column="2" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="LEFT ARROW"></TextBlock>
+                                                            <TextBlock Grid.Row="8" Grid.Column="3" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="{}{LEFT}"></TextBlock>
+                                                            <TextBlock Grid.Row="9" Grid.Column="0" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="NUM LOCK"></TextBlock>
+                                                            <TextBlock Grid.Row="9" Grid.Column="1" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="{}{NUMLOCK}"></TextBlock>
+                                                            <TextBlock Grid.Row="9" Grid.Column="2" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="PAGE DOWN"></TextBlock>
+                                                            <TextBlock Grid.Row="9" Grid.Column="3" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="{}{PGDN}"></TextBlock>
+                                                            <TextBlock Grid.Row="10" Grid.Column="0" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="PAGE UP"></TextBlock>
+                                                            <TextBlock Grid.Row="10" Grid.Column="1" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="{}{PGUP}"></TextBlock>
+                                                            <TextBlock Grid.Row="10" Grid.Column="2" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="PRINT SCREEN"></TextBlock>
+                                                            <TextBlock Grid.Row="10" Grid.Column="3" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="{}{PRTSC}(reserved)"></TextBlock>
+                                                            <TextBlock Grid.Row="11" Grid.Column="0" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="RIGHT ARROW"></TextBlock>
+                                                            <TextBlock Grid.Row="11" Grid.Column="1" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="{}{RIGHT}"></TextBlock>
+                                                            <TextBlock Grid.Row="11" Grid.Column="2" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="SCROLL LOCK"></TextBlock>
+                                                            <TextBlock Grid.Row="11" Grid.Column="3" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="{}{SCROLLLOCK}"></TextBlock>
+                                                            <TextBlock Grid.Row="12" Grid.Column="0" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="TAB"></TextBlock>
+                                                            <TextBlock Grid.Row="12" Grid.Column="1" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="{}{TAB}"></TextBlock>
+                                                            <TextBlock Grid.Row="12" Grid.Column="2" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="UP ARROW"></TextBlock>
+                                                            <TextBlock Grid.Row="12" Grid.Column="3" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="{}{UP}"></TextBlock>
+                                                            <TextBlock Grid.Row="13" Grid.Column="0" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="F1"></TextBlock>
+                                                            <TextBlock Grid.Row="13" Grid.Column="1" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="{}{F1}"></TextBlock>
+                                                            <TextBlock Grid.Row="13" Grid.Column="2" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="F2"></TextBlock>
+                                                            <TextBlock Grid.Row="13" Grid.Column="3" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="{}{F2}"></TextBlock>
+                                                            <TextBlock Grid.Row="14" Grid.Column="0" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="F3"></TextBlock>
+                                                            <TextBlock Grid.Row="14" Grid.Column="1" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="{}{F3}"></TextBlock>
+                                                            <TextBlock Grid.Row="14" Grid.Column="2" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="F4"></TextBlock>
+                                                            <TextBlock Grid.Row="14" Grid.Column="3" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="{}{F4}"></TextBlock>
+                                                            <TextBlock Grid.Row="15" Grid.Column="0" Grid.ColumnSpan="4" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="..."></TextBlock>
+                                                            <TextBlock Grid.Row="16" Grid.Column="0" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="Keypad add"></TextBlock>
+                                                            <TextBlock Grid.Row="16" Grid.Column="1" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="{}{ADD}"></TextBlock>
+                                                            <TextBlock Grid.Row="16" Grid.Column="2" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="Keypad subtract"></TextBlock>
+                                                            <TextBlock Grid.Row="16" Grid.Column="3" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="{}{SUBTRACT}"></TextBlock>
+                                                            <TextBlock Grid.Row="17" Grid.Column="0" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="Keypad multiply"></TextBlock>
+                                                            <TextBlock Grid.Row="17" Grid.Column="1" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="{}{MULTIPLY}"></TextBlock>
+                                                            <TextBlock Grid.Row="17" Grid.Column="2" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="Keypad divide"></TextBlock>
+                                                            <TextBlock Grid.Row="17" Grid.Column="3" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="{}{DIVIDE}"></TextBlock>
+                                                            <TextBlock Grid.Row="19" Grid.Column="0" Grid.ColumnSpan="4" Text="To specify keys combined with any combination of the SHIFT, CTRL, and ALT keys, precede the key code with one or more of the following codes." TextWrapping="Wrap"/>
+                                                            <TextBlock Grid.Row="21" Grid.Column="0" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="Key"></TextBlock>
+                                                            <TextBlock Grid.Row="21" Grid.Column="1" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="Code"></TextBlock>
+                                                            <TextBlock Grid.Row="22" Grid.Column="0" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="SHIFT"></TextBlock>
+                                                            <TextBlock Grid.Row="22" Grid.Column="1" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="&#x002B;"></TextBlock>
+                                                            <TextBlock Grid.Row="23" Grid.Column="0" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="CTRL"></TextBlock>
+                                                            <TextBlock Grid.Row="23" Grid.Column="1" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="&#x005E;"></TextBlock>
+                                                            <TextBlock Grid.Row="24" Grid.Column="0" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="ALT"></TextBlock>
+                                                            <TextBlock Grid.Row="24" Grid.Column="1" Foreground="{StaticResource StandardLightControlSolidColorBrush}" Text="&#x0025;"></TextBlock>
+                                                            <TextBlock Grid.Row="26" Grid.Column="0" Grid.ColumnSpan="4" Text="To specify that any combination of SHIFT, CTRL, and ALT should be held down while several other keys are pressed, enclose the code for those keys in parentheses. &#xD;&#xA;For example, to specify to hold down SHIFT while E and C are pressed, use &quot;+(EC)&quot;. To specify to hold down SHIFT while E is pressed, followed by C without SHIFT, use &quot;+EC&quot;.&#xD;&#xA;To specify repeating keys, use the form {key number}. You must put a space between key and number. For example, {LEFT 42} means press the LEFT ARROW key 42 times; {h 10} means press H 10 times." TextWrapping="Wrap"/>
+                                                        </Grid>
+                                                    </Image.ToolTip>
+                                                </Image>
+                                            </Grid>
+                                        </Grid>
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
