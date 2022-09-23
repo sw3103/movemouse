@@ -37,45 +37,31 @@ namespace ellabi
 
         public static string WorkingDirectory = Path.Combine(Environment.ExpandEnvironmentVariables("%AppData%"), @"Ellanet\Move Mouse");
         public static string TempDirectory = Path.Combine(Environment.ExpandEnvironmentVariables("%Temp%"), @"Ellanet\Move Mouse");
+        public static MoveMouseSource DownloadSource = MoveMouseSource.GitHub;
 
         public static string UpdateUrl;
         public static string ContactMailToAddress = $"mailto:{MailAddress}?subject=Move%20Mouse%20Feedback";
         public static ILogger Logger;
 
         private static string _logPath;
-        private static bool? _windowsStoreVersionIsRunning;
         private static LoggingLevelSwitch _loggingLevelSwitch = new LoggingLevelSwitch();
      
+        public enum MoveMouseSource
+        {
+            MicrosoftStore,
+            GitHub
+        }
+
         public static string SettingsXmlPath => Path.Combine(WorkingDirectory, "Settings.xml");
 
         public static string LogPath => _logPath;
-
-        public static bool? WindowsStoreVersionIsRunning
-        {
-            get
-            {
-                if (!_windowsStoreVersionIsRunning.HasValue)
-                {
-                    try
-                    {
-                        _windowsStoreVersionIsRunning = !String.IsNullOrWhiteSpace(Windows.ApplicationModel.Package.Current?.Description);
-                    }
-                    catch (Exception)
-                    {
-                        _windowsStoreVersionIsRunning = false;
-                    }
-                }
-
-                return _windowsStoreVersionIsRunning;
-            }
-        }
 
         public static void CreateLog()
         {
             try
             {
                 _loggingLevelSwitch.MinimumLevel = (LogEventLevel)1 + (int)LogEventLevel.Fatal;
-                _logPath = Path.Combine(WindowsStoreVersionIsRunning.Value ? ApplicationData.Current.LocalFolder.Path : TempDirectory, "Move Mouse.log");
+                _logPath = Path.Combine(StaticCode.DownloadSource == MoveMouseSource.MicrosoftStore ? ApplicationData.Current.LocalFolder.Path : TempDirectory, "Move Mouse.log");
 
                 if (File.Exists(_logPath))
                 {

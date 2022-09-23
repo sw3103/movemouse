@@ -128,6 +128,7 @@ namespace ellabi.ViewModels
                 StaticCode.EnableLog();
             }
 
+            StaticCode.Logger?.Here().Information($"WorkingDirectory = {StaticCode.WorkingDirectory}");
             ReadSettings();
             _removeSelectedActionCommand = new RelayCommand(param => RemoveSelectedAction(), param => CanRemoveSelectedAction());
             _moveUpSelectedActionCommand = new RelayCommand(param => MoveUpSelectedAction(), param => CanMoveUpSelectedAction());
@@ -145,7 +146,7 @@ namespace ellabi.ViewModels
 
             try
             {
-                if (StaticCode.WindowsStoreVersionIsRunning.Value)
+                if (StaticCode.DownloadSource == StaticCode.MoveMouseSource.MicrosoftStore)
                 {
                     var startupTask = await StartupTask.GetAsync("MoveMouseStartupTask");
                     _launchAtStartup = startupTask.State;
@@ -171,7 +172,7 @@ namespace ellabi.ViewModels
 
             try
             {
-                if (StaticCode.WindowsStoreVersionIsRunning.Value)
+                if (StaticCode.DownloadSource == StaticCode.MoveMouseSource.MicrosoftStore)
                 {
                     var startupTask = await StartupTask.GetAsync("MoveMouseStartupTask");
 

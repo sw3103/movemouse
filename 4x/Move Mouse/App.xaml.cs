@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Windows;
@@ -16,9 +17,21 @@ namespace ellabi
                 {
                     if (createdNew)
                     {
+                        StaticCode.CreateLog();
+
+                        if ((StaticCode.DownloadSource == StaticCode.MoveMouseSource.GitHub) && (e.Args != null) && e.Args.Any(a => a.StartsWith("/WorkingDirectory:", StringComparison.CurrentCultureIgnoreCase)))
+                        {
+                            var workingDirectoryArg = e.Args.First(a => a.StartsWith("/WorkingDirectory:", StringComparison.CurrentCultureIgnoreCase));
+                            var alternateWorkingDirectory = workingDirectoryArg.Substring(workingDirectoryArg.IndexOf(':') + 1);
+
+                            if (Directory.Exists(alternateWorkingDirectory))
+                            {
+                                StaticCode.WorkingDirectory = workingDirectoryArg.Substring(workingDirectoryArg.IndexOf(':') + 1);
+                            }
+                        }
+
                         Directory.CreateDirectory(StaticCode.WorkingDirectory);
                         ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls | SecurityProtocolType.Tls12;
-                        StaticCode.CreateLog();
                         StartupUri = new Uri("Views/MouseWindow.xaml", UriKind.Relative);
                     }
                 }
