@@ -235,6 +235,9 @@
   <data name="Mouse_SystemTray_Active" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Mouse-SystemTray-Active.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Mouse_SystemTray_Battery" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Mouse-SystemTray-Battery.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Mouse_SystemTray_Execute" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Mouse-SystemTray-Execute.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>

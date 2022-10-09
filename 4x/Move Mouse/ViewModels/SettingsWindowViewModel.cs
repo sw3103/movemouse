@@ -3,6 +3,7 @@ using ellabi.Annotations;
 using ellabi.Classes;
 using ellabi.Schedules;
 using ellabi.Utilities;
+using Serilog.Events;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -121,11 +122,14 @@ namespace ellabi.ViewModels
 
         public string Copyright => ((AssemblyCopyrightAttribute)Attribute.GetCustomAttribute(Assembly.GetExecutingAssembly(), typeof(AssemblyCopyrightAttribute), false)).Copyright;
 
+        public IEnumerable<LogEventLevel> LogEventLevels => Enum.GetValues(typeof(LogEventLevel)).Cast<LogEventLevel>();
+
+
         public SettingsWindowViewModel()
         {
             if (Settings.EnableLogging)
             {
-                StaticCode.EnableLog();
+                StaticCode.EnableLog(Settings.LogLevel);
             }
 
             StaticCode.Logger?.Here().Information($"WorkingDirectory = {StaticCode.WorkingDirectory}");
@@ -235,11 +239,20 @@ namespace ellabi.ViewModels
                         {
                             if (Settings.EnableLogging)
                             {
-                                StaticCode.EnableLog();
+                                StaticCode.EnableLog(Settings.LogLevel);
                             }
                             else
                             {
                                 StaticCode.DisableLog();
+                            }
+
+                            break;
+                        }
+                    case "LogLevel":
+                        {
+                            if (Settings.EnableLogging)
+                            {
+                                StaticCode.EnableLog(Settings.LogLevel);
                             }
 
                             break;

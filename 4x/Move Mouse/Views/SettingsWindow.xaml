@@ -12,7 +12,7 @@
         xmlns:classes="clr-namespace:ellabi.Classes"
         xmlns:ed="http://schemas.microsoft.com/expression/2010/drawing"
         mc:Ignorable="d"
-        Title="Move Mouse Settings" Height="412" Width="640" Icon="/Resources/Mouse.ico" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize" WindowStyle="None" MouseDown="SettingsWindow_OnMouseDown" ShowActivated="True" Loaded="SettingsWindow_OnLoaded">
+        Title="Move Mouse Settings" Height="442" Width="640" Icon="/Resources/Mouse.ico" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize" WindowStyle="None" MouseDown="SettingsWindow_OnMouseDown" ShowActivated="True" Loaded="SettingsWindow_OnLoaded">
     <Grid Background="{StaticResource StandardWindowBackground}">
         <Grid.Resources>
             <!--<converters:ObjectToTypeStringConverter x:Key="ObjectToTypeStringConverter"/>-->
@@ -1175,7 +1175,7 @@
                             </ContentPresenter.Resources>
                         </ContentPresenter>
                     </Grid>
-                    <ed:Callout AnchorPoint="1.118,-0.5" CalloutStyle="RoundedRectangle" Fill="{StaticResource StandardWindowBackground}" VerticalAlignment="Bottom" FontSize="14" Height="58" Margin="97,0,279,70" Stroke="{StaticResource StandardLightTextSolidColorBrush}" StrokeThickness="3" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
+                    <ed:Callout AnchorPoint="1.118,-0.5" CalloutStyle="RoundedRectangle" Fill="{StaticResource StandardWindowBackground}" VerticalAlignment="Center" FontSize="14" Height="58" Margin="97,90,279,0" Stroke="{StaticResource StandardLightTextSolidColorBrush}" StrokeThickness="3" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
                         <ed:Callout.Content>
                             <StackPanel>
                                 <TextBlock Text="Click here to add actions" Foreground="{StaticResource StandardLightTextSolidColorBrush}" Background="Transparent" HorizontalAlignment="Center" TextWrapping="Wrap" Margin="10"/>
@@ -1683,8 +1683,12 @@
                         </Image>
                     </StackPanel>
                     <StackPanel Style="{StaticResource OptionStackPanelStyle}">
+                        <toggleSwitch:HorizontalToggleSwitch IsChecked="{Binding Path=Settings.PauseOnBattery, NotifyOnTargetUpdated=True, Mode=TwoWay}"/>
+                        <TextBlock Margin="5,0,0,0" Text="Pause when running on battery" Style="{StaticResource LabelTextBlockStyle}"/>
+                    </StackPanel>
+                    <StackPanel Style="{StaticResource OptionStackPanelStyle}">
                         <toggleSwitch:HorizontalToggleSwitch IsChecked="{Binding Path=Settings.EnableLogging, NotifyOnTargetUpdated=True, Mode=TwoWay}"/>
-                        <TextBlock Margin="5,0,0,0" Text="Enabled logging" Style="{StaticResource LabelTextBlockStyle}"/>
+                        <TextBlock Margin="5,0,0,0" Text="Enable logging" Style="{StaticResource LabelTextBlockStyle}"/>
                         <Grid Margin="20,0,0,0">
                             <Grid.Style>
                                 <Style TargetType="Grid" >
@@ -1702,10 +1706,13 @@
                                 <ColumnDefinition/>
                                 <ColumnDefinition Width="20"/>
                                 <ColumnDefinition/>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
                             <!--<xctk:WatermarkTextBox Grid.Column="0" Grid.Row="0" Text="{Binding Path=Settings.LogPath, NotifyOnTargetUpdated=True}" Watermark="Log file path"/>-->
-                            <Button Grid.Column="0" Content="Open" Click="OpenLogButton_Click"/>
-                            <Button Grid.Column="2" Content="Follow" Click="FollowLogButton_Click"/>
+                            <ComboBox Grid.Column="0" Width="100" SelectedItem="{Binding Path=Settings.LogLevel, NotifyOnTargetUpdated=True}" ItemsSource="{Binding Path=LogEventLevels}"/>
+                            <Button Grid.Column="2" Content="Open" Click="OpenLogButton_Click"/>
+                            <Button Grid.Column="4" Content="Follow" Click="FollowLogButton_Click"/>
                         </Grid>
                     </StackPanel>
                     <!--<StackPanel Style="{StaticResource OptionStackPanelStyle}">
@@ -1883,6 +1890,20 @@
                                     </Style>
                                 </Image.Style>
                             </Image>
+                        </StackPanel>
+                        <StackPanel>
+                            <StackPanel.Style>
+                                <Style TargetType="StackPanel" BasedOn="{StaticResource OptionStackPanelStyle}">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Path=Settings.HideSystemTrayIcon, NotifyOnTargetUpdated=True}" Value="True">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </StackPanel.Style>
+                            <toggleSwitch:HorizontalToggleSwitch IsChecked="{Binding Path=Settings.HideSystemTrayNotifications, NotifyOnTargetUpdated=True, Mode=TwoWay}"/>
+                            <TextBlock Margin="5,0,0,0" Text="Hide system tray notifications" Style="{StaticResource LabelTextBlockStyle}"/>
                         </StackPanel>
                         <StackPanel>
                             <StackPanel.Style>

@@ -193,6 +193,16 @@
                                                     </Setter.Value>
                                                 </Setter>
                                             </DataTrigger>
+                                            <DataTrigger Binding="{Binding Path=CurrentState, NotifyOnTargetUpdated=True}" Value="OnBattery">
+                                                <Setter Property="Stroke">
+                                                    <Setter.Value>
+                                                        <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                                                            <GradientStop Color="Orange" Offset="0.0"/>
+                                                            <GradientStop Color="#C99926" Offset="1.0"/>
+                                                        </LinearGradientBrush>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
                                 </classes:Arc.Style>
@@ -275,39 +285,6 @@
                 <DataTrigger Binding="{Binding Path=SettingsVm.Settings.OverrideWindowTitle, NotifyOnTargetUpdated=True, Mode=OneWay}" Value="True">
                     <Setter Property="Title" Value="{Binding Path=SettingsVm.Settings.WindowTitle, NotifyOnTargetUpdated=True}"/>
                 </DataTrigger>
-                <!--#region Moved to code to handle exceptions.-->
-                <!--<DataTrigger Binding="{Binding Path=CurrentState, NotifyOnTargetUpdated=True}" Value="Running">
-                    --><!--<Setter Property="Icon" Value="/Resources/Mouse-Play.ico"/>--><!--
-                    <Setter Property="TaskbarItemInfo">
-                        <Setter.Value>
-                            <TaskbarItemInfo ProgressValue="1" ProgressState="Normal"/>
-                        </Setter.Value>
-                    </Setter>
-                </DataTrigger>
-                <DataTrigger Binding="{Binding Path=CurrentState, NotifyOnTargetUpdated=True}" Value="Paused">
-                    --><!--<Setter Property="Icon" Value="/Resources/Mouse-Pause.ico"/>--><!--
-                    <Setter Property="TaskbarItemInfo">
-                        <Setter.Value>
-                            <TaskbarItemInfo ProgressValue="1" ProgressState="Paused"/>
-                        </Setter.Value>
-                    </Setter>
-                </DataTrigger>
-                <DataTrigger Binding="{Binding Path=CurrentState, NotifyOnTargetUpdated=True}" Value="Sleeping">
-                    <Setter Property="Icon" Value="/Resources/Mouse-Sleep.ico"/>
-                    <Setter Property="TaskbarItemInfo">
-                        <Setter.Value>
-                            <TaskbarItemInfo ProgressValue="1" ProgressState="Paused"/>
-                        </Setter.Value>
-                    </Setter>
-                </DataTrigger>
-                <DataTrigger Binding="{Binding Path=CurrentState, NotifyOnTargetUpdated=True}" Value="Executing">
-                    <Setter Property="TaskbarItemInfo">
-                        <Setter.Value>
-                            <TaskbarItemInfo ProgressValue="1" ProgressState="Error"/>
-                        </Setter.Value>
-                    </Setter>
-                </DataTrigger>-->
-                <!--#endregion-->
                 <DataTrigger Binding="{Binding Path=SettingsVm.Settings.OverrideWindowTitle, NotifyOnTargetUpdated=True}" Value="Sleeping">
                     <Setter Property="Icon" Value="/Resources/Mouse-Sleep.ico"/>
                 </DataTrigger>
@@ -320,24 +297,16 @@
             <tb:TaskbarIcon Name="MouseTaskbarIcon" ToolTipText="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=Title}" PopupActivation="RightClick" DoubleClickCommand="{Binding Path=StartStopToggleCommand, NotifyOnTargetUpdated=True}" LeftClickCommand="{Binding Path=ShowMoveMouseCommand}">
                 <tb:TaskbarIcon.Style>
                     <Style TargetType="tb:TaskbarIcon">
-                        <Setter Property="Visibility" Value="Hidden"/>
+                        <Setter Property="Visibility" Value="Visible"/>
+                        <Setter Property="IconSource" Value="/Resources/Mouse.ico"/>
                         <Style.Triggers>
-                            <!--<MultiDataTrigger>
+                            <MultiDataTrigger>
                                 <MultiDataTrigger.Conditions>
-                                    <Condition Binding="{Binding Path=SettingsVm.Settings.HideSystemTrayIcon, NotifyOnTargetUpdated=True}" Value="False"/>
-                                    <Condition Binding="{Binding Path=SettingsVm.Settings.HideSystemTrayIcon, NotifyOnTargetUpdated=True}" Value="False"/>
+                                    <Condition Binding="{Binding Path=SettingsVm.Settings.HideSystemTrayIcon, NotifyOnTargetUpdated=True}" Value="True"/>
+                                    <Condition Binding="{Binding Path=ForceSystrayIconVisibility, NotifyOnTargetUpdated=True}" Value="False"/>
                                 </MultiDataTrigger.Conditions>
-                                <Setter Property="Visibility" Value="Visible"/>
-                            </MultiDataTrigger>-->
-                            <DataTrigger Binding="{Binding Path=SettingsVm.Settings.HideSystemTrayIcon, NotifyOnTargetUpdated=True}" Value="False">
-                                <Setter Property="Visibility" Value="Visible"/>
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding Path=ForceSystrayIconVisibility, NotifyOnTargetUpdated=True}" Value="True">
-                                <Setter Property="Visibility" Value="Visible"/>
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding Path=CurrentState, NotifyOnTargetUpdated=True}" Value="Idle">
-                                <Setter Property="IconSource" Value="/Resources/Mouse.ico"/>
-                            </DataTrigger>
+                                <Setter Property="Visibility" Value="Hidden"/>
+                            </MultiDataTrigger>
                             <DataTrigger Binding="{Binding Path=CurrentState, NotifyOnTargetUpdated=True}" Value="Running">
                                 <Setter Property="IconSource" Value="/Resources/Mouse-SystemTray-Active.ico"/>
                             </DataTrigger>
@@ -349,6 +318,9 @@
                             </DataTrigger>
                             <DataTrigger Binding="{Binding Path=CurrentState, NotifyOnTargetUpdated=True}" Value="Sleeping">
                                 <Setter Property="IconSource" Value="/Resources/Mouse-SystemTray-Sleep.ico"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Path=CurrentState, NotifyOnTargetUpdated=True}" Value="OnBattery">
+                                <Setter Property="IconSource" Value="/Resources/Mouse-SystemTray-Battery.ico"/>
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>

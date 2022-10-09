@@ -10,7 +10,6 @@ using Quartz.Impl;
 using Quartz.Impl.Triggers;
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -27,6 +26,8 @@ namespace ellabi.ViewModels
 
         public delegate void RequestMinimiseHandler(object sender);
 
+        public delegate void RequestNotificationHandler(object sender, string title, string message, Hardcodet.Wpf.TaskbarNotification.BalloonIcon symbol);
+
         //public delegate void HookKeyEnabledChangedHandler(object sender, bool enabled, Key key);
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -34,6 +35,7 @@ namespace ellabi.ViewModels
         public event AltTabVisibilityChangedHandler AltTabVisibilityChanged;
         public event RequestActivateHandler RequestActivate;
         public event RequestMinimiseHandler RequestMinimise;
+        public event RequestNotificationHandler RequestNotification;
         //public event HookKeyEnabledChangedHandler HookKeyEnabledChanged;
 
         private MouseState _currentState;
@@ -67,7 +69,8 @@ namespace ellabi.ViewModels
             Paused,
             Executing,
             Sleeping,
-            OnBattery
+            OnBattery,
+            Locked
         }
 
         public SettingsWindowViewModel SettingsVm => _settingsVm ?? (_settingsVm = new SettingsWindowViewModel());
@@ -141,6 +144,7 @@ namespace ellabi.ViewModels
             //StaticCode.ThemeUpdated += StaticCode_ThemeUpdated;
             if (StaticCode.DownloadSource == StaticCode.MoveMouseSource.GitHub) StaticCode.UpdateAvailablityChanged += StaticCode_UpdateAvailablityChanged;
             SystemEvents.SessionSwitch += SystemEvents_SessionSwitch;
+            SystemEvents.PowerModeChanged += SystemEvents_PowerModeChanged;
             ThreadPool.QueueUserWorkItem(ForceSystrayIconVisibilityAtLaunch);
             ScheduleJobs();
             //Debug.WriteLine(SystemInformation.PowerStatus.BatteryChargeStatus);
@@ -177,10 +181,43 @@ namespace ellabi.ViewModels
                 {
                     case SessionSwitchReason.SessionUnlock:
                         _workstationLocked = false;
+
+                        if ((CurrentState.Equals(MouseState.Locked) || CurrentState.Equals(MouseState.Running)) && !SettingsVm.Settings.ActiveWhenLocked)
+                        {
+                            ShowNotification("Automatically resuming now workstation has been unlocked.");
+                        }
+
                         break;
                     case SessionSwitchReason.SessionLock:
                         _workstationLocked = true;
                         break;
+                }
+            }
+            catch (Exception ex)
+            {
+                StaticCode.Logger?.Here().Error(ex.Message);
+            }
+        }
+
+        private void SystemEvents_PowerModeChanged(object sender, PowerModeChangedEventArgs e)
+        {
+            try
+            {
+                StaticCode.Logger?.Here().Debug(e.Mode.ToString());
+
+                if (SettingsVm.Settings.PauseOnBattery && e.Mode.Equals(PowerModes.StatusChange))
+                {
+                    //todo Check what happens if state is Executing
+                    if (CurrentState.Equals(MouseState.Running) && RunningOnBattery())
+                    {
+                        Stop(MouseState.OnBattery);
+                        ShowNotification("Pausing now running on battery.");
+                    }
+                    else if (CurrentState.Equals(MouseState.OnBattery) && !RunningOnBattery())
+                    {
+                        Start();
+                        ShowNotification("Resuming now running on mains power.");
+                    }
                 }
             }
             catch (Exception ex)
@@ -214,9 +251,11 @@ namespace ellabi.ViewModels
                 {
                     case ScheduleBase.ScheduleAction.Start:
                         Start();
+                        ShowNotification("Scheduled start.");
                         break;
                     case ScheduleBase.ScheduleAction.Stop:
                         Stop(MouseState.Idle);
+                        ShowNotification("Scheduled stop.");
                         break;
                 }
             }
@@ -357,6 +396,7 @@ namespace ellabi.ViewModels
                                     StopAutoResumeTimer();
                                 }
                             }
+
                             break;
                         }
                     case "Schedules":
@@ -367,6 +407,22 @@ namespace ellabi.ViewModels
                     case "HideFromAltTab":
                         {
                             OnAltTabVisibilityChanged(this, !SettingsVm.Settings.HideFromAltTab);
+                            break;
+                        }
+                    case "PauseOnBattery":
+                        {
+                            if (!SettingsVm.Settings.PauseOnBattery && CurrentState.Equals(MouseState.OnBattery))
+                            {
+                                Start();
+                                ShowNotification("Resuming now running on mains power.");
+                            }
+                            //todo Check what happens if state is Executing
+                            else if (SettingsVm.Settings.PauseOnBattery && CurrentState.Equals(MouseState.Running) && RunningOnBattery())
+                            {
+                                Stop(MouseState.OnBattery);
+                                ShowNotification("Pausing now running on battery.");
+                            }
+
                             break;
                         }
                         //case "HookKeyEnabled":
@@ -423,26 +479,33 @@ namespace ellabi.ViewModels
 
                 if (CurrentState != MouseState.Running)
                 {
-                    if (!BlackoutIsActive())
+                    if (SettingsVm.Settings.PauseOnBattery && RunningOnBattery())
                     {
-                        StopAutoResumeTimer();
-                        _activeExecutionId = Guid.NewGuid();
-                        _lastStopStartToggleTime = DateTime.Now;
-                        PerformActions(ActionBase.EventTrigger.Start);
-                        double interval = SettingsVm.Settings.RandomInterval ? new Random().Next((SettingsVm.Settings.LowerInterval * 1000), (SettingsVm.Settings.UpperInterval * 1000)) : (SettingsVm.Settings.LowerInterval * 1000);
-                        interval = interval > 0 ? interval : 1;
-                        ExecutionTime = DateTime.Now.AddMilliseconds(interval);
-                        CurrentState = MouseState.Running;
-                        _actionTimer = new Timer(param => { PerformActions(ActionBase.EventTrigger.Interval); }, null, TimeSpan.FromMilliseconds(interval), Timeout.InfiniteTimeSpan);
-                        StopBlackoutTimer();
-                        AdjustVolume();
-                        if (_settingsVm.Settings.TopmostWhenRunning) OnRequestActivate(this);
-                        StartAutoPauseTimer();
+                        CurrentState = MouseState.OnBattery;
                     }
                     else
                     {
-                        CurrentState = MouseState.Sleeping;
-                        StartBlackoutTimer();
+                        if (!BlackoutIsActive())
+                        {
+                            StopAutoResumeTimer();
+                            _activeExecutionId = Guid.NewGuid();
+                            _lastStopStartToggleTime = DateTime.Now;
+                            PerformActions(ActionBase.EventTrigger.Start);
+                            double interval = SettingsVm.Settings.RandomInterval ? new Random().Next((SettingsVm.Settings.LowerInterval * 1000), (SettingsVm.Settings.UpperInterval * 1000)) : (SettingsVm.Settings.LowerInterval * 1000);
+                            interval = interval > 0 ? interval : 1;
+                            ExecutionTime = DateTime.Now.AddMilliseconds(interval);
+                            CurrentState = MouseState.Running;
+                            _actionTimer = new Timer(param => { PerformActions(ActionBase.EventTrigger.Interval); }, null, TimeSpan.FromMilliseconds(interval), Timeout.InfiniteTimeSpan);
+                            StopBlackoutTimer();
+                            AdjustVolume();
+                            if (_settingsVm.Settings.TopmostWhenRunning) OnRequestActivate(this);
+                            StartAutoPauseTimer();
+                        }
+                        else
+                        {
+                            CurrentState = MouseState.Sleeping;
+                            StartBlackoutTimer();
+                        }
                     }
                 }
             }
@@ -571,38 +634,51 @@ namespace ellabi.ViewModels
 
                             break;
                         case ActionBase.EventTrigger.Interval:
-                            if (((SettingsVm.Settings.ActiveWhenLocked.HasValue && SettingsVm.Settings.ActiveWhenLocked.Value) || !_workstationLocked) && !BlackoutIsActive())
+                            if (SettingsVm.Settings.ActiveWhenLocked || !_workstationLocked)
                             {
-                                CurrentState = MouseState.Executing;
-                                StopAutoPauseTimer();
-
-                                if (SettingsVm.Settings.Actions.Any(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger)))
+                                if (!BlackoutIsActive())
                                 {
-                                    var actions = _firstPass ? SettingsVm.Settings.Actions.Where(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger)) : SettingsVm.Settings.Actions.Where(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger) && action.Repeat);
+                                    CurrentState = MouseState.Executing;
+                                    StopAutoPauseTimer();
 
-                                    foreach (var action in actions)
+                                    if (SettingsVm.Settings.Actions.Any(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger)))
                                     {
-                                        if (_activeExecutionId.Equals(executionId))
+                                        var actions = _firstPass ? SettingsVm.Settings.Actions.Where(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger)) : SettingsVm.Settings.Actions.Where(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger) && action.Repeat);
+
+                                        foreach (var action in actions)
                                         {
-                                            action.Execute();
+                                            if (_activeExecutionId.Equals(executionId))
+                                            {
+                                                action.Execute();
+                                            }
                                         }
                                     }
-                                }
 
-                                _firstPass = false;
+                                    _firstPass = false;
+                                }
+                                else
+                                {
+                                    CurrentState = MouseState.Sleeping;
+                                }
                             }
                             else
                             {
-                                CurrentState = MouseState.Sleeping;
+                                CurrentState = MouseState.Locked;
                             }
 
                             if (_activeExecutionId.Equals(executionId) && (CurrentState.Equals(MouseState.Sleeping) || (!_firstPass && SettingsVm.Settings.Actions.Any(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger) && action.Repeat))))
                             {
                                 Start();
+
+                                if (CurrentState.Equals(MouseState.Sleeping))
+                                {
+                                    ShowNotification("Automatically resuming after blackout expired.");
+                                }
                             }
                             else
                             {
                                 Stop(MouseState.Idle);
+                                ShowNotification("Automatically stopping as there are no actions that are configured to repeat at each interval.");
                             }
 
                             break;
@@ -729,6 +805,7 @@ namespace ellabi.ViewModels
                 if (StaticCode.GetLastInputTime().TotalSeconds > SettingsVm.Settings.AutoResumeSeconds)
                 {
                     Start();
+                    ShowNotification($"Automatically resuming after {SettingsVm.Settings.AutoResumeSeconds} seconds of inactivity.");
                 }
             }
             catch (Exception ex)
@@ -785,6 +862,7 @@ namespace ellabi.ViewModels
                 if (!BlackoutIsActive())
                 {
                     Start();
+                    ShowNotification("Resuming now blackout is over.");
                 }
             }
             catch (Exception ex)
@@ -795,20 +873,51 @@ namespace ellabi.ViewModels
 
         private bool BlackoutIsActive()
         {
-            bool _blackoutIsActive;
+            bool blackoutIsActive;
 
             try
             {
-                _blackoutIsActive = (SettingsVm.Settings.Blackouts != null) && SettingsVm.Settings.Blackouts.Any(blackout => (blackout.EnabledDays.Any(day => day.Equals(DateTime.Now.AddDays(-1).DayOfWeek)) && (new DateTime(DateTime.Now.AddDays(-1).Year, DateTime.Now.AddDays(-1).Month, DateTime.Now.AddDays(-1).Day, blackout.Time.Hours, blackout.Time.Minutes, blackout.Time.Seconds).Add(blackout.Duration) > DateTime.Now)) || (blackout.EnabledDays.Any(day => day.Equals(DateTime.Now.DayOfWeek)) && (blackout.Time < DateTime.Now.TimeOfDay) && (blackout.Time.Add(blackout.Duration) > DateTime.Now.TimeOfDay)));
+                blackoutIsActive = (SettingsVm.Settings.Blackouts != null) && SettingsVm.Settings.Blackouts.Any(blackout => (blackout.EnabledDays.Any(day => day.Equals(DateTime.Now.AddDays(-1).DayOfWeek)) && (new DateTime(DateTime.Now.AddDays(-1).Year, DateTime.Now.AddDays(-1).Month, DateTime.Now.AddDays(-1).Day, blackout.Time.Hours, blackout.Time.Minutes, blackout.Time.Seconds).Add(blackout.Duration) > DateTime.Now)) || (blackout.EnabledDays.Any(day => day.Equals(DateTime.Now.DayOfWeek)) && (blackout.Time < DateTime.Now.TimeOfDay) && (blackout.Time.Add(blackout.Duration) > DateTime.Now.TimeOfDay)));
             }
             catch (Exception ex)
             {
-                _blackoutIsActive = false;
+                blackoutIsActive = false;
                 StaticCode.Logger?.Here().Error(ex.Message);
             }
 
-            StaticCode.Logger?.Here().Debug(_blackoutIsActive.ToString());
-            return _blackoutIsActive;
+            StaticCode.Logger?.Here().Debug(blackoutIsActive.ToString());
+            return blackoutIsActive;
+        }
+
+        private bool RunningOnBattery()
+        {
+            bool runningOnBattery;
+
+            try
+            {
+                runningOnBattery = System.Windows.Forms.SystemInformation.PowerStatus.PowerLineStatus.Equals(System.Windows.Forms.PowerLineStatus.Offline);
+            }
+            catch (Exception ex)
+            {
+                runningOnBattery = false;
+                StaticCode.Logger?.Here().Error(ex.Message);
+            }
+
+            StaticCode.Logger?.Here().Debug(runningOnBattery.ToString());
+            return runningOnBattery;
+        }
+
+        public void ShowNotification(string message)
+        {
+            ShowNotification(null, message, Hardcodet.Wpf.TaskbarNotification.BalloonIcon.None);
+        }
+
+        public void ShowNotification(string title, string message, Hardcodet.Wpf.TaskbarNotification.BalloonIcon symbol)
+        {
+            if (!SettingsVm.Settings.HideSystemTrayIcon && !SettingsVm.Settings.HideSystemTrayNotifications)
+            {
+                OnRequestNotification(this, title, message, symbol);
+            }
         }
 
         protected void OnMouseStateChanged(object sender, MouseState state)
@@ -858,6 +967,20 @@ namespace ellabi.ViewModels
             }
         }
 
+        protected void OnRequestNotification(object sender, string title, string message, Hardcodet.Wpf.TaskbarNotification.BalloonIcon symbol)
+        {
+            StaticCode.Logger?.Here().Debug($"{title}\t{message}\t{symbol}");
+
+            try
+            {
+                RequestNotification?.Invoke(sender, title, message, symbol);
+            }
+            catch (Exception ex)
+            {
+                StaticCode.Logger?.Here().Error(ex.Message);
+            }
+        }
+
         protected void OnRequestMinimise(object sender)
         {
             StaticCode.Logger?.Here().Debug(String.Empty);
@@ -895,6 +1018,7 @@ namespace ellabi.ViewModels
                 //StaticCode.ThemeUpdated -= StaticCode_ThemeUpdated;
                 StaticCode.UpdateAvailablityChanged -= StaticCode_UpdateAvailablityChanged;
                 SystemEvents.SessionSwitch -= SystemEvents_SessionSwitch;
+                SystemEvents.PowerModeChanged -= SystemEvents_PowerModeChanged;
             }
             catch (Exception ex)
             {

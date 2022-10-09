@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media.Animation;
 using System.Windows.Shell;
+using static System.Windows.Forms.AxHost;
 
 namespace ellabi.Views
 {
@@ -50,6 +51,7 @@ namespace ellabi.Views
             _vm.AltTabVisibilityChanged += _vm_AltTabVisibilityChanged;
             _vm.RequestActivate += _vm_RequestActivate;
             _vm.RequestMinimise += _vm_RequestMinimise;
+            _vm.RequestNotification += _vm_RequestNotification;
             //_vm.HookKeyEnabledChanged += _vm_HookKeyEnabledChanged;
 
             if (_vm.SettingsVm.Settings.HideFromAltTab)
@@ -60,10 +62,26 @@ namespace ellabi.Views
             if (_vm.SettingsVm.Settings.StartAtLaunch)
             {
                 _vm.Start();
+                _vm.ShowNotification("Automatically started at launch.");
             }
             else if (_vm.SettingsVm.Settings.MinimiseOnStop)
             {
                 WindowState = WindowState.Minimized;
+            }
+        }
+
+        private void _vm_RequestNotification(object sender, string title, string message, Hardcodet.Wpf.TaskbarNotification.BalloonIcon symbol)
+        {
+            try
+            {
+                Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate
+                {
+                    MouseTaskbarIcon.ShowBalloonTip(title, message, symbol);
+                }));
+            }
+            catch (Exception ex)
+            {
+                StaticCode.Logger?.Here().Error(ex.Message);
             }
         }
 
@@ -154,12 +172,12 @@ namespace ellabi.Views
                         if (TaskbarItemInfo != null)
                         {
                             TaskbarItemInfo.ProgressState =
-                            state.Equals(MouseWindowViewModel.MouseState.Running) ? TaskbarItemProgressState.Normal :
-                            state.Equals(MouseWindowViewModel.MouseState.Executing) ? TaskbarItemProgressState.Error :
-                            state.Equals(MouseWindowViewModel.MouseState.Paused) ? TaskbarItemProgressState.Paused :
-                            state.Equals(MouseWindowViewModel.MouseState.Sleeping) ? TaskbarItemProgressState.Paused :
-                            state.Equals(MouseWindowViewModel.MouseState.OnBattery) ? TaskbarItemProgressState.Paused :
-                            TaskbarItemProgressState.None;
+                                state.Equals(MouseWindowViewModel.MouseState.Running) ? TaskbarItemProgressState.Normal :
+                                state.Equals(MouseWindowViewModel.MouseState.Executing) ? TaskbarItemProgressState.Error :
+                                state.Equals(MouseWindowViewModel.MouseState.Paused) ? TaskbarItemProgressState.Paused :
+                                state.Equals(MouseWindowViewModel.MouseState.Sleeping) ? TaskbarItemProgressState.Paused :
+                                state.Equals(MouseWindowViewModel.MouseState.OnBattery) ? TaskbarItemProgressState.Paused :
+                                TaskbarItemProgressState.None;
                         }
                     }));
                 }

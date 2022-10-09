@@ -86,11 +86,11 @@ namespace ellabi
             }
         }
 
-        public static void EnableLog()
+        public static void EnableLog(LogEventLevel minimumLevel)
         {
             try
             {
-                _loggingLevelSwitch.MinimumLevel = (int)LogEventLevel.Verbose;
+                _loggingLevelSwitch.MinimumLevel = minimumLevel;
                 Logger?.Here().Debug(LogPath);
             }
             catch (Exception ex)

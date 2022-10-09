@@ -1,6 +1,7 @@
 ﻿using ellabi.Actions;
 using ellabi.Annotations;
 using ellabi.Schedules;
+using Serilog.Events;
 using System;
 using System.ComponentModel;
 using System.Linq;
@@ -48,6 +49,9 @@ namespace ellabi.Classes
         //private bool? _hookKeyEnabled;
         //private Key _hookKey;
         private bool? _standWithUkraine;
+        private bool? _pauseOnBattery;
+        private LogEventLevel? _logLevel;
+        private bool? _hideSystemTrayNotifications;
 
         public int LowerInterval
         {
@@ -419,7 +423,7 @@ namespace ellabi.Classes
             }
         }
 
-        public bool? PreventScreenBurn
+        public bool PreventScreenBurn
         {
             get
             {
@@ -433,7 +437,7 @@ namespace ellabi.Classes
             }
         }
 
-        public bool? ActiveWhenLocked
+        public bool ActiveWhenLocked
         {
             get
             {
@@ -447,7 +451,7 @@ namespace ellabi.Classes
             }
         }
 
-        public bool? ShowMoveMouseStatus
+        public bool ShowMoveMouseStatus
         {
             get
             {
@@ -479,12 +483,54 @@ namespace ellabi.Classes
         {
             get
             {
-                if (_standWithUkraine == null) _standWithUkraine = true;
+                if (_standWithUkraine == null) _standWithUkraine = false;
                 return _standWithUkraine.Value;
             }
             set
             {
                 _standWithUkraine = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool PauseOnBattery
+        {
+            get
+            {
+                if (_pauseOnBattery == null) _pauseOnBattery = false;
+                return _pauseOnBattery.Value;
+            }
+            set
+            {
+                _pauseOnBattery = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public LogEventLevel LogLevel
+        {
+            get
+            {
+                if (_logLevel == null) _logLevel = LogEventLevel.Verbose;
+                return _logLevel.Value;
+            }
+            set
+            {
+                _logLevel = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool HideSystemTrayNotifications
+        {
+            get
+            {
+                if (_hideSystemTrayNotifications == null) _hideSystemTrayNotifications = false;
+                return _hideSystemTrayNotifications.Value;
+            }
+            set
+            {
+                _hideSystemTrayNotifications = value;
                 OnPropertyChanged();
             }
         }
