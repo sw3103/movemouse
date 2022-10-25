@@ -1902,8 +1902,8 @@
                                     </Style.Triggers>
                                 </Style>
                             </StackPanel.Style>
-                            <toggleSwitch:HorizontalToggleSwitch IsChecked="{Binding Path=Settings.HideSystemTrayNotifications, NotifyOnTargetUpdated=True, Mode=TwoWay}"/>
-                            <TextBlock Margin="5,0,0,0" Text="Hide system tray notifications" Style="{StaticResource LabelTextBlockStyle}"/>
+                            <toggleSwitch:HorizontalToggleSwitch IsChecked="{Binding Path=Settings.ShowSystemTrayNotifications, NotifyOnTargetUpdated=True, Mode=TwoWay}"/>
+                            <TextBlock Margin="5,0,0,0" Text="Show system tray notifications" Style="{StaticResource LabelTextBlockStyle}"/>
                         </StackPanel>
                         <StackPanel>
                             <StackPanel.Style>

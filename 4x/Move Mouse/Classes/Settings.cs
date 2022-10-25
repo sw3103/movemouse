@@ -51,7 +51,7 @@ namespace ellabi.Classes
         private bool? _standWithUkraine;
         private bool? _pauseOnBattery;
         private LogEventLevel? _logLevel;
-        private bool? _hideSystemTrayNotifications;
+        private bool? _showSystemTrayNotifications;
 
         public int LowerInterval
         {
@@ -521,16 +521,16 @@ namespace ellabi.Classes
             }
         }
 
-        public bool HideSystemTrayNotifications
+        public bool ShowSystemTrayNotifications
         {
             get
             {
-                if (_hideSystemTrayNotifications == null) _hideSystemTrayNotifications = false;
-                return _hideSystemTrayNotifications.Value;
+                if (_showSystemTrayNotifications == null) _showSystemTrayNotifications = false;
+                return _showSystemTrayNotifications.Value;
             }
             set
             {
-                _hideSystemTrayNotifications = value;
+                _showSystemTrayNotifications = value;
                 OnPropertyChanged();
             }
         }

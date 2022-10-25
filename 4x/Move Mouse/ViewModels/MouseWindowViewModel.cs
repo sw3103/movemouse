@@ -914,7 +914,7 @@ namespace ellabi.ViewModels
 
         public void ShowNotification(string title, string message, Hardcodet.Wpf.TaskbarNotification.BalloonIcon symbol)
         {
-            if (!SettingsVm.Settings.HideSystemTrayIcon && !SettingsVm.Settings.HideSystemTrayNotifications)
+            if (!SettingsVm.Settings.HideSystemTrayIcon && SettingsVm.Settings.ShowSystemTrayNotifications)
             {
                 OnRequestNotification(this, title, message, symbol);
             }
