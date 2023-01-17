@@ -2,7 +2,10 @@
 Move Mouse is a simple piece of software that is designed to simulate user activity.
 
 Originally designed to prevent Windows from locking the user session or going to sleep, Move Mouse can be deployed in a wide range of situations.
+# Donate
+Move Mouse will always be free, but if you would like to buy me a beer to show your appreciation, you can do so using the following link. Thanks!
 
+https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=QZTWHD9CRW5XN
 # Installation
 ## Microsoft Store
 The easiest way to install Move Mouse on Windows 10 or 11 is from the Microsoft Store using the link below.
@@ -28,6 +31,14 @@ Move Mouse may be open source, but you do not need to be a developer, or compile
 - Portable (better option for work/corporate machines).
 ### Cons
 - Manual updates.
+# User Guide
+## Getting Started
+By default, Move Mouse is configured to move your mouse cursor every 30 seconds.
+
+You can start this by clicking Move Mouse, at which point you will see the outer ring turn green, and the 30 second countdown begin.
+
+<img src="docs/mm_green.png" width="200" height="200">
+
 # Privacy Policy
 ## Personal Information
 This application does not collect or transmit any user’s Personally Identifiable Information (PII). No personal information is used, stored, secured or disclosed by services this application works with.
