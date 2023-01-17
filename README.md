@@ -35,10 +35,35 @@ Move Mouse may be open source, but you do not need to be a developer, or compile
 ## Getting Started
 By default, Move Mouse is configured to move your mouse cursor every 30 seconds.
 
-You can start this by clicking Move Mouse, at which point you will see the outer ring turn green, and the 30 second countdown begin.
+You can start this by clicking Move Mouse, at which point you will see the outer ring turn green, and the 30 second countdown begins.
 
 <img src="docs/mm_green.png" width="200" height="200">
 
+Once the countdown is complete, Move Mouse will perform the specified Actions (in this case, moving the mouse cursor).
+
+Move Mouse will continue to repeat these Actions, unless you stop them by clicking once again.
+
+You can also start/stop Move Mouse by double-clicking the system tray icon.
+
+## Hover Buttons
+You will quickly notice that Move Mouse will present you with some options when you hover your mouse cursor.
+
+<img src="docs/mm_hover.png" width="200" height="200">
+
+### Gear
+Opens the Settings section where you can access the many different options to help you customise Move Mouse for your requirements.
+
+### Envelope
+Send feedback email to me.
+
+### Question Mark
+Brings you to this help site.
+
+### Twitter
+Takes you to Move Mouse's Twitter page.
+
+### Cross
+Closes Move Mouse.
 # Privacy Policy
 ## Personal Information
 This application does not collect or transmit any user’s Personally Identifiable Information (PII). No personal information is used, stored, secured or disclosed by services this application works with.
