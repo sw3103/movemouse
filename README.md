@@ -64,6 +64,33 @@ Takes you to Move Mouse's Twitter page.
 
 ### Cross
 Closes Move Mouse.
+## Status Colours
+The outer ring on Move Mouse will change colour to reflect the current status.
+### Idle (Blue)
+Move Mouse is doing nothing, and will continue to do so until it is started from the main window, the system tray icon, or you have set a start Schedule.
+
+<img src="docs/mm_blue.png" width="200" height="200">
+
+### Running (Green)
+Move Mouse is active and counting down towards performing your Actions.
+
+<img src="docs/mm_green.png" width="200" height="200">
+
+### Executing (Red)
+Move Mouse is performing your Actions.
+
+<img src="docs/mm_red.png" width="200" height="200">
+
+### Paused (Yellow)
+Move Mouse has automatically paused because it has detected user activity (this option needs to be enabled in Behaviour).
+
+<img src="docs/mm_yellow.png" width="200" height="200">
+
+### Sleeping (Purple)
+Move Mouse is asleep because there is an active Blackout window in operation.
+
+<img src="docs/mm_purple.png" width="200" height="200">
+
 # Privacy Policy
 ## Personal Information
 This application does not collect or transmit any user’s Personally Identifiable Information (PII). No personal information is used, stored, secured or disclosed by services this application works with.
