@@ -126,9 +126,9 @@ Each Action contains its own set of Properties that can be used to customise its
 Used to give your Action a meaningful name, which will change how it is displayed in the Action List.
 ##### Trigger
 Lets Move Mouse know when you would like to perform the Action.
-- Start - Perform the Action only when Move Mouse starts, whether this be from clicking Move Mouse, resuming from being paused, or a Scheduled start. This does not include leaving a Blackout window.
-- Interval - Perform the Action at each interval, which is when the Move Mouse countdown has reached zero.
-- Stop - Perform the Action when Move Mouse stops, including clicking Move Mouse, entering a paused state, or a Scheduled stop. This does not include entering a Blackout window.
+- **Start** - Perform the Action only when Move Mouse starts, whether this be from clicking Move Mouse, resuming from being paused, or a Scheduled start. This does not include leaving a Blackout window.
+- **Interval** - Perform the Action at each interval, which is when the Move Mouse countdown has reached zero.
+- **Stop** - Perform the Action when Move Mouse stops, including clicking Move Mouse, entering a paused state, or a Scheduled stop. This does not include entering a Blackout window.
 ##### Repeat
 Only available when the Trigger is set to Interval, this option lets Move Mouse whether the Action should be repeated at every Interval, or just the first time.
 ##### Enabled
