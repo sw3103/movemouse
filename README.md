@@ -210,6 +210,29 @@ Makes Move Mouse sleep/pause.
 Randomise the sleep time. When this option is enabled, Duration will be replaced with Lower and Upper.
 ###### Duration
 Time in seconds to sleep.
+### Behaviour
+This section will allow you to customise how Move Mouse operates within the user session.
+
+<img src="docs/settings_behaviour.png" width="640">
+
+#### Repeat actions every/randomly X seconds
+Specify how long Move Mouse should wait between repeating your Actions. You can either set a constant interval, or select random lower and upper interval times.
+#### Automatically stop/pause when user activity detected
+Instruct Move Mouse to automatically stop or pause when user activity is detected (mouse movement or keyboard).
+#### Automatically resume after X seconds of activity
+If you have enabled the automatic pause option, you can configure Move Mouse to automatically resume after a specified number of seconds of inactivity.
+
+These two options work well together when you are frequently away from your session, although want to keep your session alive. Move Mouse will not be active when your session is in use, but will automatically become active when you are away.
+#### Launch Move Mouse at start-up
+Automatically start Move Mouse after you login to Windows.
+#### Start actions when Move Mouse is launched
+Automatically start Move Mouse when it is launched.
+#### Adjust volume when Move Mouse is running
+Allow Move Mouse to adjust your volume control when running.
+#### Continue performing actions when session is locked
+By default, Move Mouse will not continue running if you lock your session. Enable this option if you would like Move Mouse to continue working even when your session is locked.
+#### Enable Logging
+Enables trace logging which can be useful to diagnose why Move Mouse may not be behaving as expected.
 # Privacy Policy
 ## Personal Information
 This application does not collect or transmit any user’s Personally Identifiable Information (PII). No personal information is used, stored, secured or disclosed by services this application works with.
