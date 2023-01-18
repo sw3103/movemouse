@@ -259,6 +259,25 @@ Do not show the Move Mouse system tray icon.
 > :warning: If you opt to hide both the Move Mouse window and system tray icon, there will be no way to access the Settings for further customisations. The Move Mouse system tray icon will be visible momentarily at launch, which will allow you to right-click and access Settings.
 #### Show current status on main window
 Show Move Mouse's status on the main screen to compliment the outer ring colour.
+### Schedules
+Create your own Schedules to automatically stop/start Move Mouse to suit you.
+
+To add a Schedule, click the plus icon, and select whether you would like to add a Simple Schedule or Advanced Schedule.
+
+<img src="docs/settings_schedules.png" width="640">
+
+#### Simple Schedule
+For basic scheduling, a Simple Schedule can be used to start/stop Move Mouse at a specific time of day, on selected days of the week.
+
+<img src="docs/schedule_simple.png" width="400">
+
+#### Advanced Schedule
+An Advanced Schedule offers ultimate control over when to stop/start Move Mouse.
+
+Using cron expressions for the trigger, you will be able to create Schedules for almost any situation.
+
+<img src="docs/schedule_advanced.png" width="400">
+
 # Privacy Policy
 ## Personal Information
 This application does not collect or transmit any user’s Personally Identifiable Information (PII). No personal information is used, stored, secured or disclosed by services this application works with.
