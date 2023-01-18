@@ -174,7 +174,7 @@ Used to bring an application window into the foreground, which is useful when yo
 ###### Mode
 Specifies how to locate a running application.
 - **Process** - Used to locate the application using the process name. This is a good option if the window title of an application (such as a web browser) frequently changes.
-- **indow** - Uses the window title to locate the application. This is a good option when an application has multiple open windows, or there are multiple instances of the application process running.
+- **Window** - Uses the window title to locate the application. This is a good option when an application has multiple open windows, or there are multiple instances of the application process running.
 Name
 The name of the application process/window that you wish to activate.
 
