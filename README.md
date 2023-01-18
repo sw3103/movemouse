@@ -233,6 +233,32 @@ Allow Move Mouse to adjust your volume control when running.
 By default, Move Mouse will not continue running if you lock your session. Enable this option if you would like Move Mouse to continue working even when your session is locked.
 #### Enable Logging
 Enables trace logging which can be useful to diagnose why Move Mouse may not be behaving as expected.
+### Appearance
+Use these options to control the appearance of Move Mouse.
+
+<img src="docs/settings_appearance.png" width="640">
+
+#### Hide Move Mouse window
+Hides the main Move Mouse window from the screen. If you would like to disable this option, you can access the Settings section by right-clicking the system tray icon.
+
+Enabling this option will automatically remove all other Appearance options that no longer apply.
+#### Show topmost when running
+Ensures Move Mouse is always on top of other application when in a Running state.
+#### Minimise when not running
+Automatically minimise Move Mouse when entering an Idle or Paused state.
+#### Hide from taskbar
+Do not show the Move Mouse icon on the Windows taskbar.
+#### Hide from Alt+Tab
+Do not show Move Mouse when switching between applications using Alt+Tab.
+#### Override window title
+Provide your own custom title for Move Mouse.
+#### Enable screen  burn prevention
+Enabling this option will introduce a subtle movement to Move Mouse, which although unnoticeable to the eye, will help prevent screen burn in scenarios where Move Mouse is on screen for prolonged periods of time.
+#### Hide system tray icon
+Do not show the Move Mouse system tray icon.
+> :warning: If you opt to hide both the Move Mouse window and system tray icon, there will be no way to access the Settings for further customisations. The Move Mouse system tray icon will be visible momentarily at launch, which will allow you to right-click and access Settings.
+#### Show current status on main window
+Show Move Mouse's status on the main screen to compliment the outer ring colour.
 # Privacy Policy
 ## Personal Information
 This application does not collect or transmit any user’s Personally Identifiable Information (PII). No personal information is used, stored, secured or disclosed by services this application works with.
