@@ -188,7 +188,7 @@ File path for the command. This does not have to be an executable file (.exe/.ba
 Any command line arguments that need to be passed to the file.
 ###### Wait
 Tells Move Mouse whether to wait for the process to complete/close before continuing.
-WARNING: Long running/unstable processes may cause Move Mouse to hang or freeze.
+> :warning: Long running/unstable processes may cause Move Mouse to hang or freeze.
 ###### Hidden
 Hides the process execution from the user.
 #### PowerShell Script
@@ -200,7 +200,7 @@ Move Mouse includes many of the most popular Actions that users require, althoug
 Path to the Windows PowerShell script file (.ps1).
 ###### Wait
 Tells Move Mouse whether to wait for the script to complete/close before continuing.
-WARNING: Long running/unstable scripts may cause Move Mouse to hang or freeze.
+> :warning: Long running/unstable scripts may cause Move Mouse to hang or freeze.
 ###### Hidden
 Hides the script execution from the user.
 #### Sleep
