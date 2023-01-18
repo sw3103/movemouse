@@ -37,7 +37,7 @@ By default, Move Mouse is configured to move your mouse cursor every 30 seconds.
 
 You can start this by clicking Move Mouse, at which point you will see the outer ring turn green, and the 30 second countdown begins.
 
-<img src="docs/mm_green.png" width="200" height="200">
+<img src="docs/mm_green.png" height="200">
 
 Once the countdown is complete, Move Mouse will perform the specified Actions (in this case, moving the mouse cursor).
 
@@ -48,7 +48,7 @@ You can also start/stop Move Mouse by double-clicking the system tray icon.
 ## Hover Buttons
 You will quickly notice that Move Mouse will present you with some options when you hover your mouse cursor.
 
-<img src="docs/mm_hover.png" width="200" height="200">
+<img src="docs/mm_hover.png" height="200">
 
 ### Gear
 Opens the Settings section where you can access the many different options to help you customise Move Mouse for your requirements.
@@ -69,28 +69,70 @@ The outer ring on Move Mouse will change colour to reflect the current status.
 ### Idle (Blue)
 Move Mouse is doing nothing, and will continue to do so until it is started from the main window, the system tray icon, or you have set a start Schedule.
 
-<img src="docs/mm_blue.png" width="200" height="200">
+<img src="docs/mm_blue.png" height="200">
 
 ### Running (Green)
 Move Mouse is active and counting down towards performing your Actions.
 
-<img src="docs/mm_green.png" width="200" height="200">
+<img src="docs/mm_green.png" height="200">
 
 ### Executing (Red)
 Move Mouse is performing your Actions.
 
-<img src="docs/mm_red.png" width="200" height="200">
+<img src="docs/mm_red.png" height="200">
 
 ### Paused (Yellow)
 Move Mouse has automatically paused because it has detected user activity (this option needs to be enabled in Behaviour).
 
-<img src="docs/mm_yellow.png" width="200" height="200">
+<img src="docs/mm_yellow.png" height="200">
 
 ### Sleeping (Purple)
 Move Mouse is asleep because there is an active Blackout window in operation.
 
-<img src="docs/mm_purple.png" width="200" height="200">
+<img src="docs/mm_purple.png" height="200">
 
+## Settings
+Access the Settings by clicking the Gear icon on the hover button or system tray icon, or right-click the main Move Mouse window.
+### Actions
+This is where things get interesting. Move Mouse can perform a wide range of Actions, which can be customised to fit your exact requirements.
+#### Action List
+Here you will see the list of Actions, which by default will start with a Move Mouse Cursor Action.
+
+<img src="docs/settings_actionpanel.png" width="640">
+
+#### Action Controls
+Use the Action Controls to add, remove and re-order your Actions.
+
+<img src="docs/settings_actioncontrols.png" width="640">
+
+##### Add
+To add an Action, click the plus icon in the Action Controls, and select the desired Action from the list.
+
+<img src="docs/settings_addaction.png" width="640">
+
+##### Remove
+Select an Action, and click the bin icon.
+
+##### Re-ordering
+Select an Action, and use the arrow icons to re-order them in the list.
+
+#### Action Properties
+Each Action contains its own set of Properties that can be used to customise its behaviour. Some of these Properties are specific to the type of Action, for example, the Distance Property on the Move Mouse Cursor Action. There are also Common Action Properties which apply to all Actions.
+
+<img src="docs/settings_actionproperties.png" width="640">
+
+#### Common Action Properties
+##### Name
+Used to give your Action a meaningful name, which will change how it is displayed in the Action List.
+##### Trigger
+Lets Move Mouse know when you would like to perform the Action.
+- Start - Perform the Action only when Move Mouse starts, whether this be from clicking Move Mouse, resuming from being paused, or a Scheduled start. This does not include leaving a Blackout window.
+- Interval - Perform the Action at each interval, which is when the Move Mouse countdown has reached zero.
+- Stop - Perform the Action when Move Mouse stops, including clicking Move Mouse, entering a paused state, or a Scheduled stop. This does not include entering a Blackout window.
+##### Repeat
+Only available when the Trigger is set to Interval, this option lets Move Mouse whether the Action should be repeated at every Interval, or just the first time.
+##### Enabled
+Allows you to enable or disable Actions without having to remove them and lose any settings you may want to retain.
 # Privacy Policy
 ## Personal Information
 This application does not collect or transmit any user’s Personally Identifiable Information (PII). No personal information is used, stored, secured or disclosed by services this application works with.
