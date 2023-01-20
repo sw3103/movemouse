@@ -97,7 +97,7 @@ Move Mouse is asleep because there is an active Blackout window in operation.
 <img src="docs/mm_purple.png" width="200">
 
 ## Pausing On battery (Orange)
-Move Mouse has automatically paused because it has detected it is running on battery power (this option is only visible when there a bettery is present, and needs to be enabled in Behaviour).
+Move Mouse has automatically paused because it has detected it is running on battery power (this option needs to be enabled in Behaviour).
 
 <img src="docs/mm_orange.png" width="200">
 
@@ -241,6 +241,8 @@ Automatically start Move Mouse when it is launched.
 Allow Move Mouse to adjust your volume control when running.
 ### Continue performing actions when session is locked
 By default, Move Mouse will not continue running if you lock your session. Enable this option if you would like Move Mouse to continue working even when your session is locked.
+### Pause when running on battery
+Automatically pauses Move Mouse when running on battery power.
 ### Enable Logging
 Enables trace logging which can be useful to diagnose why Move Mouse may not be behaving as expected.
 ## Appearance
@@ -267,8 +269,14 @@ Enabling this option will introduce a subtle movement to Move Mouse, which altho
 ### Hide system tray icon
 Do not show the Move Mouse system tray icon.
 > :warning: If you opt to hide both the Move Mouse window and system tray icon, there will be no way to access the Settings for further customisations. The Move Mouse system tray icon will be visible momentarily at launch, which will allow you to right-click and access Settings.
+### Show system tray notifications
+Displays toast style popups from the system tray to inform of status changes. Useful for troubleshooting.
 ### Show current status on main window
 Show Move Mouse's status on the main screen to compliment the outer ring colour.
+### Disable button animations
+Disables the fly/fade in animation for the hover buttons.
+### #StandWithUkraine
+Changes the Move Mouse theme to the Ukranian flag.
 ## Schedules
 Create your own Schedules to automatically stop/start Move Mouse to suit you.
 
