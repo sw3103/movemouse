@@ -56,12 +56,12 @@ You can also start/stop Move Mouse by double-clicking the system tray icon.
 # Hover Buttons
 You will quickly notice that Move Mouse will present you with some options when you hover your mouse cursor.
 
-<img src="docs/mm_hover.png" height="200">
+<img src="docs/mm_hover.png" width="331">
 
 ## Gear
 Opens the Settings section where you can access the many different options to help you customise Move Mouse for your requirements.
-## Envelope
-Send feedback email to me.
+## PayPal
+Directs you to PayPal where you can [Donate](donate).
 ## Question Mark
 Brings you to this help site.
 ## Twitter
