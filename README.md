@@ -61,7 +61,7 @@ You will quickly notice that Move Mouse will present you with some options when 
 ## Gear
 Opens the Settings section where you can access the many different options to help you customise Move Mouse for your requirements.
 ## PayPal
-Directs you to PayPal where you can [Donate](donate).
+Directs you to PayPal where you can [Donate](#donate).
 ## Question Mark
 Brings you to this help site.
 ## Twitter
