@@ -45,7 +45,7 @@ By default, Move Mouse is configured to move your mouse cursor every 30 seconds.
 
 You can start this by clicking Move Mouse, at which point you will see the outer ring turn green, and the 30 second countdown begins.
 
-<img src="docs/mm_green.png" height="200">
+<img src="docs/mm_green.png" width="200">
 
 Once the countdown is complete, Move Mouse will perform the specified Actions (in this case, moving the mouse cursor).
 
@@ -74,32 +74,32 @@ The outer ring on Move Mouse will change colour to reflect the current status.
 ## Idle (Blue)
 Move Mouse is doing nothing, and will continue to do so until it is started from the main window, the system tray icon, or you have set a start Schedule.
 
-<img src="docs/mm_blue.png" height="200">
+<img src="docs/mm_blue.png" width="200">
 
 ## Running (Green)
 Move Mouse is active and counting down towards performing your Actions.
 
-<img src="docs/mm_green.png" height="200">
+<img src="docs/mm_green.png" width="200">
 
 ## Executing (Red)
 Move Mouse is performing your Actions.
 
-<img src="docs/mm_red.png" height="200">
+<img src="docs/mm_red.png" width="200">
 
 ## Paused (Yellow)
 Move Mouse has automatically paused because it has detected user activity (this option needs to be enabled in Behaviour).
 
-<img src="docs/mm_yellow.png" height="200">
+<img src="docs/mm_yellow.png" width="200">
 
 ## Sleeping (Purple)
 Move Mouse is asleep because there is an active Blackout window in operation.
 
-<img src="docs/mm_purple.png" height="200">
+<img src="docs/mm_purple.png" width="200">
 
 ## Pausing On battery (Orange)
 Move Mouse has automatically paused because it has detected it is running on battery power (this option is only visible when there a bettery is present, and needs to be enabled in Behaviour).
 
-<img src="docs/mm_orange.png" height="200">
+<img src="docs/mm_orange.png" width="200">
 
 # Settings
 Access the Settings by clicking the Gear icon on the hover button or system tray icon, or right-click the main Move Mouse window.
@@ -287,6 +287,18 @@ An Advanced Schedule offers ultimate control over when to stop/start Move Mouse.
 Using cron expressions for the trigger, you will be able to create Schedules for almost any situation.
 
 <img src="docs/schedule_advanced.png" width="400">
+
+## Blackouts
+Blackouts allow you to specify windows of time when you would like disable all Move Mouse activity and enter into the the Sleeping state.
+
+To add a Blackout window, click the plus icon.
+
+<img src="docs/settings_blackouts.png" width="640">
+
+### Blackout
+Simply specify the time of day at which you would like the Blackout window to start, which days of the week it applies, and how long the window should last.
+
+<img src="docs/blackout.png" width="400">
 
 # Privacy Policy
 ## Personal Information
