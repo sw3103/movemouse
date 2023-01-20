@@ -6,6 +6,7 @@ Originally designed to prevent Windows from locking the user session or going to
 Move Mouse will always be free, but if you would like to buy me a beer to show your appreciation, you can do so using the following link. Thanks!
 
 https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=QZTWHD9CRW5XN
+
 # Installation
 ## Microsoft Store
 The easiest way to install Move Mouse on Windows 10 or 11 is from the Microsoft Store using the link below.
@@ -31,6 +32,14 @@ Move Mouse may be open source, but you do not need to be a developer, or compile
 - Portable (better option for work/corporate machines).
 ### Cons
 - Manual updates.
+
+# Uninstall
+## Microsoft Store
+You have a couple of options.
+- Right-click on the Move Mouse icon in your Start Menu, and select Uninstall from the context menu.
+- Uninstall it from Settings > Apps > Installed Apps (not to be confused with Add/Remove Programs in Control Panel).
+## GitHub
+The GitHub version is just a single executable file that can be deleted.
 # Getting Started
 By default, Move Mouse is configured to move your mouse cursor every 30 seconds.
 
@@ -51,18 +60,15 @@ You will quickly notice that Move Mouse will present you with some options when 
 
 ## Gear
 Opens the Settings section where you can access the many different options to help you customise Move Mouse for your requirements.
-
 ## Envelope
 Send feedback email to me.
-
 ## Question Mark
 Brings you to this help site.
-
 ## Twitter
 Takes you to Move Mouse's Twitter page.
-
 ## Cross
 Closes Move Mouse.
+
 # Status Colours
 The outer ring on Move Mouse will change colour to reflect the current status.
 ## Idle (Blue)
@@ -89,6 +95,11 @@ Move Mouse has automatically paused because it has detected user activity (this 
 Move Mouse is asleep because there is an active Blackout window in operation.
 
 <img src="docs/mm_purple.png" height="200">
+
+## Pausing On battery (Orange)
+Move Mouse has automatically paused because it has detected it is running on battery power (this option is only visible when there a bettery is present, and needs to be enabled in Behaviour).
+
+<img src="docs/mm_orange.png" height="200">
 
 # Settings
 Access the Settings by clicking the Gear icon on the hover button or system tray icon, or right-click the main Move Mouse window.
