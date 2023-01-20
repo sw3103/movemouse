@@ -31,8 +31,7 @@ Move Mouse may be open source, but you do not need to be a developer, or compile
 - Portable (better option for work/corporate machines).
 ### Cons
 - Manual updates.
-# User Guide
-## Getting Started
+# Getting Started
 By default, Move Mouse is configured to move your mouse cursor every 30 seconds.
 
 You can start this by clicking Move Mouse, at which point you will see the outer ring turn green, and the 30 second countdown begins.
@@ -45,133 +44,133 @@ Move Mouse will continue to repeat these Actions, unless you stop them by clicki
 
 You can also start/stop Move Mouse by double-clicking the system tray icon.
 
-## Hover Buttons
+# Hover Buttons
 You will quickly notice that Move Mouse will present you with some options when you hover your mouse cursor.
 
 <img src="docs/mm_hover.png" height="200">
 
-### Gear
+## Gear
 Opens the Settings section where you can access the many different options to help you customise Move Mouse for your requirements.
 
-### Envelope
+## Envelope
 Send feedback email to me.
 
-### Question Mark
+## Question Mark
 Brings you to this help site.
 
-### Twitter
+## Twitter
 Takes you to Move Mouse's Twitter page.
 
-### Cross
+## Cross
 Closes Move Mouse.
-## Status Colours
+# Status Colours
 The outer ring on Move Mouse will change colour to reflect the current status.
-### Idle (Blue)
+## Idle (Blue)
 Move Mouse is doing nothing, and will continue to do so until it is started from the main window, the system tray icon, or you have set a start Schedule.
 
 <img src="docs/mm_blue.png" height="200">
 
-### Running (Green)
+## Running (Green)
 Move Mouse is active and counting down towards performing your Actions.
 
 <img src="docs/mm_green.png" height="200">
 
-### Executing (Red)
+## Executing (Red)
 Move Mouse is performing your Actions.
 
 <img src="docs/mm_red.png" height="200">
 
-### Paused (Yellow)
+## Paused (Yellow)
 Move Mouse has automatically paused because it has detected user activity (this option needs to be enabled in Behaviour).
 
 <img src="docs/mm_yellow.png" height="200">
 
-### Sleeping (Purple)
+## Sleeping (Purple)
 Move Mouse is asleep because there is an active Blackout window in operation.
 
 <img src="docs/mm_purple.png" height="200">
 
-## Settings
+# Settings
 Access the Settings by clicking the Gear icon on the hover button or system tray icon, or right-click the main Move Mouse window.
-### Actions
+## Actions
 This is where things get interesting. Move Mouse can perform a wide range of Actions, which can be customised to fit your exact requirements.
-#### Overview
-##### Action List
+### Overview
+#### Action List
 Here you will see the list of Actions, which by default will start with a Move Mouse Cursor Action.
 
 <img src="docs/settings_actionpanel.png" width="640">
 
-##### Action Controls
+#### Action Controls
 Use the Action Controls to add, remove and re-order your Actions.
 
 <img src="docs/settings_actioncontrols.png" width="640">
 
-###### Add
+##### Add
 To add an Action, click the plus icon in the Action Controls, and select the desired Action from the list.
 
 <img src="docs/settings_addaction.png" width="640">
 
-###### Remove
+##### Remove
 Select an Action, and click the bin icon.
 
-###### Re-ordering
+##### Re-ordering
 Select an Action, and use the arrow icons to re-order them in the list.
 
-##### Action Properties
+#### Action Properties
 Each Action contains its own set of Properties that can be used to customise its behaviour. Some of these Properties are specific to the type of Action, for example, the Distance Property on the Move Mouse Cursor Action. There are also Common Action Properties which apply to all Actions.
 
 <img src="docs/settings_actionproperties.png" width="640">
 
-##### Common Action Properties
-###### Name
+#### Common Action Properties
+##### Name
 Used to give your Action a meaningful name, which will change how it is displayed in the Action List.
-###### Trigger
+##### Trigger
 Lets Move Mouse know when you would like to perform the Action.
 - **Start** - Perform the Action only when Move Mouse starts, whether this be from clicking Move Mouse, resuming from being paused, or a Scheduled start. This does not include leaving a Blackout window.
 - **Interval** - Perform the Action at each interval, which is when the Move Mouse countdown has reached zero.
 - **Stop** - Perform the Action when Move Mouse stops, including clicking Move Mouse, entering a paused state, or a Scheduled stop. This does not include entering a Blackout window.
-###### Repeat
+##### Repeat
 Only available when the Trigger is set to Interval, this option lets Move Mouse whether the Action should be repeated at every Interval, or just the first time.
-###### Enabled
+##### Enabled
 Allows you to enable or disable Actions without having to remove them and lose any settings you may want to retain.
-#### Move Mouse Cursor
+### Move Mouse Cursor
 Moves the mouse cursor (pointer).
-##### Action Properties
-###### Distance
+#### Action Properties
+##### Distance
 The distance measured in pixels that the mouse cursor will move.
-###### Direction
+##### Direction
 The direction/pattern the mouse cursor will be moved in.
-###### Stealth
+##### Stealth
 Sets the Direction to None so that the mouse cursor does not visibly move on screen, although it will still reset the session idle time and prevent the Windows session from locking.
-###### Speed
+##### Speed
 The speed at which the mouse cursor is moved.
-#### Click Mouse Button
+### Click Mouse Button
 Clicks a mouse button.
-##### Action Properties
-###### Button
+#### Action Properties
+##### Button
 Which mouse button to click.
-###### Hold
+##### Hold
 How long to hold down the mouse button for (disabled by default).
-#### Scroll Mouse Wheel
+### Scroll Mouse Wheel
 Activates the mouse wheel.
-##### Action Properties
-###### Distance
+#### Action Properties
+##### Distance
 How far to scroll the mouse wheel.
-###### Direction
+##### Direction
 The direction to scroll the mouse wheel.
-#### Position Mouse Cursor
+### Position Mouse Cursor
 Moves the mouse cursor directly to the specified screen location.
-##### Action Properties
-###### Position
+#### Action Properties
+##### Position
 The X and Y screen coordinates to position the mouse cursor.
-###### Track
+##### Track
 What do you mean you don't know the X and Y coordinates you want to use?
 
 Use the Track button to automatically track the cursor location as you move it to the desired location. Once the mouse cursor has remained in position for three seconds, the tracking will stop and you coordinates will be locked-in.
-#### Activate Application
+### Activate Application
 Used to bring an application window into the foreground, which is useful when you would like Move Mouse to interact with a running application.
-##### Action Properties
-###### Mode
+#### Action Properties
+##### Mode
 Specifies how to locate a running application.
 - **Process** - Used to locate the application using the process name. This is a good option if the window title of an application (such as a web browser) frequently changes.
 - **Window** - Uses the window title to locate the application. This is a good option when an application has multiple open windows, or there are multiple instances of the application process running.
@@ -179,99 +178,99 @@ Name
 The name of the application process/window that you wish to activate.
 
 This will automatically populate with list of running applications for your convenience.
-#### Run Command
+### Run Command
 Run an external command. Similar to the Windows Run dialogue (Windows Key+R), although this must point to a valid file path (cannot be used to open folder windows).
-##### Action Properties
-###### Path
+#### Action Properties
+##### Path
 File path for the command. This does not have to be an executable file (.exe/.bat/.com/etc.), and can exist in any location that is accessible from the user session.
-###### Args
+##### Args
 Any command line arguments that need to be passed to the file.
-###### Wait
+##### Wait
 Tells Move Mouse whether to wait for the process to complete/close before continuing.
 > :warning: Long running/unstable processes may cause Move Mouse to hang or freeze.
-###### Hidden
+##### Hidden
 Hides the process execution from the user.
-#### PowerShell Script
+### PowerShell Script
 Run a Windows PowerShell script.
 
 Move Mouse includes many of the most popular Actions that users require, although anything else can be accomplished with a PowerShell Script. See the Snippets for inspiration, and feel free to contact me if you would like some additional help.
-##### Action Properties
-###### Script
+#### Action Properties
+##### Script
 Path to the Windows PowerShell script file (.ps1).
-###### Wait
+##### Wait
 Tells Move Mouse whether to wait for the script to complete/close before continuing.
 > :warning: Long running/unstable scripts may cause Move Mouse to hang or freeze.
-###### Hidden
+##### Hidden
 Hides the script execution from the user.
-#### Sleep
+### Sleep
 Makes Move Mouse sleep/pause.
-##### Action Properties
-###### Random
+#### Action Properties
+##### Random
 Randomise the sleep time. When this option is enabled, Duration will be replaced with Lower and Upper.
-###### Duration
+##### Duration
 Time in seconds to sleep.
-### Behaviour
+## Behaviour
 This section will allow you to customise how Move Mouse operates within the user session.
 
 <img src="docs/settings_behaviour.png" width="640">
 
-#### Repeat actions every/randomly X seconds
+### Repeat actions every/randomly X seconds
 Specify how long Move Mouse should wait between repeating your Actions. You can either set a constant interval, or select random lower and upper interval times.
-#### Automatically stop/pause when user activity detected
+### Automatically stop/pause when user activity detected
 Instruct Move Mouse to automatically stop or pause when user activity is detected (mouse movement or keyboard).
-#### Automatically resume after X seconds of activity
+### Automatically resume after X seconds of activity
 If you have enabled the automatic pause option, you can configure Move Mouse to automatically resume after a specified number of seconds of inactivity.
 
 These two options work well together when you are frequently away from your session, although want to keep your session alive. Move Mouse will not be active when your session is in use, but will automatically become active when you are away.
-#### Launch Move Mouse at start-up
+### Launch Move Mouse at start-up
 Automatically start Move Mouse after you login to Windows.
-#### Start actions when Move Mouse is launched
+### Start actions when Move Mouse is launched
 Automatically start Move Mouse when it is launched.
-#### Adjust volume when Move Mouse is running
+### Adjust volume when Move Mouse is running
 Allow Move Mouse to adjust your volume control when running.
-#### Continue performing actions when session is locked
+### Continue performing actions when session is locked
 By default, Move Mouse will not continue running if you lock your session. Enable this option if you would like Move Mouse to continue working even when your session is locked.
-#### Enable Logging
+### Enable Logging
 Enables trace logging which can be useful to diagnose why Move Mouse may not be behaving as expected.
-### Appearance
+## Appearance
 Use these options to control the appearance of Move Mouse.
 
 <img src="docs/settings_appearance.png" width="640">
 
-#### Hide Move Mouse window
+### Hide Move Mouse window
 Hides the main Move Mouse window from the screen. If you would like to disable this option, you can access the Settings section by right-clicking the system tray icon.
 
 Enabling this option will automatically remove all other Appearance options that no longer apply.
-#### Show topmost when running
+### Show topmost when running
 Ensures Move Mouse is always on top of other application when in a Running state.
-#### Minimise when not running
+### Minimise when not running
 Automatically minimise Move Mouse when entering an Idle or Paused state.
-#### Hide from taskbar
+### Hide from taskbar
 Do not show the Move Mouse icon on the Windows taskbar.
-#### Hide from Alt+Tab
+### Hide from Alt+Tab
 Do not show Move Mouse when switching between applications using Alt+Tab.
-#### Override window title
+### Override window title
 Provide your own custom title for Move Mouse.
-#### Enable screen  burn prevention
+### Enable screen  burn prevention
 Enabling this option will introduce a subtle movement to Move Mouse, which although unnoticeable to the eye, will help prevent screen burn in scenarios where Move Mouse is on screen for prolonged periods of time.
-#### Hide system tray icon
+### Hide system tray icon
 Do not show the Move Mouse system tray icon.
 > :warning: If you opt to hide both the Move Mouse window and system tray icon, there will be no way to access the Settings for further customisations. The Move Mouse system tray icon will be visible momentarily at launch, which will allow you to right-click and access Settings.
-#### Show current status on main window
+### Show current status on main window
 Show Move Mouse's status on the main screen to compliment the outer ring colour.
-### Schedules
+## Schedules
 Create your own Schedules to automatically stop/start Move Mouse to suit you.
 
 To add a Schedule, click the plus icon, and select whether you would like to add a Simple Schedule or Advanced Schedule.
 
 <img src="docs/settings_schedules.png" width="640">
 
-#### Simple Schedule
+### Simple Schedule
 For basic scheduling, a Simple Schedule can be used to start/stop Move Mouse at a specific time of day, on selected days of the week.
 
 <img src="docs/schedule_simple.png" width="400">
 
-#### Advanced Schedule
+### Advanced Schedule
 An Advanced Schedule offers ultimate control over when to stop/start Move Mouse.
 
 Using cron expressions for the trigger, you will be able to create Schedules for almost any situation.
