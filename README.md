@@ -308,6 +308,14 @@ Simply specify the time of day at which you would like the Blackout window to st
 
 <img src="docs/blackout.png" width="400">
 
+# Command Line Interface
+The CLI is only available on the GitHub version.
+- **WorkingDirectory** - Specify a custom location for your Settings.xml file. Ideal if you want to have the settings roam with you by specifying a cloud/network location.
+```
+"Move Mouse.exe" /WorkingDirectory:"\\server01\home\steve"
+"Move Mouse.exe" /WorkingDirectory:"C:\Users\steve\OneDrive\Documents"
+```
+
 # Privacy Policy
 ## Personal Information
 This application does not collect or transmit any user’s Personally Identifiable Information (PII). No personal information is used, stored, secured or disclosed by services this application works with.
