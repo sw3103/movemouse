@@ -315,21 +315,3 @@ The CLI is only available on the GitHub version.
 "Move Mouse.exe" /WorkingDirectory:"\\server01\home\steve"
 "Move Mouse.exe" /WorkingDirectory:"C:\Users\steve\OneDrive\Documents"
 ```
-
-# Privacy Policy
-## Personal Information
-This application does not collect or transmit any user’s Personally Identifiable Information (PII). No personal information is used, stored, secured or disclosed by services this application works with.
-## Technical Information
-Limited technical information is sent (such as system date and time) but none of that is used or stored.
-
-Move Mouse is able to access the local filesystem for the purpose of browsing for scripts and application files, although this information is not collected. 
-## Statistical Information
-A small set of non-identifiable information is sent to one or more of the organisations below for statistical information about app usage, device type and capabilities. Statistical service providers.
-
-- Microsoft 
-## Third Parties
-If the app makes use of third party services, their usage of information is excluded from this privacy policy. You will be clearly made aware of the third parties involved in the app and we will ensure the very minimal set of data is set to those third parties. 
-## Contact
-If there are any questions regarding this privacy policy you may contact us using the information below.
-- contact@movemouse.co.uk
-- https://twitter.com/movemouse
