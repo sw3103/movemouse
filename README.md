@@ -1,4 +1,4 @@
-# Introduction
+# About
 Move Mouse is a simple piece of software that is designed to simulate user activity.
 
 Originally designed to prevent Windows from locking the user session or going to sleep, Move Mouse can be deployed in a wide range of situations.
@@ -204,7 +204,7 @@ Hides the process execution from the user.
 ### PowerShell Script
 Run a Windows PowerShell script.
 
-Move Mouse includes many of the most popular Actions that users require, although anything else can be accomplished with a PowerShell Script. See the Snippets for inspiration, and feel free to contact me if you would like some additional help.
+Move Mouse includes many of the most popular Actions that users require, although anything else can be accomplished with a PowerShell Script. See the [Snippets](https://github.com/sw3103/movemouse/wiki/PowerShell-Snippets) for inspiration, and feel free to [contact](#contact) me if you would like some additional help.
 #### Action Properties
 ##### Script
 Path to the Windows PowerShell script file (.ps1).
