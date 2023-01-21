@@ -14,7 +14,7 @@ The easiest way to install Move Mouse on Windows 10 or 11 is from the Microsoft 
 https://www.microsoft.com/en-gb/p/move-mouse/9nq4ql59xlbf
 
 # Contact
-Please feel free to contact me via [Twitter](https://twitter.com/movemouse) or email for any suggestions or issues you may have. A lot of the features which are included in Move Mouse today exist because of feedback I have received.
+Please feel free to contact me via [Twitter](https://twitter.com/movemouse) or [email](mailto:contact@movemouse.co.uk) for any suggestions or issues you may have. A lot of the features which are included in Move Mouse today exist because of feedback I have received.
 ### Pros
 - Simple installation.
 - Automatic updates.
