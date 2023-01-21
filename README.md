@@ -7,14 +7,15 @@ Move Mouse will always be free, but if you would like to buy me a beer to show y
 
 [PayPal Donate](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=QZTWHD9CRW5XN)
 
+# Contact
+Please feel free to contact me via [Twitter](https://twitter.com/movemouse) or [email](mailto:contact@movemouse.co.uk) for any suggestions or issues you may have. A lot of the features which are included in Move Mouse today exist because of feedback I have received.
+
 # Installation
 ## Microsoft Store
 The easiest way to install Move Mouse on Windows 10 or 11 is from the Microsoft Store using the link below.
 
 https://www.microsoft.com/en-gb/p/move-mouse/9nq4ql59xlbf
 
-# Contact
-Please feel free to contact me via [Twitter](https://twitter.com/movemouse) or [email](mailto:contact@movemouse.co.uk) for any suggestions or issues you may have. A lot of the features which are included in Move Mouse today exist because of feedback I have received.
 ### Pros
 - Simple installation.
 - Automatic updates.
