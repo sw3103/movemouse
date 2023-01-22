@@ -49,7 +49,7 @@ By default, Move Mouse is configured to move your mouse cursor every 30 seconds.
 
 You can start this by clicking Move Mouse, at which point you will see the outer ring turn green, and the 30 second countdown begins.
 
-<img src="docs/mm_green.png" width="200">
+<img src="Images/mm_green.png" width="200">
 
 Once the countdown is complete, Move Mouse will perform the specified Actions (in this case, moving the mouse cursor).
 
@@ -60,7 +60,7 @@ You can also start/stop Move Mouse by double-clicking the system tray icon.
 # Hover Buttons
 You will quickly notice that Move Mouse will present you with some options when you hover your mouse cursor.
 
-<img src="docs/mm_hover.png" width="331">
+<img src="Images/mm_hover.png" width="331">
 
 ## Gear
 Opens the Settings section where you can access the many different options to help you customise Move Mouse for your requirements.
@@ -78,32 +78,32 @@ The outer ring on Move Mouse will change colour to reflect the current status.
 ## Idle (Blue)
 Move Mouse is doing nothing, and will continue to do so until it is started from the main window, the system tray icon, or you have set a start Schedule.
 
-<img src="docs/mm_blue.png" width="200">
+<img src="Images/mm_blue.png" width="200">
 
 ## Running (Green)
 Move Mouse is active and counting down towards performing your Actions.
 
-<img src="docs/mm_green.png" width="200">
+<img src="Images/mm_green.png" width="200">
 
 ## Executing (Red)
 Move Mouse is performing your Actions.
 
-<img src="docs/mm_red.png" width="200">
+<img src="Images/mm_red.png" width="200">
 
 ## Paused (Yellow)
 Move Mouse has automatically paused because it has detected user activity (this option needs to be enabled in Behaviour).
 
-<img src="docs/mm_yellow.png" width="200">
+<img src="Images/mm_yellow.png" width="200">
 
 ## Sleeping (Purple)
 Move Mouse is asleep because there is an active Blackout window in operation.
 
-<img src="docs/mm_purple.png" width="200">
+<img src="Images/mm_purple.png" width="200">
 
 ## Pausing On battery (Orange)
 Move Mouse has automatically paused because it has detected it is running on battery power (this option needs to be enabled in Behaviour).
 
-<img src="docs/mm_orange.png" width="200">
+<img src="Images/mm_orange.png" width="200">
 
 # Settings
 Access the Settings by clicking the Gear icon on the hover button or system tray icon, or right-click the main Move Mouse window.
@@ -113,17 +113,17 @@ This is where things get interesting. Move Mouse can perform a wide range of Act
 #### Action List
 Here you will see the list of Actions, which by default will start with a Move Mouse Cursor Action.
 
-<img src="docs/settings_actionpanel.png" width="640">
+<img src="Images/settings_actionpanel.png" width="640">
 
 #### Action Controls
 Use the Action Controls to add, remove and re-order your Actions.
 
-<img src="docs/settings_actioncontrols.png" width="640">
+<img src="Images/settings_actioncontrols.png" width="640">
 
 ##### Add
 To add an Action, click the plus icon in the Action Controls, and select the desired Action from the list.
 
-<img src="docs/settings_addaction.png" width="640">
+<img src="Images/settings_addaction.png" width="640">
 
 ##### Remove
 Select an Action, and click the bin icon.
@@ -134,7 +134,7 @@ Select an Action, and use the arrow icons to re-order them in the list.
 #### Action Properties
 Each Action contains its own set of Properties that can be used to customise its behaviour. Some of these Properties are specific to the type of Action, for example, the Distance Property on the Move Mouse Cursor Action. There are also Common Action Properties which apply to all Actions.
 
-<img src="docs/settings_actionproperties.png" width="640">
+<img src="Images/settings_actionproperties.png" width="640">
 
 #### Common Action Properties
 ##### Name
@@ -227,7 +227,7 @@ Time in seconds to sleep.
 ## Behaviour
 This section will allow you to customise how Move Mouse operates within the user session.
 
-<img src="docs/settings_behaviour.png" width="640">
+<img src="Images/settings_behaviour.png" width="640">
 
 ### Repeat actions every/randomly X seconds
 Specify how long Move Mouse should wait between repeating your Actions. You can either set a constant interval, or select random lower and upper interval times.
@@ -252,7 +252,7 @@ Enables trace logging which can be useful to diagnose why Move Mouse may not be 
 ## Appearance
 Use these options to control the appearance of Move Mouse.
 
-<img src="docs/settings_appearance.png" width="640">
+<img src="Images/settings_appearance.png" width="640">
 
 ### Hide Move Mouse window
 Hides the main Move Mouse window from the screen. If you would like to disable this option, you can access the Settings section by right-clicking the system tray icon.
@@ -286,31 +286,31 @@ Create your own Schedules to automatically stop/start Move Mouse to suit you.
 
 To add a Schedule, click the plus icon, and select whether you would like to add a Simple Schedule or Advanced Schedule.
 
-<img src="docs/settings_schedules.png" width="640">
+<img src="Images/settings_schedules.png" width="640">
 
 ### Simple Schedule
 For basic scheduling, a Simple Schedule can be used to start/stop Move Mouse at a specific time of day, on selected days of the week.
 
-<img src="docs/schedule_simple.png" width="400">
+<img src="Images/schedule_simple.png" width="400">
 
 ### Advanced Schedule
 An Advanced Schedule offers ultimate control over when to stop/start Move Mouse.
 
 Using cron expressions for the trigger, you will be able to create Schedules for almost any situation.
 
-<img src="docs/schedule_advanced.png" width="400">
+<img src="Images/schedule_advanced.png" width="400">
 
 ## Blackouts
 Blackouts allow you to specify windows of time when you would like disable all Move Mouse activity and enter into the the Sleeping state.
 
 To add a Blackout window, click the plus icon.
 
-<img src="docs/settings_blackouts.png" width="640">
+<img src="Images/settings_blackouts.png" width="640">
 
 ### Blackout
 Simply specify the time of day at which you would like the Blackout window to start, which days of the week it applies, and how long the window should last.
 
-<img src="docs/blackout.png" width="400">
+<img src="Images/blackout.png" width="400">
 
 # Command Line Interface
 The CLI is only available on the GitHub version.
