@@ -2,6 +2,9 @@
 Move Mouse is a simple piece of software that is designed to simulate user activity.
 
 Originally designed to prevent Windows from locking the user session or going to sleep, Move Mouse can be deployed in a wide range of situations.
+
+<img src="Images/mm_blue.png" width="200">
+
 # Donate
 Move Mouse will always be free, but if you would like to buy me a beer to show your appreciation, you can do so using the following link. Thanks!
 
