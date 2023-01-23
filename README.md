@@ -11,7 +11,7 @@ Move Mouse will always be free, but if you would like to buy me a beer to show y
 [PayPal Donate](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=QZTWHD9CRW5XN)
 
 # Wiki
-Head over to the [Wiki](https://github.com/sw3103/movemouse/wiki) where you will find a bunch of articles for [Installation](https://github.com/sw3103/movemouse/wiki/installation), [Troubleshooting](https://github.com/sw3103/movemouse/wiki/troublshooting), etc.
+Head over to the [Wiki](https://github.com/sw3103/movemouse/wiki) where you will find a bunch of articles for [Installation](https://github.com/sw3103/movemouse/wiki/installation), [Troubleshooting](https://github.com/sw3103/movemouse/wiki/troubleshooting), etc.
 
 <!---
 # Contact
