@@ -13,7 +13,5 @@ Move Mouse will always be free, but if you would like to buy me a beer to show y
 # Wiki
 Head over to the [Wiki](https://github.com/sw3103/movemouse/wiki) where you will find a bunch of articles for [Installation](https://github.com/sw3103/movemouse/wiki/installation), [Troubleshooting](https://github.com/sw3103/movemouse/wiki/troubleshooting), etc.
 
-<!---
 # Contact
 Please feel free to contact me via [Twitter](https://twitter.com/movemouse) or [email](mailto:contact@movemouse.co.uk) for any suggestions or issues you may have. A lot of the features which are included in Move Mouse today exist because of feedback I have received.
---->
