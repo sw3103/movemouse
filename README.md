@@ -279,11 +279,3 @@ To add a Blackout window, click the plus icon.
 Simply specify the time of day at which you would like the Blackout window to start, which days of the week it applies, and how long the window should last.
 
 <img src="Images/blackout.png" width="400">
-
-# Command Line Interface
-The CLI is only available on the GitHub version.
-- **WorkingDirectory** - Specify a custom location for your Settings.xml file. Ideal if you want to have the settings roam with you by specifying a cloud/network location.
-```
-"Move Mouse.exe" /WorkingDirectory:"\\server01\home\steve"
-"Move Mouse.exe" /WorkingDirectory:"C:\Users\steve\OneDrive\Documents"
-```
