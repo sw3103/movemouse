@@ -307,7 +307,7 @@
                                 </MultiDataTrigger.Conditions>
                                 <Setter Property="Visibility" Value="Hidden"/>
                             </MultiDataTrigger>
-                            <DataTrigger Binding="{Binding Path=CurrentState, NotifyOnTargetUpdated=True}" Value="Running">
+                            <!--<DataTrigger Binding="{Binding Path=CurrentState, NotifyOnTargetUpdated=True}" Value="Running">
                                 <Setter Property="IconSource" Value="/Resources/Mouse-SystemTray-Active.ico"/>
                             </DataTrigger>
                             <DataTrigger Binding="{Binding Path=CurrentState, NotifyOnTargetUpdated=True}" Value="Executing">
@@ -321,7 +321,7 @@
                             </DataTrigger>
                             <DataTrigger Binding="{Binding Path=CurrentState, NotifyOnTargetUpdated=True}" Value="OnBattery">
                                 <Setter Property="IconSource" Value="/Resources/Mouse-SystemTray-Battery.ico"/>
-                            </DataTrigger>
+                            </DataTrigger>-->
                         </Style.Triggers>
                     </Style>
                 </tb:TaskbarIcon.Style>

@@ -23,10 +23,11 @@ namespace ellabi
 
         public const string PayPalUrl = "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=QZTWHD9CRW5XN";
         public const string HomePageUrl = "http://www.movemouse.co.uk";
-        public const string HelpPageUrl = "https://sites.google.com/a/windandkite.co.uk/movemouse/help";
+        public const string HelpPageUrl = "https://github.com/sw3103/movemouse/wiki";
         public const string TwitterUrl = "https://twitter.com/movemouse";
         public const string GitHubUrl = "https://github.com/sw3103/movemouse";
         public const string CronHelpUrl = "http://www.quartz-scheduler.org/documentation/quartz-2.3.0/tutorials/crontrigger.html";
+        public const string TroubleshootingUrl = "https://github.com/sw3103/movemouse/wiki/Troubleshooting";
         //public const string CronHelpUrl = "https://crontab.guru/examples.html";
         //public const string ThemesXmlUrl = "https://raw.githubusercontent.com/sw3103/movemouse/master/Themes/Themes.xml";
         //public const string ThemesXmlUrl = "C:\\Users\\steve\\source\\repos\\movemouse\\Themes\\Themes_Test.xml";

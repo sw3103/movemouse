@@ -52,6 +52,7 @@ namespace ellabi.Classes
         private bool? _pauseOnBattery;
         private LogEventLevel? _logLevel;
         private bool? _showSystemTrayNotifications;
+        //private bool? _reactivatePreviousWindow;
 
         public int LowerInterval
         {
@@ -534,6 +535,20 @@ namespace ellabi.Classes
                 OnPropertyChanged();
             }
         }
+
+        //public bool ReactivatePreviousWindow
+        //{
+        //    get
+        //    {
+        //        if (_reactivatePreviousWindow == null) _reactivatePreviousWindow = false;
+        //        return _reactivatePreviousWindow.Value;
+        //    }
+        //    set
+        //    {
+        //        _reactivatePreviousWindow = value;
+        //        OnPropertyChanged();
+        //    }
+        //}
 
         [XmlArrayItem(Type = typeof(ActionBase)),
          XmlArrayItem(Type = typeof(MoveMouseCursorAction)),

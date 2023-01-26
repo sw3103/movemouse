@@ -300,7 +300,16 @@ namespace ellabi.Views
 
             try
             {
-                Process.Start(StaticCode.ContactMailToAddress);
+                var result = MessageBox.Show("If you are having issues with Move Mouse or have any questions, you may find the Troubleshooting section in the Wiki useful.\r\n\r\nWould you like to visit the Wiki now?", "Visit Troubleshooting Page", MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    Process.Start(StaticCode.TroubleshootingUrl);
+                }
+                else
+                {
+                    Process.Start(StaticCode.ContactMailToAddress);
+                }
             }
             catch (Exception ex)
             {

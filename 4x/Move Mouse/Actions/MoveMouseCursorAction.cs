@@ -125,6 +125,7 @@ namespace ellabi.Actions
         {
             try
             {
+                IntervalExecutionCount++;
                 StaticCode.Logger?.Here().Information(ToString());
 
                 switch (Direction)
@@ -236,7 +237,7 @@ namespace ellabi.Actions
 
         public override string ToString()
         {
-            return $"Name = {Name} | Distance = {Distance} | Direction = {Direction} | Speed = {Speed} | Delay = {Delay} | Trigger = {Trigger} | Repeat = {Repeat}";
+            return $"{this.GetType().Name} | Name = {Name} | Distance = {Distance} | Direction = {Direction} | Speed = {Speed} | Delay = {Delay} | Trigger = {Trigger} | Repeat = {Repeat} | RepeatMode = {RepeatMode} | IntervalThrottle = {IntervalThrottle} | IntervalExecutionCount = {IntervalExecutionCount}";
         }
     }
 }

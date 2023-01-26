@@ -88,7 +88,7 @@ namespace ellabi.Actions
 
         public override string ToString()
         {
-            return $"Name = {Name} | FilePath = {FilePath} | Arguments = {Arguments} | WaitForExit = {WaitForExit} | Hidden = {Hidden} | Trigger = {Trigger} | Repeat = {Repeat}";
+            return $"{this.GetType().Name} | Name = {Name} | FilePath = {FilePath} | Arguments = {Arguments} | WaitForExit = {WaitForExit} | Hidden = {Hidden} | Trigger = {Trigger} | Repeat = {Repeat} | RepeatMode = {RepeatMode} | IntervalThrottle = {IntervalThrottle} | IntervalExecutionCount = {IntervalExecutionCount}";
         }
     }
 }

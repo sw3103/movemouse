@@ -4,14 +4,18 @@ using ellabi.Annotations;
 using ellabi.Jobs;
 using ellabi.Schedules;
 using ellabi.Utilities;
+using ellabi.Wrappers;
+using Microsoft.VisualBasic;
 using Microsoft.Win32;
 using Quartz;
 using Quartz.Impl;
 using Quartz.Impl.Triggers;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Threading;
 
 namespace ellabi.ViewModels
@@ -61,6 +65,7 @@ namespace ellabi.ViewModels
         private object _lock = new object();
         private bool _updateAvailable;
         //private DateTime _startTime;
+        //private string _previousActiveWindowTitle;
 
         public enum MouseState
         {
@@ -491,7 +496,7 @@ namespace ellabi.ViewModels
                             _activeExecutionId = Guid.NewGuid();
                             _lastStopStartToggleTime = DateTime.Now;
                             PerformActions(ActionBase.EventTrigger.Start);
-                            double interval = SettingsVm.Settings.RandomInterval ? new Random().Next((SettingsVm.Settings.LowerInterval * 1000), (SettingsVm.Settings.UpperInterval * 1000)) : (SettingsVm.Settings.LowerInterval * 1000);
+                            double interval = SettingsVm.Settings.RandomInterval ? new Random().Next(SettingsVm.Settings.LowerInterval * 1000, SettingsVm.Settings.UpperInterval * 1000) : (SettingsVm.Settings.LowerInterval * 1000);
                             interval = interval > 0 ? interval : 1;
                             ExecutionTime = DateTime.Now.AddMilliseconds(interval);
                             CurrentState = MouseState.Running;
@@ -514,6 +519,26 @@ namespace ellabi.ViewModels
                 StaticCode.Logger?.Here().Error(ex.Message);
             }
         }
+
+        //private void GetActiveWindow()
+        //{
+        //    try
+        //    {
+        //        var handle = NativeMethods.GetForegroundWindow();
+        //        const int nChar = 256;
+        //        var sb = new StringBuilder(nChar);
+        //        _previousActiveWindowTitle = null;
+
+        //        if (NativeMethods.GetWindowText(handle, sb, nChar) > 0)
+        //        {
+        //            _previousActiveWindowTitle = sb.ToString();
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        StaticCode.Logger?.Here().Error(ex.Message);
+        //    }
+        //}
 
         public void Stop(MouseState state)
         {
@@ -543,6 +568,11 @@ namespace ellabi.ViewModels
                     if (CurrentState.Equals(MouseState.Paused))
                     {
                         StartAutoResumeTimer();
+
+                        //if (SettingsVm.Settings.ReactivatePreviousWindow && !String.IsNullOrWhiteSpace(_previousActiveWindowTitle))
+                        //{
+                        //    Interaction.AppActivate(_previousActiveWindowTitle);
+                        //}
                     }
                 }
             }
@@ -613,6 +643,14 @@ namespace ellabi.ViewModels
                 {
                     var executionId = _activeExecutionId;
 
+                    if (_firstPass)
+                    {
+                        for (int i = 0; i < SettingsVm.Settings.Actions.Length; i++)
+                        {
+                            SettingsVm.Settings.Actions[i].IntervalExecutionCount = 0;
+                        }
+                    }
+
                     switch (trigger)
                     {
                         case ActionBase.EventTrigger.Start:
@@ -643,7 +681,7 @@ namespace ellabi.ViewModels
 
                                     if (SettingsVm.Settings.Actions.Any(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger)))
                                     {
-                                        var actions = _firstPass ? SettingsVm.Settings.Actions.Where(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger)) : SettingsVm.Settings.Actions.Where(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger) && action.Repeat);
+                                        var actions = _firstPass ? SettingsVm.Settings.Actions.Where(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger)) : SettingsVm.Settings.Actions.Where(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger) && action.Repeat && ((action.RepeatMode == ActionBase.IntervalRepeatMode.Forever) || ((action.RepeatMode == ActionBase.IntervalRepeatMode.Throttle) && (action.IntervalExecutionCount < action.IntervalThrottle))));
 
                                         foreach (var action in actions)
                                         {
@@ -666,19 +704,14 @@ namespace ellabi.ViewModels
                                 CurrentState = MouseState.Locked;
                             }
 
-                            if (_activeExecutionId.Equals(executionId) && (CurrentState.Equals(MouseState.Sleeping) || (!_firstPass && SettingsVm.Settings.Actions.Any(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger) && action.Repeat))))
+                            if (_activeExecutionId.Equals(executionId) && (CurrentState.Equals(MouseState.Locked) || CurrentState.Equals(MouseState.Sleeping) || (!_firstPass && SettingsVm.Settings.Actions.Any(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger) && action.Repeat && ((action.RepeatMode == ActionBase.IntervalRepeatMode.Forever) || ((action.RepeatMode == ActionBase.IntervalRepeatMode.Throttle) && (action.IntervalExecutionCount < action.IntervalThrottle)))))))
                             {
                                 Start();
-
-                                if (CurrentState.Equals(MouseState.Sleeping))
-                                {
-                                    ShowNotification("Automatically resuming after blackout expired.");
-                                }
                             }
                             else
                             {
                                 Stop(MouseState.Idle);
-                                ShowNotification("Automatically stopping as there are no actions that are configured to repeat at each interval.");
+                                ShowNotification("Automatically stopping as there are no actions that are configured to repeat forever at each interval.");
                             }
 
                             break;
@@ -805,6 +838,7 @@ namespace ellabi.ViewModels
                 if (StaticCode.GetLastInputTime().TotalSeconds > SettingsVm.Settings.AutoResumeSeconds)
                 {
                     Start();
+                    //GetActiveWindow();
                     ShowNotification($"Automatically resuming after {SettingsVm.Settings.AutoResumeSeconds} seconds of inactivity.");
                 }
             }
@@ -821,6 +855,7 @@ namespace ellabi.ViewModels
             try
             {
                 StopBlackoutTimer();
+                ShowNotification("Going to sleep whilst blackout in effect.");
 
                 if (_blackoutTimer == null)
                 {
@@ -862,7 +897,7 @@ namespace ellabi.ViewModels
                 if (!BlackoutIsActive())
                 {
                     Start();
-                    ShowNotification("Resuming now blackout is over.");
+                    ShowNotification("Resuming now blackout has expired.");
                 }
             }
             catch (Exception ex)
@@ -914,7 +949,7 @@ namespace ellabi.ViewModels
 
         public void ShowNotification(string title, string message, Hardcodet.Wpf.TaskbarNotification.BalloonIcon symbol)
         {
-            if (!SettingsVm.Settings.HideSystemTrayIcon && SettingsVm.Settings.ShowSystemTrayNotifications)
+            if (!SettingsVm.Settings.HideSystemTrayIcon && SettingsVm.Settings.ShowSystemTrayNotifications && !_workstationLocked)
             {
                 OnRequestNotification(this, title, message, symbol);
             }

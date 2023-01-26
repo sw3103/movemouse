@@ -78,7 +78,7 @@ namespace ellabi.Actions
 
         public override string ToString()
         {
-            return $"Name = {Name} | Random = {Random} | Seconds = {Seconds} | UpperSeconds = {UpperSeconds} | Trigger = {Trigger} | Repeat = {Repeat}";
+            return $"{this.GetType().Name} | Name = {Name} | Random = {Random} | Seconds = {Seconds} | UpperSeconds = {UpperSeconds} | Trigger = {Trigger} | Repeat = {Repeat} | RepeatMode = {RepeatMode} | IntervalThrottle = {IntervalThrottle} | IntervalExecutionCount = {IntervalExecutionCount}";
         }
     }
 }

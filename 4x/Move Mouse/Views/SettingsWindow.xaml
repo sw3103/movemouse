@@ -12,7 +12,7 @@
         xmlns:classes="clr-namespace:ellabi.Classes"
         xmlns:ed="http://schemas.microsoft.com/expression/2010/drawing"
         mc:Ignorable="d"
-        Title="Move Mouse Settings" Height="442" Width="640" Icon="/Resources/Mouse.ico" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize" WindowStyle="None" MouseDown="SettingsWindow_OnMouseDown" ShowActivated="True" Loaded="SettingsWindow_OnLoaded">
+        Title="Move Mouse Settings" Height="442" Width="688" Icon="/Resources/Mouse.ico" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize" WindowStyle="None" MouseDown="SettingsWindow_OnMouseDown" ShowActivated="True" Loaded="SettingsWindow_OnLoaded">
     <Grid Background="{StaticResource StandardWindowBackground}">
         <Grid.Resources>
             <!--<converters:ObjectToTypeStringConverter x:Key="ObjectToTypeStringConverter"/>-->
@@ -626,13 +626,19 @@
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
                                         <ComboBox Grid.Column="0" SelectedItem="{Binding Path=Trigger, NotifyOnTargetUpdated=True}" ItemsSource="{Binding Path=EventTriggerValues}" IsEnabled="{Binding Path=IsEnabled, NotifyOnTargetUpdated=True}"/>
-                                        <Image Grid.Column="2" Source="/Resources/Help_Dark_64x64.png" Stretch="Uniform" RenderOptions.BitmapScalingMode="HighQuality" ToolTipService.ShowDuration="{x:Static sys:Int32.MaxValue}" ToolTip="Start - Run this action when Move Mouse starts.&#xD;&#xA;&#xD;&#xA;Interval - Run this action at each interval.&#xD;&#xA;&#xD;&#xA;Stop - Run this action when Move Mouse stops&#xD;&#xA;or pauses (does not include blackouts)."/>
+                                        <Image Grid.Column="2" Source="/Resources/Help_Dark_64x64.png" Stretch="Uniform" RenderOptions.BitmapScalingMode="HighQuality" Height="22" ToolTipService.ShowDuration="{x:Static sys:Int32.MaxValue}" ToolTip="Start - Run this action when Move Mouse starts.&#xD;&#xA;&#xD;&#xA;Interval - Run this action at each interval.&#xD;&#xA;&#xD;&#xA;Stop - Run this action when Move Mouse stops&#xD;&#xA;or pauses (does not include blackouts)."/>
                                     </Grid>
                                 </Grid>
                                 <Grid x:Key="RepeatGrid" x:Shared="False">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="10"/>
                                         <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="10"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="10"/>
+                                        <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="{StaticResource LabelColumnHeight}"/>
@@ -650,6 +656,40 @@
                                     </Grid.Style>
                                     <TextBlock Grid.Column="0" Grid.Row="0" Text="Repeat" Style="{StaticResource LabelTextBlockStyle}"/>
                                     <toggleSwitch:HorizontalToggleSwitch Grid.Column="1" Grid.Row="0" IsChecked="{Binding Path=Repeat, NotifyOnTargetUpdated=True, Mode=TwoWay}" IsEnabled="{Binding Path=IsEnabled, NotifyOnTargetUpdated=True}"/>
+                                    <ComboBox Grid.Column="3" SelectedItem="{Binding Path=RepeatMode, NotifyOnTargetUpdated=True}" ItemsSource="{Binding Path=IntervalRepeatModeValues}">
+                                        <ComboBox.Style>
+                                            <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
+                                                <Setter Property="IsEnabled" Value="False"/>
+                                                <Style.Triggers>
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding Path=Repeat, NotifyOnTargetUpdated=True}" Value="True"/>
+                                                            <Condition Binding="{Binding Path=IsEnabled, NotifyOnTargetUpdated=True}" Value="True"/>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <Setter Property="IsEnabled" Value="True"/>
+                                                    </MultiDataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </ComboBox.Style>
+                                    </ComboBox>
+                                    <xctk:IntegerUpDown Grid.Column="5" Grid.Row="0" Value="{Binding Path=IntervalThrottle, NotifyOnTargetUpdated=True}" Increment="1" Minimum="1">
+                                        <xctk:IntegerUpDown.Style>
+                                            <Style TargetType="xctk:IntegerUpDown" BasedOn="{StaticResource {x:Type xctk:IntegerUpDown}}">
+                                                <Setter Property="IsEnabled" Value="False"/>
+                                                <Style.Triggers>
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding Path=Repeat, NotifyOnTargetUpdated=True}" Value="True"/>
+                                                            <Condition Binding="{Binding Path=RepeatMode, NotifyOnTargetUpdated=True}" Value="Throttle"/>
+                                                            <Condition Binding="{Binding Path=IsEnabled, NotifyOnTargetUpdated=True}" Value="True"/>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <Setter Property="IsEnabled" Value="True"/>
+                                                    </MultiDataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </xctk:IntegerUpDown.Style>
+                                    </xctk:IntegerUpDown>
+                                    <Image Grid.Column="7" Source="/Resources/Help_Dark_64x64.png" Stretch="Uniform" RenderOptions.BitmapScalingMode="HighQuality" Height="22" ToolTipService.ShowDuration="{x:Static sys:Int32.MaxValue}" ToolTip="Forever - Run this action at every interval.&#xD;&#xA;&#xD;&#xA;Throttle - Limits the number of intervals to run this action."/>
                                 </Grid>
                                 <Grid x:Key="EnabledGrid" x:Shared="False">
                                     <Grid.ColumnDefinitions>
@@ -1175,7 +1215,7 @@
                             </ContentPresenter.Resources>
                         </ContentPresenter>
                     </Grid>
-                    <ed:Callout AnchorPoint="1.118,-0.5" CalloutStyle="RoundedRectangle" Fill="{StaticResource StandardWindowBackground}" VerticalAlignment="Center" FontSize="14" Height="58" Margin="97,90,279,0" Stroke="{StaticResource StandardLightTextSolidColorBrush}" StrokeThickness="3" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
+                    <ed:Callout AnchorPoint="1.118,-0.5" CalloutStyle="RoundedRectangle" Fill="{StaticResource StandardWindowBackground}" VerticalAlignment="Center" FontSize="14" Height="58" Margin="97,92,328,0" Stroke="{StaticResource StandardLightTextSolidColorBrush}" StrokeThickness="3" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
                         <ed:Callout.Content>
                             <StackPanel>
                                 <TextBlock Text="Click here to add actions" Foreground="{StaticResource StandardLightTextSolidColorBrush}" Background="Transparent" HorizontalAlignment="Center" TextWrapping="Wrap" Margin="10"/>
@@ -1227,7 +1267,7 @@
                                             <Setter Property="Source" Value="/Resources/Behaviour_Light_64x64.png"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=TabItem}, Path=IsMouseOver}" Value="True">
-                                            <Setter Property="Source" Value="/Resources/Behaviour_Light_64x64.png"/> 
+                                            <Setter Property="Source" Value="/Resources/Behaviour_Light_64x64.png"/>
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
@@ -1344,9 +1384,24 @@
                             </TextBlock>
                         </StackPanel>
                     </StackPanel>
-                    <!--<StackPanel Style="{StaticResource OptionStackPanelStyle}">
-                        <toggleSwitch:HorizontalToggleSwitch IsChecked="{Binding Path=Settings.LaunchAtLogon, NotifyOnTargetUpdated=True, Mode=TwoWay}"/>
-                        <TextBlock Margin="5,0,0,0" Text="Launch Move Mouse at startup" Style="{StaticResource LabelTextBlockStyle}"/>
+                    <!--<StackPanel>
+                        <StackPanel.Style>
+                            <Style TargetType="StackPanel" BasedOn="{StaticResource OptionStackPanelStyle}">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding Path=Settings.AutoPause, NotifyOnTargetUpdated=True}" Value="True"/>
+                                            <Condition Binding="{Binding Path=Settings.AutoResume, NotifyOnTargetUpdated=True}" Value="True"/>
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </MultiDataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
+                        <toggleSwitch:HorizontalToggleSwitch IsChecked="{Binding Path=Settings.ReactivatePreviousWindow, NotifyOnTargetUpdated=True, Mode=TwoWay}"/>
+                        <TextBlock Margin="5,0,0,0" Text="Refocus previous active window on pause" Style="{StaticResource LabelTextBlockStyle}"/>
+                        <Image Margin="10,0,0,0" Source="/Resources/Help_Dark_64x64.png" ToolTipService.ShowDuration="{x:Static sys:Int32.MaxValue}" RenderOptions.BitmapScalingMode="HighQuality" ToolTip="Attempt to refocus the last active window when Move Mouse is paused."/>
                     </StackPanel>-->
                     <StackPanel Style="{StaticResource OptionStackPanelStyle}">
                         <toggleSwitch:HorizontalToggleSwitch IsChecked="{Binding Path=LaunchAtStartup, NotifyOnTargetUpdated=True, Mode=TwoWay, Converter={StaticResource StartupTaskStateToBoolConverter}}">

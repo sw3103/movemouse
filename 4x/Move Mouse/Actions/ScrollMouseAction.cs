@@ -92,7 +92,7 @@ namespace ellabi.Actions
 
         public override string ToString()
         {
-            return $"Name = {Name} | Distance = {Distance} | Direction = {Direction} | Trigger = {Trigger} | Repeat = {Repeat}";
+            return $"{this.GetType().Name} | Name = {Name} | Distance = {Distance} | Direction = {Direction} | Trigger = {Trigger} | Repeat = {Repeat} | RepeatMode = {RepeatMode} | IntervalThrottle = {IntervalThrottle} | IntervalExecutionCount = {IntervalExecutionCount}";
         }
     }
 }

@@ -111,7 +111,7 @@ namespace ellabi.Actions
 
         public override string ToString()
         {
-            return $"Name = {Name} | Button = {Button} | Hold = {Hold} | HoldInterval = {HoldInterval} | Trigger = {Trigger} | Repeat = {Repeat}";
+            return $"{this.GetType().Name} | Name = {Name} | Button = {Button} | Hold = {Hold} | HoldInterval = {HoldInterval} | Trigger = {Trigger} | Repeat = {Repeat} | RepeatMode = {RepeatMode} | IntervalThrottle = {IntervalThrottle} | IntervalExecutionCount = {IntervalExecutionCount}";
         }
     }
 }

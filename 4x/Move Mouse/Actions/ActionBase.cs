@@ -17,12 +17,21 @@ namespace ellabi.Actions
         private bool _isEnabled;
         private bool _repeat;
         private EventTrigger _trigger;
+        private IntervalRepeatMode _repeatMode;
+        private int _intervalThrottle;
+        private int _intervalExecutionCount;
 
         public enum EventTrigger
         {
             Start,
             Interval,
             Stop
+        }
+
+        public enum IntervalRepeatMode
+        {
+            Forever,
+            Throttle
         }
 
         public abstract bool IsValid { get; }
@@ -74,12 +83,47 @@ namespace ellabi.Actions
 
         public IEnumerable<EventTrigger> EventTriggerValues => Enum.GetValues(typeof(EventTrigger)).Cast<EventTrigger>();
 
+        public IntervalRepeatMode RepeatMode
+        {
+            get => _repeatMode;
+            set
+            {
+                _repeatMode = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public IEnumerable<IntervalRepeatMode> IntervalRepeatModeValues => Enum.GetValues(typeof(IntervalRepeatMode)).Cast<IntervalRepeatMode>();
+
+        public int IntervalThrottle
+        {
+            get => _intervalThrottle;
+            set
+            {
+                _intervalThrottle = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [XmlIgnore]
+        public int IntervalExecutionCount
+        {
+            get => _intervalExecutionCount;
+            set
+            {
+                _intervalExecutionCount = value;
+                OnPropertyChanged();
+            }
+        }
+
         protected ActionBase()
         {
             Id = Guid.NewGuid();
             _isEnabled = true;
             _repeat = true;
             _trigger = EventTrigger.Interval;
+            _repeatMode = IntervalRepeatMode.Forever;
+            _intervalThrottle = 1;
             ExecuteCommand = new RelayCommand(param => Execute(), param => CanExecute());
         }
 

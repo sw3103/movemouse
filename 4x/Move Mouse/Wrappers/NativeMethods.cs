@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Text;
 // ReSharper disable InconsistentNaming
 // ReSharper disable MemberCanBePrivate.Local
 // ReSharper disable FieldCanBeMadeReadOnly.Local
 
 namespace ellabi.Wrappers
 {
-    internal class NativeMethods
+    public class NativeMethods
     {
         //public const int WH_KEYBOARD_LL = 13;
 
@@ -159,18 +160,6 @@ namespace ellabi.Wrappers
             IntPtr hWnd,
             ref WINDOWPLACEMENT lpwndpl);
 
-        //[DllImport("user32.dll", EntryPoint = "SetWindowLongPtr", SetLastError = true)]
-        //private static extern IntPtr IntSetWindowLongPtr(
-        //    IntPtr hWnd,
-        //    int nIndex,
-        //    IntPtr dwNewLong);
-
-        //[DllImport("user32.dll", EntryPoint = "SetWindowLong", SetLastError = true)]
-        //private static extern Int32 IntSetWindowLong(
-        //    IntPtr hWnd,
-        //    int nIndex,
-        //    Int32 dwNewLong);
-
         [DllImport("kernel32.dll", EntryPoint = "SetLastError")]
         public static extern void SetLastError(
             int dwErrorCode);
@@ -186,19 +175,13 @@ namespace ellabi.Wrappers
             int nIndex,
             int dwNewLong);
 
-        //[DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        //public static extern IntPtr SetWindowsHookEx(
-        //    int idHook,
-        //    LowLevelKeyboardProc lpfn,
-        //    IntPtr hMod,
-        //    uint dwThreadId);
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetForegroundWindow();
 
-        //[DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        //public static extern bool UnhookWindowsHookEx(
-        //    IntPtr hhk);
-
-        //[DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        //public static extern IntPtr GetModuleHandle(
-        //    string lpModuleName);
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        public static extern int GetWindowText(
+            IntPtr hWnd, 
+            StringBuilder lpString, 
+            int nMaxCount);
     }
 }

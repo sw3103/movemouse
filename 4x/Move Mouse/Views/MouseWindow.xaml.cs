@@ -547,19 +547,19 @@ namespace ellabi.Views
         //    return IntPtr.Zero;
         //}
 
-        private void ContactButton_OnClick(object sender, RoutedEventArgs e)
-        {
-            StaticCode.Logger?.Here().Debug(String.Empty);
+        //private void ContactButton_OnClick(object sender, RoutedEventArgs e)
+        //{
+        //    StaticCode.Logger?.Here().Debug(String.Empty);
 
-            try
-            {
-                Process.Start(StaticCode.ContactMailToAddress);
-            }
-            catch (Exception ex)
-            {
-                StaticCode.Logger?.Here().Error(ex.Message);
-            }
-        }
+        //    try
+        //    {
+        //        Process.Start(StaticCode.ContactMailToAddress);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        StaticCode.Logger?.Here().Error(ex.Message);
+        //    }
+        //}
 
         private void MouseWindow_OnClosing(object sender, CancelEventArgs e)
         {
