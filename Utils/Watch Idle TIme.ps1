@@ -1,4 +1,6 @@
-﻿Add-Type @'
+﻿# https://github.com/sw3103/movemouse/wiki/Troubleshooting#idle-time
+
+Add-Type @'
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
