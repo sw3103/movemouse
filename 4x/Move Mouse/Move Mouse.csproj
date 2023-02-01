@@ -345,18 +345,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Mouse-Pause.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Mouse-Play.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Mouse-Sleep.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Mouse-Stop.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
