@@ -1,12 +1,12 @@
 <versions>
   <version>
     <major>4</major>
-    <minor>15</minor>
+    <minor>16</minor>
     <build>1</build>
-    <released_date>25-Oct-2022</released_date>
-    <advertised_date>25-Oct-2022</advertised_date>
+    <released_date>01-Feb-2023</released_date>
+    <advertised_date>01-Feb-2023</advertised_date>
     <wmi_filter>SELECT * FROM Win32_OperatingSystem</wmi_filter>
-    <download_url>https://github.com/sw3103/movemouse/releases/tag/v4.15.1</download_url>
+    <download_url>https://github.com/sw3103/movemouse/releases/tag/v4.16.1</download_url>
     <features/>
     <fixes>
       <fix>Now the version that was previously only available on the Microsoft Store is downloadable on GitHub</fix>
