@@ -56,6 +56,7 @@ namespace ellabi.Actions
         public ClickMouseAction()
         {
             _button = MouseButton.Left;
+            InterruptsIdleTime = true;
         }
 
         public override bool CanExecute()
@@ -111,7 +112,7 @@ namespace ellabi.Actions
 
         public override string ToString()
         {
-            return $"{this.GetType().Name} | Name = {Name} | Button = {Button} | Hold = {Hold} | HoldInterval = {HoldInterval} | Trigger = {Trigger} | Repeat = {Repeat} | RepeatMode = {RepeatMode} | IntervalThrottle = {IntervalThrottle} | IntervalExecutionCount = {IntervalExecutionCount}";
+            return $"{this.GetType().Name} | Name = {Name} | Button = {Button} | Hold = {Hold} | HoldInterval = {HoldInterval} | Trigger = {Trigger} | Repeat = {Repeat} | RepeatMode = {RepeatMode} | IntervalThrottle = {IntervalThrottle} | IntervalExecutionCount = {IntervalExecutionCount} | InterruptsIdleTime = {InterruptsIdleTime}";
         }
     }
 }

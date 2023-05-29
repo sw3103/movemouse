@@ -4,18 +4,16 @@ using ellabi.Annotations;
 using ellabi.Jobs;
 using ellabi.Schedules;
 using ellabi.Utilities;
-using ellabi.Wrappers;
-using Microsoft.VisualBasic;
 using Microsoft.Win32;
 using Quartz;
 using Quartz.Impl;
 using Quartz.Impl.Triggers;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading;
 
 namespace ellabi.ViewModels
@@ -495,7 +493,7 @@ namespace ellabi.ViewModels
                             StopAutoResumeTimer();
                             _activeExecutionId = Guid.NewGuid();
                             _lastStopStartToggleTime = DateTime.Now;
-                            PerformActions(ActionBase.EventTrigger.Start);
+                            if (_firstPass) PerformActions(ActionBase.EventTrigger.Start);
                             double interval = SettingsVm.Settings.RandomInterval ? new Random().Next(SettingsVm.Settings.LowerInterval * 1000, SettingsVm.Settings.UpperInterval * 1000) : (SettingsVm.Settings.LowerInterval * 1000);
                             interval = interval > 0 ? interval : 1;
                             ExecutionTime = DateTime.Now.AddMilliseconds(interval);
@@ -642,6 +640,8 @@ namespace ellabi.ViewModels
                 lock (_lock)
                 {
                     var executionId = _activeExecutionId;
+                    var lastInputTime = StaticCode.GetLastInputTime();
+                    IEnumerable<ActionBase> actions = null;
 
                     if (_firstPass)
                     {
@@ -658,7 +658,7 @@ namespace ellabi.ViewModels
                             {
                                 if (SettingsVm.Settings.Actions.Any(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger)))
                                 {
-                                    var actions = SettingsVm.Settings.Actions.Where(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger));
+                                    actions = SettingsVm.Settings.Actions.Where(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger));
 
                                     foreach (var action in actions)
                                     {
@@ -681,7 +681,7 @@ namespace ellabi.ViewModels
 
                                     if (SettingsVm.Settings.Actions.Any(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger)))
                                     {
-                                        var actions = _firstPass ? SettingsVm.Settings.Actions.Where(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger)) : SettingsVm.Settings.Actions.Where(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger) && action.Repeat && ((action.RepeatMode == ActionBase.IntervalRepeatMode.Forever) || ((action.RepeatMode == ActionBase.IntervalRepeatMode.Throttle) && (action.IntervalExecutionCount < action.IntervalThrottle))));
+                                        actions = _firstPass ? SettingsVm.Settings.Actions.Where(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger)) : SettingsVm.Settings.Actions.Where(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger) && action.Repeat && ((action.RepeatMode == ActionBase.IntervalRepeatMode.Forever) || ((action.RepeatMode == ActionBase.IntervalRepeatMode.Throttle) && (action.IntervalExecutionCount < action.IntervalThrottle))));
 
                                         foreach (var action in actions)
                                         {
@@ -718,7 +718,7 @@ namespace ellabi.ViewModels
                         case ActionBase.EventTrigger.Stop:
                             if (SettingsVm.Settings.Actions.Any(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger)))
                             {
-                                var actions = SettingsVm.Settings.Actions.Where(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger));
+                                actions = SettingsVm.Settings.Actions.Where(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger));
 
                                 foreach (var action in actions)
                                 {
@@ -730,6 +730,11 @@ namespace ellabi.ViewModels
                             }
 
                             break;
+                    }
+
+                    if ((actions != null) && actions.Any(action => action.InterruptsIdleTime) && (lastInputTime <= StaticCode.GetLastInputTime()))
+                    {
+                        StaticCode.Logger?.Here().Warning($"Your system idle time has not been reset which may result in session timeout due to lack of user activity. Please refer to the Troubleshooting section in the Wiki for further assistance ({StaticCode.TroubleshootingUrl}).");
                     }
                 }
             }

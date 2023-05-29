@@ -184,7 +184,7 @@ namespace ellabi.Actions
 
         public override string ToString()
         {
-            return $"{this.GetType().Name} | Name = {Name} | Mode = {Mode} | Application = {Application} | Trigger = {Trigger} | Repeat = {Repeat} | RepeatMode = {RepeatMode} | IntervalThrottle = {IntervalThrottle} | IntervalExecutionCount = {IntervalExecutionCount}";
+            return $"{this.GetType().Name} | Name = {Name} | Mode = {Mode} | Application = {Application} | Trigger = {Trigger} | Repeat = {Repeat} | RepeatMode = {RepeatMode} | IntervalThrottle = {IntervalThrottle} | IntervalExecutionCount = {IntervalExecutionCount} | InterruptsIdleTime = {InterruptsIdleTime}";
         }
     }
 }

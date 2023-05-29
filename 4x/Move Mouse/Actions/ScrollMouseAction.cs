@@ -47,6 +47,7 @@ namespace ellabi.Actions
         {
             _distance = 100;
             _direction = WheelDirection.Down;
+            InterruptsIdleTime = true;
         }
 
         public override bool CanExecute()
@@ -92,7 +93,7 @@ namespace ellabi.Actions
 
         public override string ToString()
         {
-            return $"{this.GetType().Name} | Name = {Name} | Distance = {Distance} | Direction = {Direction} | Trigger = {Trigger} | Repeat = {Repeat} | RepeatMode = {RepeatMode} | IntervalThrottle = {IntervalThrottle} | IntervalExecutionCount = {IntervalExecutionCount}";
+            return $"{this.GetType().Name} | Name = {Name} | Distance = {Distance} | Direction = {Direction} | Trigger = {Trigger} | Repeat = {Repeat} | RepeatMode = {RepeatMode} | IntervalThrottle = {IntervalThrottle} | IntervalExecutionCount = {IntervalExecutionCount} | InterruptsIdleTime = {InterruptsIdleTime}";
         }
     }
 }

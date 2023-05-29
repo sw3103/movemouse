@@ -20,6 +20,7 @@ namespace ellabi.Actions
         private IntervalRepeatMode _repeatMode;
         private int _intervalThrottle;
         private int _intervalExecutionCount;
+        private bool _interruptsIdleTime;
 
         public enum EventTrigger
         {
@@ -112,6 +113,17 @@ namespace ellabi.Actions
             set
             {
                 _intervalExecutionCount = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [XmlIgnore]
+        public bool InterruptsIdleTime
+        {
+            get => _interruptsIdleTime;
+            set
+            {
+                _interruptsIdleTime = value;
                 OnPropertyChanged();
             }
         }
