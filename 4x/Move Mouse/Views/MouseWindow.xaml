@@ -291,7 +291,7 @@
     <Grid>
         <Grid Width="200" Height="200" MouseEnter="MouseGrid_OnMouseEnter" MouseLeave="UIElement_OnMouseLeave">
             <!--IconSource="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=Icon}"-->
-            <tb:TaskbarIcon Name="MouseTaskbarIcon" ToolTipText="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=Title}" PopupActivation="RightClick" DoubleClickCommand="{Binding Path=StartStopToggleCommand, NotifyOnTargetUpdated=True}" LeftClickCommand="{Binding Path=ShowMoveMouseCommand}">
+            <tb:TaskbarIcon Name="MouseTaskbarIcon" PopupActivation="RightClick" DoubleClickCommand="{Binding Path=StartStopToggleCommand, NotifyOnTargetUpdated=True}" LeftClickCommand="{Binding Path=ShowMoveMouseCommand}">
                 <tb:TaskbarIcon.Style>
                     <Style TargetType="tb:TaskbarIcon">
                         <Setter Property="Visibility" Value="Visible"/>
