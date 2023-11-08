@@ -272,6 +272,7 @@
     <Compile Include="Converters\StartupTaskStateToBoolConverter.cs" />
     <Compile Include="Converters\StringToFileExistsConverter.cs" />
     <Compile Include="Jobs\CheckForUpdateJob.cs" />
+    <Compile Include="Jobs\RefreshSchedulesJob.cs" />
     <Compile Include="Jobs\ResetUpdateStatusJob.cs" />
     <Compile Include="Jobs\UpdateThemeJob.cs" />
     <Compile Include="Schedules\AdvancedSchedule.cs" />

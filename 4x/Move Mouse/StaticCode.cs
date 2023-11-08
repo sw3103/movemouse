@@ -16,10 +16,12 @@ namespace ellabi
         public delegate void ScheduleArrivedHandler(ScheduleBase.ScheduleAction action);
         //public delegate void ThemeUpdatedHandler(Theme theme);
         public delegate void UpdateAvailablityChangedHandler(bool updateAvailable);
+        public delegate void RefreshSchedulesHandler();
 
         public static event ScheduleArrivedHandler ScheduleArrived;
         //public static event ThemeUpdatedHandler ThemeUpdated;
         public static event UpdateAvailablityChangedHandler UpdateAvailablityChanged;
+        public static event RefreshSchedulesHandler RefreshSchedules;
 
         public const string PayPalUrl = "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=QZTWHD9CRW5XN";
         public const string HomePageUrl = "http://www.movemouse.co.uk";
@@ -152,6 +154,11 @@ namespace ellabi
         public static void OnUpdateAvailablityChanged(bool updateAvailable)
         {
             UpdateAvailablityChanged?.Invoke(updateAvailable);
+        }
+
+        public static void OnRefreshSchedules()
+        {
+            RefreshSchedules?.Invoke();
         }
     }
 }

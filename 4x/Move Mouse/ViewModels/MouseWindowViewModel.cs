@@ -15,6 +15,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace ellabi.ViewModels
 {
@@ -146,11 +147,18 @@ namespace ellabi.ViewModels
             StaticCode.ScheduleArrived += StaticCode_ScheduleArrived;
             //StaticCode.ThemeUpdated += StaticCode_ThemeUpdated;
             if (StaticCode.DownloadSource == StaticCode.MoveMouseSource.GitHub) StaticCode.UpdateAvailablityChanged += StaticCode_UpdateAvailablityChanged;
+            StaticCode.RefreshSchedules += StaticCode_RefreshSchedules;
             SystemEvents.SessionSwitch += SystemEvents_SessionSwitch;
             SystemEvents.PowerModeChanged += SystemEvents_PowerModeChanged;
             ThreadPool.QueueUserWorkItem(ForceSystrayIconVisibilityAtLaunch);
             ScheduleJobs();
             //Debug.WriteLine(SystemInformation.PowerStatus.BatteryChargeStatus);
+        }
+
+        private void StaticCode_RefreshSchedules()
+        {
+            Debug.WriteLine("StaticCode_RefreshSchedules()");
+            ScheduleJobs();
         }
 
         private void ForceSystrayIconVisibilityAtLaunch(object stateInfo)
@@ -268,12 +276,7 @@ namespace ellabi.ViewModels
             }
         }
 
-        private void ScheduleJobs()
-        {
-            ThreadPool.QueueUserWorkItem(ScheduleJobsThread);
-        }
-
-        private async void ScheduleJobsThread(object stateInfo)
+        private async void ScheduleJobs()
         {
             using (Mutex myMutex = new Mutex(false, "ScheduleJobsThread", out var owned))
             {
@@ -285,7 +288,7 @@ namespace ellabi.ViewModels
 
                         //if (_lastSchedulesUpdateTime.Add(_schedulesUpdateDelay) > DateTime.Now)
                         //{
-                        CleanupJobs();
+                        await CleanupJobs();
 
                         //while (_lastSchedulesUpdateTime.Add(_schedulesUpdateDelay) > DateTime.Now)
                         //{
@@ -327,10 +330,10 @@ namespace ellabi.ViewModels
 
                         if (StaticCode.DownloadSource == StaticCode.MoveMouseSource.GitHub)
                         {
-                            var resetUpdateStatus = JobBuilder.Create<ResetUpdateStatusJob>()
+                            var resetUpdateStatusJob = JobBuilder.Create<ResetUpdateStatusJob>()
                                 .WithIdentity("ResetUpdateStatusJob")
                                 .Build();
-                            await _scheduler.ScheduleJob(resetUpdateStatus, new CronTriggerImpl("ResetUpdateStatusJob", null, "0 0 0 ? * *"));
+                            await _scheduler.ScheduleJob(resetUpdateStatusJob, new CronTriggerImpl("ResetUpdateStatusJob", null, "0 1 0 ? * *"));
                             await _scheduler.TriggerJob(new JobKey("ResetUpdateStatusJob"));
                             var checkForUpdateTime = TimeSpan.FromHours(10).Add(TimeSpan.FromSeconds(new Random().Next(0, 21600)));
                             var checkForUpdateJob = JobBuilder.Create<CheckForUpdateJob>()
@@ -340,6 +343,11 @@ namespace ellabi.ViewModels
                             await _scheduler.TriggerJob(new JobKey("CheckForUpdateJob"));
                         }
 
+                        var refreshSchedulesJob = JobBuilder.Create<RefreshSchedulesJob>()
+                            .WithIdentity("RefreshSchedulesJob")
+                            .Build();
+                        var refreshSchedulesTime = DateTime.Now.AddSeconds(-1).TimeOfDay;
+                        await _scheduler.ScheduleJob(refreshSchedulesJob, new CronTriggerImpl("RefreshSchedulesJob", null, $"{refreshSchedulesTime.Seconds} {refreshSchedulesTime.Minutes} {refreshSchedulesTime.Hours} ? * *"));
                         await _scheduler.Start();
                         //}
                     }
@@ -355,7 +363,7 @@ namespace ellabi.ViewModels
             }
         }
 
-        private void CleanupJobs()
+        private async Task CleanupJobs()
         {
             StaticCode.Logger?.Here().Debug(String.Empty);
 
@@ -363,8 +371,9 @@ namespace ellabi.ViewModels
             {
                 if ((_scheduler != null) && !_scheduler.IsShutdown)
                 {
-                    _scheduler?.Clear();
-                    _scheduler?.Shutdown();
+                    await _scheduler?.Clear();
+                    await _scheduler?.Shutdown();
+
                 }
             }
             catch (Exception ex)
@@ -1057,6 +1066,7 @@ namespace ellabi.ViewModels
                 StaticCode.ScheduleArrived -= StaticCode_ScheduleArrived;
                 //StaticCode.ThemeUpdated -= StaticCode_ThemeUpdated;
                 StaticCode.UpdateAvailablityChanged -= StaticCode_UpdateAvailablityChanged;
+                StaticCode.RefreshSchedules -= StaticCode_RefreshSchedules;
                 SystemEvents.SessionSwitch -= SystemEvents_SessionSwitch;
                 SystemEvents.PowerModeChanged -= SystemEvents_PowerModeChanged;
             }

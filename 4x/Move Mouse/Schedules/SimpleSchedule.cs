@@ -14,10 +14,18 @@ namespace ellabi.Schedules
         private bool _saturday;
         private bool _sunday;
         private TimeSpan _time;
-
+        private int _delay;
         public override bool IsValid => (Monday || Tuesday || Wednesday || Thursday || Friday || Saturday || Sunday) && (Time < TimeSpan.FromHours(24));
 
-        public override string CronExpression => String.Format("{0} {1} {2} ? * {3}", Time.Seconds, Time.Minutes, Time.Hours, BuildDayOfWeekPart());
+        public override string CronExpression
+        {
+            get
+            {
+                var time = Delay == 0 ? Time : Time.Add(TimeSpan.FromSeconds(new Random().Next(0, Delay)));
+                if (time.TotalDays >= 1) time = new TimeSpan(23, 59, 59);
+                return String.Format("{0} {1} {2} ? * {3}", time.Seconds, time.Minutes, time.Hours, BuildDayOfWeekPart());
+            }
+        }
 
         public bool Monday
         {
@@ -155,6 +163,16 @@ namespace ellabi.Schedules
         {
             get => _time.ToString();
             set => _time = String.IsNullOrEmpty(value) ? TimeSpan.Zero : TimeSpan.Parse(value);
+        }
+
+        public int Delay
+        {
+            get => _delay;
+            set
+            {
+                _delay = value;
+                OnPropertyChanged();
+            }
         }
 
         public SimpleSchedule()

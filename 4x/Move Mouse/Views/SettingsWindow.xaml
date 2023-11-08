@@ -2075,13 +2075,16 @@
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="10"/>
                                 <ColumnDefinition Width="70"/>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="10"/>
-                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="70"/>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="10"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="10"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="10"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="5"/>
+                                <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="10"/>
                                 <ColumnDefinition Width="Auto"/>
@@ -2096,16 +2099,36 @@
                             </Grid.RowDefinitions>
                             <TextBlock Grid.Column="1" Grid.Row="1" Text="Action" Style="{StaticResource LabelTextBlockStyle}"/>
                             <ComboBox Grid.Column="3" Grid.Row="1" SelectedItem="{Binding Path=Action, NotifyOnTargetUpdated=True}" ItemsSource="{Binding Path=ScheduleActionValues}" HorizontalAlignment="Stretch"/>
-                            <TextBlock Grid.Column="1" Grid.Row="3" Text="Time" Style="{StaticResource LabelTextBlockStyle}"/>
-                            <xctk:TimeSpanUpDown Grid.Column="3" Grid.Row="3" Value="{Binding Path=Time, NotifyOnTargetUpdated=True, UpdateSourceTrigger=LostFocus}" Minimum="0:0:0" Maximum="23:59:59" HorizontalAlignment="Stretch"/>
-                            <toggleSwitch:HorizontalToggleSwitch Grid.Column="5" Grid.Row="1" IsChecked="{Binding Path=Monday, NotifyOnTargetUpdated=True, Mode=TwoWay}" UncheckedContent="Mon" CheckedContent="Mon"/>
-                            <toggleSwitch:HorizontalToggleSwitch Grid.Column="7" Grid.Row="1" IsChecked="{Binding Path=Tuesday, NotifyOnTargetUpdated=True, Mode=TwoWay}" UncheckedContent="Tue" CheckedContent="Tue"/>
-                            <toggleSwitch:HorizontalToggleSwitch Grid.Column="9" Grid.Row="1" IsChecked="{Binding Path=Wednesday, NotifyOnTargetUpdated=True, Mode=TwoWay}" UncheckedContent="Wed" CheckedContent="Wed"/>
-                            <toggleSwitch:HorizontalToggleSwitch Grid.Column="11" Grid.Row="1" IsChecked="{Binding Path=Thursday, NotifyOnTargetUpdated=True, Mode=TwoWay}" UncheckedContent="Thu" CheckedContent="Thu"/>
-                            <toggleSwitch:HorizontalToggleSwitch Grid.Column="5" Grid.Row="3" IsChecked="{Binding Path=Friday, NotifyOnTargetUpdated=True, Mode=TwoWay}" UncheckedContent="Fri" CheckedContent="Fri"/>
-                            <toggleSwitch:HorizontalToggleSwitch Grid.Column="7" Grid.Row="3" IsChecked="{Binding Path=Saturday, NotifyOnTargetUpdated=True, Mode=TwoWay}" UncheckedContent="Sat" CheckedContent="Sat"/>
-                            <toggleSwitch:HorizontalToggleSwitch Grid.Column="9" Grid.Row="3" IsChecked="{Binding Path=Sunday, NotifyOnTargetUpdated=True, Mode=TwoWay}" UncheckedContent="Sun" CheckedContent="Sun"/>
-                            <Button Grid.Column="13" Grid.Row="1" Grid.RowSpan="3" Style="{StaticResource TaskActionButtonStyle}" Command="{Binding ElementName=ScheduleItemsControl, Path=DataContext.RemoveSelectedScheduleCommand, NotifyOnTargetUpdated=True}" CommandParameter="{Binding Path=Id}" Margin="0">
+                            <TextBlock Grid.Column="5" Grid.Row="1" Text="Time" Style="{StaticResource LabelTextBlockStyle}"/>
+                            <xctk:TimeSpanUpDown Grid.Column="7" Grid.Row="1" Value="{Binding Path=Time, NotifyOnTargetUpdated=True, UpdateSourceTrigger=LostFocus}" Minimum="0:0:0" Maximum="23:59:59" HorizontalAlignment="Stretch"/>
+                            <TextBlock Grid.Column="9" Grid.Row="1" Text="Delay" Style="{StaticResource LabelTextBlockStyle}"/>
+                            <xctk:IntegerUpDown Grid.Column="11" Grid.Row="1" Value="{Binding Path=Delay, NotifyOnTargetUpdated=True}" Increment="1" Minimum="0" Maximum="99999"/>
+                            <TextBlock Grid.Column="13" Grid.Row="1" Text="seconds" Style="{StaticResource LabelTextBlockStyle}"/>
+                            <Grid Grid.Column="1" Grid.Row="3" Grid.ColumnSpan="14">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="10"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="10"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="10"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="10"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="10"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="10"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <toggleSwitch:HorizontalToggleSwitch Grid.Column="0" IsChecked="{Binding Path=Monday, NotifyOnTargetUpdated=True, Mode=TwoWay}" UncheckedContent="Mon" CheckedContent="Mon"/>
+                                <toggleSwitch:HorizontalToggleSwitch Grid.Column="2" IsChecked="{Binding Path=Tuesday, NotifyOnTargetUpdated=True, Mode=TwoWay}" UncheckedContent="Tue" CheckedContent="Tue"/>
+                                <toggleSwitch:HorizontalToggleSwitch Grid.Column="4" IsChecked="{Binding Path=Wednesday, NotifyOnTargetUpdated=True, Mode=TwoWay}" UncheckedContent="Wed" CheckedContent="Wed"/>
+                                <toggleSwitch:HorizontalToggleSwitch Grid.Column="6" IsChecked="{Binding Path=Thursday, NotifyOnTargetUpdated=True, Mode=TwoWay}" UncheckedContent="Thu" CheckedContent="Thu"/>
+                                <toggleSwitch:HorizontalToggleSwitch Grid.Column="8" IsChecked="{Binding Path=Friday, NotifyOnTargetUpdated=True, Mode=TwoWay}" UncheckedContent="Fri" CheckedContent="Fri"/>
+                                <toggleSwitch:HorizontalToggleSwitch Grid.Column="10" IsChecked="{Binding Path=Saturday, NotifyOnTargetUpdated=True, Mode=TwoWay}" UncheckedContent="Sat" CheckedContent="Sat"/>
+                                <toggleSwitch:HorizontalToggleSwitch Grid.Column="12" IsChecked="{Binding Path=Sunday, NotifyOnTargetUpdated=True, Mode=TwoWay}" UncheckedContent="Sun" CheckedContent="Sun"/>
+                            </Grid>
+                            <Button Grid.Column="16" Grid.Row="1" Grid.RowSpan="3" Style="{StaticResource TaskActionButtonStyle}" Command="{Binding ElementName=ScheduleItemsControl, Path=DataContext.RemoveSelectedScheduleCommand, NotifyOnTargetUpdated=True}" CommandParameter="{Binding Path=Id}" Margin="0">
                                 <Image>
                                     <Image.Style>
                                         <Style TargetType="Image" BasedOn="{StaticResource TaskActionButtonImageStyle}">
@@ -2119,7 +2142,7 @@
                                     </Image.Style>
                                 </Image>
                             </Button>
-                            <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="15" Grid.RowSpan="5" BorderThickness="1" BorderBrush="{StaticResource StandardBorderBrush}"/>
+                            <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="18" Grid.RowSpan="5" BorderThickness="1" BorderBrush="{StaticResource StandardBorderBrush}"/>
                         </Grid>
                     </DataTemplate>
                     <DataTemplate DataType="{x:Type schedules:AdvancedSchedule}">
@@ -2129,7 +2152,7 @@
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="10"/>
                                 <ColumnDefinition Width="70"/>
-                                <ColumnDefinition Width="10"/>
+                                <ColumnDefinition Width="20"/>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="10"/>
                                 <ColumnDefinition Width="*"/>
