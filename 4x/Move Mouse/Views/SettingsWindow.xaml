@@ -544,27 +544,79 @@
                                     <xctk:WatermarkTextBox Grid.Column="1" Grid.Row="0" Text="{Binding Path=Name, NotifyOnTargetUpdated=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding Path=IsEnabled, NotifyOnTargetUpdated=True}" Watermark="Optional"/>
                                 </Grid>
                                 <Grid x:Key="DistanceGrid" x:Shared="False">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="{StaticResource LabelColumnHeight}"/>
-                                        <RowDefinition Height="10"/>
-                                    </Grid.RowDefinitions>
-                                    <TextBlock Grid.Column="0" Grid.Row="0" Text="Distance" Style="{StaticResource LabelTextBlockStyle}"/>
-                                    <xctk:IntegerUpDown Grid.Column="1" Grid.Row="0" Value="{Binding Path=Distance, NotifyOnTargetUpdated=True}" Increment="1" Minimum="1" Maximum="9999">
-                                        <xctk:IntegerUpDown.Style>
-                                            <Style TargetType="xctk:IntegerUpDown" BasedOn="{StaticResource {x:Type xctk:IntegerUpDown}}">
-                                                <Setter Property="IsEnabled" Value="{Binding Path=IsEnabled, NotifyOnTargetUpdated=True}"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Path=Direction, NotifyOnTargetUpdated=True}" Value="None">
-                                                        <Setter Property="IsEnabled" Value="False"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </xctk:IntegerUpDown.Style>
-                                    </xctk:IntegerUpDown>
+                                    <StackPanel Orientation="Vertical">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="{StaticResource LabelColumnHeight}"/>
+                                                <RowDefinition Height="10"/>
+                                                <RowDefinition Height="{StaticResource LabelColumnHeight}"/>
+                                                <RowDefinition Height="10"/>
+                                            </Grid.RowDefinitions>
+                                            <TextBlock Grid.Column="0" Grid.Row="0" Text="Random" Style="{StaticResource LabelTextBlockStyle}"/>
+                                            <toggleSwitch:HorizontalToggleSwitch Grid.Column="1" Grid.Row="0" IsChecked="{Binding Path=Random, NotifyOnTargetUpdated=True, Mode=TwoWay}" IsEnabled="{Binding Path=IsEnabled, NotifyOnTargetUpdated=True}"/>
+                                            <TextBlock Grid.Column="0" Grid.Row="2">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock" BasedOn="{StaticResource LabelTextBlockStyle}">
+                                                        <Setter Property="Text" Value="Distance"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Path=Random, NotifyOnTargetUpdated=True}" Value="True">
+                                                                <Setter Property="Text" Value="Lower"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                            <xctk:IntegerUpDown Grid.Column="1" Grid.Row="2" Value="{Binding Path=Distance, NotifyOnTargetUpdated=True}" Increment="1" Minimum="1" Maximum="9999">
+                                                <xctk:IntegerUpDown.Style>
+                                                    <Style TargetType="xctk:IntegerUpDown" BasedOn="{StaticResource {x:Type xctk:IntegerUpDown}}">
+                                                        <Setter Property="IsEnabled" Value="{Binding Path=IsEnabled, NotifyOnTargetUpdated=True}"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Path=Direction, NotifyOnTargetUpdated=True}" Value="None">
+                                                                <Setter Property="IsEnabled" Value="False"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </xctk:IntegerUpDown.Style>
+                                            </xctk:IntegerUpDown>
+                                        </Grid>
+                                        <Grid>
+                                            <Grid.Style>
+                                                <Style TargetType="Grid">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Path=Random, NotifyOnTargetUpdated=True}" Value="True">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Grid.Style>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="{StaticResource LabelColumnHeight}"/>
+                                                <RowDefinition Height="10"/>
+                                            </Grid.RowDefinitions>
+                                            <TextBlock Grid.Column="0" Grid.Row="0" Text="Upper" Style="{StaticResource LabelTextBlockStyle}"/>
+                                            <xctk:IntegerUpDown Grid.Column="1" Grid.Row="0" Value="{Binding Path=UpperDistance, NotifyOnTargetUpdated=True}" Increment="1" Minimum="1" Maximum="9999">
+                                                <xctk:IntegerUpDown.Style>
+                                                    <Style TargetType="xctk:IntegerUpDown" BasedOn="{StaticResource {x:Type xctk:IntegerUpDown}}">
+                                                        <Setter Property="IsEnabled" Value="{Binding Path=IsEnabled, NotifyOnTargetUpdated=True}"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Path=Direction, NotifyOnTargetUpdated=True}" Value="None">
+                                                                <Setter Property="IsEnabled" Value="False"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </xctk:IntegerUpDown.Style>
+                                            </xctk:IntegerUpDown>
+                                        </Grid>
+                                    </StackPanel>
                                 </Grid>
                                 <Grid x:Key="WaitForReturnGrid" x:Shared="False">
                                     <Grid.ColumnDefinitions>

@@ -9,6 +9,8 @@ namespace ellabi.Actions
     public class MoveMouseCursorAction : ActionBase
     {
         private int _distance;
+        private int _upperDistance;
+        private bool _random;
         private CursorDirection _direction;
         private CursorSpeed _speed;
         private int _delay;
@@ -49,7 +51,37 @@ namespace ellabi.Actions
             get => _distance;
             set
             {
+                if (value > UpperDistance)
+                {
+                    UpperDistance = value;
+                }
+
                 _distance = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int UpperDistance
+        {
+            get => _upperDistance;
+            set
+            {
+                if (value < Distance)
+                {
+                    Distance = value;
+                }
+
+                _upperDistance = value < 1 ? 1 : value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool Random
+        {
+            get => _random;
+            set
+            {
+                _random = value;
                 OnPropertyChanged();
             }
         }
@@ -112,6 +144,7 @@ namespace ellabi.Actions
         public MoveMouseCursorAction()
         {
             _distance = 10;
+            _upperDistance = 20;
             _direction = CursorDirection.Square;
             Speed = CursorSpeed.Normal;
             InterruptsIdleTime = true;
@@ -128,64 +161,65 @@ namespace ellabi.Actions
             {
                 IntervalExecutionCount++;
                 StaticCode.Logger?.Here().Information(ToString());
+                int distance = Random ? new Random().Next(Convert.ToInt32(Distance), Convert.ToInt32(UpperDistance)) : Distance;
 
                 switch (Direction)
                 {
                     case CursorDirection.Square:
-                        MouseCursorWrapper.MoveEast(Distance, _delay);
-                        MouseCursorWrapper.MoveSouth(Distance, _delay);
-                        MouseCursorWrapper.MoveWest(Distance, _delay);
-                        MouseCursorWrapper.MoveNorth(Distance, _delay);
+                        MouseCursorWrapper.MoveEast(distance, _delay);
+                        MouseCursorWrapper.MoveSouth(distance, _delay);
+                        MouseCursorWrapper.MoveWest(distance, _delay);
+                        MouseCursorWrapper.MoveNorth(distance, _delay);
                         break;
                     case CursorDirection.North:
-                        MouseCursorWrapper.MoveNorth(Distance, _delay);
+                        MouseCursorWrapper.MoveNorth(distance, _delay);
                         break;
                     case CursorDirection.East:
-                        MouseCursorWrapper.MoveEast(Distance, _delay);
+                        MouseCursorWrapper.MoveEast(distance, _delay);
                         break;
                     case CursorDirection.South:
-                        MouseCursorWrapper.MoveSouth(Distance, _delay);
+                        MouseCursorWrapper.MoveSouth(distance, _delay);
                         break;
                     case CursorDirection.West:
-                        MouseCursorWrapper.MoveWest(Distance, _delay);
+                        MouseCursorWrapper.MoveWest(distance, _delay);
                         break;
                     case CursorDirection.NorthEast:
-                        MouseCursorWrapper.MoveNorthEast(Distance, _delay);
+                        MouseCursorWrapper.MoveNorthEast(distance, _delay);
                         break;
                     case CursorDirection.SouthEast:
-                        MouseCursorWrapper.MoveSouthEast(Distance, _delay);
+                        MouseCursorWrapper.MoveSouthEast(distance, _delay);
                         break;
                     case CursorDirection.SouthWest:
-                        MouseCursorWrapper.MoveSouthWest(Distance, _delay);
+                        MouseCursorWrapper.MoveSouthWest(distance, _delay);
                         break;
                     case CursorDirection.NorthWest:
-                        MouseCursorWrapper.MoveNorthWest(Distance, _delay);
+                        MouseCursorWrapper.MoveNorthWest(distance, _delay);
                         break;
                     case CursorDirection.UpAndDown:
-                        MouseCursorWrapper.MoveNorth(Distance, _delay);
-                        MouseCursorWrapper.MoveSouth(Distance, _delay);
+                        MouseCursorWrapper.MoveNorth(distance, _delay);
+                        MouseCursorWrapper.MoveSouth(distance, _delay);
                         break;
                     case CursorDirection.DownAndUp:
-                        MouseCursorWrapper.MoveSouth(Distance, _delay);
-                        MouseCursorWrapper.MoveNorth(Distance, _delay);
+                        MouseCursorWrapper.MoveSouth(distance, _delay);
+                        MouseCursorWrapper.MoveNorth(distance, _delay);
                         break;
                     case CursorDirection.LeftAndRight:
-                        MouseCursorWrapper.MoveWest(Distance, _delay);
-                        MouseCursorWrapper.MoveEast(Distance, _delay);
+                        MouseCursorWrapper.MoveWest(distance, _delay);
+                        MouseCursorWrapper.MoveEast(distance, _delay);
                         break;
                     case CursorDirection.RightAndLeft:
-                        MouseCursorWrapper.MoveEast(Distance, _delay);
-                        MouseCursorWrapper.MoveWest(Distance, _delay);
+                        MouseCursorWrapper.MoveEast(distance, _delay);
+                        MouseCursorWrapper.MoveWest(distance, _delay);
                         break;
                     case CursorDirection.Random:
-                        int distanceRemaining = Distance;
+                        int distanceRemaining = distance;
                         int lastDirection = 0;
 
                         while (distanceRemaining > 0)
                         {
                             const int maxDistance = 150;
-                            int distance = new Random(distanceRemaining).Next(1, (distanceRemaining < maxDistance) ? distanceRemaining : maxDistance);
-                            distanceRemaining = distanceRemaining - distance;
+                            int randomDistance = new Random(distanceRemaining).Next(1, (distanceRemaining < maxDistance) ? distanceRemaining : maxDistance);
+                            distanceRemaining = distanceRemaining - randomDistance;
                             int direction;
 
                             do
@@ -198,28 +232,28 @@ namespace ellabi.Actions
                             switch (direction)
                             {
                                 case 1:
-                                    MouseCursorWrapper.MoveNorth(distance, _delay);
+                                    MouseCursorWrapper.MoveNorth(randomDistance, _delay);
                                     break;
                                 case 2:
-                                    MouseCursorWrapper.MoveEast(distance, _delay);
+                                    MouseCursorWrapper.MoveEast(randomDistance, _delay);
                                     break;
                                 case 3:
-                                    MouseCursorWrapper.MoveSouth(distance, _delay);
+                                    MouseCursorWrapper.MoveSouth(randomDistance, _delay);
                                     break;
                                 case 4:
-                                    MouseCursorWrapper.MoveWest(distance, _delay);
+                                    MouseCursorWrapper.MoveWest(randomDistance, _delay);
                                     break;
                                 case 5:
-                                    MouseCursorWrapper.MoveNorthEast(distance, _delay);
+                                    MouseCursorWrapper.MoveNorthEast(randomDistance, _delay);
                                     break;
                                 case 6:
-                                    MouseCursorWrapper.MoveSouthEast(distance, _delay);
+                                    MouseCursorWrapper.MoveSouthEast(randomDistance, _delay);
                                     break;
                                 case 7:
-                                    MouseCursorWrapper.MoveSouthWest(distance, _delay);
+                                    MouseCursorWrapper.MoveSouthWest(randomDistance, _delay);
                                     break;
                                 case 8:
-                                    MouseCursorWrapper.MoveNorthWest(distance, _delay);
+                                    MouseCursorWrapper.MoveNorthWest(randomDistance, _delay);
                                     break;
                             }
                         }

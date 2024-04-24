@@ -9,6 +9,8 @@ namespace ellabi.Actions
     public class ScrollMouseAction : ActionBase
     {
         private uint _distance;
+        private uint _upperDistance;
+        private bool _random;
         private WheelDirection _direction;
 
         public enum WheelDirection
@@ -16,7 +18,8 @@ namespace ellabi.Actions
             Up,
             Down,
             Left,
-            Right
+            Right,
+            Random
         }
 
         public IEnumerable<WheelDirection> WheelDirectionValues => Enum.GetValues(typeof(WheelDirection)).Cast<WheelDirection>();
@@ -28,7 +31,37 @@ namespace ellabi.Actions
             get => _distance;
             set
             {
+                if (value > UpperDistance)
+                {
+                    UpperDistance = value;
+                }
+
                 _distance = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public uint UpperDistance
+        {
+            get => _upperDistance;
+            set
+            {
+                if (value < Distance)
+                {
+                    Distance = value;
+                }
+
+                _upperDistance = value < 1 ? 1 : value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool Random
+        {
+            get => _random;
+            set
+            {
+                _random = value;
                 OnPropertyChanged();
             }
         }
@@ -46,6 +79,7 @@ namespace ellabi.Actions
         public ScrollMouseAction()
         {
             _distance = 100;
+            _upperDistance = 200;
             _direction = WheelDirection.Down;
             InterruptsIdleTime = true;
         }
@@ -60,27 +94,29 @@ namespace ellabi.Actions
             try
             {
                 StaticCode.Logger?.Here().Information(ToString());
+                var direction = (Direction == WheelDirection.Random) ? WheelDirectionValues.OrderBy(wd => Guid.NewGuid()).FirstOrDefault() : Direction;
+                uint distance = Random ? (uint)(new Random().Next(Convert.ToInt32(Distance), Convert.ToInt32(UpperDistance))) : Distance;
 
-                switch (_direction)
+                switch (direction)
                 {
                     case WheelDirection.Up:
                         {
-                            NativeMethods.mouse_event((int)NativeMethods.MouseEventFlags.WHEEL, 0, 0, Distance, 0);
+                            NativeMethods.mouse_event((int)NativeMethods.MouseEventFlags.WHEEL, 0, 0, distance, 0);
                             break;
                         }
                     case WheelDirection.Down:
                         {
-                            NativeMethods.mouse_event((int)NativeMethods.MouseEventFlags.WHEEL, 0, 0, (uint)(Distance * -1), 0);
+                            NativeMethods.mouse_event((int)NativeMethods.MouseEventFlags.WHEEL, 0, 0, (uint)(distance * -1), 0);
                             break;
                         }
                     case WheelDirection.Left:
                         {
-                            NativeMethods.mouse_event((int)NativeMethods.MouseEventFlags.HWHEEL, 0, 0, Distance, 0);
+                            NativeMethods.mouse_event((int)NativeMethods.MouseEventFlags.HWHEEL, 0, 0, distance, 0);
                             break;
                         }
                     case WheelDirection.Right:
                         {
-                            NativeMethods.mouse_event((int)NativeMethods.MouseEventFlags.HWHEEL, 0, 0, (uint)(Distance * -1), 0);
+                            NativeMethods.mouse_event((int)NativeMethods.MouseEventFlags.HWHEEL, 0, 0, (uint)(distance * -1), 0);
                             break;
                         }
                 }

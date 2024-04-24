@@ -46,7 +46,8 @@ namespace ellabi.Actions
             get => _random;
             set
             {
-                _random = value; OnPropertyChanged();
+                _random = value;
+                OnPropertyChanged();
             }
         }
 
