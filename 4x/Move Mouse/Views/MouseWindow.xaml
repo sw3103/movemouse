@@ -120,25 +120,7 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="ProgressBar">
                         <Grid>
-                            <Ellipse>
-                                <Ellipse.Style>
-                                    <Style TargetType="Ellipse">
-                                        <Setter Property="Fill" Value="{StaticResource StandardWindowBackground}"/>
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Path=SettingsVm.Settings.StandWithUkraine, NotifyOnTargetUpdated=True}" Value="True">
-                                                <Setter Property="Fill">
-                                                    <Setter.Value>
-                                                        <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                                                            <GradientStop Color="#0057b7" Offset="0.5"/>
-                                                            <GradientStop Color="#ffd700" Offset="0.5"/>
-                                                        </LinearGradientBrush>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Ellipse.Style>
-                            </Ellipse>
+                            <Ellipse Fill="{StaticResource StandardWindowBackground}"/>
                             <classes:Arc StrokeThickness="15">
                                 <classes:Arc.Style>
                                     <Style TargetType="classes:Arc">

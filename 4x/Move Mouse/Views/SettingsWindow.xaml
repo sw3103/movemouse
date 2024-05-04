@@ -12,7 +12,7 @@
         xmlns:classes="clr-namespace:ellabi.Classes"
         xmlns:ed="http://schemas.microsoft.com/expression/2010/drawing"
         mc:Ignorable="d"
-        Title="Move Mouse Settings" Height="442" Width="688" Icon="/Resources/Mouse.ico" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize" WindowStyle="None" MouseDown="SettingsWindow_OnMouseDown" ShowActivated="True" Loaded="SettingsWindow_OnLoaded">
+        Title="Move Mouse Settings" Height="412" Width="688" Icon="/Resources/Mouse.ico" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize" WindowStyle="None" MouseDown="SettingsWindow_OnMouseDown" ShowActivated="True" Loaded="SettingsWindow_OnLoaded">
     <Grid Background="{StaticResource StandardWindowBackground}">
         <Grid.Resources>
             <!--<converters:ObjectToTypeStringConverter x:Key="ObjectToTypeStringConverter"/>-->
@@ -2042,28 +2042,6 @@
                             </StackPanel.Style>
                             <toggleSwitch:HorizontalToggleSwitch IsChecked="{Binding Path=Settings.DisableButtonAnimation, NotifyOnTargetUpdated=True, Mode=TwoWay}"/>
                             <TextBlock Margin="5,0,0,0" Text="Disable button animations" Style="{StaticResource LabelTextBlockStyle}"/>
-                        </StackPanel>
-                        <StackPanel>
-                            <StackPanel.Style>
-                                <Style TargetType="StackPanel" BasedOn="{StaticResource OptionStackPanelStyle}">
-                                    <Setter Property="Visibility" Value="Visible"/>
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Path=Settings.HideMainWindow, NotifyOnTargetUpdated=True}" Value="True">
-                                            <Setter Property="Visibility" Value="Collapsed"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </StackPanel.Style>
-                            <toggleSwitch:HorizontalToggleSwitch IsChecked="{Binding Path=Settings.StandWithUkraine, NotifyOnTargetUpdated=True, Mode=TwoWay}"/>
-                            <TextBlock Margin="5,0,0,0" Text="#StandWithUkraine" Style="{StaticResource LabelTextBlockStyle}"/>
-                            <Grid Margin="10,0,0,0" Height="15" Width="22">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition/>
-                                    <RowDefinition/>
-                                </Grid.RowDefinitions>
-                                <Rectangle Grid.Row="0" Fill="#0057b7"/>
-                                <Rectangle Grid.Row="1" Fill="#ffd700"/>
-                            </Grid>
                         </StackPanel>
                         <!--<Grid Height="22">
                             <Grid.ColumnDefinitions>

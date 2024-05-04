@@ -48,7 +48,6 @@ namespace ellabi.Classes
         private bool? _disableButtonAnimation;
         //private bool? _hookKeyEnabled;
         //private Key _hookKey;
-        private bool? _standWithUkraine;
         private bool? _pauseOnBattery;
         private LogEventLevel? _logLevel;
         private bool? _showSystemTrayNotifications;
@@ -476,20 +475,6 @@ namespace ellabi.Classes
             set
             {
                 _disableButtonAnimation = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public bool StandWithUkraine
-        {
-            get
-            {
-                if (_standWithUkraine == null) _standWithUkraine = false;
-                return _standWithUkraine.Value;
-            }
-            set
-            {
-                _standWithUkraine = value;
                 OnPropertyChanged();
             }
         }
