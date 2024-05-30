@@ -52,6 +52,7 @@ namespace ellabi.Classes
         private LogEventLevel? _logLevel;
         private bool? _showSystemTrayNotifications;
         //private bool? _reactivatePreviousWindow;
+        private bool? _showTaskbarStatus;
 
         public int LowerInterval
         {
@@ -534,6 +535,20 @@ namespace ellabi.Classes
         //        OnPropertyChanged();
         //    }
         //}
+
+        public bool ShowTaskbarStatus
+        {
+            get
+            {
+                if (_showTaskbarStatus == null) _showTaskbarStatus = true;
+                return _showTaskbarStatus.Value;
+            }
+            set
+            {
+                _showTaskbarStatus = value;
+                OnPropertyChanged();
+            }
+        }
 
         [XmlArrayItem(Type = typeof(ActionBase)),
          XmlArrayItem(Type = typeof(MoveMouseCursorAction)),

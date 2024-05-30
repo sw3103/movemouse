@@ -165,6 +165,30 @@ namespace ellabi.Views
 
             try
             {
+                try
+                {
+                    if (_vm.SettingsVm.Settings.ShowTaskbarStatus)
+                    {
+                        Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate
+                        {
+                            if (TaskbarItemInfo != null)
+                            {
+                                TaskbarItemInfo.ProgressState =
+                                    state.Equals(MouseWindowViewModel.MouseState.Running) ? TaskbarItemProgressState.Normal :
+                                    state.Equals(MouseWindowViewModel.MouseState.Executing) ? TaskbarItemProgressState.Error :
+                                    state.Equals(MouseWindowViewModel.MouseState.Paused) ? TaskbarItemProgressState.Paused :
+                                    state.Equals(MouseWindowViewModel.MouseState.Sleeping) ? TaskbarItemProgressState.Paused :
+                                    state.Equals(MouseWindowViewModel.MouseState.OnBattery) ? TaskbarItemProgressState.Paused :
+                                    TaskbarItemProgressState.None;
+                            }
+                        }));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    StaticCode.Logger?.Here().Error(ex.Message);
+                }
+
                 //Debug.WriteLine($"state = {state}");
                 var duration = _vm.ExecutionTime.Subtract(DateTime.Now);
                 //Debug.WriteLine($"duration = {duration}");
