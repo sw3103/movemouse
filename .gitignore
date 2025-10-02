@@ -8,3 +8,12 @@
 4x/Move Mouse/obj/
 4x/UWP Package/
 .vs/
+bin/
+obj/
+*.user
+*.suo
+*.vs
+.vscode/
+profiles.xml
+4x/profiles.xml
+test_profiles.xml

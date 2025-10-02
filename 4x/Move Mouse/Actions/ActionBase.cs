@@ -9,6 +9,15 @@ using System.Xml.Serialization;
 
 namespace ellabi.Actions
 {
+    [Serializable]
+    [XmlInclude(typeof(ActivateApplicationAction))]
+    [XmlInclude(typeof(ClickMouseAction))]
+    [XmlInclude(typeof(CommandAction))]
+    [XmlInclude(typeof(MoveMouseCursorAction))]
+    [XmlInclude(typeof(PositionMouseCursorAction))]
+    [XmlInclude(typeof(ScriptAction))]
+    [XmlInclude(typeof(ScrollMouseAction))]
+    [XmlInclude(typeof(SleepAction))]
     public abstract class ActionBase : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
@@ -156,6 +165,17 @@ namespace ellabi.Actions
             {
                 StaticCode.Logger?.Here().Error(ex.Message);
             }
+        }
+
+        /// <summary>
+        /// Creates a deep copy of this action with a new ID
+        /// </summary>
+        /// <returns>A new action instance with the same properties but different ID</returns>
+        public virtual ActionBase Clone()
+        {
+            var cloned = (ActionBase)MemberwiseClone();
+            cloned.Id = Guid.NewGuid();
+            return cloned;
         }
     }
 }

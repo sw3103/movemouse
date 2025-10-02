@@ -394,16 +394,52 @@
                         <TextBlock Text="Actions" Style="{StaticResource TabHeaderTextBlockStyle}"/>
                     </StackPanel>
                 </TabItem.Header>
-                <Grid>
-                    <Grid Margin="10">
+                <StackPanel Orientation="Vertical">
+                    <!-- Profile Management Section -->
+                    <Grid Margin="10,10,0,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="200"/>
+                            <ColumnDefinition Width="20"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <ComboBox Grid.Column="0"
+                                ItemsSource="{Binding ProfileManager.Profiles}"
+                                DisplayMemberPath="Name"
+                                SelectedItem="{Binding SelectedProfile, Mode=TwoWay}"
+                                Width="180"
+                                HorizontalAlignment="Center"
+                                ToolTip="Select a profile"/>
+
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Left">
+                            <Button Content="Add" Command="{Binding AddProfileCommand}" Margin="0,0,5,0"/>
+                            <Button Content="Rename" Command="{Binding RenameProfileCommand}" Margin="0,0,5,0" IsEnabled="{Binding SelectedProfile}"/>
+                            <Button Content="Remove" Command="{Binding RemoveProfileCommand}" IsEnabled="{Binding SelectedProfile}"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Actions Management Section -->
+                    <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="200"/>
                             <ColumnDefinition Width="10"/>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="10"/>
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="280"/>
                         </Grid.ColumnDefinitions>
-                        <ListView Grid.Column="0" ItemsSource="{Binding Path=Settings.Actions, NotifyOnTargetUpdated=True}" SelectedItem="{Binding Path=SelectedAction, NotifyOnTargetUpdated=True}" SelectionMode="Single" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0" Background="Transparent" BorderThickness="1" BorderBrush="{StaticResource StandardBorderBrush}">
+
+                        <!-- Actions ListView -->
+                        <ListView Grid.Column="0"
+                                ItemsSource="{Binding Path=Settings.Actions, NotifyOnTargetUpdated=True}"
+                                SelectedItem="{Binding Path=SelectedAction, NotifyOnTargetUpdated=True}"
+                                SelectionMode="Single"
+                                VerticalAlignment="Top"
+                                HorizontalAlignment="Stretch"
+                                Height="340"
+                                Margin="10,0,0,10"
+                                Background="Transparent"
+                                BorderThickness="1"
+                                BorderBrush="{StaticResource StandardBorderBrush}">
                             <ListView.Resources>
                                 <Style TargetType="ScrollViewer" BasedOn="{StaticResource StandardScrollViewerStyle}"/>
                             </ListView.Resources>
@@ -1264,9 +1300,10 @@
                                         <ContentPresenter Content="{StaticResource EnabledGrid}"/>
                                     </StackPanel>
                                 </DataTemplate>
-                            </ContentPresenter.Resources>
-                        </ContentPresenter>
+                                </ContentPresenter.Resources>
+                            </ContentPresenter>
                     </Grid>
+                    
                     <ed:Callout AnchorPoint="1.118,-0.5" CalloutStyle="RoundedRectangle" Fill="{StaticResource StandardWindowBackground}" VerticalAlignment="Center" FontSize="14" Height="58" Margin="97,92,328,0" Stroke="{StaticResource StandardLightTextSolidColorBrush}" StrokeThickness="3" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
                         <ed:Callout.Content>
                             <StackPanel>
@@ -1305,7 +1342,7 @@
                             </Style>
                         </ed:Callout.Style>
                     </ed:Callout>
-                </Grid>
+                </StackPanel>
             </TabItem>
             <TabItem>
                 <TabItem.Header>
@@ -1328,13 +1365,56 @@
                         <TextBlock Text="Behaviour" Style="{StaticResource TabHeaderTextBlockStyle}"/>
                     </StackPanel>
                 </TabItem.Header>
-                <StackPanel Orientation="Vertical" Margin="10">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="10">
+                    <StackPanel Orientation="Vertical">
+                        <!-- Program-Wide Settings Header -->
+                        <TextBlock Text="Program Settings" FontSize="14" FontWeight="Bold" Margin="0,0,0,10" Foreground="#FF0078D4"/>
+                        <TextBlock Text="These settings apply to the entire application and affect all profiles." 
+                                   FontSize="11" Margin="0,0,0,15" Foreground="#FF666666" TextWrapping="Wrap"/>
+                        
+                        <!-- Startup Settings -->
+                        <StackPanel Style="{StaticResource OptionStackPanelStyle}">
+                            <toggleSwitch:HorizontalToggleSwitch IsChecked="{Binding Path=LaunchAtStartup, NotifyOnTargetUpdated=True, Mode=TwoWay, Converter={StaticResource StartupTaskStateToBoolConverter}}">
+                                <toggleSwitch:HorizontalToggleSwitch.Style>
+                                    <Style TargetType="toggleSwitch:HorizontalToggleSwitch" BasedOn="{StaticResource {x:Type toggleSwitch:HorizontalToggleSwitch}}">
+                                        <Setter Property="IsEnabled" Value="True"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Path=LaunchAtStartup, NotifyOnTargetUpdated=True}" Value="DisabledByUser">
+                                                <Setter Property="IsEnabled" Value="False"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </toggleSwitch:HorizontalToggleSwitch.Style>
+                            </toggleSwitch:HorizontalToggleSwitch>
+                            <TextBlock Margin="5,0,0,0" Text="Launch Move Mouse at start-up" Style="{StaticResource LabelTextBlockStyle}"/>
+                            <Image Source="/Resources/Warning_128x128.png" Margin="10,0,0,0" ToolTipService.ShowDuration="{x:Static sys:Int32.MaxValue}" ToolTip="Move Mouse start-up has been disabled in&#xD;&#xA;Task Manager, and therefore cannot controlled&#xD;&#xA;from here.&#xD;&#xA;&#xD;&#xA;To re-enable Move Mouse to launch at start-up,&#xD;&#xA;open Task Manager, select Move Mouse in the&#xD;&#xA;Start-up tab, and click Enable.">
+                                <Image.Style>
+                                    <Style TargetType="Image">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Path=LaunchAtStartup, NotifyOnTargetUpdated=True}" Value="DisabledByUser">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Image.Style>
+                            </Image>
+                        </StackPanel>
+                        <StackPanel Style="{StaticResource OptionStackPanelStyle}">
+                            <toggleSwitch:HorizontalToggleSwitch IsChecked="{Binding Path=Settings.StartAtLaunch, NotifyOnTargetUpdated=True, Mode=TwoWay}"/>
+                            <TextBlock Margin="5,0,0,0" Text="Start actions when Move Mouse is launched" Style="{StaticResource LabelTextBlockStyle}"/>
+                        </StackPanel>
+                        
+                        <!-- Profile-Specific Settings Header -->
+                        <TextBlock Text="Profile Settings" FontSize="14" FontWeight="Bold" Margin="0,20,0,10" Foreground="#FF0078D4"/>
+                        <TextBlock Text="These settings are specific to the selected profile and will be saved independently for each profile." 
+                                   FontSize="11" Margin="0,0,0,15" Foreground="#FF666666" TextWrapping="Wrap"/>
                     <StackPanel Style="{StaticResource OptionStackPanelStyle}">
                         <StackPanel.Resources>
                             <converters:BoolToIndexConverter x:Key="BoolToIndexConverter"/>
                         </StackPanel.Resources>
                         <TextBlock Text="Repeat actions" Style="{StaticResource LabelTextBlockStyle}" Margin="0,0,5,0"/>
-                        <ComboBox SelectedIndex="{Binding Path=Settings.RandomInterval, Converter={StaticResource BoolToIndexConverter}}">
+                        <ComboBox SelectedIndex="{Binding Path=SelectedProfile.RandomInterval, Converter={StaticResource BoolToIndexConverter}}">
                             <ComboBoxItem Content="randomly"/>
                             <ComboBoxItem Content="every"/>
                         </ComboBox>
@@ -1343,32 +1423,32 @@
                                 <Style TargetType="TextBlock" BasedOn="{StaticResource LabelTextBlockStyle}">
                                     <Setter Property="Visibility" Value="Collapsed"/>
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Path=Settings.RandomInterval, NotifyOnTargetUpdated=True}" Value="True">
+                                        <DataTrigger Binding="{Binding Path=SelectedProfile.RandomInterval, NotifyOnTargetUpdated=True}" Value="True">
                                             <Setter Property="Visibility" Value="Visible"/>
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
                             </TextBlock.Style>
                         </TextBlock>
-                        <xctk:IntegerUpDown Value="{Binding Path=Settings.LowerInterval, NotifyOnTargetUpdated=True}" Increment="1" Minimum="1" Maximum="99999" Margin="5,0,5,0"/>
+                        <xctk:IntegerUpDown Value="{Binding Path=SelectedProfile.LowerInterval, NotifyOnTargetUpdated=True}" Increment="1" Minimum="1" Maximum="99999" Margin="5,0,5,0"/>
                         <TextBlock Text="and">
                             <TextBlock.Style>
                                 <Style TargetType="TextBlock" BasedOn="{StaticResource LabelTextBlockStyle}">
                                     <Setter Property="Visibility" Value="Collapsed"/>
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Path=Settings.RandomInterval, NotifyOnTargetUpdated=True}" Value="True">
+                                        <DataTrigger Binding="{Binding Path=SelectedProfile.RandomInterval, NotifyOnTargetUpdated=True}" Value="True">
                                             <Setter Property="Visibility" Value="Visible"/>
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
                             </TextBlock.Style>
                         </TextBlock>
-                        <xctk:IntegerUpDown Value="{Binding Path=Settings.UpperInterval, NotifyOnTargetUpdated=True}" Increment="1" Minimum="1" Maximum="99999" Margin="5,0,5,0">
+                        <xctk:IntegerUpDown Value="{Binding Path=SelectedProfile.UpperInterval, NotifyOnTargetUpdated=True}" Increment="1" Minimum="1" Maximum="99999" Margin="5,0,5,0">
                             <xctk:IntegerUpDown.Style>
                                 <Style TargetType="xctk:IntegerUpDown" BasedOn="{StaticResource {x:Type xctk:IntegerUpDown}}">
                                     <Setter Property="Visibility" Value="Collapsed"/>
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Path=Settings.RandomInterval, NotifyOnTargetUpdated=True}" Value="True">
+                                        <DataTrigger Binding="{Binding Path=SelectedProfile.RandomInterval, NotifyOnTargetUpdated=True}" Value="True">
                                             <Setter Property="Visibility" Value="Visible"/>
                                         </DataTrigger>
                                     </Style.Triggers>
@@ -1382,8 +1462,8 @@
                                     <Style.Triggers>
                                         <MultiDataTrigger>
                                             <MultiDataTrigger.Conditions>
-                                                <Condition Binding="{Binding Path=Settings.LowerInterval, NotifyOnTargetUpdated=True}" Value="1"/>
-                                                <Condition Binding="{Binding Path=Settings.RandomInterval, NotifyOnTargetUpdated=True}" Value="False"/>
+                                                <Condition Binding="{Binding Path=SelectedProfile.LowerInterval, NotifyOnTargetUpdated=True}" Value="1"/>
+                                                <Condition Binding="{Binding Path=SelectedProfile.RandomInterval, NotifyOnTargetUpdated=True}" Value="False"/>
                                             </MultiDataTrigger.Conditions>
                                             <Setter Property="Text" Value="second"/>
                                         </MultiDataTrigger>
@@ -1393,13 +1473,13 @@
                         </TextBlock>
                     </StackPanel>
                     <StackPanel Style="{StaticResource OptionStackPanelStyle}">
-                        <toggleSwitch:HorizontalToggleSwitch IsChecked="{Binding Path=Settings.AutoPause, NotifyOnTargetUpdated=True, Mode=TwoWay}"/>
+                        <toggleSwitch:HorizontalToggleSwitch IsChecked="{Binding Path=SelectedProfile.AutoPause, NotifyOnTargetUpdated=True, Mode=TwoWay}"/>
                         <TextBlock Margin="5,0,0,0">
                             <TextBlock.Style>
                                 <Style TargetType="TextBlock" BasedOn="{StaticResource LabelTextBlockStyle}">
                                     <Setter Property="Text" Value="Automatically stop when user activity detected"/>
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Path=Settings.AutoResume, NotifyOnTargetUpdated=True}" Value="True">
+                                        <DataTrigger Binding="{Binding Path=SelectedProfile.AutoResume, NotifyOnTargetUpdated=True}" Value="True">
                                             <Setter Property="Text" Value="Automatically pause when user activity detected"/>
                                         </DataTrigger>
                                     </Style.Triggers>
@@ -1412,22 +1492,22 @@
                             <Style TargetType="StackPanel" BasedOn="{StaticResource OptionStackPanelStyle}">
                                 <Setter Property="Visibility" Value="Visible"/>
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding Path=Settings.AutoPause, NotifyOnTargetUpdated=True}" Value="False">
+                                    <DataTrigger Binding="{Binding Path=SelectedProfile.AutoPause, NotifyOnTargetUpdated=True}" Value="False">
                                         <Setter Property="Visibility" Value="Collapsed"/>
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
                         </StackPanel.Style>
-                        <toggleSwitch:HorizontalToggleSwitch Grid.Column="0" Grid.Row="4" IsChecked="{Binding Path=Settings.AutoResume, NotifyOnTargetUpdated=True, Mode=TwoWay}"/>
+                        <toggleSwitch:HorizontalToggleSwitch Grid.Column="0" Grid.Row="4" IsChecked="{Binding Path=SelectedProfile.AutoResume, NotifyOnTargetUpdated=True, Mode=TwoWay}"/>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="Automatically resume after" Style="{StaticResource LabelTextBlockStyle}" Margin="5,0,0,0"/>
-                            <xctk:IntegerUpDown Value="{Binding Path=Settings.AutoResumeSeconds, NotifyOnTargetUpdated=True}" IsEnabled="{Binding Path=Settings.AutoResume, NotifyOnTargetUpdated=True}" Increment="1" Minimum="1" Maximum="99999" Margin="5,0,5,0"/>
+                            <xctk:IntegerUpDown Value="{Binding Path=SelectedProfile.AutoResumeSeconds, NotifyOnTargetUpdated=True}" IsEnabled="{Binding Path=SelectedProfile.AutoResume, NotifyOnTargetUpdated=True}" Increment="1" Minimum="1" Maximum="99999" Margin="5,0,5,0"/>
                             <TextBlock>
                                 <TextBlock.Style>
                                     <Style TargetType="TextBlock" BasedOn="{StaticResource LabelTextBlockStyle}">
                                         <Setter Property="Text" Value="seconds of inactivity"/>
                                         <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Path=Settings.AutoResumeSeconds, NotifyOnTargetUpdated=True}" Value="1">
+                                            <DataTrigger Binding="{Binding Path=SelectedProfile.AutoResumeSeconds, NotifyOnTargetUpdated=True}" Value="1">
                                                 <Setter Property="Text" Value="second of inactivity"/>
                                             </DataTrigger>
                                         </Style.Triggers>
@@ -1443,8 +1523,8 @@
                                 <Style.Triggers>
                                     <MultiDataTrigger>
                                         <MultiDataTrigger.Conditions>
-                                            <Condition Binding="{Binding Path=Settings.AutoPause, NotifyOnTargetUpdated=True}" Value="True"/>
-                                            <Condition Binding="{Binding Path=Settings.AutoResume, NotifyOnTargetUpdated=True}" Value="True"/>
+                                            <Condition Binding="{Binding Path=SelectedProfile.AutoPause, NotifyOnTargetUpdated=True}" Value="True"/>
+                                            <Condition Binding="{Binding Path=SelectedProfile.AutoResume, NotifyOnTargetUpdated=True}" Value="True"/>
                                         </MultiDataTrigger.Conditions>
                                         <Setter Property="Visibility" Value="Visible"/>
                                     </MultiDataTrigger>
@@ -1455,37 +1535,6 @@
                         <TextBlock Margin="5,0,0,0" Text="Refocus previous active window on pause" Style="{StaticResource LabelTextBlockStyle}"/>
                         <Image Margin="10,0,0,0" Source="/Resources/Help_Dark_64x64.png" ToolTipService.ShowDuration="{x:Static sys:Int32.MaxValue}" RenderOptions.BitmapScalingMode="HighQuality" ToolTip="Attempt to refocus the last active window when Move Mouse is paused."/>
                     </StackPanel>-->
-                    <StackPanel Style="{StaticResource OptionStackPanelStyle}">
-                        <toggleSwitch:HorizontalToggleSwitch IsChecked="{Binding Path=LaunchAtStartup, NotifyOnTargetUpdated=True, Mode=TwoWay, Converter={StaticResource StartupTaskStateToBoolConverter}}">
-                            <toggleSwitch:HorizontalToggleSwitch.Style>
-                                <Style TargetType="toggleSwitch:HorizontalToggleSwitch" BasedOn="{StaticResource {x:Type toggleSwitch:HorizontalToggleSwitch}}">
-                                    <Setter Property="IsEnabled" Value="True"/>
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Path=LaunchAtStartup, NotifyOnTargetUpdated=True}" Value="DisabledByUser">
-                                            <Setter Property="IsEnabled" Value="False"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </toggleSwitch:HorizontalToggleSwitch.Style>
-                        </toggleSwitch:HorizontalToggleSwitch>
-                        <TextBlock Margin="5,0,0,0" Text="Launch Move Mouse at start-up" Style="{StaticResource LabelTextBlockStyle}"/>
-                        <Image Source="/Resources/Warning_128x128.png" Margin="10,0,0,0" ToolTipService.ShowDuration="{x:Static sys:Int32.MaxValue}" ToolTip="Move Mouse start-up has been disabled in&#xD;&#xA;Task Manager, and therefore cannot controlled&#xD;&#xA;from here.&#xD;&#xA;&#xD;&#xA;To re-enable Move Mouse to launch at start-up,&#xD;&#xA;open Task Manager, select Move Mouse in the&#xD;&#xA;Start-up tab, and click Enable.">
-                            <Image.Style>
-                                <Style TargetType="Image">
-                                    <Setter Property="Visibility" Value="Collapsed"/>
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Path=LaunchAtStartup, NotifyOnTargetUpdated=True}" Value="DisabledByUser">
-                                            <Setter Property="Visibility" Value="Visible"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Image.Style>
-                        </Image>
-                    </StackPanel>
-                    <StackPanel Style="{StaticResource OptionStackPanelStyle}">
-                        <toggleSwitch:HorizontalToggleSwitch IsChecked="{Binding Path=Settings.StartAtLaunch, NotifyOnTargetUpdated=True, Mode=TwoWay}"/>
-                        <TextBlock Margin="5,0,0,0" Text="Start actions when Move Mouse is launched" Style="{StaticResource LabelTextBlockStyle}"/>
-                    </StackPanel>
                     <Grid HorizontalAlignment="Stretch">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
@@ -1497,7 +1546,7 @@
                             <RowDefinition Height="10"/>
                         </Grid.RowDefinitions>
                         <StackPanel Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Style="{StaticResource OptionStackPanelStyle}" HorizontalAlignment="Stretch">
-                            <toggleSwitch:HorizontalToggleSwitch IsChecked="{Binding Path=Settings.AdjustRunningVolume, NotifyOnTargetUpdated=True, Mode=TwoWay}"/>
+                            <toggleSwitch:HorizontalToggleSwitch IsChecked="{Binding Path=SelectedProfile.AdjustRunningVolume, NotifyOnTargetUpdated=True, Mode=TwoWay}"/>
                             <TextBlock Margin="5,0,0,0" Text="Adjust volume when Move Mouse is running" Style="{StaticResource LabelTextBlockStyle}"/>
                         </StackPanel>
                         <Grid Grid.Column="2" Grid.Row="0">
@@ -1505,7 +1554,7 @@
                                 <Style TargetType="Grid">
                                     <Setter Property="Visibility" Value="Collapsed"/>
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Path=Settings.AdjustRunningVolume, NotifyOnTargetUpdated=True, Mode=OneWay}" Value="True">
+                                        <DataTrigger Binding="{Binding Path=SelectedProfile.AdjustRunningVolume, NotifyOnTargetUpdated=True, Mode=OneWay}" Value="True">
                                             <Setter Property="Visibility" Value="Visible"/>
                                         </DataTrigger>
                                     </Style.Triggers>
@@ -1774,14 +1823,14 @@
                         </Grid>
                     </Grid>
                     <StackPanel Style="{StaticResource OptionStackPanelStyle}">
-                        <toggleSwitch:HorizontalToggleSwitch IsChecked="{Binding Path=Settings.ActiveWhenLocked, NotifyOnTargetUpdated=True, Mode=TwoWay}"/>
+                        <toggleSwitch:HorizontalToggleSwitch IsChecked="{Binding Path=SelectedProfile.ActiveWhenLocked, NotifyOnTargetUpdated=True, Mode=TwoWay}"/>
                         <TextBlock Margin="5,0,0,0" Text="Continue performing actions when session is locked" Style="{StaticResource LabelTextBlockStyle}"/>
                         <Image Margin="10,0,0,0" Source="/Resources/Warning_128x128.png" ToolTipService.ShowDuration="{x:Static sys:Int32.MaxValue}" RenderOptions.BitmapScalingMode="HighQuality" ToolTip="Allowing actions to continue performing whilst your&#xD;&#xA;session is locked may cause unexpected behaviour.">
                             <Image.Style>
                                 <Style TargetType="Image">
                                     <Setter Property="Visibility" Value="Collapsed"/>
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Path=Settings.ActiveWhenLocked, NotifyOnTargetUpdated=True}" Value="True">
+                                        <DataTrigger Binding="{Binding Path=SelectedProfile.ActiveWhenLocked, NotifyOnTargetUpdated=True}" Value="True">
                                             <Setter Property="Visibility" Value="Visible"/>
                                         </DataTrigger>
                                     </Style.Triggers>
@@ -1790,18 +1839,18 @@
                         </Image>
                     </StackPanel>
                     <StackPanel Style="{StaticResource OptionStackPanelStyle}">
-                        <toggleSwitch:HorizontalToggleSwitch IsChecked="{Binding Path=Settings.PauseOnBattery, NotifyOnTargetUpdated=True, Mode=TwoWay}"/>
+                        <toggleSwitch:HorizontalToggleSwitch IsChecked="{Binding Path=SelectedProfile.PauseOnBattery, NotifyOnTargetUpdated=True, Mode=TwoWay}"/>
                         <TextBlock Margin="5,0,0,0" Text="Pause when running on battery" Style="{StaticResource LabelTextBlockStyle}"/>
                     </StackPanel>
                     <StackPanel Style="{StaticResource OptionStackPanelStyle}">
-                        <toggleSwitch:HorizontalToggleSwitch IsChecked="{Binding Path=Settings.EnableLogging, NotifyOnTargetUpdated=True, Mode=TwoWay}"/>
+                        <toggleSwitch:HorizontalToggleSwitch IsChecked="{Binding Path=SelectedProfile.EnableLogging, NotifyOnTargetUpdated=True, Mode=TwoWay}"/>
                         <TextBlock Margin="5,0,0,0" Text="Enable logging" Style="{StaticResource LabelTextBlockStyle}"/>
                         <Grid Margin="20,0,0,0">
                             <Grid.Style>
                                 <Style TargetType="Grid" >
                                     <Setter Property="Visibility" Value="Collapsed"/>
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Path=Settings.EnableLogging, NotifyOnTargetUpdated=True}" Value="True">
+                                        <DataTrigger Binding="{Binding Path=SelectedProfile.EnableLogging, NotifyOnTargetUpdated=True}" Value="True">
                                             <Setter Property="Visibility" Value="Visible"/>
                                         </DataTrigger>
                                     </Style.Triggers>
@@ -1827,14 +1876,15 @@
                         <TextBlock Margin="5,0,0,0" Text="Start/Stop Move Mouse using the keyboard" Style="{StaticResource LabelTextBlockStyle}"/>
                     </StackPanel>-->
                     <!--<StackPanel Style="{StaticResource OptionStackPanelStyle}">
-                        <toggleSwitch:HorizontalToggleSwitch Grid.Column="0" Grid.Row="8" IsChecked="{Binding Path=Settings.EnableLogging, NotifyOnTargetUpdated=True, Mode=TwoWay}"/>
+                        <toggleSwitch:HorizontalToggleSwitch Grid.Column="0" Grid.Row="8" IsChecked="{Binding Path=SelectedProfile.EnableLogging, NotifyOnTargetUpdated=True, Mode=TwoWay}"/>
                         <StackPanel Grid.Column="2" Grid.Row="8" Orientation="Horizontal" Margin="5,0,0,0">
                             <TextBlock Text="Enable activity logs with a maximum buffer of" Style="{StaticResource LabelTextBlockStyle}"/>
-                            <xctk:IntegerUpDown Value="{Binding Path=Settings.LoggingBuffer, NotifyOnTargetUpdated=True}" IsEnabled="{Binding Path=Settings.EnableLogging, NotifyOnTargetUpdated=True}" Increment="1" Minimum="1" Maximum="99999" Margin="5,0,5,0"/>
+                            <xctk:IntegerUpDown Value="{Binding Path=Settings.LoggingBuffer, NotifyOnTargetUpdated=True}" IsEnabled="{Binding Path=SelectedProfile.EnableLogging, NotifyOnTargetUpdated=True}" Increment="1" Minimum="1" Maximum="99999" Margin="5,0,5,0"/>
                         </StackPanel>
                     </StackPanel>-->
                     <!--make move mouse hidden/topmost when running-->
                 </StackPanel>
+                </ScrollViewer>
             </TabItem>
             <TabItem>
                 <TabItem.Header>
@@ -1867,6 +1917,7 @@
                             <RowDefinition Height="Auto"></RowDefinition>
                         </Grid.RowDefinitions>-->
                     <StackPanel Grid.Column="0" Orientation="Vertical">
+
                         <StackPanel Style="{StaticResource OptionStackPanelStyle}">
                             <toggleSwitch:HorizontalToggleSwitch IsChecked="{Binding Path=Settings.HideMainWindow, NotifyOnTargetUpdated=True, Mode=TwoWay}"/>
                             <TextBlock Margin="5,0,0,0" Text="Hide Move Mouse window" Style="{StaticResource LabelTextBlockStyle}"/>
@@ -2282,18 +2333,28 @@
                     </StackPanel>
                 </TabItem.Header>
                 <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="10"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <!-- Program-Wide Settings Header -->
+                    <StackPanel Grid.Row="0" Grid.ColumnSpan="3" Margin="0,0,0,15">
+                        <TextBlock Text="Program Settings" FontSize="14" FontWeight="Bold" Margin="0,0,0,10" Foreground="#FF0078D4"/>
+                        <TextBlock Text="These schedule settings apply to the entire application and affect all profiles." 
+                                   FontSize="11" Margin="0,0,0,0" Foreground="#FF666666" TextWrapping="Wrap"/>
+                    </StackPanel>   
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
                         <!--<ScrollViewer.Resources>
                             <Style TargetType="ScrollViewer" BasedOn="{StaticResource StandardScrollViewerStyle}"/>
                         </ScrollViewer.Resources>-->
                         <ItemsControl Name="ScheduleItemsControl" ItemsSource="{Binding Path=Settings.Schedules, NotifyOnTargetUpdated=True}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0" Background="Transparent" BorderThickness="1" BorderBrush="{StaticResource StandardBorderBrush}"/>
                     </ScrollViewer>
-                    <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                    <StackPanel Grid.Row="1" Grid.Column="2" VerticalAlignment="Center">
                         <Button>
                             <Button.Style>
                                 <Style TargetType="{x:Type Button}" BasedOn="{StaticResource TaskActionButtonStyle}">
@@ -2428,18 +2489,28 @@
                     </StackPanel>
                 </TabItem.Header>
                 <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="10"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <!-- Program-Wide Settings Header -->
+                    <StackPanel Grid.Row="0" Grid.ColumnSpan="3" Margin="0,0,0,15">
+                        <TextBlock Text="Program Settings" FontSize="14" FontWeight="Bold" Margin="0,0,0,10" Foreground="#FF0078D4"/>
+                        <TextBlock Text="These blackout settings apply to the entire application and affect all profiles." 
+                                   FontSize="11" Margin="0,0,0,0" Foreground="#FF666666" TextWrapping="Wrap"/>
+                    </StackPanel>
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
                         <!--<ScrollViewer.Resources>
                             <Style TargetType="ScrollViewer" BasedOn="{StaticResource StandardScrollViewerStyle}"/>
                         </ScrollViewer.Resources>-->
                         <ItemsControl Name="BlackoutItemsControl" ItemsSource="{Binding Path=Settings.Blackouts, NotifyOnTargetUpdated=True}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0" Background="Transparent" BorderThickness="1" BorderBrush="{StaticResource StandardBorderBrush}"/>
                     </ScrollViewer>
-                    <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                    <StackPanel Grid.Row="1" Grid.Column="2" VerticalAlignment="Center">
                         <Button Command="{Binding Path=AddBlackoutCommand, NotifyOnTargetUpdated=True}" Style="{StaticResource TaskActionButtonStyle}">
                             <Image>
                                 <Image.Style>
@@ -2479,7 +2550,13 @@
                     </StackPanel>
                 </TabItem.Header>
                 <Grid Margin="10">
-                    <Grid>
+                    <!-- Program Information Header -->
+                    <StackPanel Margin="0,0,0,15">
+                        <TextBlock Text="Program Information" FontSize="14" FontWeight="Bold" Margin="0,0,0,10" Foreground="#FF0078D4"/>
+                        <TextBlock Text="Application details and system information." 
+                                   FontSize="11" Margin="0,0,0,0" Foreground="#FF666666" TextWrapping="Wrap"/>
+                    </StackPanel>
+                    <Grid Margin="0,60,0,0">
                         <Grid.Resources>
                             <Style TargetType="TextBlock" BasedOn="{StaticResource LabelTextBlockStyle}"/>
                         </Grid.Resources>

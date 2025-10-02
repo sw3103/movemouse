@@ -15,12 +15,12 @@ namespace ellabi.Classes
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private int? _lowerInterval;
-        private int? _upperInterval;
-        private bool? _randomInterval;
-        private bool? _autoPause;
-        private bool? _autoResume;
-        private int? _autoResumeSeconds;
+        private int _lowerInterval = 30;
+        private int _upperInterval = 60;
+        private bool _randomInterval = false;
+        private bool _autoPause = false;
+        private bool _autoResume = false;
+        private int _autoResumeSeconds = 30;
         private bool? _topmostWhenRunning;
         private bool? _hideFromTaskbar;
         private bool? _hideMainWindow;
@@ -56,11 +56,7 @@ namespace ellabi.Classes
 
         public int LowerInterval
         {
-            get
-            {
-                if (_lowerInterval == null) _lowerInterval = 30;
-                return _lowerInterval.Value;
-            }
+            get => _lowerInterval;
             set
             {
                 if (value > UpperInterval)
@@ -75,11 +71,7 @@ namespace ellabi.Classes
 
         public int UpperInterval
         {
-            get
-            {
-                if (_upperInterval == null) _upperInterval = 60;
-                return _upperInterval.Value;
-            }
+            get => _upperInterval;
             set
             {
                 if (value < LowerInterval)
@@ -94,11 +86,7 @@ namespace ellabi.Classes
 
         public bool RandomInterval
         {
-            get
-            {
-                if (_randomInterval == null) _randomInterval = false;
-                return _randomInterval.Value;
-            }
+            get => _randomInterval;
             set
             {
                 _randomInterval = value;
@@ -108,11 +96,7 @@ namespace ellabi.Classes
 
         public bool AutoPause
         {
-            get
-            {
-                if (_autoPause == null) _autoPause = false;
-                return _autoPause.Value;
-            }
+            get => _autoPause;
             set
             {
                 _autoPause = value;
@@ -122,11 +106,7 @@ namespace ellabi.Classes
 
         public bool AutoResume
         {
-            get
-            {
-                if (_autoResume == null) _autoResume = false;
-                return _autoResume.Value;
-            }
+            get => _autoResume;
             set
             {
                 _autoResume = value;
@@ -136,11 +116,7 @@ namespace ellabi.Classes
 
         public int AutoResumeSeconds
         {
-            get
-            {
-                if (_autoResumeSeconds == null) _autoResumeSeconds = 30;
-                return _autoResumeSeconds.Value;
-            }
+            get => _autoResumeSeconds;
             set
             {
                 _autoResumeSeconds = value;
