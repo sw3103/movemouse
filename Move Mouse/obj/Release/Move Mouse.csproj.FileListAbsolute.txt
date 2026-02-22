@@ -1,0 +1,42 @@
+C:\Users\steve\source\repos\move-mouse\Move Mouse\bin\Release\Move Mouse.exe.config
+C:\Users\steve\source\repos\move-mouse\Move Mouse\bin\Release\Move Mouse.exe
+C:\Users\steve\source\repos\move-mouse\Move Mouse\bin\Release\Move Mouse.pdb
+C:\Users\steve\source\repos\move-mouse\Move Mouse\bin\Release\Windows.winmd
+C:\Users\steve\source\repos\move-mouse\Move Mouse\bin\Release\Common.Logging.xml
+C:\Users\steve\source\repos\move-mouse\Move Mouse\bin\Release\Common.Logging.Core.xml
+C:\Users\steve\source\repos\move-mouse\Move Mouse\bin\Release\Hardcodet.NotifyIcon.Wpf.xml
+C:\Users\steve\source\repos\move-mouse\Move Mouse\bin\Release\Microsoft.Bcl.AsyncInterfaces.xml
+C:\Users\steve\source\repos\move-mouse\Move Mouse\bin\Release\Microsoft.Extensions.DependencyInjection.Abstractions.xml
+C:\Users\steve\source\repos\move-mouse\Move Mouse\bin\Release\Microsoft.Extensions.Logging.Abstractions.xml
+C:\Users\steve\source\repos\move-mouse\Move Mouse\bin\Release\Quartz.xml
+C:\Users\steve\source\repos\move-mouse\Move Mouse\bin\Release\Serilog.xml
+C:\Users\steve\source\repos\move-mouse\Move Mouse\bin\Release\Serilog.Sinks.File.xml
+C:\Users\steve\source\repos\move-mouse\Move Mouse\bin\Release\System.Buffers.xml
+C:\Users\steve\source\repos\move-mouse\Move Mouse\bin\Release\System.Diagnostics.DiagnosticSource.xml
+C:\Users\steve\source\repos\move-mouse\Move Mouse\bin\Release\System.Memory.xml
+C:\Users\steve\source\repos\move-mouse\Move Mouse\bin\Release\System.Numerics.Vectors.xml
+C:\Users\steve\source\repos\move-mouse\Move Mouse\bin\Release\System.Runtime.CompilerServices.Unsafe.xml
+C:\Users\steve\source\repos\move-mouse\Move Mouse\bin\Release\System.Threading.Channels.xml
+C:\Users\steve\source\repos\move-mouse\Move Mouse\bin\Release\System.Threading.Tasks.Extensions.xml
+C:\Users\steve\source\repos\move-mouse\Move Mouse\obj\Release\Move Mouse.csproj.AssemblyReference.cache
+C:\Users\steve\source\repos\move-mouse\Move Mouse\obj\Release\Styles\Colours.baml
+C:\Users\steve\source\repos\move-mouse\Move Mouse\obj\Release\Styles\Controls.baml
+C:\Users\steve\source\repos\move-mouse\Move Mouse\obj\Release\App.baml
+C:\Users\steve\source\repos\move-mouse\Move Mouse\obj\Release\Views\MouseWindow.g.cs
+C:\Users\steve\source\repos\move-mouse\Move Mouse\obj\Release\Views\SettingsWindow.g.cs
+C:\Users\steve\source\repos\move-mouse\Move Mouse\obj\Release\App.g.cs
+C:\Users\steve\source\repos\move-mouse\Move Mouse\obj\Release\GeneratedInternalTypeHelper.g.cs
+C:\Users\steve\source\repos\move-mouse\Move Mouse\obj\Release\Move Mouse_MarkupCompile.cache
+C:\Users\steve\source\repos\move-mouse\Move Mouse\obj\Release\Move Mouse_MarkupCompile.lref
+C:\Users\steve\source\repos\move-mouse\Move Mouse\obj\Release\Views\MouseWindow.baml
+C:\Users\steve\source\repos\move-mouse\Move Mouse\obj\Release\Views\SettingsWindow.baml
+C:\Users\steve\source\repos\move-mouse\Move Mouse\obj\Release\Move Mouse.g.resources
+C:\Users\steve\source\repos\move-mouse\Move Mouse\obj\Release\ellabi.Properties.Resources.resources
+C:\Users\steve\source\repos\move-mouse\Move Mouse\obj\Release\Move Mouse.csproj.GenerateResource.cache
+C:\Users\steve\source\repos\move-mouse\Move Mouse\obj\Release\Move Mouse.csproj.CoreCompileInputs.cache
+C:\Users\steve\source\repos\move-mouse\Move Mouse\obj\Release\Move Mouse.csproj.Fody.CopyLocal.cache
+C:\Users\steve\source\repos\move-mouse\Move Mouse\obj\Release\Move Mouse.csproj.Fody.RuntimeCopyLocal.cache
+C:\Users\steve\source\repos\move-mouse\Move Mouse\obj\Release\Move Mouse.csproj.Up2Date
+C:\Users\steve\source\repos\move-mouse\Move Mouse\obj\Release\Move Mouse.exe
+C:\Users\steve\source\repos\move-mouse\Move Mouse\obj\Release\Move Mouse.pdb
+C:\Users\steve\source\repos\move-mouse\Move Mouse\obj\Release\Move Mouse.exe.config
