@@ -39,8 +39,40 @@ namespace ellabi.ViewModels
         private DateTime _lastSettingsPropertyChanged;
         private TimeSpan _lastSettingsPropertyChangedInterval = TimeSpan.FromMilliseconds(1000);
         private Guid _lastThreadId;
+        private ProfileManager _profileManager = new ProfileManager();
+        private ActionProfile _selectedProfile;
+        private RelayCommand _addProfileCommand;
+        private RelayCommand _renameProfileCommand;
+        private RelayCommand _removeProfileCommand;
+        private bool _isUpdatingProfile = false;
 
         public Settings Settings => _settings ?? (_settings = ReadSettings());
+
+        public ProfileManager ProfileManager => _profileManager;
+
+        public ActionProfile SelectedProfile
+        {
+            get => _selectedProfile;
+            set
+            {
+                if (_selectedProfile != null)
+                {
+                    _selectedProfile.PropertyChanged -= SelectedProfile_PropertyChanged;
+                }
+
+                _selectedProfile = value;
+                ProfileManager.SetActiveProfile(value);
+                Settings.LastActiveProfileName = value?.Name;
+                Settings.Actions = value?.Actions?.ToArray() ?? Array.Empty<ActionBase>();
+
+                if (value != null)
+                {
+                    value.PropertyChanged += SelectedProfile_PropertyChanged;
+                }
+
+                OnPropertyChanged(nameof(SelectedProfile));
+            }
+        }
 
         //public ObservableCollection<VirtualKey> VirtualKeys => new ObservableCollection<VirtualKey>(VirtualKey.GetVirtualKeys());
         public ObservableCollection<int> VirtualKeys => new ObservableCollection<int>(StaticCode.VirtualKeys.Value.Keys);
@@ -125,6 +157,36 @@ namespace ellabi.ViewModels
             }
         }
 
+        public RelayCommand AddProfileCommand
+        {
+            get => _addProfileCommand;
+            set
+            {
+                _addProfileCommand = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public RelayCommand RenameProfileCommand
+        {
+            get => _renameProfileCommand;
+            set
+            {
+                _renameProfileCommand = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public RelayCommand RemoveProfileCommand
+        {
+            get => _removeProfileCommand;
+            set
+            {
+                _removeProfileCommand = value;
+                OnPropertyChanged();
+            }
+        }
+
         public StartupTaskState LaunchAtStartup
         {
             get => _launchAtStartup;
@@ -158,6 +220,7 @@ namespace ellabi.ViewModels
 
             StaticCode.Logger?.Here().Information($"WorkingDirectory = {StaticCode.WorkingDirectory}");
             ReadSettings();
+            LoadProfiles();
             SelectedAction = Settings.Actions.First();
             _removeSelectedActionCommand = new RelayCommand(param => RemoveSelectedAction(), param => CanRemoveSelectedAction());
             _copySelectedActionCommand = new RelayCommand(param => CopySelectedAction(), param => CanCopySelectedAction());
@@ -166,6 +229,9 @@ namespace ellabi.ViewModels
             _removeSelectedScheduleCommand = new RelayCommand(RemoveSelectedSchedule);
             _addBlackoutCommand = new RelayCommand(param => AddBlackout());
             _removeSelectedBlackoutCommand = new RelayCommand(RemoveSelectedBlackout);
+            _addProfileCommand = new RelayCommand(_ => AddProfile());
+            _renameProfileCommand = new RelayCommand(_ => RenameProfile(), _ => SelectedProfile != null);
+            _removeProfileCommand = new RelayCommand(_ => RemoveProfile(), _ => SelectedProfile != null);
             Settings.PropertyChanged += Settings_PropertyChanged;
             RefreshStartupTask();
             _updateSystemIdleTimeTimer = new System.Timers.Timer(250);
@@ -397,6 +463,104 @@ namespace ellabi.ViewModels
             return new Settings();
         }
 
+        private const string ProfileFilePath = "profiles.xml";
+
+        public void LoadProfiles()
+        {
+            ProfileManager.LoadProfiles(ProfileFilePath);
+
+            if (ProfileManager.Profiles.Any())
+            {
+                var lastProfileName = Settings.LastActiveProfileName;
+                var profileToSelect = !string.IsNullOrEmpty(lastProfileName)
+                    ? ProfileManager.Profiles.FirstOrDefault(p => p.Name == lastProfileName)
+                    : null;
+                SelectedProfile = profileToSelect ?? ProfileManager.Profiles.First();
+            }
+        }
+
+        public void SaveProfiles()
+        {
+            ProfileManager.SaveProfiles(ProfileFilePath);
+        }
+
+        private void SelectedProfile_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            try
+            {
+                if (_isUpdatingProfile) return;
+                StaticCode.Logger?.Here().Debug($"Profile property changed: {e.PropertyName}");
+                ProfileManager.SaveProfiles(ProfileFilePath);
+            }
+            catch (Exception ex)
+            {
+                StaticCode.Logger?.Here().Error(ex.Message);
+            }
+        }
+
+        private void AddProfile()
+        {
+            string defaultName = "New Profile";
+            int suffix = 1;
+            string newName = defaultName;
+
+            while (ProfileManager.Profiles.Any(p => p.Name == newName))
+            {
+                newName = $"{defaultName} {suffix++}";
+            }
+
+            var newProfile = new ActionProfile { Name = newName };
+            newProfile.LowerInterval = Settings.LowerInterval;
+            newProfile.UpperInterval = Settings.UpperInterval;
+            newProfile.RandomInterval = Settings.RandomInterval;
+            newProfile.AutoPause = Settings.AutoPause;
+            newProfile.AutoResume = Settings.AutoResume;
+            newProfile.AutoResumeSeconds = Settings.AutoResumeSeconds;
+            newProfile.AdjustRunningVolume = Settings.AdjustRunningVolume;
+            newProfile.ActiveWhenLocked = Settings.ActiveWhenLocked;
+            newProfile.PauseOnBattery = Settings.PauseOnBattery;
+            newProfile.EnableLogging = Settings.EnableLogging;
+
+            var defaultAction = new MoveMouseCursorAction();
+            newProfile.Actions = new List<ActionBase> { defaultAction };
+
+            ProfileManager.Profiles.Add(newProfile);
+            SelectedProfile = newProfile;
+            SaveProfiles();
+        }
+
+        private void RenameProfile()
+        {
+            if (SelectedProfile != null)
+            {
+                string newName = Microsoft.VisualBasic.Interaction.InputBox(
+                    "Enter new profile name:", "Rename Profile", SelectedProfile.Name);
+
+                if (!string.IsNullOrWhiteSpace(newName) &&
+                    !ProfileManager.Profiles.Any(p => p.Name == newName))
+                {
+                    ProfileManager.RenameProfile(SelectedProfile, newName);
+                    SaveProfiles();
+                    OnPropertyChanged(nameof(ProfileManager));
+                    OnPropertyChanged(nameof(SelectedProfile));
+                }
+                else if (ProfileManager.Profiles.Any(p => p.Name == newName))
+                {
+                    System.Windows.MessageBox.Show("A profile with that name already exists.", "Rename Profile", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
+                }
+            }
+        }
+
+        private void RemoveProfile()
+        {
+            if (SelectedProfile != null)
+            {
+                ProfileManager.Profiles.Remove(SelectedProfile);
+                SelectedProfile = ProfileManager.Profiles.FirstOrDefault();
+                SaveProfiles();
+            }
+        }
+
         public void AddAction(Type actionType)
         {
             StaticCode.Logger?.Here().Debug(actionType.ToString());
@@ -418,18 +582,38 @@ namespace ellabi.ViewModels
 
             try
             {
-                var actions = (Settings.Actions == null) ? new List<ActionBase>() : new List<ActionBase>(Settings.Actions);
-
-                if (SelectedAction != null)
+                if (SelectedProfile != null)
                 {
-                    actions.Insert(actions.FindIndex(t => t.Id.Equals(SelectedAction.Id)) + 1, action);
+                    var actions = SelectedProfile.Actions ?? new List<ActionBase>();
+
+                    if (SelectedAction != null)
+                    {
+                        actions.Insert(actions.FindIndex(t => t.Id.Equals(SelectedAction.Id)) + 1, action);
+                    }
+                    else
+                    {
+                        actions.Add(action);
+                    }
+
+                    SelectedProfile.Actions = actions;
+                    Settings.Actions = actions.ToArray();
                 }
                 else
                 {
-                    actions.Add(action);
+                    var actions = (Settings.Actions == null) ? new List<ActionBase>() : new List<ActionBase>(Settings.Actions);
+
+                    if (SelectedAction != null)
+                    {
+                        actions.Insert(actions.FindIndex(t => t.Id.Equals(SelectedAction.Id)) + 1, action);
+                    }
+                    else
+                    {
+                        actions.Add(action);
+                    }
+
+                    Settings.Actions = actions.ToArray();
                 }
 
-                Settings.Actions = actions.ToArray();
                 SelectedAction = action;
             }
             catch (Exception ex)
@@ -444,7 +628,13 @@ namespace ellabi.ViewModels
             {
                 StaticCode.Logger?.Here().Debug(SelectedAction.ToString());
                 var previousActionIndex = Settings.Actions.ToList().FindIndex(t => t.Id.Equals(SelectedAction.Id)) - 1;
-                Settings.Actions = new List<ActionBase>(Settings.Actions.Except(new[] { SelectedAction })).ToArray();
+                var updatedActions = new List<ActionBase>(Settings.Actions.Except(new[] { SelectedAction })).ToArray();
+                Settings.Actions = updatedActions;
+
+                if (SelectedProfile != null)
+                {
+                    SelectedProfile.Actions = new List<ActionBase>(updatedActions);
+                }
 
                 if (previousActionIndex > -1)
                 {
@@ -511,6 +701,7 @@ namespace ellabi.ViewModels
                 actions.RemoveAt(index);
                 actions.Insert(index - 1, action);
                 Settings.Actions = actions.ToArray();
+                if (SelectedProfile != null) SelectedProfile.Actions = new List<ActionBase>(actions);
                 SelectedAction = action;
             }
             catch (Exception ex)
@@ -544,6 +735,7 @@ namespace ellabi.ViewModels
                 actions.RemoveAt(index);
                 actions.Insert(index + 1, action);
                 Settings.Actions = actions.ToArray();
+                if (SelectedProfile != null) SelectedProfile.Actions = new List<ActionBase>(actions);
                 SelectedAction = action;
             }
             catch (Exception ex)

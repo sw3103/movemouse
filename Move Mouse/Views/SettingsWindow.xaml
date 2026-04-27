@@ -422,7 +422,30 @@
                     </StackPanel>
                 </TabItem.Header>
                 <Grid>
-                    <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <!-- Profile Management Section -->
+                    <Grid Grid.Row="0" Margin="10,10,10,5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="200"/>
+                            <ColumnDefinition Width="20"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <ComboBox Grid.Column="0"
+                                  ItemsSource="{Binding ProfileManager.Profiles}"
+                                  DisplayMemberPath="Name"
+                                  SelectedItem="{Binding SelectedProfile, Mode=TwoWay}"
+                                  HorizontalAlignment="Stretch"
+                                  ToolTip="Select a profile"/>
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                            <Button Content="Add" Command="{Binding AddProfileCommand}" Margin="0,0,5,0"/>
+                            <Button Content="Rename" Command="{Binding RenameProfileCommand}" Margin="0,0,5,0"/>
+                            <Button Content="Remove" Command="{Binding RemoveProfileCommand}"/>
+                        </StackPanel>
+                    </Grid>
+                    <Grid Grid.Row="1" Margin="10">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="200"/>
                             <ColumnDefinition Width="20"/>
@@ -1589,7 +1612,7 @@
                             </ContentPresenter.Resources>
                         </ContentPresenter>
                     </Grid>
-                    <ed:Callout AnchorPoint="-0.171,1.118" CalloutStyle="RoundedRectangle" Fill="{StaticResource StandardWindowBackground}" VerticalAlignment="Center" FontSize="14" Height="58" Margin="72,255,355,0" Stroke="{StaticResource StandardLightTextSolidColorBrush}" StrokeThickness="3" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
+                    <ed:Callout Grid.RowSpan="2" AnchorPoint="-0.171,1.118" CalloutStyle="RoundedRectangle" Fill="{StaticResource StandardWindowBackground}" VerticalAlignment="Center" FontSize="14" Height="58" Margin="72,255,355,0" Stroke="{StaticResource StandardLightTextSolidColorBrush}" StrokeThickness="3" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
                         <ed:Callout.Content>
                             <StackPanel>
                                 <TextBlock Text="Click here to add actions" Foreground="{StaticResource StandardLightTextSolidColorBrush}" Background="Transparent" HorizontalAlignment="Center" TextWrapping="Wrap" Margin="10"/>

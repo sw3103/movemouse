@@ -53,6 +53,7 @@ namespace ellabi.Classes
         private bool? _showSystemTrayNotifications;
         //private bool? _reactivatePreviousWindow;
         private bool? _showTaskbarStatus;
+        private string _lastActiveProfileName;
 
         public int LowerInterval
         {
@@ -546,6 +547,16 @@ namespace ellabi.Classes
             set
             {
                 _showTaskbarStatus = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string LastActiveProfileName
+        {
+            get => _lastActiveProfileName;
+            set
+            {
+                _lastActiveProfileName = value;
                 OnPropertyChanged();
             }
         }

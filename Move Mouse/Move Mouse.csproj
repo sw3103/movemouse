@@ -276,6 +276,8 @@
     <Compile Include="Actions\ScrollMouseAction.cs" />
     <Compile Include="Actions\SleepAction.cs" />
     <Compile Include="Classes\Arc.cs" />
+    <Compile Include="Classes\ActionProfile.cs" />
+    <Compile Include="Classes\ProfileManager.cs" />
     <Compile Include="Actions\MoveMouseCursorAction.cs" />
     <Compile Include="Classes\Blackout.cs" />
     <Compile Include="Classes\OpenContextMenuOnLeftClickBehavior.cs" />

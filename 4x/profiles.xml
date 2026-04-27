@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<ArrayOfActionProfile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ActionProfile>
+    <Id>cb77e236-5c67-48bf-8c03-08087d83fd70</Id>
+    <Name>test</Name>
+    <Actions />
+    <LowerInterval>3</LowerInterval>
+    <UpperInterval>60</UpperInterval>
+    <RandomInterval>false</RandomInterval>
+    <AutoPause>true</AutoPause>
+    <AutoResume>true</AutoResume>
+    <AutoResumeSeconds>2</AutoResumeSeconds>
+    <AdjustRunningVolume>false</AdjustRunningVolume>
+    <RunningVolume>30</RunningVolume>
+    <ActiveWhenLocked>false</ActiveWhenLocked>
+    <PauseOnBattery>false</PauseOnBattery>
+    <EnableLogging>false</EnableLogging>
+  </ActionProfile>
+  <ActionProfile>
+    <Id>db05ffdb-52da-4955-a6b8-fa15a889943a</Id>
+    <Name>test2</Name>
+    <Actions />
+    <LowerInterval>24</LowerInterval>
+    <UpperInterval>60</UpperInterval>
+    <RandomInterval>false</RandomInterval>
+    <AutoPause>true</AutoPause>
+    <AutoResume>false</AutoResume>
+    <AutoResumeSeconds>30</AutoResumeSeconds>
+    <AdjustRunningVolume>false</AdjustRunningVolume>
+    <RunningVolume>30</RunningVolume>
+    <ActiveWhenLocked>false</ActiveWhenLocked>
+    <PauseOnBattery>false</PauseOnBattery>
+    <EnableLogging>false</EnableLogging>
+  </ActionProfile>
+</ArrayOfActionProfile>

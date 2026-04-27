@@ -16,6 +16,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace ellabi.ViewModels
 {
@@ -194,7 +195,7 @@ namespace ellabi.ViewModels
                     case SessionSwitchReason.SessionUnlock:
                         _workstationLocked = false;
 
-                        if ((CurrentState.Equals(MouseState.Locked) || CurrentState.Equals(MouseState.Running)) && !SettingsVm.Settings.ActiveWhenLocked)
+                        if ((CurrentState.Equals(MouseState.Locked) || CurrentState.Equals(MouseState.Running)) && !SettingsVm.SelectedProfile.ActiveWhenLocked)
                         {
                             ShowNotification("Automatically resuming now workstation has been unlocked.");
                         }
@@ -217,7 +218,7 @@ namespace ellabi.ViewModels
             {
                 StaticCode.Logger?.Here().Debug(e.Mode.ToString());
 
-                if (SettingsVm.Settings.PauseOnBattery && e.Mode.Equals(PowerModes.StatusChange))
+                if (SettingsVm.SelectedProfile.PauseOnBattery && e.Mode.Equals(PowerModes.StatusChange))
                 {
                     //todo Check what happens if state is Executing
                     if (CurrentState.Equals(MouseState.Running) && RunningOnBattery())
@@ -392,12 +393,12 @@ namespace ellabi.ViewModels
                 {
                     case "AutoPause":
                         {
-                            if (!SettingsVm.Settings.AutoPause) StopAutoPauseTimer();
+                            if (!SettingsVm.SelectedProfile.AutoPause) StopAutoPauseTimer();
                             break;
                         }
                     case "AutoResume":
                         {
-                            if (!SettingsVm.Settings.AutoResume)
+                            if (!SettingsVm.SelectedProfile.AutoResume)
                             {
                                 if (CurrentState.Equals(MouseState.Paused))
                                 {
@@ -423,13 +424,13 @@ namespace ellabi.ViewModels
                         }
                     case "PauseOnBattery":
                         {
-                            if (!SettingsVm.Settings.PauseOnBattery && CurrentState.Equals(MouseState.OnBattery))
+                            if (!SettingsVm.SelectedProfile.PauseOnBattery && CurrentState.Equals(MouseState.OnBattery))
                             {
                                 Start();
                                 ShowNotification("Resuming now running on mains power.");
                             }
                             //todo Check what happens if state is Executing
-                            else if (SettingsVm.Settings.PauseOnBattery && CurrentState.Equals(MouseState.Running) && RunningOnBattery())
+                            else if (SettingsVm.SelectedProfile.PauseOnBattery && CurrentState.Equals(MouseState.Running) && RunningOnBattery())
                             {
                                 Stop(MouseState.OnBattery);
                                 ShowNotification("Pausing now running on battery.");
@@ -491,7 +492,7 @@ namespace ellabi.ViewModels
 
                 if (CurrentState != MouseState.Running)
                 {
-                    if (SettingsVm.Settings.PauseOnBattery && RunningOnBattery())
+                    if (SettingsVm.SelectedProfile.PauseOnBattery && RunningOnBattery())
                     {
                         CurrentState = MouseState.OnBattery;
                     }
@@ -503,7 +504,7 @@ namespace ellabi.ViewModels
                             _activeExecutionId = Guid.NewGuid();
                             _lastStopStartToggleTime = DateTime.Now;
                             if (_firstPass) PerformActions(ActionBase.EventTrigger.Start);
-                            double interval = SettingsVm.Settings.RandomInterval ? new Random().Next(SettingsVm.Settings.LowerInterval * 1000, SettingsVm.Settings.UpperInterval * 1000) : (SettingsVm.Settings.LowerInterval * 1000);
+                            double interval = SettingsVm.SelectedProfile.RandomInterval ? new Random().Next(SettingsVm.SelectedProfile.LowerInterval * 1000, SettingsVm.SelectedProfile.UpperInterval * 1000) : (SettingsVm.SelectedProfile.LowerInterval * 1000);
                             interval = interval > 0 ? interval : 1;
                             ExecutionTime = DateTime.Now.AddMilliseconds(interval);
                             CurrentState = MouseState.Running;
@@ -593,7 +594,7 @@ namespace ellabi.ViewModels
         {
             try
             {
-                if (SettingsVm.Settings.AdjustRunningVolume)
+                if (SettingsVm.SelectedProfile.AdjustRunningVolume)
                 {
                     if (_defaultPlaybackDevice == null)
                     {
@@ -605,9 +606,9 @@ namespace ellabi.ViewModels
                         _initialVolume = _defaultPlaybackDevice.Volume;
                     }
 
-                    StaticCode.Logger?.Here().Information(SettingsVm.Settings.RunningVolume.ToString());
-                    //_defaultPlaybackDevice.Volume = SettingsVm.Settings.RunningVolume;
-                    await _defaultPlaybackDevice.SetVolumeAsync(SettingsVm.Settings.RunningVolume);
+                    StaticCode.Logger?.Here().Information(SettingsVm.SelectedProfile.RunningVolume.ToString());
+                    //_defaultPlaybackDevice.Volume = SettingsVm.SelectedProfile.RunningVolume;
+                    await _defaultPlaybackDevice.SetVolumeAsync(SettingsVm.SelectedProfile.RunningVolume);
                 }
             }
             catch (Exception ex)
@@ -620,7 +621,7 @@ namespace ellabi.ViewModels
         {
             try
             {
-                if (SettingsVm.Settings.AdjustRunningVolume && _initialVolume.HasValue)
+                if (SettingsVm.SelectedProfile.AdjustRunningVolume && _initialVolume.HasValue)
                 {
                     if (_defaultPlaybackDevice == null)
                     {
@@ -655,9 +656,9 @@ namespace ellabi.ViewModels
 
                     if (_firstPass)
                     {
-                        for (int i = 0; i < SettingsVm.Settings.Actions.Length; i++)
+                        for (int i = 0; i < SettingsVm.SelectedProfile.Actions.Count; i++)
                         {
-                            SettingsVm.Settings.Actions[i].IntervalExecutionCount = 0;
+                            SettingsVm.SelectedProfile.Actions[i].IntervalExecutionCount = 0;
                         }
                     }
 
@@ -666,9 +667,9 @@ namespace ellabi.ViewModels
                         case ActionBase.EventTrigger.Start:
                             if (_firstPass)
                             {
-                                if (SettingsVm.Settings.Actions.Any(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger)))
+                                if (SettingsVm.SelectedProfile.Actions.Any(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger)))
                                 {
-                                    actions = SettingsVm.Settings.Actions.Where(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger));
+                                    actions = SettingsVm.SelectedProfile.Actions.Where(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger));
 
                                     foreach (var action in actions)
                                     {
@@ -683,16 +684,16 @@ namespace ellabi.ViewModels
 
                             break;
                         case ActionBase.EventTrigger.Interval:
-                            if (SettingsVm.Settings.ActiveWhenLocked || !_workstationLocked)
+                            if (SettingsVm.SelectedProfile.ActiveWhenLocked || !_workstationLocked)
                             {
                                 if (!BlackoutIsActive())
                                 {
                                     CurrentState = MouseState.Executing;
                                     StopAutoPauseTimer();
 
-                                    if (SettingsVm.Settings.Actions.Any(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger)))
+                                    if (SettingsVm.SelectedProfile.Actions.Any(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger)))
                                     {
-                                        actions = _firstPass ? SettingsVm.Settings.Actions.Where(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger)) : SettingsVm.Settings.Actions.Where(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger) && action.Repeat && ((action.RepeatMode == ActionBase.IntervalRepeatMode.Forever) || ((action.RepeatMode == ActionBase.IntervalRepeatMode.Throttle) && (action.IntervalExecutionCount < action.IntervalThrottle))));
+                                        actions = _firstPass ? SettingsVm.SelectedProfile.Actions.Where(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger)) : SettingsVm.SelectedProfile.Actions.Where(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger) && action.Repeat && ((action.RepeatMode == ActionBase.IntervalRepeatMode.Forever) || ((action.RepeatMode == ActionBase.IntervalRepeatMode.Throttle) && (action.IntervalExecutionCount < action.IntervalThrottle))));
 
                                         foreach (var action in actions)
                                         {
@@ -718,16 +719,52 @@ namespace ellabi.ViewModels
 
                             if (actionAborted)
                             {
-                                Stop((SettingsVm.Settings.AutoPause && SettingsVm.Settings.AutoResume) ? MouseState.Paused : MouseState.Idle);
+                                Stop((SettingsVm.SelectedProfile.AutoPause && SettingsVm.SelectedProfile.AutoResume) ? MouseState.Paused : MouseState.Idle);
                             }
                             else
                             {
-                                if (_activeExecutionId.Equals(executionId) && (CurrentState.Equals(MouseState.Locked) || CurrentState.Equals(MouseState.Sleeping) || (!_firstPass && SettingsVm.Settings.Actions.Any(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger) && action.Repeat && ((action.RepeatMode == ActionBase.IntervalRepeatMode.Forever) || ((action.RepeatMode == ActionBase.IntervalRepeatMode.Throttle) && (action.IntervalExecutionCount < action.IntervalThrottle)))))))
+                                bool shouldContinue = false;
+                                if (_activeExecutionId.Equals(executionId))
                                 {
-                                    Start();
+                                    StaticCode.Logger?.Here().Debug($"Checking continuation: _firstPass={_firstPass}, CurrentState={CurrentState}");
+
+                                    if (CurrentState.Equals(MouseState.Locked) || CurrentState.Equals(MouseState.Sleeping))
+                                    {
+                                        StaticCode.Logger?.Here().Debug("Continuing because locked/sleeping");
+                                        shouldContinue = true;
+                                    }
+                                    else if (SettingsVm.SelectedProfile.Actions.Any(action =>
+                                        action.IsValid &&
+                                        action.IsEnabled &&
+                                        action.Trigger.Equals(trigger) &&
+                                        action.Repeat &&
+                                        ((action.RepeatMode == ActionBase.IntervalRepeatMode.Forever) ||
+                                         (action.RepeatMode == ActionBase.IntervalRepeatMode.Throttle && action.IntervalExecutionCount < action.IntervalThrottle))))
+                                    {
+                                        StaticCode.Logger?.Here().Debug("Continuing because we have repeating actions");
+                                        shouldContinue = true;
+                                    }
+                                    else
+                                    {
+                                        StaticCode.Logger?.Here().Debug("No repeating actions found");
+                                    }
+                                }
+
+                                if (shouldContinue)
+                                {
+                                    Application.Current.Dispatcher.Invoke(() =>
+                                    {
+                                        double nextInterval = SettingsVm.SelectedProfile.RandomInterval ? new Random().Next(SettingsVm.SelectedProfile.LowerInterval * 1000, SettingsVm.SelectedProfile.UpperInterval * 1000) : (SettingsVm.SelectedProfile.LowerInterval * 1000);
+                                        nextInterval = nextInterval > 0 ? nextInterval : 1;
+                                        ExecutionTime = DateTime.Now.AddMilliseconds(nextInterval);
+                                        CurrentState = MouseState.Running;
+                                        _actionTimer = new Timer(param => { PerformActions(ActionBase.EventTrigger.Interval); }, null, TimeSpan.FromMilliseconds(nextInterval), Timeout.InfiniteTimeSpan);
+                                        StartAutoPauseTimer();
+                                    });
                                 }
                                 else
                                 {
+                                    StaticCode.Logger?.Here().Debug("Stopping - no continuation needed");
                                     Stop(MouseState.Idle);
                                     ShowNotification("Automatically stopping as there are no actions that are configured to repeat forever at each interval.");
                                 }
@@ -735,9 +772,9 @@ namespace ellabi.ViewModels
 
                             break;
                         case ActionBase.EventTrigger.Stop:
-                            if (SettingsVm.Settings.Actions.Any(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger)))
+                            if (SettingsVm.SelectedProfile.Actions.Any(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger)))
                             {
-                                actions = SettingsVm.Settings.Actions.Where(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger));
+                                actions = SettingsVm.SelectedProfile.Actions.Where(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger));
 
                                 foreach (var action in actions)
                                 {
@@ -772,7 +809,7 @@ namespace ellabi.ViewModels
             {
                 StopAutoPauseTimer();
 
-                if (SettingsVm.Settings.AutoPause)
+                if (SettingsVm.SelectedProfile.AutoPause)
                 {
                     if (_autoPauseTimer == null)
                     {
@@ -819,7 +856,7 @@ namespace ellabi.ViewModels
                 {
                     if (CurrentState.Equals(MouseState.Running) && (StaticCode.GetLastInputTime() < TimeSpan.FromMilliseconds(_autoPauseTimer.Interval)))
                     {
-                        Stop((SettingsVm.Settings.AutoPause && SettingsVm.Settings.AutoResume) ? MouseState.Paused : MouseState.Idle);
+                        Stop((SettingsVm.SelectedProfile.AutoPause && SettingsVm.SelectedProfile.AutoResume) ? MouseState.Paused : MouseState.Idle);
                     }
                 }
             }
@@ -874,11 +911,11 @@ namespace ellabi.ViewModels
             {
                 StaticCode.Logger?.Here().Debug(StaticCode.GetLastInputTime().ToString());
 
-                if (StaticCode.GetLastInputTime().TotalSeconds > SettingsVm.Settings.AutoResumeSeconds)
+                if (StaticCode.GetLastInputTime().TotalSeconds > SettingsVm.SelectedProfile.AutoResumeSeconds)
                 {
                     Start();
                     //GetActiveWindow();
-                    ShowNotification($"Automatically resuming after {SettingsVm.Settings.AutoResumeSeconds} seconds of inactivity.");
+                    ShowNotification($"Automatically resuming after {SettingsVm.SelectedProfile.AutoResumeSeconds} seconds of inactivity.");
                 }
             }
             catch (Exception ex)

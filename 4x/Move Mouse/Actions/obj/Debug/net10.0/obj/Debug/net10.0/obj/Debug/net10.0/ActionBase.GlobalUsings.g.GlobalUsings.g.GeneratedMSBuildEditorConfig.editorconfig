@@ -1,0 +1,11 @@
+is_global = true
+build_property.TargetFramework = net10.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = 
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = ActionBase.GlobalUsings.g.GlobalUsings.g
+build_property.ProjectDir = c:\Users\Derrick\Documents\Development\MoveMouse\movemouse\4x\Move Mouse\Actions\obj\Debug\net10.0\obj\Debug\net10.0\
