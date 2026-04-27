@@ -231,7 +231,7 @@ namespace ellabi.ViewModels
             _removeSelectedBlackoutCommand = new RelayCommand(RemoveSelectedBlackout);
             _addProfileCommand = new RelayCommand(_ => AddProfile());
             _renameProfileCommand = new RelayCommand(_ => RenameProfile(), _ => SelectedProfile != null);
-            _removeProfileCommand = new RelayCommand(_ => RemoveProfile(), _ => SelectedProfile != null);
+            _removeProfileCommand = new RelayCommand(_ => RemoveProfile(), _ => SelectedProfile != null && ProfileManager.Profiles.Count > 1);
             Settings.PropertyChanged += Settings_PropertyChanged;
             RefreshStartupTask();
             _updateSystemIdleTimeTimer = new System.Timers.Timer(250);
@@ -463,20 +463,38 @@ namespace ellabi.ViewModels
             return new Settings();
         }
 
-        private const string ProfileFilePath = "profiles.xml";
+        private string ProfileFilePath => System.IO.Path.Combine(StaticCode.WorkingDirectory, "profiles.xml");
 
         public void LoadProfiles()
         {
             ProfileManager.LoadProfiles(ProfileFilePath);
 
-            if (ProfileManager.Profiles.Any())
+            if (!ProfileManager.Profiles.Any())
             {
-                var lastProfileName = Settings.LastActiveProfileName;
-                var profileToSelect = !string.IsNullOrEmpty(lastProfileName)
-                    ? ProfileManager.Profiles.FirstOrDefault(p => p.Name == lastProfileName)
-                    : null;
-                SelectedProfile = profileToSelect ?? ProfileManager.Profiles.First();
+                // First run (or missing profiles.xml): seed a default profile from current settings
+                var defaultProfile = new ActionProfile { Name = "Default" };
+                defaultProfile.LowerInterval = Settings.LowerInterval;
+                defaultProfile.UpperInterval = Settings.UpperInterval;
+                defaultProfile.RandomInterval = Settings.RandomInterval;
+                defaultProfile.AutoPause = Settings.AutoPause;
+                defaultProfile.AutoResume = Settings.AutoResume;
+                defaultProfile.AutoResumeSeconds = Settings.AutoResumeSeconds;
+                defaultProfile.AdjustRunningVolume = Settings.AdjustRunningVolume;
+                defaultProfile.ActiveWhenLocked = Settings.ActiveWhenLocked;
+                defaultProfile.PauseOnBattery = Settings.PauseOnBattery;
+                defaultProfile.EnableLogging = Settings.EnableLogging;
+                defaultProfile.Actions = (Settings.Actions != null && Settings.Actions.Length > 0)
+                    ? new List<ActionBase>(Settings.Actions)
+                    : new List<ActionBase> { new MoveMouseCursorAction() };
+                ProfileManager.Profiles.Add(defaultProfile);
+                SaveProfiles();
             }
+
+            var lastProfileName = Settings.LastActiveProfileName;
+            var profileToSelect = !string.IsNullOrEmpty(lastProfileName)
+                ? ProfileManager.Profiles.FirstOrDefault(p => p.Name == lastProfileName)
+                : null;
+            SelectedProfile = profileToSelect ?? ProfileManager.Profiles.First();
         }
 
         public void SaveProfiles()
