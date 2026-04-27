@@ -3,6 +3,7 @@ using ellabi.Wrappers;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -303,13 +304,30 @@ namespace ellabi.Views
             }
         }
 
-        private void TwitterButton_OnClick(object sender, RoutedEventArgs e)
+        private void ProfileButton_OnClick(object sender, RoutedEventArgs e)
         {
             StaticCode.Logger?.Here().Debug(String.Empty);
 
             try
             {
-                Process.Start(StaticCode.TwitterUrl);
+                var profiles = _vm.SettingsVm.ProfileManager.Profiles;
+                if (!profiles.Any()) return;
+
+                var menu = new ContextMenu { PlacementTarget = FlyingProfileButton, Placement = System.Windows.Controls.Primitives.PlacementMode.MousePoint };
+
+                foreach (var profile in profiles)
+                {
+                    var capturedProfile = profile;
+                    var item = new MenuItem
+                    {
+                        Header = profile.Name,
+                        IsChecked = profile == _vm.SettingsVm.SelectedProfile
+                    };
+                    item.Click += (s, args) => _vm.SettingsVm.SelectedProfile = capturedProfile;
+                    menu.Items.Add(item);
+                }
+
+                menu.IsOpen = true;
             }
             catch (Exception ex)
             {
@@ -392,7 +410,7 @@ namespace ellabi.Views
                         StartInstantAnimation(ref FlyingMinimiseButton, 1);
                         StartInstantAnimation(ref FlyingSettingsButton, 2);
                         StartInstantAnimation(ref FlyingPayPalButton, 3);
-                        StartInstantAnimation(ref FlyingTwitterButton, 4);   
+                        StartInstantAnimation(ref FlyingProfileButton, 4);
                         StartInstantAnimation(ref FlyingHelpButton, 5);
                         StartInstantAnimation(ref FlyingCloseButton, 6);
                     }
@@ -401,7 +419,7 @@ namespace ellabi.Views
                         StartFlyingAnimation(ref FlyingMinimiseButton, 1);
                         StartFlyingAnimation(ref FlyingSettingsButton, 2);
                         StartFlyingAnimation(ref FlyingPayPalButton, 3);
-                        StartFlyingAnimation(ref FlyingTwitterButton, 4);      
+                        StartFlyingAnimation(ref FlyingProfileButton, 4);
                         StartFlyingAnimation(ref FlyingHelpButton, 5);
                         StartFlyingAnimation(ref FlyingCloseButton, 6);
                     }
@@ -519,7 +537,7 @@ namespace ellabi.Views
                         StartFadeOutAnimation(FlyingSettingsButton);
                         StartFadeOutAnimation(FlyingPayPalButton);
                         StartFadeOutAnimation(FlyingHelpButton);
-                        StartFadeOutAnimation(FlyingTwitterButton);
+                        StartFadeOutAnimation(FlyingProfileButton);
                         StartFadeOutAnimation(FlyingMinimiseButton);
                         StartFadeOutAnimation(FlyingCloseButton);
                         _buttonsOnShow = false;

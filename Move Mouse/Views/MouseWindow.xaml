@@ -373,14 +373,14 @@
                                     </Image.Style>
                                 </Image>
                             </Button>
-                            <Button AutomationProperties.Name="Twitter" Click="TwitterButton_OnClick">
+                            <Button AutomationProperties.Name="Profile" Click="ProfileButton_OnClick">
                                 <Image>
                                     <Image.Style>
                                         <Style TargetType="Image" BasedOn="{StaticResource StandardImageStyle}">
-                                            <Setter Property="Source" Value="/Resources/Twitter_Dark_64x64.png"/>
+                                            <Setter Property="Source" Value="/Resources/FileOpen_Dark_64x64.png"/>
                                             <Style.Triggers>
                                                 <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter Property="Source" Value="/Resources/Twitter_Light_64x64.png"/>
+                                                    <Setter Property="Source" Value="/Resources/FileOpen_Light_64x64.png"/>
                                                 </Trigger>
                                             </Style.Triggers>
                                         </Style>
@@ -476,14 +476,14 @@
                 </TextBlock.Style>
             </TextBlock>
         </Grid>
-        <Button AutomationProperties.Name="Twitter" Name="FlyingTwitterButton" Style="{StaticResource FlyingButtonStyle}" MouseEnter="UIElement_OnMouseEnter" MouseLeave="UIElement_OnMouseLeave" Click="TwitterButton_OnClick">
-            <Image Name="FlyingTwitterImage">
+        <Button AutomationProperties.Name="Profile" Name="FlyingProfileButton" Style="{StaticResource FlyingButtonStyle}" MouseEnter="UIElement_OnMouseEnter" MouseLeave="UIElement_OnMouseLeave" Click="ProfileButton_OnClick">
+            <Image Name="FlyingProfileImage">
                 <Image.Style>
                     <Style TargetType="Image" BasedOn="{StaticResource FlyingImageStyle}">
-                        <Setter Property="Source" Value="/Resources/Twitter_Dark_64x64.png"/>
+                        <Setter Property="Source" Value="/Resources/FileOpen_Dark_64x64.png"/>
                         <Style.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Source" Value="/Resources/Twitter_Light_64x64.png"/>
+                                <Setter Property="Source" Value="/Resources/FileOpen_Light_64x64.png"/>
                             </Trigger>
                         </Style.Triggers>
                     </Style>
