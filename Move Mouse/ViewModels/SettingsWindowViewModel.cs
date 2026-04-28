@@ -39,6 +39,7 @@ namespace ellabi.ViewModels
         private DateTime _lastSettingsPropertyChanged;
         private TimeSpan _lastSettingsPropertyChangedInterval = TimeSpan.FromMilliseconds(1000);
         private Guid _lastThreadId;
+        private System.Threading.Timer _profileSaveTimer;
         private ProfileManager _profileManager = new ProfileManager();
         private ActionProfile _selectedProfile;
         private RelayCommand _addProfileCommand;
@@ -63,11 +64,34 @@ namespace ellabi.ViewModels
                 _selectedProfile = value;
                 ProfileManager.SetActiveProfile(value);
                 Settings.LastActiveProfileName = value?.Name;
-                Settings.Actions = value?.Actions?.ToArray() ?? Array.Empty<ActionBase>();
 
                 if (value != null)
                 {
+                    _isUpdatingProfile = true;
+                    try
+                    {
+                        Settings.LowerInterval = value.LowerInterval;
+                        Settings.UpperInterval = value.UpperInterval;
+                        Settings.RandomInterval = value.RandomInterval;
+                        Settings.AutoPause = value.AutoPause;
+                        Settings.AutoResume = value.AutoResume;
+                        Settings.AutoResumeSeconds = value.AutoResumeSeconds;
+                        Settings.AdjustRunningVolume = value.AdjustRunningVolume;
+                        Settings.RunningVolume = value.RunningVolume;
+                        Settings.ActiveWhenLocked = value.ActiveWhenLocked;
+                        Settings.PauseOnBattery = value.PauseOnBattery;
+                        Settings.Actions = value.Actions?.ToArray() ?? Array.Empty<ActionBase>();
+                    }
+                    finally
+                    {
+                        _isUpdatingProfile = false;
+                    }
+
                     value.PropertyChanged += SelectedProfile_PropertyChanged;
+                }
+                else
+                {
+                    Settings.Actions = Array.Empty<ActionBase>();
                 }
 
                 OnPropertyChanged(nameof(SelectedProfile));
@@ -338,7 +362,31 @@ namespace ellabi.ViewModels
             {
                 StaticCode.Logger?.Here().Debug(e.PropertyName);
                 _lastSettingsPropertyChanged = DateTime.Now;
-                SaveSettings(Settings);
+
+                // Sync profile-specific setting changes back to the active profile
+                if (!_isUpdatingProfile && SelectedProfile != null)
+                {
+                    switch (e.PropertyName)
+                    {
+                        case nameof(Settings.LowerInterval): SelectedProfile.LowerInterval = Settings.LowerInterval; break;
+                        case nameof(Settings.UpperInterval): SelectedProfile.UpperInterval = Settings.UpperInterval; break;
+                        case nameof(Settings.RandomInterval): SelectedProfile.RandomInterval = Settings.RandomInterval; break;
+                        case nameof(Settings.AutoPause): SelectedProfile.AutoPause = Settings.AutoPause; break;
+                        case nameof(Settings.AutoResume): SelectedProfile.AutoResume = Settings.AutoResume; break;
+                        case nameof(Settings.AutoResumeSeconds): SelectedProfile.AutoResumeSeconds = Settings.AutoResumeSeconds; break;
+                        case nameof(Settings.AdjustRunningVolume): SelectedProfile.AdjustRunningVolume = Settings.AdjustRunningVolume; break;
+                        case nameof(Settings.RunningVolume): SelectedProfile.RunningVolume = Settings.RunningVolume; break;
+                        case nameof(Settings.ActiveWhenLocked): SelectedProfile.ActiveWhenLocked = Settings.ActiveWhenLocked; break;
+                        case nameof(Settings.PauseOnBattery): SelectedProfile.PauseOnBattery = Settings.PauseOnBattery; break;
+                    }
+                }
+
+                // Don't trigger a Settings save while we're bulk-syncing profile→Settings
+                // (that would flood the ThreadPool with ~10 sleeping threads at once)
+                if (!_isUpdatingProfile)
+                {
+                    SaveSettings(Settings);
+                }
 
                 switch (e.PropertyName)
                 {
@@ -397,36 +445,36 @@ namespace ellabi.ViewModels
         {
             var threadId = _lastThreadId;
 
+            // Wait outside the lock — avoids stacking blocked threads
+            while (threadId.Equals(_lastThreadId) && (_lastSettingsPropertyChanged.Add(_lastSettingsPropertyChangedInterval) > DateTime.Now))
+            {
+                Thread.Sleep(100);
+            }
+
+            if (!threadId.Equals(_lastThreadId)) return;
+
             lock (_settingsLock)
             {
-                while (threadId.Equals(_lastThreadId) && (_lastSettingsPropertyChanged.Add(_lastSettingsPropertyChangedInterval) > DateTime.Now))
+                if (!threadId.Equals(_lastThreadId)) return;
+
+                StaticCode.Logger?.Here().Debug(StaticCode.SettingsXmlPath);
+                StreamWriter sw = null;
+
+                try
                 {
-                    Thread.Sleep(100);
+                    sw = new StreamWriter(StaticCode.SettingsXmlPath, false);
+                    var xs = XmlSerializer.FromTypes(new[] { typeof(Settings) })[0];
+                    xs.Serialize(sw, settings);
+                    sw.Flush();
                 }
-
-                if (threadId.Equals(_lastThreadId))
+                catch (Exception ex)
                 {
-                    StaticCode.Logger?.Here().Debug(StaticCode.SettingsXmlPath);
-                    StreamWriter sw = null;
-
-                    try
-                    {
-                        sw = new StreamWriter(StaticCode.SettingsXmlPath, false);
-                        var xs = XmlSerializer.FromTypes(new[] { typeof(Settings) })[0];
-                        xs.Serialize(sw, settings);
-                        sw.Flush();
-                    }
-                    catch (Exception ex)
-                    {
-                        StaticCode.Logger?.Here().Error(ex.Message);
-                    }
-                    finally
-                    {
-                        sw?.Close();
-                        sw?.Dispose();
-                    }
-
-                    System.Threading.Thread.Sleep(1000); // Ensure file is written before next read
+                    StaticCode.Logger?.Here().Error(ex.Message);
+                }
+                finally
+                {
+                    sw?.Close();
+                    sw?.Dispose();
                 }
             }
         }
@@ -499,7 +547,13 @@ namespace ellabi.ViewModels
 
         public void SaveProfiles()
         {
-            ProfileManager.SaveProfiles(ProfileFilePath);
+            // Timer-based debounce: no ThreadPool threads are consumed during the quiet period.
+            // Each call resets the 800ms countdown; the file write happens once after things settle.
+            var path = ProfileFilePath;
+            if (_profileSaveTimer == null)
+                _profileSaveTimer = new System.Threading.Timer(_ => ProfileManager.SaveProfiles(path), null, 800, System.Threading.Timeout.Infinite);
+            else
+                _profileSaveTimer.Change(800, System.Threading.Timeout.Infinite);
         }
 
         private void SelectedProfile_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -508,7 +562,7 @@ namespace ellabi.ViewModels
             {
                 if (_isUpdatingProfile) return;
                 StaticCode.Logger?.Here().Debug($"Profile property changed: {e.PropertyName}");
-                ProfileManager.SaveProfiles(ProfileFilePath);
+                SaveProfiles();
             }
             catch (Exception ex)
             {
@@ -877,6 +931,7 @@ namespace ellabi.ViewModels
             _updateSystemIdleTimeTimer?.Stop();
             _updateSystemIdleTimeTimer.Elapsed -= (sender, args) => OnPropertyChanged(nameof(SystemIdleTime));
             _updateSystemIdleTimeTimer?.Dispose();
+            _profileSaveTimer?.Dispose();
         }
     }
 }

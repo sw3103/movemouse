@@ -313,21 +313,40 @@ namespace ellabi.Views
                 var profiles = _vm.SettingsVm.ProfileManager.Profiles;
                 if (!profiles.Any()) return;
 
-                var menu = new ContextMenu { PlacementTarget = FlyingProfileButton, Placement = System.Windows.Controls.Primitives.PlacementMode.MousePoint };
+                ProfilePickerItems.Children.Clear();
 
                 foreach (var profile in profiles)
                 {
                     var capturedProfile = profile;
-                    var item = new MenuItem
+                    var isActive = profile == _vm.SettingsVm.SelectedProfile;
+                    var btn = new Button
                     {
-                        Header = profile.Name,
-                        IsChecked = profile == _vm.SettingsVm.SelectedProfile
+                        Content = (isActive ? "\u2713  " : "     ") + profile.Name,
+                        Style = (Style)FindResource("NoChromeButton"),
+                        HorizontalAlignment = HorizontalAlignment.Stretch,
+                        HorizontalContentAlignment = HorizontalAlignment.Left,
+                        Padding = new Thickness(8, 5, 8, 5),
+                        Cursor = Cursors.Hand,
+                        Foreground = isActive
+                            ? (System.Windows.Media.Brush)FindResource("StandardLightControlSolidColorBrush")
+                            : (System.Windows.Media.Brush)FindResource("StandardLightTextSolidColorBrush"),
                     };
-                    item.Click += (s, args) => _vm.SettingsVm.SelectedProfile = capturedProfile;
-                    menu.Items.Add(item);
+                    btn.Click += (s, args) =>
+                    {
+                        try
+                        {
+                            _vm.SettingsVm.SelectedProfile = capturedProfile;
+                            ProfilePickerPopup.IsOpen = false;
+                        }
+                        catch (Exception ex)
+                        {
+                            StaticCode.Logger?.Here().Error(ex.Message);
+                        }
+                    };
+                    ProfilePickerItems.Children.Add(btn);
                 }
 
-                menu.IsOpen = true;
+                ProfilePickerPopup.IsOpen = true;
             }
             catch (Exception ex)
             {

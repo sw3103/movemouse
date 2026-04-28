@@ -659,5 +659,13 @@
                 </Style>
             </ed:Callout.Style>
         </ed:Callout>
+        <!-- Profile picker popup (Popup in XAML avoids AllowsTransparency ContextMenu crash) -->
+        <Popup Name="ProfilePickerPopup" StaysOpen="False" AllowsTransparency="True" Placement="MousePoint" PopupAnimation="Fade">
+            <Border Background="{StaticResource StandardDarkBackgroundSolidColorBrush}"
+                    BorderBrush="{StaticResource StandardBorderBrush}"
+                    BorderThickness="1" Padding="2" MinWidth="130">
+                <StackPanel Name="ProfilePickerItems"/>
+            </Border>
+        </Popup>
     </Grid>
 </Window>
