@@ -795,7 +795,7 @@ namespace ellabi.ViewModels
         private void StopAutoPauseTimer()
         {
             StaticCode.Logger?.Here().Debug(String.Empty);
-            
+
             lock (_pauseLock)
             {
                 try
@@ -814,13 +814,21 @@ namespace ellabi.ViewModels
             try
             {
                 StaticCode.Logger?.Here().Debug(StaticCode.GetLastInputTime().ToString());
+                bool shouldStop = false;
+                MouseState stopState = MouseState.Idle;
 
                 lock (_pauseLock)
                 {
                     if (CurrentState.Equals(MouseState.Running) && (StaticCode.GetLastInputTime() < TimeSpan.FromMilliseconds(_autoPauseTimer.Interval)))
                     {
-                        Stop((SettingsVm.Settings.AutoPause && SettingsVm.Settings.AutoResume) ? MouseState.Paused : MouseState.Idle);
+                        shouldStop = true;
+                        stopState = (SettingsVm.Settings.AutoPause && SettingsVm.Settings.AutoResume) ? MouseState.Paused : MouseState.Idle;
                     }
+                }
+
+                if (shouldStop)
+                {
+                    Stop(stopState);
                 }
             }
             catch (Exception ex)
