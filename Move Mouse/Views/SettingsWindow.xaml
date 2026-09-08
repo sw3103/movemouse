@@ -12,7 +12,7 @@
         xmlns:classes="clr-namespace:ellabi.Classes"
         xmlns:ed="http://schemas.microsoft.com/expression/2010/drawing"
         mc:Ignorable="d"
-        Title="Move Mouse Settings" Height="482" Width="688" Icon="/Resources/Mouse.ico" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize" WindowStyle="None" MouseDown="SettingsWindow_OnMouseDown" ShowActivated="True" Loaded="SettingsWindow_OnLoaded">
+        Title="Move Mouse Settings" Height="482" Width="700" Icon="/Resources/Mouse.ico" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize" WindowStyle="None" MouseDown="SettingsWindow_OnMouseDown" ShowActivated="True" Loaded="SettingsWindow_OnLoaded">
     <Grid Background="{StaticResource StandardWindowBackground}">
         <Grid.Resources>
             <converters:DoubleDividedByTwoConverter x:Key="DoubleDividedByTwoConverter"/>
@@ -2155,7 +2155,6 @@
                             <xctk:IntegerUpDown Value="{Binding Path=Settings.LoggingBuffer, NotifyOnTargetUpdated=True}" IsEnabled="{Binding Path=Settings.EnableLogging, NotifyOnTargetUpdated=True}" Increment="1" Minimum="1" Maximum="99999" Margin="5,0,5,0"/>
                         </StackPanel>
                     </StackPanel>-->
-                    <!--make move mouse hidden/topmost when running-->
                 </StackPanel>
             </TabItem>
             <TabItem AutomationProperties.Name="Appearance">
@@ -2204,8 +2203,25 @@
                                     </Style.Triggers>
                                 </Style>
                             </StackPanel.Style>
+                            <toggleSwitch:HorizontalToggleSwitch IsChecked="{Binding Path=Settings.Topmost, NotifyOnTargetUpdated=True, Mode=TwoWay}"/>
+                            <TextBlock Margin="5,0,0,0" Text="Show topmost" Style="{StaticResource LabelTextBlockStyle}"/>
+                        </StackPanel>
+                        <StackPanel>
+                            <StackPanel.Style>
+                                <Style TargetType="StackPanel" BasedOn="{StaticResource OptionStackPanelStyle}">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Path=Settings.HideMainWindow, NotifyOnTargetUpdated=True}" Value="True">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Path=Settings.Topmost, NotifyOnTargetUpdated=True}" Value="True">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </StackPanel.Style>
                             <toggleSwitch:HorizontalToggleSwitch IsChecked="{Binding Path=Settings.TopmostWhenRunning, NotifyOnTargetUpdated=True, Mode=TwoWay}"/>
-                            <TextBlock Margin="5,0,0,0" Text="Show topmost when running" Style="{StaticResource LabelTextBlockStyle}"/>
+                            <TextBlock Margin="5,0,0,0" Text="Show topmost only when running" Style="{StaticResource LabelTextBlockStyle}"/>
                         </StackPanel>
                         <StackPanel>
                             <StackPanel.Style>
@@ -2514,7 +2530,7 @@
                                     </Image.Style>
                                 </Image>
                             </Button>
-                            <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="20" Grid.RowSpan="5" BorderThickness="1" BorderBrush="{StaticResource StandardBorderBrush}"/>
+                            <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="19" Grid.RowSpan="5" BorderThickness="1" BorderBrush="{StaticResource StandardBorderBrush}"/>
                         </Grid>
                     </DataTemplate>
                     <DataTemplate DataType="{x:Type schedules:AdvancedSchedule}">
@@ -2687,10 +2703,14 @@
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="5"/>
                                 <ColumnDefinition Width="70"/>
-                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="5"/>
                                 <ColumnDefinition Width="70"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="5"/>
+                                <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="5"/>
@@ -2710,9 +2730,11 @@
                             <xctk:TimeSpanUpDown Grid.Column="3" Grid.Row="1" Value="{Binding Path=Time, NotifyOnTargetUpdated=True, UpdateSourceTrigger=LostFocus}" Minimum="0:0:0" Maximum="23:59:59" HorizontalAlignment="Stretch" IsEnabled="{Binding Path=IsEnabled, NotifyOnTargetUpdated=True}"/>
                             <TextBlock Grid.Column="5" Grid.Row="1" Text="Duration" Style="{StaticResource LabelTextBlockStyle}"/>
                             <xctk:TimeSpanUpDown Grid.Column="7" Grid.Row="1" Value="{Binding Path=Duration, NotifyOnTargetUpdated=True, UpdateSourceTrigger=LostFocus}" Minimum="0:0:1" Maximum="23:59:59" HorizontalAlignment="Stretch" IsEnabled="{Binding Path=IsEnabled, NotifyOnTargetUpdated=True}"/>
-                            <TextBlock Grid.Column="9" Grid.Row="1" Text="Enabled" Style="{StaticResource LabelTextBlockStyle}"/>
-                            <toggleSwitch:HorizontalToggleSwitch Grid.Column="11" Grid.Row="1" IsChecked="{Binding Path=IsEnabled, NotifyOnTargetUpdated=True, Mode=TwoWay}"/>
-                            <Grid Grid.Column="1" Grid.Row="3" Grid.ColumnSpan="11">
+                            <TextBlock Grid.Column="9" Grid.Row="1" Text="Delay (sec)" Style="{StaticResource LabelTextBlockStyle}"/>
+                            <xctk:IntegerUpDown Grid.Column="11" Grid.Row="1" Value="{Binding Path=Delay, NotifyOnTargetUpdated=True}" Increment="1" Minimum="0" Maximum="99999" Width="45" IsEnabled="{Binding Path=IsEnabled, NotifyOnTargetUpdated=True}"/>
+                            <TextBlock Grid.Column="13" Grid.Row="1" Text="Enabled" Style="{StaticResource LabelTextBlockStyle}"/>
+                            <toggleSwitch:HorizontalToggleSwitch Grid.Column="15" Grid.Row="1" IsChecked="{Binding Path=IsEnabled, NotifyOnTargetUpdated=True, Mode=TwoWay}"/>
+                            <Grid Grid.Column="1" Grid.Row="3" Grid.ColumnSpan="15">
                                 <Grid.Resources>
                                     <Style TargetType="toggleSwitch:HorizontalToggleSwitch" BasedOn="{StaticResource {x:Type toggleSwitch:HorizontalToggleSwitch}}">
                                         <Setter Property="IsEnabled" Value="{Binding Path=IsEnabled, NotifyOnTargetUpdated=True}"/>
@@ -2745,7 +2767,7 @@
                                 <toggleSwitch:HorizontalToggleSwitch Grid.Column="10" IsChecked="{Binding Path=Saturday, NotifyOnTargetUpdated=True, Mode=TwoWay}" UncheckedContent="Sat" CheckedContent="Sat"/>
                                 <toggleSwitch:HorizontalToggleSwitch Grid.Column="12" IsChecked="{Binding Path=Sunday, NotifyOnTargetUpdated=True, Mode=TwoWay}" UncheckedContent="Sun" CheckedContent="Sun"/>
                             </Grid>
-                            <Button AutomationProperties.Name="Remove blackout" Grid.Column="13" Grid.Row="1" Grid.RowSpan="3" Style="{StaticResource TaskActionButtonStyle}" Command="{Binding ElementName=ScheduleItemsControl, Path=DataContext.RemoveSelectedBlackoutCommand, NotifyOnTargetUpdated=True}" CommandParameter="{Binding Path=Id}" Margin="0">
+                            <Button AutomationProperties.Name="Remove blackout" Grid.Column="17" Grid.Row="1" Grid.RowSpan="3" Style="{StaticResource TaskActionButtonStyle}" Command="{Binding ElementName=ScheduleItemsControl, Path=DataContext.RemoveSelectedBlackoutCommand, NotifyOnTargetUpdated=True}" CommandParameter="{Binding Path=Id}" Margin="0">
                                 <Image>
                                     <Image.Style>
                                         <Style TargetType="Image" BasedOn="{StaticResource TaskActionButtonImageStyle}">
@@ -2759,7 +2781,7 @@
                                     </Image.Style>
                                 </Image>
                             </Button>
-                            <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="15" Grid.RowSpan="5" BorderThickness="1" BorderBrush="{StaticResource StandardBorderBrush}"/>
+                            <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="19" Grid.RowSpan="5" BorderThickness="1" BorderBrush="{StaticResource StandardBorderBrush}"/>
                         </Grid>
                     </DataTemplate>
                 </TabItem.Resources>

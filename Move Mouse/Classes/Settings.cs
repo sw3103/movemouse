@@ -1,5 +1,4 @@
 ﻿using ellabi.Actions;
-using ellabi.Annotations;
 using ellabi.Schedules;
 using Serilog.Events;
 using System;
@@ -21,6 +20,7 @@ namespace ellabi.Classes
         private bool? _autoPause;
         private bool? _autoResume;
         private int? _autoResumeSeconds;
+        private bool? _topmost;
         private bool? _topmostWhenRunning;
         private bool? _hideFromTaskbar;
         private bool? _hideMainWindow;
@@ -171,6 +171,20 @@ namespace ellabi.Classes
         //        OnPropertyChanged();
         //    }
         //}
+
+        public bool Topmost
+        {
+            get
+            {
+                if (_topmost == null) _topmost = false;
+                return _topmost.Value;
+            }
+            set
+            {
+                _topmost = value;
+                OnPropertyChanged();
+            }
+        }
 
         public bool TopmostWhenRunning
         {
@@ -673,7 +687,6 @@ namespace ellabi.Classes
             if (e?.PropertyName != "IsValid") OnPropertyChanged(nameof(Blackouts));
         }
 
-        [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             try

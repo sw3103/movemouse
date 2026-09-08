@@ -1,7 +1,8 @@
-﻿using ellabi.Annotations;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Xml.Serialization;
 
@@ -21,6 +22,10 @@ namespace ellabi.Classes
         private TimeSpan _time;
         private TimeSpan _duration;
         private bool _isEnabled;
+        private int _delay;
+        private TimeSpan _randomDelay;
+        private DateTime _randomDelayRecycled = DateTime.MinValue;
+        private readonly TimeSpan _maxRandomDelayAge = TimeSpan.FromHours(1);
 
         public bool IsValid => (Monday || Tuesday || Wednesday || Thursday || Friday || Saturday || Sunday);
 
@@ -238,6 +243,58 @@ namespace ellabi.Classes
             }
         }
 
+        public int Delay
+        {
+            get => _delay;
+            set
+            {
+                _delay = value;
+                _randomDelayRecycled = DateTime.MinValue;
+                OnPropertyChanged();
+            }
+        }
+
+        [XmlIgnore]
+        public TimeSpan RandomDelay
+        {
+            get
+            {
+                if (Delay > 0)
+                {
+                    if (_randomDelayRecycled.Add(_maxRandomDelayAge) < DateTime.Now)
+                    {
+                        _randomDelay = TimeSpan.FromSeconds(new Random().Next(0, Delay));
+                        Debug.WriteLine(_randomDelay);
+                        _randomDelayRecycled = DateTime.Now;
+                    }
+
+                    return _randomDelay;
+                }
+
+                return TimeSpan.FromSeconds(0);
+            }
+        }
+
+        [XmlIgnore]
+        public bool IsActive
+        {
+            get
+            {
+                return IsEnabled &&
+                    (
+                        (
+                            EnabledDays.Any(day => day.Equals(DateTime.Now.AddDays(-1).DayOfWeek)) &&
+                            (new DateTime(DateTime.Now.AddDays(-1).Year, DateTime.Now.AddDays(-1).Month, DateTime.Now.AddDays(-1).Day, Time.Hours, Time.Minutes, Time.Seconds).Add(RandomDelay).Add(Duration) > DateTime.Now)
+                        ) ||
+                        (
+                            EnabledDays.Any(day => day.Equals(DateTime.Now.DayOfWeek)) &&
+                            (Time.Add(RandomDelay) < DateTime.Now.TimeOfDay) &&
+                            (Time.Add(RandomDelay).Add(Duration) > DateTime.Now.TimeOfDay)
+                        )
+                    );
+            }
+        }
+
         public Blackout()
         {
             try
@@ -260,7 +317,6 @@ namespace ellabi.Classes
             }
         }
 
-        [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             try

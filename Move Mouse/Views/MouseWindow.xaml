@@ -22,6 +22,11 @@
             <Setter Property="Width" Value="50"/>
             <Setter Property="Margin" Value="-300,0,0,0"/>
             <Setter Property="Opacity" Value="0.0"/>
+            <Setter Property="Background">
+                <Setter.Value>
+                    <SolidColorBrush Color="White" Opacity="0.01"/>
+                </Setter.Value>
+            </Setter>
             <Setter Property="RenderTransform">
                 <Setter.Value>
                     <RotateTransform CenterX="175" CenterY="25"/>
@@ -245,6 +250,13 @@
                     </MultiDataTrigger.Conditions>
                     <Setter Property="Topmost" Value="True"/>
                 </MultiDataTrigger>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding Path=SettingsVm.Settings.HideMainWindow, NotifyOnTargetUpdated=True}" Value="False"/>
+                        <Condition Binding="{Binding Path=SettingsVm.Settings.Topmost, NotifyOnTargetUpdated=True}" Value="True"/>
+                    </MultiDataTrigger.Conditions>
+                    <Setter Property="Topmost" Value="True"/>
+                </MultiDataTrigger>
                 <!--todo This is slow for some reason-->
                 <MultiDataTrigger>
                     <MultiDataTrigger.Conditions>
@@ -287,7 +299,7 @@
     <Grid>
         <Grid Width="200" Height="200" MouseEnter="MouseGrid_OnMouseEnter" MouseLeave="UIElement_OnMouseLeave">
             <!--IconSource="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=Icon}"-->
-            <tb:TaskbarIcon Name="MouseTaskbarIcon" PopupActivation="RightClick" DoubleClickCommand="{Binding Path=StartStopToggleCommand, NotifyOnTargetUpdated=True}" LeftClickCommand="{Binding Path=ShowMoveMouseCommand}">
+            <tb:TaskbarIcon Name="MouseTaskbarIcon" PopupActivation="RightClick" DoubleClickCommand="{Binding Path=StartStopToggleCommand, NotifyOnTargetUpdated=True}" LeftClickCommand="{Binding Path=ShowMoveMouseCommand}" ToolTipText="{Binding Path=CurrentState, NotifyOnTargetUpdated=True}">
                 <tb:TaskbarIcon.Style>
                     <Style TargetType="tb:TaskbarIcon">
                         <Setter Property="Visibility" Value="Visible"/>

@@ -1,6 +1,5 @@
 ﻿using AudioSwitcher.AudioApi.CoreAudio;
 using ellabi.Actions;
-using ellabi.Annotations;
 using ellabi.Jobs;
 using ellabi.Schedules;
 using ellabi.Utilities;
@@ -951,7 +950,7 @@ namespace ellabi.ViewModels
 
             try
             {
-                blackoutIsActive = (SettingsVm.Settings.Blackouts != null) && SettingsVm.Settings.Blackouts.Any(blackout => blackout.IsEnabled && ((blackout.EnabledDays.Any(day => day.Equals(DateTime.Now.AddDays(-1).DayOfWeek)) && (new DateTime(DateTime.Now.AddDays(-1).Year, DateTime.Now.AddDays(-1).Month, DateTime.Now.AddDays(-1).Day, blackout.Time.Hours, blackout.Time.Minutes, blackout.Time.Seconds).Add(blackout.Duration) > DateTime.Now)) || (blackout.EnabledDays.Any(day => day.Equals(DateTime.Now.DayOfWeek)) && (blackout.Time < DateTime.Now.TimeOfDay) && (blackout.Time.Add(blackout.Duration) > DateTime.Now.TimeOfDay))));
+                blackoutIsActive = (SettingsVm.Settings.Blackouts != null) && SettingsVm.Settings.Blackouts.Any(blackout => blackout.IsActive);
             }
             catch (Exception ex)
             {
@@ -1069,7 +1068,6 @@ namespace ellabi.ViewModels
             }
         }
 
-        [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             try

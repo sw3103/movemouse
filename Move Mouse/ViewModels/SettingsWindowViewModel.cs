@@ -1,5 +1,4 @@
 ﻿using ellabi.Actions;
-using ellabi.Annotations;
 using ellabi.Classes;
 using ellabi.Schedules;
 using ellabi.Utilities;
@@ -649,7 +648,6 @@ namespace ellabi.ViewModels
         //    OnPropertyChanged("Activities");
         //}
 
-        [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             try

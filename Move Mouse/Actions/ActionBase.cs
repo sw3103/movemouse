@@ -1,5 +1,4 @@
-﻿using ellabi.Annotations;
-using ellabi.Utilities;
+﻿using ellabi.Utilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -130,7 +129,6 @@ namespace ellabi.Actions
 
         public abstract override string ToString();
 
-        [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             try
