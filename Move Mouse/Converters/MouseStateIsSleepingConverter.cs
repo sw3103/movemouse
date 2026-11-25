@@ -1,7 +1,7 @@
-﻿using ellabi.ViewModels;
+using ellabi.ViewModels;
 using System;
 using System.Globalization;
-using System.Windows.Data;
+using Avalonia.Data.Converters;
 
 namespace ellabi.Converters
 {
@@ -9,15 +9,10 @@ namespace ellabi.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            try
+            if (value is MouseWindowViewModel.MouseState state)
             {
-                return (value != null) && Enum.TryParse(value.ToString(), true, out MouseWindowViewModel.MouseState state) && state.Equals(MouseWindowViewModel.MouseState.Sleeping);
+                return state == MouseWindowViewModel.MouseState.Sleeping;
             }
-            catch (Exception ex)
-            {
-                StaticCode.Logger?.Here().Error(ex.Message);
-            }
-
             return false;
         }
 

@@ -1,0 +1,1083 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:converters="clr-namespace:ellabi.Converters"
+        xmlns:actions="clr-namespace:ellabi.Actions"
+        xmlns:schedules="clr-namespace:ellabi.Schedules"
+        xmlns:classes="clr-namespace:ellabi.Classes"
+        xmlns:controls="clr-namespace:ellabi.Controls"
+        x:Class="ellabi.Views.SettingsWindow"
+        Title="Move Mouse Settings"
+        Width="720"
+        Height="500"
+        Icon="avares://MoveMouse/Resources/Mouse.ico"
+        WindowStartupLocation="CenterScreen"
+        CanResize="False"
+        SystemDecorations="None"
+        Background="Transparent"
+        PointerPressed="SettingsWindow_OnPointerPressed"
+        Opened="SettingsWindow_OnOpened"
+        Closing="SettingsWindow_Closing">
+    <Window.Resources>
+        <converters:DoubleDividedByTwoConverter x:Key="DoubleDividedByTwoConverter"/>
+        <converters:StartupTaskStateToBoolConverter x:Key="StartupTaskStateToBoolConverter"/>
+        <converters:CursorDirectionToStealthModeBoolConverter x:Key="CursorDirectionToStealthModeBoolConverter"/>
+        <converters:BoolToIndexConverter x:Key="BoolToIndexConverter"/>
+        <converters:VirtualKeyToNameConverter x:Key="VirtualKeyToNameConverter"/>
+        <converters:VirtualKeyToDescriptionConverter x:Key="VirtualKeyToDescriptionConverter"/>
+        <converters:EnumEqualsConverter x:Key="EnumEqualsConverter"/>
+        <converters:EnumNotEqualsConverter x:Key="EnumNotEqualsConverter"/>
+        <converters:ActionDisplayNameConverter x:Key="ActionDisplayNameConverter"/>
+        <converters:ActionForegroundConverter x:Key="ActionForegroundConverter"/>
+        <converters:BoolAndNotSecondConverter x:Key="BoolAndNotSecondConverter"/>
+        <converters:NotBoolAndNotBoolConverter x:Key="NotBoolAndNotBoolConverter"/>
+        <converters:IntervalPluralUnitConverter x:Key="IntervalPluralUnitConverter"/>
+        <converters:SingularPluralSuffixConverter x:Key="SingularPluralSuffixConverter"/>
+        <converters:AutoPauseLabelConverter x:Key="AutoPauseLabelConverter"/>
+        <converters:DistanceLabelConverter x:Key="DistanceLabelConverter"/>
+        <converters:SleepDurationLabelConverter x:Key="SleepDurationLabelConverter"/>
+        <converters:MoveSpeedCustomEnabledConverter x:Key="MoveSpeedCustomEnabledConverter"/>
+        <converters:MoveDirectionNotNoneEnabledConverter x:Key="MoveDirectionNotNoneEnabledConverter"/>
+        <converters:AdvancedScheduleInvalidBorderConverter x:Key="AdvancedScheduleInvalidBorderConverter"/>
+        <converters:TrackButtonTextConverter x:Key="TrackButtonTextConverter"/>
+        <converters:DecimalToNumberConverter x:Key="DecimalToNumberConverter"/>
+    </Window.Resources>
+
+    <Window.Styles>
+        <Style Selector="TabItem">
+            <Setter Property="MinHeight" Value="30"/>
+            <Setter Property="Padding" Value="6,4"/>
+            <Setter Property="Foreground" Value="{StaticResource StandardLightTextSolidColorBrush}"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        <Style Selector="TabItem:selected">
+            <Setter Property="Foreground" Value="{StaticResource StandardLightControlSolidColorBrush}"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+        <Style Selector="TabItem:pointerover">
+            <Setter Property="Foreground" Value="{StaticResource StandardLightControlSolidColorBrush}"/>
+        </Style>
+        <Style Selector="TextBlock.Label">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="{StaticResource StandardLightTextSolidColorBrush}"/>
+            <Setter Property="FontSize" Value="12"/>
+        </Style>
+        <Style Selector="TextBlock.HyperLink">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="{StaticResource StandardLightTextSolidColorBrush}"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        <Style Selector="TextBlock.HyperLink:pointerover">
+            <Setter Property="Foreground" Value="{StaticResource StandardLightControlSolidColorBrush}"/>
+        </Style>
+        <Style Selector="StackPanel.OptionRow">
+            <Setter Property="Orientation" Value="Horizontal"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+            <Setter Property="MinHeight" Value="24"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Spacing" Value="6"/>
+        </Style>
+        <Style Selector="Button.TaskAction">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Margin" Value="0,4,0,4"/>
+            <Setter Property="Padding" Value="2"/>
+            <Setter Property="Width" Value="28"/>
+            <Setter Property="Height" Value="28"/>
+        </Style>
+    </Window.Styles>
+
+    <Grid Background="{StaticResource StandardWindowBackground}">
+        <TabControl Name="MainTabControl"
+                    Background="Transparent"
+                    Margin="20"
+                    TabStripPlacement="Right"
+                    BorderBrush="{StaticResource StandardBorderBrush}"
+                    BorderThickness="3">
+
+            <!-- TAB 1: ACTIONS -->
+            <TabItem AutomationProperties.Name="Actions">
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal" Spacing="6" Margin="6,0,0,0">
+                        <Image Source="avares://MoveMouse/Resources/Actions_Light_64x64.png" Height="16" Width="16"/>
+                        <TextBlock Text="Actions" VerticalAlignment="Center" FontSize="12"/>
+                    </StackPanel>
+                </TabItem.Header>
+                <Grid Margin="10">
+                    <Grid ColumnDefinitions="200,20,*">
+                        <!-- Action List & Buttons -->
+                        <Grid Grid.Column="0" RowDefinitions="*,10,Auto">
+                            <ListBox Grid.Row="0"
+                                     ItemsSource="{Binding Settings.Actions}"
+                                     SelectedItem="{Binding SelectedAction, Mode=TwoWay}"
+                                     SelectionMode="Single">
+                                <ListBox.DataTemplates>
+                                    <DataTemplate DataType="actions:MoveMouseCursorAction">
+                                        <StackPanel Orientation="Horizontal" Spacing="6">
+                                            <Image Source="avares://MoveMouse/Resources/MoveMouseCursorAction_Light_128x128.png" Width="20" Height="20"/>
+                                            <TextBlock VerticalAlignment="Center" Foreground="{Binding IsEnabled, Converter={StaticResource ActionForegroundConverter}}">
+                                                <TextBlock.Text>
+                                                    <MultiBinding Converter="{StaticResource ActionDisplayNameConverter}" ConverterParameter="Move Mouse Cursor">
+                                                        <Binding Path="Name"/>
+                                                    </MultiBinding>
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                    <DataTemplate DataType="actions:ClickMouseAction">
+                                        <StackPanel Orientation="Horizontal" Spacing="6">
+                                            <Image Source="avares://MoveMouse/Resources/ClickMouseAction_Light_128x128.png" Width="20" Height="20"/>
+                                            <TextBlock VerticalAlignment="Center" Foreground="{Binding IsEnabled, Converter={StaticResource ActionForegroundConverter}}">
+                                                <TextBlock.Text>
+                                                    <MultiBinding Converter="{StaticResource ActionDisplayNameConverter}" ConverterParameter="Click Mouse Button">
+                                                        <Binding Path="Name"/>
+                                                    </MultiBinding>
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                    <DataTemplate DataType="actions:ScrollMouseAction">
+                                        <StackPanel Orientation="Horizontal" Spacing="6">
+                                            <Image Source="avares://MoveMouse/Resources/ScrollMouseWheelAction_Light_128x128.png" Width="20" Height="20"/>
+                                            <TextBlock VerticalAlignment="Center" Foreground="{Binding IsEnabled, Converter={StaticResource ActionForegroundConverter}}">
+                                                <TextBlock.Text>
+                                                    <MultiBinding Converter="{StaticResource ActionDisplayNameConverter}" ConverterParameter="Scroll Mouse Wheel">
+                                                        <Binding Path="Name"/>
+                                                    </MultiBinding>
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                    <DataTemplate DataType="actions:PositionMouseCursorAction">
+                                        <StackPanel Orientation="Horizontal" Spacing="6">
+                                            <Image Source="avares://MoveMouse/Resources/PositionMouseCursorAction_Light_128x128.png" Width="20" Height="20"/>
+                                            <TextBlock VerticalAlignment="Center" Foreground="{Binding IsEnabled, Converter={StaticResource ActionForegroundConverter}}">
+                                                <TextBlock.Text>
+                                                    <MultiBinding Converter="{StaticResource ActionDisplayNameConverter}" ConverterParameter="Position Mouse Cursor">
+                                                        <Binding Path="Name"/>
+                                                    </MultiBinding>
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                    <DataTemplate DataType="actions:ActivateApplicationAction">
+                                        <StackPanel Orientation="Horizontal" Spacing="6">
+                                            <Image Source="avares://MoveMouse/Resources/ActivateWindowAction_Light_128x128.png" Width="20" Height="20"/>
+                                            <TextBlock VerticalAlignment="Center" Foreground="{Binding IsEnabled, Converter={StaticResource ActionForegroundConverter}}">
+                                                <TextBlock.Text>
+                                                    <MultiBinding Converter="{StaticResource ActionDisplayNameConverter}" ConverterParameter="Activate Application">
+                                                        <Binding Path="Name"/>
+                                                    </MultiBinding>
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                    <DataTemplate DataType="actions:CommandAction">
+                                        <StackPanel Orientation="Horizontal" Spacing="6">
+                                            <Image Source="avares://MoveMouse/Resources/CommandAction_Light_128x128.png" Width="20" Height="20"/>
+                                            <TextBlock VerticalAlignment="Center" Foreground="{Binding IsEnabled, Converter={StaticResource ActionForegroundConverter}}">
+                                                <TextBlock.Text>
+                                                    <MultiBinding Converter="{StaticResource ActionDisplayNameConverter}" ConverterParameter="Run Command">
+                                                        <Binding Path="Name"/>
+                                                    </MultiBinding>
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                    <DataTemplate DataType="actions:ScriptAction">
+                                        <StackPanel Orientation="Horizontal" Spacing="6">
+                                            <Image Source="avares://MoveMouse/Resources/ScriptAction_Light_128x128.png" Width="20" Height="20"/>
+                                            <TextBlock VerticalAlignment="Center" Foreground="{Binding IsEnabled, Converter={StaticResource ActionForegroundConverter}}">
+                                                <TextBlock.Text>
+                                                    <MultiBinding Converter="{StaticResource ActionDisplayNameConverter}" ConverterParameter="Run Script">
+                                                        <Binding Path="Name"/>
+                                                    </MultiBinding>
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                    <DataTemplate DataType="actions:SleepAction">
+                                        <StackPanel Orientation="Horizontal" Spacing="6">
+                                            <Image Source="avares://MoveMouse/Resources/SleepAction_Light_128x128.png" Width="20" Height="20"/>
+                                            <TextBlock VerticalAlignment="Center" Foreground="{Binding IsEnabled, Converter={StaticResource ActionForegroundConverter}}">
+                                                <TextBlock.Text>
+                                                    <MultiBinding Converter="{StaticResource ActionDisplayNameConverter}" ConverterParameter="Sleep">
+                                                        <Binding Path="Name"/>
+                                                    </MultiBinding>
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                    <DataTemplate DataType="actions:KeystrokeAction">
+                                        <StackPanel Orientation="Horizontal" Spacing="6">
+                                            <Image Source="avares://MoveMouse/Resources/KeystrokeAction_Light_128x128.png" Width="20" Height="20"/>
+                                            <TextBlock VerticalAlignment="Center" Foreground="{Binding IsEnabled, Converter={StaticResource ActionForegroundConverter}}">
+                                                <TextBlock.Text>
+                                                    <MultiBinding Converter="{StaticResource ActionDisplayNameConverter}" ConverterParameter="Send Keystrokes">
+                                                        <Binding Path="Name"/>
+                                                    </MultiBinding>
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListBox.DataTemplates>
+                            </ListBox>
+
+                            <StackPanel Grid.Row="2" HorizontalAlignment="Center" Orientation="Horizontal" Spacing="6">
+                                <Button Name="AddActionButton" Classes="NoChrome TaskAction" AutomationProperties.Name="Add action" Click="AddActionButton_OnClick">
+                                    <Button.ContextMenu>
+                                        <ContextMenu Name="AddActionContextMenu">
+                                            <MenuItem Header="Move Mouse Cursor" Click="AddMoveMouseCursorAction_OnClick">
+                                                <MenuItem.Icon><Image Source="avares://MoveMouse/Resources/MoveMouseCursorAction_Light_128x128.png" Width="16" Height="16"/></MenuItem.Icon>
+                                            </MenuItem>
+                                            <MenuItem Header="Click Mouse Button" Click="AddClickMouseAction_OnClick">
+                                                <MenuItem.Icon><Image Source="avares://MoveMouse/Resources/ClickMouseAction_Light_128x128.png" Width="16" Height="16"/></MenuItem.Icon>
+                                            </MenuItem>
+                                            <MenuItem Header="Scroll Mouse Wheel" Click="AddScrollMouseAction_OnClick">
+                                                <MenuItem.Icon><Image Source="avares://MoveMouse/Resources/ScrollMouseWheelAction_Light_128x128.png" Width="16" Height="16"/></MenuItem.Icon>
+                                            </MenuItem>
+                                            <MenuItem Header="Position Mouse Cursor" Click="AddPositionMouseCursorAction_OnClick">
+                                                <MenuItem.Icon><Image Source="avares://MoveMouse/Resources/PositionMouseCursorAction_Light_128x128.png" Width="16" Height="16"/></MenuItem.Icon>
+                                            </MenuItem>
+                                            <MenuItem Header="Send Keystrokes" Click="AddKeystrokeAction_OnClick">
+                                                <MenuItem.Icon><Image Source="avares://MoveMouse/Resources/KeystrokeAction_Light_128x128.png" Width="16" Height="16"/></MenuItem.Icon>
+                                            </MenuItem>
+                                            <MenuItem Header="Activate Application" Click="ActivateApplicationAction_OnClick">
+                                                <MenuItem.Icon><Image Source="avares://MoveMouse/Resources/ActivateWindowAction_Light_128x128.png" Width="16" Height="16"/></MenuItem.Icon>
+                                            </MenuItem>
+                                            <MenuItem Header="Run Command" Click="AddCommandAction_OnClick">
+                                                <MenuItem.Icon><Image Source="avares://MoveMouse/Resources/CommandAction_Light_128x128.png" Width="16" Height="16"/></MenuItem.Icon>
+                                            </MenuItem>
+                                            <MenuItem Header="Script (.sh / .py / .ps1)" Click="AddScriptAction_OnClick">
+                                                <MenuItem.Icon><Image Source="avares://MoveMouse/Resources/ScriptAction_Light_128x128.png" Width="16" Height="16"/></MenuItem.Icon>
+                                            </MenuItem>
+                                            <MenuItem Header="Sleep" Click="AddSleepAction_OnClick">
+                                                <MenuItem.Icon><Image Source="avares://MoveMouse/Resources/SleepAction_Light_128x128.png" Width="16" Height="16"/></MenuItem.Icon>
+                                            </MenuItem>
+                                        </ContextMenu>
+                                    </Button.ContextMenu>
+                                    <Image Source="avares://MoveMouse/Resources/ActionsAdd_Light_64x64.png" Width="24" Height="24"/>
+                                </Button>
+                                <Button Classes="NoChrome TaskAction" AutomationProperties.Name="Copy selected action" Command="{Binding CopySelectedActionCommand}">
+                                    <Image Source="avares://MoveMouse/Resources/Copy_Light_64x64.png" Width="24" Height="24"/>
+                                </Button>
+                                <Button Classes="NoChrome TaskAction" AutomationProperties.Name="Remove selected action" Command="{Binding RemoveSelectedActionCommand}">
+                                    <Image Source="avares://MoveMouse/Resources/ActionsRemove_Light_64x64.png" Width="24" Height="24"/>
+                                </Button>
+                                <Button Classes="NoChrome TaskAction" AutomationProperties.Name="Move action up" Command="{Binding MoveUpSelectedActionCommand}">
+                                    <Image Source="avares://MoveMouse/Resources/UpArrow_Light_64x64.png" Width="24" Height="24"/>
+                                </Button>
+                                <Button Classes="NoChrome TaskAction" AutomationProperties.Name="Move action down" Command="{Binding MoveDownSelectedActionCommand}">
+                                    <Image Source="avares://MoveMouse/Resources/DownArrow_Light_64x64.png" Width="24" Height="24"/>
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Selected Action Properties -->
+                        <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto">
+                            <ContentControl Content="{Binding SelectedAction}">
+                                <ContentControl.DataTemplates>
+
+                                    <!-- MoveMouseCursorAction -->
+                                    <DataTemplate DataType="actions:MoveMouseCursorAction">
+                                        <StackPanel Orientation="Vertical">
+                                            <Grid ColumnDefinitions="60,*" RowDefinitions="22,10">
+                                                <TextBlock Grid.Column="0" Text="Name" Classes="Label"/>
+                                                <TextBox AutomationProperties.Name="Optional action name" Grid.Column="1" Text="{Binding Name}" Watermark="Optional" IsEnabled="{Binding IsEnabled}"/>
+                                            </Grid>
+                                            <Grid ColumnDefinitions="60,*" RowDefinitions="22,10">
+                                                <TextBlock Grid.Column="0" Text="Random" Classes="Label"/>
+                                                <ToggleSwitch Classes="CompactSwitch" Grid.Column="1" IsChecked="{Binding Random, Mode=TwoWay}" IsEnabled="{Binding IsEnabled}"/>
+                                            </Grid>
+                                            <Grid ColumnDefinitions="60,*" RowDefinitions="22,10">
+                                                <TextBlock Grid.Column="0" Text="{Binding Random, Converter={StaticResource DistanceLabelConverter}}" Classes="Label"/>
+                                                <NumericUpDown Grid.Column="1" Width="75" Value="{Binding Distance, Converter={StaticResource DecimalToNumberConverter}}" Increment="1" Minimum="1" Maximum="9999">
+                                                    <NumericUpDown.IsEnabled>
+                                                        <MultiBinding Converter="{StaticResource MoveDirectionNotNoneEnabledConverter}">
+                                                            <Binding Path="IsEnabled"/>
+                                                            <Binding Path="Direction"/>
+                                                        </MultiBinding>
+                                                    </NumericUpDown.IsEnabled>
+                                                </NumericUpDown>
+                                            </Grid>
+                                            <Grid ColumnDefinitions="60,*" RowDefinitions="22,10" IsVisible="{Binding Random}">
+                                                <TextBlock Grid.Column="0" Text="Upper" Classes="Label"/>
+                                                <NumericUpDown Grid.Column="1" Width="75" Value="{Binding UpperDistance, Converter={StaticResource DecimalToNumberConverter}}" Increment="1" Minimum="1" Maximum="9999">
+                                                    <NumericUpDown.IsEnabled>
+                                                        <MultiBinding Converter="{StaticResource MoveDirectionNotNoneEnabledConverter}">
+                                                            <Binding Path="IsEnabled"/>
+                                                            <Binding Path="Direction"/>
+                                                        </MultiBinding>
+                                                    </NumericUpDown.IsEnabled>
+                                                </NumericUpDown>
+                                            </Grid>
+                                            <Grid ColumnDefinitions="60,*" RowDefinitions="22,10">
+                                                <TextBlock Grid.Column="0" Text="Direction" Classes="Label"/>
+                                                <ComboBox AutomationProperties.Name="Cursor direction" Grid.Column="1" HorizontalAlignment="Stretch" ItemsSource="{Binding CursorDirectionValues}" SelectedItem="{Binding Direction}" IsEnabled="{Binding IsEnabled}"/>
+                                            </Grid>
+                                            <Grid ColumnDefinitions="60,Auto,10,Auto" RowDefinitions="22,10">
+                                                <TextBlock Grid.Column="0" Text="Stealth" Classes="Label"/>
+                                                <ToggleSwitch Classes="CompactSwitch" Grid.Column="1" IsChecked="{Binding Direction, Mode=TwoWay, Converter={StaticResource CursorDirectionToStealthModeBoolConverter}}" IsEnabled="{Binding IsEnabled}"/>
+                                                <Image Grid.Column="3" Source="avares://MoveMouse/Resources/Help_Dark_64x64.png" Width="20" Height="20" ToolTip.Tip="Mouse cursor movement is not visible."/>
+                                            </Grid>
+                                            <Grid ColumnDefinitions="60,Auto,10,Auto" RowDefinitions="22,10">
+                                                <TextBlock Grid.Column="0" Text="Abortable" Classes="Label"/>
+                                                <ToggleSwitch Classes="CompactSwitch" Grid.Column="1" IsChecked="{Binding AbortIfUserActivityDetected, Mode=TwoWay}" IsEnabled="{Binding IsEnabled}"/>
+                                                <Image Grid.Column="3" Source="avares://MoveMouse/Resources/Help_Dark_64x64.png" Width="20" Height="20" ToolTip.Tip="Abort the action if user activity detected."/>
+                                            </Grid>
+                                            <Grid ColumnDefinitions="60,*,10,Auto,10,Auto" RowDefinitions="22,10">
+                                                <TextBlock Grid.Column="0" Text="Speed" Classes="Label"/>
+                                                <ComboBox AutomationProperties.Name="Speed" Grid.Column="1" HorizontalAlignment="Stretch" SelectedItem="{Binding Speed}" ItemsSource="{Binding CursorSpeedValues}">
+                                                    <ComboBox.IsEnabled>
+                                                        <MultiBinding Converter="{StaticResource MoveDirectionNotNoneEnabledConverter}">
+                                                            <Binding Path="IsEnabled"/>
+                                                            <Binding Path="Direction"/>
+                                                        </MultiBinding>
+                                                    </ComboBox.IsEnabled>
+                                                </ComboBox>
+                                                <NumericUpDown Grid.Column="3" Width="75" Value="{Binding Delay, Converter={StaticResource DecimalToNumberConverter}}" Increment="1" Minimum="0" Maximum="5000">
+                                                    <NumericUpDown.IsEnabled>
+                                                        <MultiBinding Converter="{StaticResource MoveSpeedCustomEnabledConverter}">
+                                                            <Binding Path="Speed"/>
+                                                            <Binding Path="IsEnabled"/>
+                                                            <Binding Path="Direction"/>
+                                                        </MultiBinding>
+                                                    </NumericUpDown.IsEnabled>
+                                                </NumericUpDown>
+                                                <Image Grid.Column="5" Source="avares://MoveMouse/Resources/Help_Dark_64x64.png" Width="20" Height="20" ToolTip.Tip="Interval in milliseconds between each pixel shift.&#10;&#10;The higher the interval - the slower the cursor will move."/>
+                                            </Grid>
+                                            <controls:ActionFooterControl ShowTestButton="True"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+
+                                    <!-- ClickMouseAction -->
+                                    <DataTemplate DataType="actions:ClickMouseAction">
+                                        <StackPanel Orientation="Vertical">
+                                            <Grid ColumnDefinitions="60,*" RowDefinitions="22,10">
+                                                <TextBlock Grid.Column="0" Text="Name" Classes="Label"/>
+                                                <TextBox AutomationProperties.Name="Optional action name" Grid.Column="1" Text="{Binding Name}" Watermark="Optional" IsEnabled="{Binding IsEnabled}"/>
+                                            </Grid>
+                                            <Grid ColumnDefinitions="60,*" RowDefinitions="22,10">
+                                                <TextBlock Grid.Column="0" Text="Button" Classes="Label"/>
+                                                <ComboBox AutomationProperties.Name="Mouse button" Grid.Column="1" HorizontalAlignment="Stretch" SelectedItem="{Binding Button}" ItemsSource="{Binding MouseButtonValues}" IsEnabled="{Binding IsEnabled}"/>
+                                            </Grid>
+                                            <Grid ColumnDefinitions="60,*" RowDefinitions="22,10">
+                                                <TextBlock Grid.Column="0" Text="Hold" Classes="Label"/>
+                                                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6">
+                                                    <ToggleSwitch Classes="CompactSwitch" IsChecked="{Binding Hold, Mode=TwoWay}" IsEnabled="{Binding IsEnabled}"/>
+                                                    <TextBlock Text="for" Classes="Label"/>
+                                                    <NumericUpDown Width="80" FormatString="0.0" Increment="0.1" Minimum="0.1" Maximum="9999" Value="{Binding HoldInterval, Converter={StaticResource DecimalToNumberConverter}}">
+                                                        <NumericUpDown.IsEnabled>
+                                                            <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                                                <Binding Path="Hold"/>
+                                                                <Binding Path="IsEnabled"/>
+                                                            </MultiBinding>
+                                                        </NumericUpDown.IsEnabled>
+                                                    </NumericUpDown>
+                                                    <TextBlock Text="seconds" Classes="Label"/>
+                                                </StackPanel>
+                                            </Grid>
+                                            <controls:ActionFooterControl ShowTestButton="False"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+
+                                    <!-- ScrollMouseAction -->
+                                    <DataTemplate DataType="actions:ScrollMouseAction">
+                                        <StackPanel Orientation="Vertical">
+                                            <Grid ColumnDefinitions="60,*" RowDefinitions="22,10">
+                                                <TextBlock Grid.Column="0" Text="Name" Classes="Label"/>
+                                                <TextBox AutomationProperties.Name="Optional action name" Grid.Column="1" Text="{Binding Name}" Watermark="Optional" IsEnabled="{Binding IsEnabled}"/>
+                                            </Grid>
+                                            <Grid ColumnDefinitions="60,*" RowDefinitions="22,10">
+                                                <TextBlock Grid.Column="0" Text="Random" Classes="Label"/>
+                                                <ToggleSwitch Classes="CompactSwitch" Grid.Column="1" IsChecked="{Binding Random, Mode=TwoWay}" IsEnabled="{Binding IsEnabled}"/>
+                                            </Grid>
+                                            <Grid ColumnDefinitions="60,*" RowDefinitions="22,10">
+                                                <TextBlock Grid.Column="0" Text="{Binding Random, Converter={StaticResource DistanceLabelConverter}}" Classes="Label"/>
+                                                <NumericUpDown Grid.Column="1" Width="75" Value="{Binding Distance, Converter={StaticResource DecimalToNumberConverter}}" Increment="1" Minimum="1" Maximum="9999" IsEnabled="{Binding IsEnabled}"/>
+                                            </Grid>
+                                            <Grid ColumnDefinitions="60,*" RowDefinitions="22,10" IsVisible="{Binding Random}">
+                                                <TextBlock Grid.Column="0" Text="Upper" Classes="Label"/>
+                                                <NumericUpDown Grid.Column="1" Width="75" Value="{Binding UpperDistance, Converter={StaticResource DecimalToNumberConverter}}" Increment="1" Minimum="1" Maximum="9999" IsEnabled="{Binding IsEnabled}"/>
+                                            </Grid>
+                                            <Grid ColumnDefinitions="60,*" RowDefinitions="22,10">
+                                                <TextBlock Grid.Column="0" Text="Direction" Classes="Label"/>
+                                                <ComboBox AutomationProperties.Name="Wheel direction" Grid.Column="1" HorizontalAlignment="Stretch" ItemsSource="{Binding WheelDirectionValues}" SelectedItem="{Binding Direction}" IsEnabled="{Binding IsEnabled}"/>
+                                            </Grid>
+                                            <controls:ActionFooterControl ShowTestButton="False"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+
+                                    <!-- PositionMouseCursorAction -->
+                                    <DataTemplate DataType="actions:PositionMouseCursorAction">
+                                        <StackPanel Orientation="Vertical">
+                                            <Grid ColumnDefinitions="60,*" RowDefinitions="22,10">
+                                                <TextBlock Grid.Column="0" Text="Name" Classes="Label"/>
+                                                <TextBox AutomationProperties.Name="Optional action name" Grid.Column="1" Text="{Binding Name}" Watermark="Optional" IsEnabled="{Binding IsEnabled}"/>
+                                            </Grid>
+                                            <Grid ColumnDefinitions="60,*" RowDefinitions="22,10">
+                                                <TextBlock Grid.Column="0" Text="Position" Classes="Label"/>
+                                                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6">
+                                                    <TextBlock Text="X" Classes="Label" IsEnabled="{Binding IsEnabled}"/>
+                                                    <NumericUpDown Width="75" Value="{Binding X, Converter={StaticResource DecimalToNumberConverter}}" Increment="1" Minimum="-10000" Maximum="20000" IsEnabled="{Binding IsEnabled}"/>
+                                                    <TextBlock Text="Y" Classes="Label" IsEnabled="{Binding IsEnabled}"/>
+                                                    <NumericUpDown Width="75" Value="{Binding Y, Converter={StaticResource DecimalToNumberConverter}}" Increment="1" Minimum="-10000" Maximum="20000" IsEnabled="{Binding IsEnabled}"/>
+                                                </StackPanel>
+                                            </Grid>
+                                            <controls:ActionFooterControl ShowTestButton="False"/>
+                                            <Grid ColumnDefinitions="60,*" RowDefinitions="22,10">
+                                                <Button AutomationProperties.Name="Track cursor" Grid.Column="1" HorizontalAlignment="Left" Command="{Binding StartCursorTrackingCommand}" IsEnabled="{Binding IsEnabled}">
+                                                    <Button.Content>
+                                                        <MultiBinding Converter="{StaticResource TrackButtonTextConverter}">
+                                                            <Binding Path="CursorTrackingEnabled"/>
+                                                            <Binding Path="CursorTrackingTimeRemaining"/>
+                                                        </MultiBinding>
+                                                    </Button.Content>
+                                                </Button>
+                                            </Grid>
+                                            <Grid ColumnDefinitions="60,*" RowDefinitions="22,10">
+                                                <Button AutomationProperties.Name="Test action" Grid.Column="1" Content="Test" HorizontalAlignment="Left" Command="{Binding ExecuteCommand}" IsEnabled="{Binding IsEnabled}"/>
+                                            </Grid>
+                                        </StackPanel>
+                                    </DataTemplate>
+
+                                    <!-- KeystrokeAction -->
+                                    <DataTemplate DataType="actions:KeystrokeAction">
+                                        <StackPanel Orientation="Vertical">
+                                            <Grid ColumnDefinitions="60,*" RowDefinitions="22,10">
+                                                <TextBlock Grid.Column="0" Text="Name" Classes="Label"/>
+                                                <TextBox AutomationProperties.Name="Optional action name" Grid.Column="1" Text="{Binding Name}" Watermark="Optional" IsEnabled="{Binding IsEnabled}"/>
+                                            </Grid>
+                                            <Grid ColumnDefinitions="60,*" RowDefinitions="150,10">
+                                                <TextBlock Grid.Column="0" Grid.Row="0" Text="Keys" Classes="Label" VerticalAlignment="Top"/>
+                                                <Grid Grid.Column="1" Grid.Row="0" ColumnDefinitions="*,10,Auto">
+                                                    <ListBox Grid.Column="0"
+                                                             ItemsSource="{Binding Keystrokes}"
+                                                             SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}"
+                                                             IsEnabled="{Binding IsEnabled}"
+                                                             SelectionMode="Single">
+                                                        <ListBox.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <TextBlock Text="{Binding Converter={StaticResource VirtualKeyToNameConverter}}" Classes="Label"/>
+                                                            </DataTemplate>
+                                                        </ListBox.ItemTemplate>
+                                                    </ListBox>
+                                                    <StackPanel Grid.Column="2" VerticalAlignment="Center" IsEnabled="{Binding IsEnabled}" Spacing="2">
+                                                        <Button AutomationProperties.Name="Move keystroke up" Classes="NoChrome TaskAction" Command="{Binding MoveUpSelectedKeystrokeCommand}">
+                                                            <Image Source="avares://MoveMouse/Resources/UpArrow_Light_64x64.png" Width="22" Height="22"/>
+                                                        </Button>
+                                                        <Button Name="AddKeystrokeButton"
+                                                                AutomationProperties.Name="Add keystroke"
+                                                                Classes="NoChrome TaskAction"
+                                                                Click="AddKeystrokeButton_OnClick">
+                                                            <Image Source="avares://MoveMouse/Resources/ActionsAdd_Light_64x64.png" Width="22" Height="22"/>
+                                                        </Button>
+                                                        <Button AutomationProperties.Name="Remove selected keystroke" Classes="NoChrome TaskAction" Command="{Binding RemoveSelectedKeystrokeCommand}">
+                                                            <Image Source="avares://MoveMouse/Resources/ActionsRemove_Light_64x64.png" Width="22" Height="22"/>
+                                                        </Button>
+                                                        <Button AutomationProperties.Name="Move keystroke down" Classes="NoChrome TaskAction" Command="{Binding MoveDownSelectedKeystrokeCommand}">
+                                                            <Image Source="avares://MoveMouse/Resources/DownArrow_Light_64x64.png" Width="22" Height="22"/>
+                                                        </Button>
+                                                    </StackPanel>
+                                                </Grid>
+                                            </Grid>
+                                            <Grid ColumnDefinitions="60,*" RowDefinitions="22,10">
+                                                <TextBlock Grid.Column="0" Text="Method" Classes="Label"/>
+                                                <ComboBox AutomationProperties.Name="Input method type" Grid.Column="1" HorizontalAlignment="Stretch" SelectedItem="{Binding Method}" ItemsSource="{Binding InputMethodValues}" IsEnabled="{Binding IsEnabled}"/>
+                                            </Grid>
+                                            <Grid ColumnDefinitions="60,*" RowDefinitions="22,10" IsVisible="{Binding Method, Converter={StaticResource EnumEqualsConverter}, ConverterParameter=Sequential}">
+                                                <TextBlock Grid.Column="0" Text="Pause" Classes="Label"/>
+                                                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6">
+                                                    <ToggleSwitch Classes="CompactSwitch" IsChecked="{Binding Pause, Mode=TwoWay}" IsEnabled="{Binding IsEnabled}"/>
+                                                    <TextBlock Text="for" Classes="Label"/>
+                                                    <NumericUpDown Width="80" FormatString="0.00" Increment="0.01" Minimum="0.001" Maximum="9999" Value="{Binding PauseInterval, Converter={StaticResource DecimalToNumberConverter}}">
+                                                        <NumericUpDown.IsEnabled>
+                                                            <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                                                <Binding Path="Pause"/>
+                                                                <Binding Path="IsEnabled"/>
+                                                            </MultiBinding>
+                                                        </NumericUpDown.IsEnabled>
+                                                    </NumericUpDown>
+                                                    <TextBlock Text="seconds" Classes="Label"/>
+                                                </StackPanel>
+                                            </Grid>
+                                            <Grid ColumnDefinitions="60,Auto,10,Auto" RowDefinitions="22,10" IsVisible="{Binding Method, Converter={StaticResource EnumEqualsConverter}, ConverterParameter=Sequential}">
+                                                <TextBlock Grid.Column="0" Text="Abortable" Classes="Label"/>
+                                                <ToggleSwitch Classes="CompactSwitch" Grid.Column="1" IsChecked="{Binding AbortIfUserActivityDetected, Mode=TwoWay}" IsEnabled="{Binding IsEnabled}"/>
+                                                <Image Grid.Column="3" Source="avares://MoveMouse/Resources/Help_Dark_64x64.png" Width="20" Height="20" ToolTip.Tip="Abort the action if user activity detected."/>
+                                            </Grid>
+                                            <controls:ActionFooterControl ShowTestButton="True"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+
+                                    <!-- ActivateApplicationAction -->
+                                    <DataTemplate DataType="actions:ActivateApplicationAction">
+                                        <StackPanel Orientation="Vertical">
+                                            <Grid ColumnDefinitions="60,*" RowDefinitions="22,10">
+                                                <TextBlock Grid.Column="0" Text="Name" Classes="Label"/>
+                                                <TextBox AutomationProperties.Name="Optional action name" Grid.Column="1" Text="{Binding Name}" Watermark="Optional" IsEnabled="{Binding IsEnabled}"/>
+                                            </Grid>
+                                            <Grid ColumnDefinitions="60,*" RowDefinitions="22,10">
+                                                <TextBlock Grid.Column="0" Text="Mode" Classes="Label"/>
+                                                <Grid Grid.Column="1" ColumnDefinitions="*,10,Auto">
+                                                    <ComboBox AutomationProperties.Name="Application search mode" Grid.Column="0" HorizontalAlignment="Stretch" SelectedItem="{Binding Mode}" ItemsSource="{Binding SearchModeValues}" IsEnabled="{Binding IsEnabled}"/>
+                                                    <Image Grid.Column="2" Source="avares://MoveMouse/Resources/Help_Dark_64x64.png" Width="20" Height="20" ToolTip.Tip="Window - Uses the window name to locate the application.&#10;&#10;Process - Uses the process name to locate the application."/>
+                                                </Grid>
+                                            </Grid>
+                                            <Grid ColumnDefinitions="60,*" RowDefinitions="22,10">
+                                                <TextBlock Grid.Column="0" Text="Name" Classes="Label"/>
+                                                <Grid Grid.Column="1" ColumnDefinitions="*,6,Auto,6,Auto">
+                                                    <ComboBox AutomationProperties.Name="Available applications"
+                                                              Grid.Column="0"
+                                                              HorizontalAlignment="Stretch"
+                                                              ItemsSource="{Binding AvailableApplications}"
+                                                              SelectedItem="{Binding Application, Mode=TwoWay}"
+                                                              IsEnabled="{Binding IsEnabled}"
+                                                              IsVisible="{Binding Mode, Converter={StaticResource EnumEqualsConverter}, ConverterParameter=Process}"/>
+                                                    <AutoCompleteBox AutomationProperties.Name="Window title pattern"
+                                                                     Grid.Column="0"
+                                                                     HorizontalAlignment="Stretch"
+                                                                     ItemsSource="{Binding AvailableApplications}"
+                                                                     Text="{Binding Application, Mode=TwoWay}"
+                                                                     Watermark="Window title or *wildcard*"
+                                                                     IsEnabled="{Binding IsEnabled}"
+                                                                     IsVisible="{Binding Mode, Converter={StaticResource EnumEqualsConverter}, ConverterParameter=Window}"/>
+                                                    <Button Grid.Column="2" Classes="NoChrome" Command="{Binding RefreshApplicationsCommand}" ToolTip.Tip="Refresh applications" Cursor="Hand" IsEnabled="{Binding IsEnabled}">
+                                                        <Image Source="avares://MoveMouse/Resources/Refresh_Dark_64x64.png" Width="18" Height="18"/>
+                                                    </Button>
+                                                    <Image Grid.Column="4" Source="avares://MoveMouse/Resources/Help_Dark_64x64.png" Width="20" Height="20" ToolTip.Tip="If the application's window title changes frequently, use a wildcard search pattern such as Move Mouse*, *Privacy Policy*, or *Word."/>
+                                                </Grid>
+                                            </Grid>
+                                            <controls:ActionFooterControl ShowTestButton="True"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+
+                                    <!-- CommandAction -->
+                                    <DataTemplate DataType="actions:CommandAction">
+                                        <StackPanel Orientation="Vertical">
+                                            <Grid ColumnDefinitions="60,*" RowDefinitions="22,10">
+                                                <TextBlock Grid.Column="0" Text="Name" Classes="Label"/>
+                                                <TextBox AutomationProperties.Name="Optional action name" Grid.Column="1" Text="{Binding Name}" Watermark="Optional" IsEnabled="{Binding IsEnabled}"/>
+                                            </Grid>
+                                            <Grid ColumnDefinitions="60,*" RowDefinitions="22,10">
+                                                <TextBlock Grid.Column="0" Text="Path" Classes="Label"/>
+                                                <Grid Grid.Column="1" ColumnDefinitions="*,10,Auto">
+                                                    <TextBox AutomationProperties.Name="Path to file" Grid.Column="0" Text="{Binding FilePath}" Watermark="Path to file" IsEnabled="{Binding IsEnabled}"/>
+                                                    <Button AutomationProperties.Name="Browse to program" Grid.Column="2" Classes="NoChrome" ToolTip.Tip="Browse to your program" Cursor="Hand" IsEnabled="{Binding IsEnabled}" Click="CommandPathBrowseButton_OnClick">
+                                                        <Image Source="avares://MoveMouse/Resources/FileOpen_Light_64x64.png" Width="20" Height="20"/>
+                                                    </Button>
+                                                </Grid>
+                                            </Grid>
+                                            <Grid ColumnDefinitions="60,*" RowDefinitions="22,10">
+                                                <TextBlock Grid.Column="0" Text="Args" Classes="Label"/>
+                                                <TextBox AutomationProperties.Name="Command line arguments" Grid.Column="1" Text="{Binding Arguments}" Watermark="Command line arguments" IsEnabled="{Binding IsEnabled}"/>
+                                            </Grid>
+                                            <Grid ColumnDefinitions="60,Auto,10,Auto" RowDefinitions="22,10">
+                                                <TextBlock Grid.Column="0" Text="Wait" Classes="Label"/>
+                                                <ToggleSwitch Classes="CompactSwitch" Grid.Column="1" IsChecked="{Binding WaitForExit, Mode=TwoWay}" IsEnabled="{Binding IsEnabled}"/>
+                                                <Image Grid.Column="3" Source="avares://MoveMouse/Resources/Warning_128x128.png" Width="18" Height="18" IsVisible="{Binding WaitForExit}" ToolTip.Tip="Long running processes may cause Move Mouse to hang if Wait is enabled."/>
+                                            </Grid>
+                                            <Grid ColumnDefinitions="60,*" RowDefinitions="22,10">
+                                                <TextBlock Grid.Column="0" Text="Hidden" Classes="Label"/>
+                                                <ToggleSwitch Classes="CompactSwitch" Grid.Column="1" IsChecked="{Binding Hidden, Mode=TwoWay}" IsEnabled="{Binding IsEnabled}"/>
+                                            </Grid>
+                                            <controls:ActionFooterControl ShowTestButton="True"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+
+                                    <!-- ScriptAction -->
+                                    <DataTemplate DataType="actions:ScriptAction">
+                                        <StackPanel Orientation="Vertical">
+                                            <Grid ColumnDefinitions="60,*" RowDefinitions="22,10">
+                                                <TextBlock Grid.Column="0" Text="Name" Classes="Label"/>
+                                                <TextBox AutomationProperties.Name="Optional action name" Grid.Column="1" Text="{Binding Name}" Watermark="Optional" IsEnabled="{Binding IsEnabled}"/>
+                                            </Grid>
+                                            <Grid ColumnDefinitions="60,*" RowDefinitions="22,10">
+                                                <TextBlock Grid.Column="0" Text="Script" Classes="Label"/>
+                                                <Grid Grid.Column="1" ColumnDefinitions="*,10,Auto">
+                                                    <TextBox AutomationProperties.Name="Path to script" Grid.Column="0" Text="{Binding ScriptPath}" Watermark="Path to .sh / .py / .ps1 script" IsEnabled="{Binding IsEnabled}"/>
+                                                    <Button AutomationProperties.Name="Browse to script" Grid.Column="2" Classes="NoChrome" ToolTip.Tip="Browse to your script" Cursor="Hand" IsEnabled="{Binding IsEnabled}" Click="ScriptPathBrowseButton_OnClick">
+                                                        <Image Source="avares://MoveMouse/Resources/FileOpen_Light_64x64.png" Width="20" Height="20"/>
+                                                    </Button>
+                                                </Grid>
+                                            </Grid>
+                                            <Grid ColumnDefinitions="60,Auto,10,Auto" RowDefinitions="22,10">
+                                                <TextBlock Grid.Column="0" Text="Wait" Classes="Label"/>
+                                                <ToggleSwitch Classes="CompactSwitch" Grid.Column="1" IsChecked="{Binding WaitForExit, Mode=TwoWay}" IsEnabled="{Binding IsEnabled}"/>
+                                                <Image Grid.Column="3" Source="avares://MoveMouse/Resources/Warning_128x128.png" Width="18" Height="18" IsVisible="{Binding WaitForExit}" ToolTip.Tip="Long running processes may cause Move Mouse to hang if Wait is enabled."/>
+                                            </Grid>
+                                            <Grid ColumnDefinitions="60,*" RowDefinitions="22,10">
+                                                <TextBlock Grid.Column="0" Text="Hidden" Classes="Label"/>
+                                                <ToggleSwitch Classes="CompactSwitch" Grid.Column="1" IsChecked="{Binding Hidden, Mode=TwoWay}" IsEnabled="{Binding IsEnabled}"/>
+                                            </Grid>
+                                            <controls:ActionFooterControl ShowTestButton="True"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+
+                                    <!-- SleepAction -->
+                                    <DataTemplate DataType="actions:SleepAction">
+                                        <StackPanel Orientation="Vertical">
+                                            <Grid ColumnDefinitions="60,*" RowDefinitions="22,10">
+                                                <TextBlock Grid.Column="0" Text="Name" Classes="Label"/>
+                                                <TextBox AutomationProperties.Name="Optional action name" Grid.Column="1" Text="{Binding Name}" Watermark="Optional" IsEnabled="{Binding IsEnabled}"/>
+                                            </Grid>
+                                            <Grid ColumnDefinitions="60,*" RowDefinitions="22,10">
+                                                <TextBlock Grid.Column="0" Text="Random" Classes="Label"/>
+                                                <ToggleSwitch Classes="CompactSwitch" Grid.Column="1" IsChecked="{Binding Random, Mode=TwoWay}" IsEnabled="{Binding IsEnabled}"/>
+                                            </Grid>
+                                            <Grid ColumnDefinitions="60,*" RowDefinitions="22,10">
+                                                <TextBlock Grid.Column="0" Text="{Binding Random, Converter={StaticResource SleepDurationLabelConverter}}" Classes="Label"/>
+                                                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6">
+                                                    <NumericUpDown Width="80" FormatString="0.0" Increment="0.1" Minimum="0.1" Maximum="9999" Value="{Binding Seconds, Converter={StaticResource DecimalToNumberConverter}}" IsEnabled="{Binding IsEnabled}"/>
+                                                    <TextBlock Text="seconds" Classes="Label" IsEnabled="{Binding IsEnabled}"/>
+                                                </StackPanel>
+                                            </Grid>
+                                            <Grid ColumnDefinitions="60,*" RowDefinitions="22,10" IsVisible="{Binding Random}">
+                                                <TextBlock Grid.Column="0" Text="Upper" Classes="Label"/>
+                                                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6">
+                                                    <NumericUpDown Width="80" FormatString="0.0" Increment="0.1" Minimum="0.1" Maximum="9999" Value="{Binding UpperSeconds, Converter={StaticResource DecimalToNumberConverter}}" IsEnabled="{Binding IsEnabled}"/>
+                                                    <TextBlock Text="seconds" Classes="Label" IsEnabled="{Binding IsEnabled}"/>
+                                                </StackPanel>
+                                            </Grid>
+                                            <controls:ActionFooterControl ShowTestButton="False"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+
+                                </ContentControl.DataTemplates>
+                            </ContentControl>
+                        </ScrollViewer>
+                    </Grid>
+
+                    <controls:CalloutBubble Text="Click here to add actions"
+                                            Width="180"
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Bottom"
+                                            Margin="20,0,0,42"
+                                            IsVisible="{Binding !Settings.ActionsHaveBeenClicked}"/>
+                </Grid>
+            </TabItem>
+
+            <!-- TAB 2: BEHAVIOUR -->
+            <TabItem AutomationProperties.Name="Behaviour">
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal" Spacing="6" Margin="6,0,0,0">
+                        <Image Source="avares://MoveMouse/Resources/Behaviour_Light_64x64.png" Height="16" Width="16"/>
+                        <TextBlock Text="Behaviour" VerticalAlignment="Center" FontSize="12"/>
+                    </StackPanel>
+                </TabItem.Header>
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Orientation="Vertical" Margin="10">
+                        <StackPanel Classes="OptionRow">
+                            <TextBlock Text="Repeat actions" Classes="Label"/>
+                            <ComboBox AutomationProperties.Name="Random interval type" SelectedIndex="{Binding Settings.RandomInterval, Converter={StaticResource BoolToIndexConverter}}">
+                                <ComboBoxItem Content="randomly"/>
+                                <ComboBoxItem Content="every"/>
+                            </ComboBox>
+                            <TextBlock Text="between" Classes="Label" IsVisible="{Binding Settings.RandomInterval}"/>
+                            <NumericUpDown Width="75" Value="{Binding Settings.LowerInterval, Converter={StaticResource DecimalToNumberConverter}}" Increment="1" Minimum="1" Maximum="99999"/>
+                            <TextBlock Text="and" Classes="Label" IsVisible="{Binding Settings.RandomInterval}"/>
+                            <NumericUpDown Width="75" Value="{Binding Settings.UpperInterval, Converter={StaticResource DecimalToNumberConverter}}" Increment="1" Minimum="1" Maximum="99999" IsVisible="{Binding Settings.RandomInterval}"/>
+                            <TextBlock Classes="Label">
+                                <TextBlock.Text>
+                                    <MultiBinding Converter="{StaticResource IntervalPluralUnitConverter}">
+                                        <Binding Path="Settings.LowerInterval"/>
+                                        <Binding Path="Settings.RandomInterval"/>
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                        </StackPanel>
+
+                        <StackPanel Classes="OptionRow">
+                            <ToggleSwitch Classes="CompactSwitch" IsChecked="{Binding Settings.AutoPause, Mode=TwoWay}"/>
+                            <TextBlock Classes="Label" Text="{Binding Settings.AutoResume, Converter={StaticResource AutoPauseLabelConverter}}"/>
+                        </StackPanel>
+
+                        <StackPanel Classes="OptionRow" IsVisible="{Binding Settings.AutoPause}">
+                            <ToggleSwitch Classes="CompactSwitch" IsChecked="{Binding Settings.AutoResume, Mode=TwoWay}"/>
+                            <TextBlock Text="Automatically resume after" Classes="Label"/>
+                            <NumericUpDown Width="75" Value="{Binding Settings.AutoResumeSeconds, Converter={StaticResource DecimalToNumberConverter}}" IsEnabled="{Binding Settings.AutoResume}" Increment="1" Minimum="1" Maximum="99999"/>
+                            <TextBlock Classes="Label" Text="{Binding Settings.AutoResumeSeconds, Converter={StaticResource SingularPluralSuffixConverter}}"/>
+                        </StackPanel>
+
+                        <StackPanel Classes="OptionRow">
+                            <ToggleSwitch Classes="CompactSwitch"
+                                          IsChecked="{Binding LaunchAtStartup, Mode=TwoWay, Converter={StaticResource StartupTaskStateToBoolConverter}}"
+                                          IsEnabled="{Binding LaunchAtStartup, Converter={StaticResource EnumNotEqualsConverter}, ConverterParameter=DisabledByUser}"/>
+                            <TextBlock Text="Launch Move Mouse at start-up" Classes="Label"/>
+                        </StackPanel>
+
+                        <StackPanel Classes="OptionRow">
+                            <ToggleSwitch Classes="CompactSwitch" IsChecked="{Binding Settings.StartAtLaunch, Mode=TwoWay}"/>
+                            <TextBlock Text="Start actions when Move Mouse is launched" Classes="Label"/>
+                        </StackPanel>
+
+                        <Grid ColumnDefinitions="Auto,16,*" RowDefinitions="22,10">
+                            <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Horizontal" Spacing="6">
+                                <ToggleSwitch Classes="CompactSwitch" IsChecked="{Binding Settings.AdjustRunningVolume, Mode=TwoWay}"/>
+                                <TextBlock Text="Adjust volume when Move Mouse is running" Classes="Label"/>
+                            </StackPanel>
+                            <Grid Grid.Column="2" Grid.Row="0" ColumnDefinitions="Auto,8,*,8,26" IsVisible="{Binding Settings.AdjustRunningVolume}">
+                                <Image Grid.Column="0" Source="avares://MoveMouse/Resources/Volume_Light_64x64.png" Width="18" Height="18"/>
+                                <Slider Grid.Column="2" Minimum="0" Maximum="100" Value="{Binding Settings.RunningVolume}" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="4" Text="{Binding Settings.RunningVolume}" Classes="Label" HorizontalAlignment="Right"/>
+                            </Grid>
+                        </Grid>
+
+                        <StackPanel Classes="OptionRow">
+                            <ToggleSwitch Classes="CompactSwitch" IsChecked="{Binding Settings.ActiveWhenLocked, Mode=TwoWay}"/>
+                            <TextBlock Text="Continue performing actions when session is locked" Classes="Label"/>
+                            <Image Source="avares://MoveMouse/Resources/Warning_128x128.png" Width="18" Height="18" IsVisible="{Binding Settings.ActiveWhenLocked}" ToolTip.Tip="Allowing actions to continue performing whilst your session is locked may cause unexpected behaviour."/>
+                        </StackPanel>
+
+                        <StackPanel Classes="OptionRow">
+                            <ToggleSwitch Classes="CompactSwitch" IsChecked="{Binding Settings.PauseOnBattery, Mode=TwoWay}"/>
+                            <TextBlock Text="Pause when running on battery" Classes="Label"/>
+                        </StackPanel>
+
+                        <StackPanel Classes="OptionRow">
+                            <ToggleSwitch Classes="CompactSwitch" IsChecked="{Binding Settings.EnableLogging, Mode=TwoWay}"/>
+                            <TextBlock Text="Enable logging" Classes="Label"/>
+                            <StackPanel Orientation="Horizontal" Spacing="8" Margin="10,0,0,0" IsVisible="{Binding Settings.EnableLogging}">
+                                <ComboBox AutomationProperties.Name="Log level" Width="105" SelectedItem="{Binding Settings.LogLevel}" ItemsSource="{Binding LogEventLevels}"/>
+                                <Button AutomationProperties.Name="Open log" Width="65" Content="Open" Click="OpenLogButton_Click"/>
+                                <Button AutomationProperties.Name="Follow log" Width="65" Content="Follow" Click="FollowLogButton_Click"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- TAB 3: APPEARANCE -->
+            <TabItem AutomationProperties.Name="Appearance">
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal" Spacing="6" Margin="6,0,0,0">
+                        <Image Source="avares://MoveMouse/Resources/Appearance_Light_64x64.png" Height="16" Width="16"/>
+                        <TextBlock Text="Appearance" VerticalAlignment="Center" FontSize="12"/>
+                    </StackPanel>
+                </TabItem.Header>
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Orientation="Vertical" Margin="10">
+                        <StackPanel Classes="OptionRow">
+                            <ToggleSwitch Classes="CompactSwitch" IsChecked="{Binding Settings.HideMainWindow, Mode=TwoWay}"/>
+                            <TextBlock Text="Hide Move Mouse window" Classes="Label"/>
+                        </StackPanel>
+
+                        <StackPanel Classes="OptionRow" IsVisible="{Binding !Settings.HideMainWindow}">
+                            <ToggleSwitch Classes="CompactSwitch" IsChecked="{Binding Settings.Topmost, Mode=TwoWay}"/>
+                            <TextBlock Text="Show topmost" Classes="Label"/>
+                        </StackPanel>
+
+                        <StackPanel Classes="OptionRow">
+                            <StackPanel.IsVisible>
+                                <MultiBinding Converter="{StaticResource NotBoolAndNotBoolConverter}">
+                                    <Binding Path="Settings.HideMainWindow"/>
+                                    <Binding Path="Settings.Topmost"/>
+                                </MultiBinding>
+                            </StackPanel.IsVisible>
+                            <ToggleSwitch Classes="CompactSwitch" IsChecked="{Binding Settings.TopmostWhenRunning, Mode=TwoWay}"/>
+                            <TextBlock Text="Show topmost only when running" Classes="Label"/>
+                        </StackPanel>
+
+                        <StackPanel Classes="OptionRow" IsVisible="{Binding !Settings.HideMainWindow}">
+                            <ToggleSwitch Classes="CompactSwitch" IsChecked="{Binding Settings.MinimiseOnStop, Mode=TwoWay}"/>
+                            <TextBlock Text="Minimise when not running" Classes="Label"/>
+                        </StackPanel>
+
+                        <StackPanel Classes="OptionRow" IsVisible="{Binding !Settings.HideMainWindow}">
+                            <ToggleSwitch Classes="CompactSwitch" IsChecked="{Binding Settings.HideFromTaskbar, Mode=TwoWay}"/>
+                            <TextBlock Text="Hide from taskbar" Classes="Label"/>
+                        </StackPanel>
+
+                        <StackPanel Classes="OptionRow">
+                            <StackPanel.IsVisible>
+                                <MultiBinding Converter="{StaticResource NotBoolAndNotBoolConverter}">
+                                    <Binding Path="Settings.HideMainWindow"/>
+                                    <Binding Path="Settings.HideFromTaskbar"/>
+                                </MultiBinding>
+                            </StackPanel.IsVisible>
+                            <ToggleSwitch Classes="CompactSwitch" IsChecked="{Binding Settings.ShowTaskbarStatus, Mode=TwoWay}"/>
+                            <TextBlock Text="Show status on taskbar" Classes="Label"/>
+                        </StackPanel>
+
+                        <StackPanel Classes="OptionRow" IsVisible="{Binding !Settings.HideMainWindow}">
+                            <ToggleSwitch Classes="CompactSwitch" IsChecked="{Binding Settings.HideFromAltTab, Mode=TwoWay}"/>
+                            <TextBlock Text="Hide from Alt+Tab" Classes="Label"/>
+                        </StackPanel>
+
+                        <Grid ColumnDefinitions="Auto,Auto,10,*" RowDefinitions="22,10">
+                            <Grid.IsVisible>
+                                <MultiBinding Converter="{StaticResource NotBoolAndNotBoolConverter}">
+                                    <Binding Path="Settings.HideMainWindow"/>
+                                    <Binding Path="Settings.HideFromAltTab"/>
+                                </MultiBinding>
+                            </Grid.IsVisible>
+                            <ToggleSwitch Grid.Column="0" Classes="CompactSwitch" IsChecked="{Binding Settings.OverrideWindowTitle, Mode=TwoWay}"/>
+                            <TextBlock Grid.Column="1" Text="Override window title" Classes="Label" Margin="6,0,0,0"/>
+                            <TextBox Grid.Column="3" Text="{Binding Settings.WindowTitle}" Watermark="Window title" IsVisible="{Binding Settings.OverrideWindowTitle}"/>
+                        </Grid>
+
+                        <StackPanel Classes="OptionRow" IsVisible="{Binding !Settings.HideMainWindow}">
+                            <ToggleSwitch Classes="CompactSwitch" IsChecked="{Binding Settings.PreventScreenBurn, Mode=TwoWay}"/>
+                            <TextBlock Text="Enable screen burn prevention" Classes="Label"/>
+                            <Image Source="avares://MoveMouse/Resources/Help_Dark_64x64.png" Width="18" Height="18" ToolTip.Tip="Enabling this option will introduce a subtle movement to Move Mouse to help prevent screen burn."/>
+                        </StackPanel>
+
+                        <StackPanel Classes="OptionRow">
+                            <ToggleSwitch Classes="CompactSwitch" IsChecked="{Binding Settings.HideSystemTrayIcon, Mode=TwoWay}"/>
+                            <TextBlock Text="Hide system tray icon" Classes="Label"/>
+                            <Image Source="avares://MoveMouse/Resources/Warning_128x128.png" Width="18" Height="18" ToolTip.Tip="If you opt to hide both the Move Mouse window and system tray icon, the tray icon will be visible momentarily at launch to allow access to settings.">
+                                <Image.IsVisible>
+                                    <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                        <Binding Path="Settings.HideMainWindow"/>
+                                        <Binding Path="Settings.HideSystemTrayIcon"/>
+                                    </MultiBinding>
+                                </Image.IsVisible>
+                            </Image>
+                        </StackPanel>
+
+                        <StackPanel Classes="OptionRow" IsVisible="{Binding !Settings.HideSystemTrayIcon}">
+                            <ToggleSwitch Classes="CompactSwitch" IsChecked="{Binding Settings.ShowSystemTrayNotifications, Mode=TwoWay}"/>
+                            <TextBlock Text="Show system tray notifications" Classes="Label"/>
+                        </StackPanel>
+
+                        <StackPanel Classes="OptionRow" IsVisible="{Binding !Settings.HideMainWindow}">
+                            <ToggleSwitch Classes="CompactSwitch" IsChecked="{Binding Settings.ShowMoveMouseStatus, Mode=TwoWay}"/>
+                            <TextBlock Text="Show current status on main window" Classes="Label"/>
+                        </StackPanel>
+
+                        <StackPanel Classes="OptionRow" IsVisible="{Binding !Settings.HideMainWindow}">
+                            <ToggleSwitch Classes="CompactSwitch" IsChecked="{Binding Settings.DisableButtonAnimation, Mode=TwoWay}"/>
+                            <TextBlock Text="Disable button animations" Classes="Label"/>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- TAB 4: SCHEDULES -->
+            <TabItem AutomationProperties.Name="Schedules">
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal" Spacing="6" Margin="6,0,0,0">
+                        <Image Source="avares://MoveMouse/Resources/Schedules_Light_64x64.png" Height="16" Width="16"/>
+                        <TextBlock Text="Schedules" VerticalAlignment="Center" FontSize="12"/>
+                    </StackPanel>
+                </TabItem.Header>
+                <Grid Margin="10" ColumnDefinitions="*,10,Auto">
+                    <Border Grid.Column="0" BorderThickness="1" BorderBrush="{StaticResource StandardBorderBrush}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <ItemsControl Name="ScheduleItemsControl" ItemsSource="{Binding Settings.Schedules}">
+                                <ItemsControl.DataTemplates>
+                                    <DataTemplate DataType="schedules:SimpleSchedule">
+                                        <Border BorderThickness="0,0,0,1" BorderBrush="{StaticResource StandardBorderBrush}" Padding="8">
+                                            <Grid ColumnDefinitions="*,10,Auto" RowDefinitions="Auto,8,Auto">
+                                                <WrapPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
+                                                    <StackPanel Orientation="Horizontal" Spacing="5" Margin="0,0,10,4">
+                                                        <TextBlock Text="Action" Classes="Label"/>
+                                                        <ComboBox Width="70" SelectedItem="{Binding Action}" ItemsSource="{Binding ScheduleActionValues}" IsEnabled="{Binding IsEnabled}"/>
+                                                    </StackPanel>
+                                                    <StackPanel Orientation="Horizontal" Spacing="5" Margin="0,0,10,4">
+                                                        <TextBlock Text="Time" Classes="Label"/>
+                                                        <controls:TimeSpanUpDown Value="{Binding Time, Mode=TwoWay}" Minimum="0:0:0" Maximum="23:59:59" IsEnabled="{Binding IsEnabled}"/>
+                                                    </StackPanel>
+                                                    <StackPanel Orientation="Horizontal" Spacing="5" Margin="0,0,10,4">
+                                                        <TextBlock Text="Delay (sec)" Classes="Label"/>
+                                                        <NumericUpDown Width="65" Value="{Binding Delay, Converter={StaticResource DecimalToNumberConverter}}" Increment="1" Minimum="0" Maximum="99999" IsEnabled="{Binding IsEnabled}"/>
+                                                    </StackPanel>
+                                                    <StackPanel Orientation="Horizontal" Spacing="5" Margin="0,0,0,4">
+                                                        <TextBlock Text="Enabled" Classes="Label"/>
+                                                        <ToggleSwitch Classes="CompactSwitch" IsChecked="{Binding IsEnabled, Mode=TwoWay}"/>
+                                                    </StackPanel>
+                                                </WrapPanel>
+
+                                                <Grid Grid.Row="2" Grid.Column="0" ColumnDefinitions="*,4,*,4,*,4,*,4,*,4,*,4,*" IsEnabled="{Binding IsEnabled}">
+                                                    <ToggleButton Grid.Column="0" Classes="DayToggle" Content="Mon" IsChecked="{Binding Monday, Mode=TwoWay}"/>
+                                                    <ToggleButton Grid.Column="2" Classes="DayToggle" Content="Tue" IsChecked="{Binding Tuesday, Mode=TwoWay}"/>
+                                                    <ToggleButton Grid.Column="4" Classes="DayToggle" Content="Wed" IsChecked="{Binding Wednesday, Mode=TwoWay}"/>
+                                                    <ToggleButton Grid.Column="6" Classes="DayToggle" Content="Thu" IsChecked="{Binding Thursday, Mode=TwoWay}"/>
+                                                    <ToggleButton Grid.Column="8" Classes="DayToggle" Content="Fri" IsChecked="{Binding Friday, Mode=TwoWay}"/>
+                                                    <ToggleButton Grid.Column="10" Classes="DayToggle" Content="Sat" IsChecked="{Binding Saturday, Mode=TwoWay}"/>
+                                                    <ToggleButton Grid.Column="12" Classes="DayToggle" Content="Sun" IsChecked="{Binding Sunday, Mode=TwoWay}"/>
+                                                </Grid>
+
+                                                <Button Grid.Row="0" Grid.RowSpan="3" Grid.Column="2"
+                                                        AutomationProperties.Name="Remove schedule"
+                                                        Classes="NoChrome TaskAction"
+                                                        VerticalAlignment="Center"
+                                                        Command="{Binding $parent[ItemsControl].DataContext.RemoveSelectedScheduleCommand}"
+                                                        CommandParameter="{Binding Id}">
+                                                    <Image Source="avares://MoveMouse/Resources/ActionsRemove_Light_64x64.png" Width="22" Height="22"/>
+                                                </Button>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+
+                                    <DataTemplate DataType="schedules:AdvancedSchedule">
+                                        <Border BorderThickness="0,0,0,1" BorderBrush="{StaticResource StandardBorderBrush}" Padding="8">
+                                            <Grid ColumnDefinitions="*,10,Auto">
+                                                <WrapPanel Grid.Column="0" Orientation="Horizontal">
+                                                    <StackPanel Orientation="Horizontal" Spacing="5" Margin="0,0,10,4">
+                                                        <TextBlock Text="Action" Classes="Label"/>
+                                                        <ComboBox Width="70" SelectedItem="{Binding Action}" ItemsSource="{Binding ScheduleActionValues}" IsEnabled="{Binding IsEnabled}"/>
+                                                    </StackPanel>
+                                                    <StackPanel Orientation="Horizontal" Spacing="5" Margin="0,0,10,4">
+                                                        <TextBlock Text="Schedule" Classes="Label"/>
+                                                        <TextBox Width="130" Text="{Binding Schedule}" Watermark="Cron Expression" IsEnabled="{Binding IsEnabled}">
+                                                            <TextBox.BorderBrush>
+                                                                <MultiBinding Converter="{StaticResource AdvancedScheduleInvalidBorderConverter}">
+                                                                    <Binding Path="IsValid"/>
+                                                                    <Binding Path="IsEnabled"/>
+                                                                </MultiBinding>
+                                                            </TextBox.BorderBrush>
+                                                        </TextBox>
+                                                        <Button AutomationProperties.Name="Cron help" Classes="NoChrome TaskAction" Click="CronHelpButton_OnClick">
+                                                            <Image Source="avares://MoveMouse/Resources/Help_Light_64x64.png" Width="20" Height="20"/>
+                                                        </Button>
+                                                    </StackPanel>
+                                                    <StackPanel Orientation="Horizontal" Spacing="5" Margin="0,0,0,4">
+                                                        <TextBlock Text="Enabled" Classes="Label"/>
+                                                        <ToggleSwitch Classes="CompactSwitch" IsChecked="{Binding IsEnabled, Mode=TwoWay}"/>
+                                                    </StackPanel>
+                                                </WrapPanel>
+                                                <Button Grid.Column="2"
+                                                        AutomationProperties.Name="Remove schedule"
+                                                        Classes="NoChrome TaskAction"
+                                                        VerticalAlignment="Center"
+                                                        Command="{Binding $parent[ItemsControl].DataContext.RemoveSelectedScheduleCommand}"
+                                                        CommandParameter="{Binding Id}">
+                                                    <Image Source="avares://MoveMouse/Resources/ActionsRemove_Light_64x64.png" Width="22" Height="22"/>
+                                                </Button>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.DataTemplates>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </Border>
+
+                    <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                        <Button Name="AddScheduleButton" Classes="NoChrome TaskAction" Click="AddScheduleButton_OnClick">
+                            <Button.ContextMenu>
+                                <ContextMenu Name="AddScheduleContextMenu">
+                                    <MenuItem Header="Simple Schedule" Click="AddSimpleSchedule_OnClick">
+                                        <MenuItem.Icon><Image Source="avares://MoveMouse/Resources/Schedules_Light_64x64.png" Width="16" Height="16"/></MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Header="Advanced Schedule" Click="AddAdvancedSchedule_OnClick">
+                                        <MenuItem.Icon><Image Source="avares://MoveMouse/Resources/Schedules_Light_64x64.png" Width="16" Height="16"/></MenuItem.Icon>
+                                    </MenuItem>
+                                </ContextMenu>
+                            </Button.ContextMenu>
+                            <Image Source="avares://MoveMouse/Resources/ActionsAdd_Light_64x64.png" Width="24" Height="24"/>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+
+            <!-- TAB 5: BLACKOUTS -->
+            <TabItem AutomationProperties.Name="Blackouts">
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal" Spacing="6" Margin="6,0,0,0">
+                        <Image Source="avares://MoveMouse/Resources/Moon_Light_128x128.png" Height="16" Width="16"/>
+                        <TextBlock Text="Blackouts" VerticalAlignment="Center" FontSize="12"/>
+                    </StackPanel>
+                </TabItem.Header>
+                <Grid Margin="10" ColumnDefinitions="*,10,Auto">
+                    <Border Grid.Column="0" BorderThickness="1" BorderBrush="{StaticResource StandardBorderBrush}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <ItemsControl Name="BlackoutItemsControl" ItemsSource="{Binding Settings.Blackouts}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate DataType="classes:Blackout">
+                                        <Border BorderThickness="0,0,0,1" BorderBrush="{StaticResource StandardBorderBrush}" Padding="8">
+                                            <Grid ColumnDefinitions="*,10,Auto" RowDefinitions="Auto,8,Auto">
+                                                <WrapPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
+                                                    <StackPanel Orientation="Horizontal" Spacing="5" Margin="0,0,10,4">
+                                                        <TextBlock Text="Time" Classes="Label"/>
+                                                        <controls:TimeSpanUpDown Value="{Binding Time, Mode=TwoWay}" Minimum="0:0:0" Maximum="23:59:59" IsEnabled="{Binding IsEnabled}"/>
+                                                    </StackPanel>
+                                                    <StackPanel Orientation="Horizontal" Spacing="5" Margin="0,0,10,4">
+                                                        <TextBlock Text="Duration" Classes="Label"/>
+                                                        <controls:TimeSpanUpDown Value="{Binding Duration, Mode=TwoWay}" Minimum="0:0:1" Maximum="23:59:59" IsEnabled="{Binding IsEnabled}"/>
+                                                    </StackPanel>
+                                                    <StackPanel Orientation="Horizontal" Spacing="5" Margin="0,0,10,4">
+                                                        <TextBlock Text="Delay (sec)" Classes="Label"/>
+                                                        <NumericUpDown Width="65" Value="{Binding Delay, Converter={StaticResource DecimalToNumberConverter}}" Increment="1" Minimum="0" Maximum="99999" IsEnabled="{Binding IsEnabled}"/>
+                                                    </StackPanel>
+                                                    <StackPanel Orientation="Horizontal" Spacing="5" Margin="0,0,0,4">
+                                                        <TextBlock Text="Enabled" Classes="Label"/>
+                                                        <ToggleSwitch Classes="CompactSwitch" IsChecked="{Binding IsEnabled, Mode=TwoWay}"/>
+                                                    </StackPanel>
+                                                </WrapPanel>
+
+                                                <Grid Grid.Row="2" Grid.Column="0" ColumnDefinitions="*,4,*,4,*,4,*,4,*,4,*,4,*" IsEnabled="{Binding IsEnabled}">
+                                                    <ToggleButton Grid.Column="0" Classes="DayToggle" Content="Mon" IsChecked="{Binding Monday, Mode=TwoWay}"/>
+                                                    <ToggleButton Grid.Column="2" Classes="DayToggle" Content="Tue" IsChecked="{Binding Tuesday, Mode=TwoWay}"/>
+                                                    <ToggleButton Grid.Column="4" Classes="DayToggle" Content="Wed" IsChecked="{Binding Wednesday, Mode=TwoWay}"/>
+                                                    <ToggleButton Grid.Column="6" Classes="DayToggle" Content="Thu" IsChecked="{Binding Thursday, Mode=TwoWay}"/>
+                                                    <ToggleButton Grid.Column="8" Classes="DayToggle" Content="Fri" IsChecked="{Binding Friday, Mode=TwoWay}"/>
+                                                    <ToggleButton Grid.Column="10" Classes="DayToggle" Content="Sat" IsChecked="{Binding Saturday, Mode=TwoWay}"/>
+                                                    <ToggleButton Grid.Column="12" Classes="DayToggle" Content="Sun" IsChecked="{Binding Sunday, Mode=TwoWay}"/>
+                                                </Grid>
+
+                                                <Button Grid.Row="0" Grid.RowSpan="3" Grid.Column="2"
+                                                        AutomationProperties.Name="Remove blackout"
+                                                        Classes="NoChrome TaskAction"
+                                                        VerticalAlignment="Center"
+                                                        Command="{Binding $parent[ItemsControl].DataContext.RemoveSelectedBlackoutCommand}"
+                                                        CommandParameter="{Binding Id}">
+                                                    <Image Source="avares://MoveMouse/Resources/ActionsRemove_Light_64x64.png" Width="22" Height="22"/>
+                                                </Button>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </Border>
+
+                    <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                        <Button AutomationProperties.Name="Add blackout" Command="{Binding AddBlackoutCommand}" Classes="NoChrome TaskAction">
+                            <Image Source="avares://MoveMouse/Resources/ActionsAdd_Light_64x64.png" Width="24" Height="24"/>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+
+            <!-- TAB 6: ABOUT -->
+            <TabItem AutomationProperties.Name="About">
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal" Spacing="6" Margin="6,0,0,0">
+                        <Image Source="avares://MoveMouse/Resources/Information_Light_64x64.png" Height="16" Width="16"/>
+                        <TextBlock Text="About" VerticalAlignment="Center" FontSize="12"/>
+                    </StackPanel>
+                </TabItem.Header>
+                <Grid Margin="10">
+                    <Grid ColumnDefinitions="Auto,10,*" RowDefinitions="Auto,12,Auto,12,Auto,12,Auto,12,Auto,12,Auto,12,Auto,12,Auto,*">
+                        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" FontWeight="Bold" FontSize="18" Foreground="{StaticResource StandardLightTextSolidColorBrush}" Text="{Binding Version, StringFormat='Move Mouse {0}'}"/>
+                        <Image Grid.Row="2" Grid.Column="0" Source="avares://MoveMouse/Resources/Copyright_Dark_64x64.png" Width="16" Height="16"/>
+                        <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding Copyright}" Classes="Label"/>
+                        <Image Grid.Row="4" Grid.Column="0" Source="avares://MoveMouse/Resources/Home_Dark_64x64.png" Width="16" Height="16"/>
+                        <TextBlock Grid.Row="4" Grid.Column="2" Text="{Binding HomePage}" Classes="HyperLink" PointerPressed="HomeLink_OnPointerPressed"/>
+                        <Image Grid.Row="6" Grid.Column="0" Source="avares://MoveMouse/Resources/Mail_Dark_64x64.png" Width="16" Height="16"/>
+                        <TextBlock Grid.Row="6" Grid.Column="2" Text="{Binding MailAddress}" Classes="HyperLink" PointerPressed="ContactLink_OnPointerPressed"/>
+                        <Image Grid.Row="8" Grid.Column="0" Source="avares://MoveMouse/Resources/PayPal_Dark_64x64.png" Width="16" Height="16"/>
+                        <TextBlock Grid.Row="8" Grid.Column="2" Text="https://www.paypal.com" Classes="HyperLink" PointerPressed="PayPalLink_OnPointerPressed"/>
+                        <Image Grid.Row="10" Grid.Column="0" Source="avares://MoveMouse/Resources/Twitter_Dark_64x64.png" Width="16" Height="16"/>
+                        <TextBlock Grid.Row="10" Grid.Column="2" Text="{Binding TwitterUrl}" Classes="HyperLink" PointerPressed="TwitterLink_OnPointerPressed"/>
+                        <Image Grid.Row="12" Grid.Column="0" Source="avares://MoveMouse/Resources/GitHub_Dark_64x64.png" Width="16" Height="16"/>
+                        <TextBlock Grid.Row="12" Grid.Column="2" Text="{Binding GitHubUrl}" Classes="HyperLink" PointerPressed="GitHubLink_OnPointerPressed"/>
+                        <Image Grid.Row="14" Grid.Column="0" Source="avares://MoveMouse/Resources/Timer_Dark_64x64.png" Width="16" Height="16"/>
+                        <TextBlock Grid.Row="14" Grid.Column="2" Classes="Label" Text="{Binding SystemIdleTime, StringFormat='System Idle Time - {0:hh}h {0:mm}m {0:ss}s {0:fff}ms'}"/>
+                    </Grid>
+                    <Image Source="avares://MoveMouse/Resources/Mouse.ico" HorizontalAlignment="Right" VerticalAlignment="Top" Width="96" Height="96"/>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+        <Button AutomationProperties.Name="Close settings"
+                Content="Close"
+                VerticalAlignment="Bottom"
+                HorizontalAlignment="Right"
+                Margin="0,0,28,28"
+                Click="CloseButton_OnClick"/>
+
+        <Border BorderThickness="5" BorderBrush="{StaticResource StandardBorderBrush}" IsHitTestVisible="False"/>
+    </Grid>
+</Window>

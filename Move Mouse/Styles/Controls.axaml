@@ -1,0 +1,338 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- NoChromeButton (no grey hover box, #01FFFFFF preserves Linux/Avalonia hit-testing) -->
+    <Style Selector="Button.NoChrome">
+        <Setter Property="Background" Value="#01FFFFFF"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Padding" Value="1"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Width" Value="NaN"/>
+        <Setter Property="Height" Value="NaN"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <ContentPresenter Name="PART_ContentPresenter"
+                                  Background="{TemplateBinding Background}"
+                                  Content="{TemplateBinding Content}"
+                                  ContentTemplate="{TemplateBinding ContentTemplate}"
+                                  Padding="{TemplateBinding Padding}"
+                                  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+    <Style Selector="Button.NoChrome:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="#01FFFFFF"/>
+    </Style>
+    <Style Selector="Button.NoChrome:pressed /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="#01FFFFFF"/>
+    </Style>
+    <Style Selector="Button.NoChrome:disabled">
+        <Setter Property="Opacity" Value="0.5"/>
+    </Style>
+
+    <!-- Standard Button -->
+    <Style Selector="Button:not(.NoChrome):not(.FlyingButton):not(.DayToggle)">
+        <Setter Property="Width" Value="85"/>
+        <Setter Property="Height" Value="22"/>
+        <Setter Property="Padding" Value="4,0"/>
+        <Setter Property="Foreground" Value="{StaticResource StandardLightTextSolidColorBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource StandardBorderBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="0"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Background">
+            <Setter.Value>
+                <LinearGradientBrush StartPoint="0%,50%" EndPoint="100%,50%">
+                    <GradientStop Color="{StaticResource StandardLightBackgroundColor}" Offset="0.00"/>
+                    <GradientStop Color="Transparent" Offset="0.70"/>
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style Selector="Button:not(.NoChrome):not(.FlyingButton):pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="BorderBrush" Value="{StaticResource StandardLightControlSolidColorBrush}"/>
+        <Setter Property="Background">
+            <Setter.Value>
+                <LinearGradientBrush StartPoint="0%,50%" EndPoint="100%,50%">
+                    <GradientStop Color="#30437CAF" Offset="0.00"/>
+                    <GradientStop Color="Transparent" Offset="0.80"/>
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style Selector="Button:not(.NoChrome):not(.FlyingButton):pressed /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background">
+            <Setter.Value>
+                <LinearGradientBrush StartPoint="0%,50%" EndPoint="100%,50%">
+                    <GradientStop Color="{StaticResource StandardLightControlColor}" Offset="0.10"/>
+                    <GradientStop Color="Transparent" Offset="0.70"/>
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style Selector="Button:not(.NoChrome):not(.FlyingButton):disabled /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Foreground" Value="{StaticResource StandardDisabledControlColorBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource StandardDisabledControlColorBrush}"/>
+    </Style>
+
+    <!-- TextBox -->
+    <Style Selector="TextBox">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{StaticResource StandardLightTextSolidColorBrush}"/>
+        <Setter Property="CaretBrush" Value="{StaticResource StandardLightTextSolidColorBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource StandardBorderBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="0"/>
+        <Setter Property="Padding" Value="4,1,4,1"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="MinHeight" Value="22"/>
+        <Setter Property="Height" Value="22"/>
+    </Style>
+    <Style Selector="TextBox:disabled">
+        <Setter Property="Foreground" Value="{StaticResource StandardDisabledControlColorBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource StandardDisabledControlColorBrush}"/>
+    </Style>
+
+    <!-- ComboBox -->
+    <Style Selector="ComboBox">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{StaticResource StandardLightTextSolidColorBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource StandardBorderBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="0"/>
+        <Setter Property="MinHeight" Value="22"/>
+        <Setter Property="Height" Value="22"/>
+        <Setter Property="Padding" Value="5,0,5,0"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+    </Style>
+    <Style Selector="ComboBox:disabled">
+        <Setter Property="Foreground" Value="{StaticResource StandardDisabledControlColorBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource StandardDisabledControlColorBrush}"/>
+    </Style>
+    <Style Selector="ComboBoxItem">
+        <Setter Property="Foreground" Value="{StaticResource StandardLightTextSolidColorBrush}"/>
+        <Setter Property="Background" Value="{StaticResource StandardDarkBackgroundSolidColorBrush}"/>
+        <Setter Property="Padding" Value="6,3"/>
+        <Setter Property="FontSize" Value="12"/>
+    </Style>
+    <Style Selector="ComboBoxItem:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{StaticResource StandardBorderBrush}"/>
+    </Style>
+    <Style Selector="ComboBoxItem:selected /template/ ContentPresenter">
+        <Setter Property="Background" Value="{StaticResource StandardDarkControlSolidColorBrush}"/>
+    </Style>
+
+    <!-- Compact ButtonSpinner for NumericUpDown (stacked vertical ▲/▼ so numbers are never squeezed out) -->
+    <Style Selector="NumericUpDown">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{StaticResource StandardLightTextSolidColorBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource StandardBorderBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="0"/>
+        <Setter Property="MinHeight" Value="22"/>
+        <Setter Property="Height" Value="22"/>
+        <Setter Property="MinWidth" Value="50"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Padding" Value="4,0,2,0"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="ShowButtonSpinner" Value="True"/>
+        <Setter Property="AllowSpin" Value="True"/>
+        <Setter Property="FormatString" Value="0"/>
+    </Style>
+    <Style Selector="NumericUpDown /template/ ButtonSpinner#PART_Spinner">
+        <Setter Property="MinHeight" Value="20"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}">
+                    <Grid ColumnDefinitions="*,16">
+                        <ContentPresenter Grid.Column="0"
+                                          Content="{TemplateBinding Content}"
+                                          VerticalAlignment="Center"
+                                          Padding="{TemplateBinding Padding}"/>
+                        <Grid Grid.Column="1" RowDefinitions="*,*">
+                            <RepeatButton Name="PART_IncreaseButton"
+                                          Grid.Row="0"
+                                          Width="16"
+                                          Height="10"
+                                          MinWidth="16"
+                                          MinHeight="10"
+                                          Padding="0"
+                                          Margin="0"
+                                          Background="Transparent"
+                                          BorderBrush="{StaticResource StandardBorderBrush}"
+                                          BorderThickness="1,0,0,0">
+                                <Path Data="M 0,4 L 3,0 L 6,4 Z"
+                                      Fill="{StaticResource StandardLightControlSolidColorBrush}"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"/>
+                            </RepeatButton>
+                            <RepeatButton Name="PART_DecreaseButton"
+                                          Grid.Row="1"
+                                          Width="16"
+                                          Height="10"
+                                          MinWidth="16"
+                                          MinHeight="10"
+                                          Padding="0"
+                                          Margin="0"
+                                          Background="Transparent"
+                                          BorderBrush="{StaticResource StandardBorderBrush}"
+                                          BorderThickness="1,1,0,0">
+                                <Path Data="M 0,0 L 3,4 L 6,0 Z"
+                                      Fill="{StaticResource StandardLightControlSolidColorBrush}"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"/>
+                            </RepeatButton>
+                        </Grid>
+                    </Grid>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+    <Style Selector="NumericUpDown /template/ TextBox#PART_TextBox">
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="MinHeight" Value="20"/>
+        <Setter Property="Height" Value="20"/>
+        <Setter Property="Padding" Value="4,0,2,0"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+    </Style>
+    <Style Selector="NumericUpDown:disabled">
+        <Setter Property="Foreground" Value="{StaticResource StandardDisabledControlColorBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource StandardDisabledControlColorBrush}"/>
+    </Style>
+
+    <!-- Custom Unclipped Compact Pill ToggleSwitch -->
+    <Style Selector="ToggleSwitch.CompactSwitch">
+        <Setter Property="OnContent" Value="{x:Null}"/>
+        <Setter Property="OffContent" Value="{x:Null}"/>
+        <Setter Property="Width" Value="36"/>
+        <Setter Property="MinWidth" Value="36"/>
+        <Setter Property="Height" Value="18"/>
+        <Setter Property="MinHeight" Value="18"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Margin" Value="0"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Grid Width="36" Height="18" Background="Transparent">
+                    <Border Name="TrackBorder"
+                            Width="36"
+                            Height="18"
+                            CornerRadius="9"
+                            BorderThickness="1"
+                            BorderBrush="{StaticResource StandardBorderBrush}"
+                            Background="Transparent"/>
+                    <Canvas Name="PART_SwitchKnob" Width="36" Height="18">
+                        <Grid Name="PART_MovingKnobs" Width="18" Height="18" Canvas.Left="0" Canvas.Top="0">
+                            <Ellipse Name="Knob"
+                                     Width="12"
+                                     Height="12"
+                                     HorizontalAlignment="Center"
+                                     VerticalAlignment="Center"
+                                     Fill="#FFE6E8EA"/>
+                        </Grid>
+                    </Canvas>
+                </Grid>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+    <Style Selector="ToggleSwitch.CompactSwitch:checked /template/ Border#TrackBorder">
+        <Setter Property="Background" Value="{StaticResource StandardBorderBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource StandardLightControlSolidColorBrush}"/>
+    </Style>
+    <Style Selector="ToggleSwitch.CompactSwitch:checked /template/ Grid#PART_MovingKnobs">
+        <Setter Property="Canvas.Left" Value="18"/>
+    </Style>
+    <Style Selector="ToggleSwitch.CompactSwitch:checked /template/ Ellipse#Knob">
+        <Setter Property="Fill" Value="White"/>
+    </Style>
+    <Style Selector="ToggleSwitch.CompactSwitch:disabled /template/ Border#TrackBorder">
+        <Setter Property="BorderBrush" Value="{StaticResource StandardDisabledControlColorBrush}"/>
+        <Setter Property="Background" Value="Transparent"/>
+    </Style>
+    <Style Selector="ToggleSwitch.CompactSwitch:disabled /template/ Ellipse#Knob">
+        <Setter Property="Fill" Value="{StaticResource StandardDisabledControlColorBrush}"/>
+    </Style>
+
+    <!-- Day ToggleButton (Mon..Sun) -->
+    <Style Selector="ToggleButton.DayToggle">
+        <Setter Property="Height" Value="20"/>
+        <Setter Property="Padding" Value="4,0"/>
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{StaticResource StandardDisabledControlColorBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource StandardDisabledControlColorBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="4"/>
+        <Setter Property="Cursor" Value="Hand"/>
+    </Style>
+    <Style Selector="ToggleButton.DayToggle:checked /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{StaticResource StandardBorderBrush}"/>
+        <Setter Property="TextBlock.Foreground" Value="{StaticResource StandardDarkBackgroundSolidColorBrush}"/>
+        <Setter Property="TextBlock.FontWeight" Value="SemiBold"/>
+    </Style>
+
+    <!-- ListBox -->
+    <Style Selector="ListBox">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="{StaticResource StandardBorderBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Padding" Value="2"/>
+    </Style>
+    <Style Selector="ListBoxItem">
+        <Setter Property="Padding" Value="6,4"/>
+        <Setter Property="Margin" Value="2"/>
+        <Setter Property="Foreground" Value="{StaticResource StandardLightTextSolidColorBrush}"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+    </Style>
+    <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{StaticResource StandardBorderBrush}"/>
+    </Style>
+    <Style Selector="ListBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{StaticResource StandardBorderBrush}"/>
+    </Style>
+
+    <!-- ContextMenu / MenuItem -->
+    <Style Selector="ContextMenu">
+        <Setter Property="Background" Value="{StaticResource StandardWindowBackground}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource StandardBorderBrush}"/>
+        <Setter Property="BorderThickness" Value="2"/>
+        <Setter Property="Padding" Value="2"/>
+    </Style>
+    <Style Selector="MenuItem">
+        <Setter Property="Foreground" Value="{StaticResource StandardLightTextSolidColorBrush}"/>
+        <Setter Property="FontSize" Value="12"/>
+    </Style>
+    <Style Selector="MenuItem:pointerover /template/ Border#PART_LayoutRoot">
+        <Setter Property="Background" Value="{StaticResource StandardBorderBrush}"/>
+    </Style>
+
+    <!-- ToolTip -->
+    <Style Selector="ToolTip">
+        <Setter Property="Background" Value="{StaticResource StandardDarkBackgroundSolidColorBrush}"/>
+        <Setter Property="Foreground" Value="{StaticResource StandardLightTextSolidColorBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource StandardBorderBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="FontSize" Value="12"/>
+    </Style>
+</Styles>

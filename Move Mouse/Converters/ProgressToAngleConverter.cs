@@ -1,31 +1,34 @@
-﻿using System;
-using System.Diagnostics;
+using Avalonia.Controls;
+using Avalonia.Data.Converters;
+using System;
+using System.Collections.Generic;
 using System.Globalization;
-using System.Windows.Controls;
-using System.Windows.Data;
 
 namespace ellabi.Converters
 {
     public class ProgressToAngleConverter : IMultiValueConverter
     {
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        public object Convert(IList<object> values, Type targetType, object parameter, CultureInfo culture)
         {
             try
             {
-                double progress = (double) values[0];
-                if (values[1] is ProgressBar bar) return 359.999 * (progress / (bar.Maximum - bar.Minimum));
+                if (values != null && values.Count >= 2 &&
+                    values[0] is double progress &&
+                    values[1] is ProgressBar bar)
+                {
+                    double range = bar.Maximum - bar.Minimum;
+                    if (range > 0)
+                    {
+                        return 359.999 * (progress / range);
+                    }
+                }
             }
             catch (Exception ex)
             {
                 StaticCode.Logger?.Here().Error(ex.Message);
             }
 
-            return null;
-        }
-
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
+            return 0.0;
         }
     }
 }

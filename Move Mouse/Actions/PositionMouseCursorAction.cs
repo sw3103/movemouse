@@ -1,4 +1,5 @@
-﻿using ellabi.Utilities;
+using ellabi.Platform;
+using ellabi.Utilities;
 using ellabi.Wrappers;
 using System;
 using System.Timers;
@@ -75,7 +76,7 @@ namespace ellabi.Actions
             {
                 IntervalExecutionCount++;
                 StaticCode.Logger?.Here().Information(ToString());
-                NativeMethods.SetCursorPos(X, Y);
+                LinuxInputService.SetCursorPosition(X, Y);
             }
             catch (Exception ex)
             {
@@ -87,34 +88,38 @@ namespace ellabi.Actions
         {
             try
             {
+                _cursorTrackingTimer?.Stop();
+                _cursorTrackingTimer?.Dispose();
                 CursorTrackingEnabled = true;
+                CursorTrackingTimeRemaining = _cursorTrackingTime;
+                var startWait = DateTime.UtcNow;
                 _cursorTrackingTimer = new Timer { Interval = 100 };
-                _cursorTrackingTimer.Elapsed += _cursorTrackingTimer_Elapsed;
+                _cursorTrackingTimer.Elapsed += (s, e) =>
+                {
+                    try
+                    {
+                        var lastInput = StaticCode.GetLastInputTime();
+                        var elapsed = lastInput > TimeSpan.Zero ? lastInput : (DateTime.UtcNow - startWait);
+                        CursorTrackingTimeRemaining = _cursorTrackingTime.Subtract(elapsed);
+
+                        if (CursorTrackingTimeRemaining.TotalMilliseconds <= 0)
+                        {
+                            _cursorTrackingTimer?.Stop();
+                            CursorTrackingEnabled = false;
+                        }
+                        else
+                        {
+                            var position = new MouseCursorWrapper().GetCursorPosition();
+                            X = position.X;
+                            Y = position.Y;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        StaticCode.Logger?.Here().Error(ex.Message);
+                    }
+                };
                 _cursorTrackingTimer.Start();
-            }
-            catch (Exception ex)
-            {
-                StaticCode.Logger?.Here().Error(ex.Message);
-            }
-        }
-
-        private void _cursorTrackingTimer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            try
-            {
-                CursorTrackingTimeRemaining = _cursorTrackingTime.Subtract(StaticCode.GetLastInputTime());
-
-                if (CursorTrackingTimeRemaining.TotalMilliseconds <= 0)
-                {
-                    _cursorTrackingTimer.Stop();
-                    CursorTrackingEnabled = false;
-                }
-                else
-                {
-                    var position = new MouseCursorWrapper().GetCursorPosition();
-                    X = position.X;
-                    Y = position.Y;
-                }
             }
             catch (Exception ex)
             {
@@ -124,7 +129,7 @@ namespace ellabi.Actions
 
         public override string ToString()
         {
-            return $"{this.GetType().Name} | Name = {Name} | X = {X} | Y = {Y} | Trigger = {Trigger} | Repeat = {Repeat} | RepeatMode = {RepeatMode} | IntervalThrottle = {IntervalThrottle} | IntervalExecutionCount = {IntervalExecutionCount} | InterruptsIdleTime = {InterruptsIdleTime}";
+            return $"{GetType().Name} | Name = {Name} | X = {X} | Y = {Y} | Trigger = {Trigger} | Repeat = {Repeat} | RepeatMode = {RepeatMode} | IntervalThrottle = {IntervalThrottle} | IntervalExecutionCount = {IntervalExecutionCount} | InterruptsIdleTime = {InterruptsIdleTime}";
         }
     }
 }

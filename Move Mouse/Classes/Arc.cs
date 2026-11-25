@@ -1,70 +1,93 @@
-﻿using System;
-using System.Diagnostics;
-using System.Windows;
-using System.Windows.Media;
-using System.Windows.Shapes;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Media;
+using System;
 
 namespace ellabi.Classes
 {
-    public class Arc : Shape
+    public class Arc : Control
     {
-        public double StartAngle
+        public static readonly StyledProperty<double> StartAngleProperty =
+            AvaloniaProperty.Register<Arc, double>(nameof(StartAngle), 0.0);
+
+        public static readonly StyledProperty<double> EndAngleProperty =
+            AvaloniaProperty.Register<Arc, double>(nameof(EndAngle), 90.0);
+
+        public static readonly StyledProperty<SweepDirection> DirectionProperty =
+            AvaloniaProperty.Register<Arc, SweepDirection>(nameof(Direction), SweepDirection.Clockwise);
+
+        public static readonly StyledProperty<double> OriginRotationDegreesProperty =
+            AvaloniaProperty.Register<Arc, double>(nameof(OriginRotationDegrees), 270.0);
+
+        public static readonly StyledProperty<IBrush> StrokeProperty =
+            AvaloniaProperty.Register<Arc, IBrush>(nameof(Stroke));
+
+        public static readonly StyledProperty<double> StrokeThicknessProperty =
+            AvaloniaProperty.Register<Arc, double>(nameof(StrokeThickness), 1.0);
+
+        static Arc()
         {
-            get { return (double)GetValue(StartAngleProperty); }
-            set { SetValue(StartAngleProperty, value); }
+            AffectsRender<Arc>(
+                StartAngleProperty,
+                EndAngleProperty,
+                DirectionProperty,
+                OriginRotationDegreesProperty,
+                StrokeProperty,
+                StrokeThicknessProperty);
         }
 
-        // Using a DependencyProperty as the backing store for StartAngle.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty StartAngleProperty = DependencyProperty.Register("StartAngle", typeof(double), typeof(Arc), new UIPropertyMetadata(0.0, UpdateArc));
+        public double StartAngle
+        {
+            get => GetValue(StartAngleProperty);
+            set => SetValue(StartAngleProperty, value);
+        }
 
         public double EndAngle
         {
-            get { return (double)GetValue(EndAngleProperty); }
-            set { SetValue(EndAngleProperty, value); }
+            get => GetValue(EndAngleProperty);
+            set => SetValue(EndAngleProperty, value);
         }
 
-        // Using a DependencyProperty as the backing store for EndAngle.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty EndAngleProperty = DependencyProperty.Register("EndAngle", typeof(double), typeof(Arc), new UIPropertyMetadata(90.0, UpdateArc));
-
-        // This controls whether or not the progress bar goes clockwise or counterclockwise
         public SweepDirection Direction
         {
-            get { return (SweepDirection)GetValue(DirectionProperty); }
-            set { SetValue(DirectionProperty, value); }
+            get => GetValue(DirectionProperty);
+            set => SetValue(DirectionProperty, value);
         }
 
-        public static readonly DependencyProperty DirectionProperty = DependencyProperty.Register("Direction", typeof(SweepDirection), typeof(Arc), new UIPropertyMetadata(SweepDirection.Clockwise));
-
-        // Rotate the start/endpoint of the arc a certain number of degree in the direction
-        // ie. if you wanted it to be at 12:00 that would be 270 Clockwise or 90 counterclockwise
         public double OriginRotationDegrees
         {
-            get { return (double)GetValue(OriginRotationDegreesProperty); }
-            set { SetValue(OriginRotationDegreesProperty, value); }
+            get => GetValue(OriginRotationDegreesProperty);
+            set => SetValue(OriginRotationDegreesProperty, value);
         }
 
-        public static readonly DependencyProperty OriginRotationDegreesProperty = DependencyProperty.Register("OriginRotationDegrees", typeof(double), typeof(Arc), new UIPropertyMetadata(270.0, UpdateArc));
-
-        protected static void UpdateArc(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        public IBrush Stroke
         {
-            try
-            {
-                Arc arc = d as Arc;
-                arc?.InvalidateVisual();
-            }
-            catch (Exception ex)
-            {
-                StaticCode.Logger?.Here().Error(ex.Message);
-            }
+            get => GetValue(StrokeProperty);
+            set => SetValue(StrokeProperty, value);
         }
 
-        protected override Geometry DefiningGeometry => GetArcGeometry();
-
-        protected override void OnRender(DrawingContext drawingContext)
+        public double StrokeThickness
         {
+            get => GetValue(StrokeThicknessProperty);
+            set => SetValue(StrokeThicknessProperty, value);
+        }
+
+        public override void Render(DrawingContext context)
+        {
+            base.Render(context);
+
+            if (Stroke == null || StrokeThickness <= 0 || Bounds.Width <= 0 || Bounds.Height <= 0)
+            {
+                return;
+            }
+
             try
             {
-                drawingContext.DrawGeometry(null, new Pen(Stroke, StrokeThickness), GetArcGeometry());
+                var geom = GetArcGeometry();
+                if (geom != null)
+                {
+                    context.DrawGeometry(null, new Pen(Stroke, StrokeThickness), geom);
+                }
             }
             catch (Exception ex)
             {
@@ -74,59 +97,41 @@ namespace ellabi.Classes
 
         private Geometry GetArcGeometry()
         {
-            StreamGeometry geom = new StreamGeometry();
+            double minAngle = Math.Min(StartAngle, EndAngle);
+            double maxAngle = Math.Max(StartAngle, EndAngle);
+            if (Math.Abs(maxAngle - minAngle) < 0.01) return null;
 
-            try
+            double halfStroke = StrokeThickness / 2.0;
+            double xr = Math.Max(0, (Bounds.Width - StrokeThickness) / 2.0);
+            double yr = Math.Max(0, (Bounds.Height - StrokeThickness) / 2.0);
+            if (xr <= 0 || yr <= 0) return null;
+
+            Point startPoint = PointAtAngle(minAngle, Direction, xr, yr, halfStroke);
+            Point endPoint = PointAtAngle(maxAngle, Direction, xr, yr, halfStroke);
+            Size arcSize = new Size(xr, yr);
+            bool isLargeArc = Math.Abs(EndAngle - StartAngle) > 180.0;
+
+            var geom = new StreamGeometry();
+            using (var ctx = geom.Open())
             {
-                Point startPoint = PointAtAngle(Math.Min(StartAngle, EndAngle), Direction);
-                Point endPoint = PointAtAngle(Math.Max(StartAngle, EndAngle), Direction);
-                Size arcSize = new Size(Math.Max(0, (RenderSize.Width - StrokeThickness) / 2), Math.Max(0, (RenderSize.Height - StrokeThickness) / 2));
-                bool isLargeArc = Math.Abs(EndAngle - StartAngle) > 180;
-
-                using (StreamGeometryContext context = geom.Open())
-                {
-                    context.BeginFigure(startPoint, false, false);
-                    context.ArcTo(endPoint, arcSize, 0, isLargeArc, Direction, true, false);
-                }
-
-                geom.Transform = new TranslateTransform(StrokeThickness / 2, StrokeThickness / 2);
-            }
-            catch (Exception ex)
-            {
-                StaticCode.Logger?.Here().Error(ex.Message);
+                ctx.BeginFigure(startPoint, false);
+                ctx.ArcTo(endPoint, arcSize, 0, isLargeArc, Direction);
+                ctx.EndFigure(false);
             }
 
             return geom;
         }
 
-        private Point PointAtAngle(double angle, SweepDirection sweep)
+        private Point PointAtAngle(double angle, SweepDirection sweep, double xr, double yr, double offset)
         {
-            try
-            {
-                double translatedAngle = angle + OriginRotationDegrees;
-                double radAngle = translatedAngle * (Math.PI / 180);
-                double xr = (RenderSize.Width - StrokeThickness) / 2;
-                double yr = (RenderSize.Height - StrokeThickness) / 2;
-                double x = xr + xr * Math.Cos(radAngle);
-                double y = yr * Math.Sin(radAngle);
+            double translatedAngle = angle + OriginRotationDegrees;
+            double radAngle = translatedAngle * (Math.PI / 180.0);
+            double x = offset + xr + xr * Math.Cos(radAngle);
+            double y = offset + (sweep == SweepDirection.CounterClockwise
+                ? yr - yr * Math.Sin(radAngle)
+                : yr + yr * Math.Sin(radAngle));
 
-                if (sweep == SweepDirection.Counterclockwise)
-                {
-                    y = yr - y;
-                }
-                else
-                {
-                    y = yr + y;
-                }
-
-                return new Point(x, y);
-            }
-            catch (Exception ex)
-            {
-                StaticCode.Logger?.Here().Error(ex.Message);
-            }
-
-            return new Point();
+            return new Point(x, y);
         }
     }
 }

@@ -1,7 +1,7 @@
-﻿using System;
+using ellabi.Platform;
+using System;
 using System.Globalization;
-using System.Windows.Data;
-using Windows.ApplicationModel;
+using Avalonia.Data.Converters;
 
 namespace ellabi.Converters
 {
@@ -9,36 +9,19 @@ namespace ellabi.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            try
+            if (value is StartupTaskState state)
             {
-                if ((value != null) && value.GetType() == typeof(StartupTaskState))
-                {
-                    var state = (StartupTaskState) value;
-                    return state.Equals(StartupTaskState.Enabled);
-                }
+                return state == StartupTaskState.Enabled;
             }
-            catch (Exception ex)
-            {
-                StaticCode.Logger?.Here().Error(ex.Message);
-            }
-
             return false;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            try
+            if (bool.TryParse(value?.ToString(), out var b))
             {
-                if (Boolean.TryParse(value?.ToString(), out var b))
-                {
-                    return b ? StartupTaskState.Enabled : StartupTaskState.Disabled;
-                }
+                return b ? StartupTaskState.Enabled : StartupTaskState.Disabled;
             }
-            catch (Exception ex)
-            {
-                StaticCode.Logger?.Here().Error(ex.Message);
-            }
-
             return StartupTaskState.Disabled;
         }
     }

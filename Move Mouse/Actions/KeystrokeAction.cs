@@ -1,10 +1,11 @@
-﻿using ellabi.Utilities;
+using ellabi.Platform;
+using ellabi.Utilities;
 using ellabi.Wrappers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Xml.Serialization;
-using static ellabi.Wrappers.NativeMethods;
 
 namespace ellabi.Actions
 {
@@ -36,6 +37,7 @@ namespace ellabi.Actions
             {
                 _keystrokes = value;
                 OnPropertyChanged(nameof(Keystrokes));
+                RaiseKeystrokeCommands();
             }
         }
 
@@ -131,6 +133,7 @@ namespace ellabi.Actions
             {
                 _selectedIndex = value;
                 OnPropertyChanged();
+                RaiseKeystrokeCommands();
             }
         }
 
@@ -147,10 +150,20 @@ namespace ellabi.Actions
             _moveDownSelectedKeystrokeCommand = new RelayCommand(param => MoveDownSelectedKeystroke(), param => CanMoveDownSelectedKeystroke);
         }
 
+        private void RaiseKeystrokeCommands()
+        {
+            _removeSelectedKeystrokeCommand?.RaiseCanExecuteChanged();
+            _moveUpSelectedKeystrokeCommand?.RaiseCanExecuteChanged();
+            _moveDownSelectedKeystrokeCommand?.RaiseCanExecuteChanged();
+            ExecuteCommand?.RaiseCanExecuteChanged();
+        }
+
         public override void Execute()
         {
             try
             {
+                if (_keystrokes == null || _keystrokes.Length == 0) return;
+
                 IntervalExecutionCount++;
                 StaticCode.Logger?.Here().Information(ToString());
                 Aborted = false;
@@ -166,15 +179,13 @@ namespace ellabi.Actions
                             Aborted = true;
                             break;
                         }
-                        else
-                        {
-                            keybd_event((byte)key, 0, 0, 0);
-                            keybd_event((byte)key, 0, (uint)KeyEventFlags.KEYUP, 0);
 
-                            if (Pause)
-                            {
-                                System.Threading.Thread.Sleep((int)(PauseInterval * 1000));
-                            }
+                        LinuxInputService.SendKey(key, true);
+                        LinuxInputService.SendKey(key, false);
+
+                        if (Pause)
+                        {
+                            Thread.Sleep((int)(PauseInterval * 1000));
                         }
                     }
                 }
@@ -182,12 +193,12 @@ namespace ellabi.Actions
                 {
                     foreach (var key in _keystrokes)
                     {
-                        keybd_event((byte)key, 0, 0, 0);
+                        LinuxInputService.SendKey(key, true);
                     }
 
                     foreach (var key in _keystrokes)
                     {
-                        keybd_event((byte)key, 0, (uint)KeyEventFlags.KEYUP, 0);
+                        LinuxInputService.SendKey(key, false);
                     }
                 }
             }
@@ -203,9 +214,10 @@ namespace ellabi.Actions
             {
                 var selectedIndex = SelectedIndex;
                 var keystrokeList = Keystrokes?.ToList() ?? new List<int>();
-                keystrokeList.Insert(SelectedIndex + 1, key);
+                int insertAt = Math.Clamp(selectedIndex + 1, 0, keystrokeList.Count);
+                keystrokeList.Insert(insertAt, key);
                 Keystrokes = keystrokeList.ToArray();
-                SelectedIndex = selectedIndex + 1;
+                SelectedIndex = insertAt;
             }
             catch (Exception ex)
             {
@@ -217,9 +229,13 @@ namespace ellabi.Actions
         {
             try
             {
+                if (!CanRemoveSelectedKeystroke) return;
+
                 var selectedIndex = SelectedIndex;
                 var keystrokeList = Keystrokes?.ToList() ?? new List<int>();
-                keystrokeList.RemoveAt(SelectedIndex);
+                if (selectedIndex < 0 || selectedIndex >= keystrokeList.Count) return;
+
+                keystrokeList.RemoveAt(selectedIndex);
                 Keystrokes = keystrokeList.ToArray();
 
                 if (selectedIndex > 0)
@@ -230,6 +246,10 @@ namespace ellabi.Actions
                 {
                     SelectedIndex = 0;
                 }
+                else
+                {
+                    SelectedIndex = -1;
+                }
             }
             catch (Exception ex)
             {
@@ -237,16 +257,18 @@ namespace ellabi.Actions
             }
         }
 
-        private bool CanRemoveSelectedKeystroke => SelectedIndex > -1;
+        private bool CanRemoveSelectedKeystroke => SelectedIndex > -1 && Keystrokes != null && SelectedIndex < Keystrokes.Length;
 
         public void MoveUpSelectedKeystroke()
         {
             try
             {
+                if (!CanMoveUpSelectedKeystroke) return;
+
                 var selectedIndex = SelectedIndex;
                 var keystrokeList = Keystrokes?.ToList() ?? new List<int>();
 
-                if (selectedIndex > 0)
+                if (selectedIndex > 0 && selectedIndex < keystrokeList.Count)
                 {
                     var temp = keystrokeList[selectedIndex - 1];
                     keystrokeList[selectedIndex - 1] = keystrokeList[selectedIndex];
@@ -261,16 +283,18 @@ namespace ellabi.Actions
             }
         }
 
-        private bool CanMoveUpSelectedKeystroke => SelectedIndex > 0;
+        private bool CanMoveUpSelectedKeystroke => SelectedIndex > 0 && Keystrokes != null && SelectedIndex < Keystrokes.Length;
 
         public void MoveDownSelectedKeystroke()
         {
             try
             {
+                if (!CanMoveDownSelectedKeystroke) return;
+
                 var selectedIndex = SelectedIndex;
                 var keystrokeList = Keystrokes?.ToList() ?? new List<int>();
 
-                if (selectedIndex < keystrokeList.Count - 1)
+                if (selectedIndex >= 0 && selectedIndex < keystrokeList.Count - 1)
                 {
                     var temp = keystrokeList[selectedIndex + 1];
                     keystrokeList[selectedIndex + 1] = keystrokeList[selectedIndex];
@@ -289,7 +313,7 @@ namespace ellabi.Actions
 
         public override string ToString()
         {
-            return $"{this.GetType().Name} | Name = {Name} | Keystrokes = {Keystrokes} | Trigger = {Trigger} | Repeat = {Repeat} | RepeatMode = {RepeatMode} | IntervalThrottle = {IntervalThrottle} | IntervalExecutionCount = {IntervalExecutionCount} | InterruptsIdleTime = {InterruptsIdleTime}";
+            return $"{GetType().Name} | Name = {Name} | Keystrokes = {Keystrokes} | Trigger = {Trigger} | Repeat = {Repeat} | RepeatMode = {RepeatMode} | IntervalThrottle = {IntervalThrottle} | IntervalExecutionCount = {IntervalExecutionCount} | InterruptsIdleTime = {InterruptsIdleTime}";
         }
     }
 }

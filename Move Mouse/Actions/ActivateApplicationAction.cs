@@ -1,11 +1,8 @@
-﻿using ellabi.Utilities;
-using ellabi.Wrappers;
-using Microsoft.VisualBasic;
+using ellabi.Platform;
+using ellabi.Utilities;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Xml.Serialization;
 
 namespace ellabi.Actions
@@ -23,7 +20,7 @@ namespace ellabi.Actions
 
         public IEnumerable<SearchMode> SearchModeValues => Enum.GetValues(typeof(SearchMode)).Cast<SearchMode>();
 
-        public override bool IsValid => !String.IsNullOrWhiteSpace(Application);
+        public override bool IsValid => !string.IsNullOrWhiteSpace(Application);
 
         public SearchMode Mode
         {
@@ -44,6 +41,7 @@ namespace ellabi.Actions
             {
                 _application = value;
                 OnPropertyChanged();
+                ExecuteCommand?.RaiseCanExecuteChanged();
             }
         }
 
@@ -59,28 +57,17 @@ namespace ellabi.Actions
 
                 try
                 {
-                    if (!String.IsNullOrWhiteSpace(Application))
+                    if (!string.IsNullOrWhiteSpace(Application))
                     {
                         availableApplications.Add(Application);
                     }
 
-                    foreach (var process in Process.GetProcesses().Where(p => p.Responding))
+                    foreach (var window in LinuxWindowService.GetOpenWindows())
                     {
-                        try
+                        string candidate = Mode == SearchMode.Window ? window.Title : window.ProcessName;
+                        if (!string.IsNullOrWhiteSpace(candidate) && !availableApplications.Contains(candidate))
                         {
-                            if (!String.IsNullOrEmpty(process.MainWindowTitle))
-                            {
-                                var application = Mode.Equals(SearchMode.Window) ? process.MainWindowTitle : process.ProcessName;
-
-                                if (!availableApplications.Contains(application))
-                                {
-                                    availableApplications.Add(application);
-                                }
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            StaticCode.Logger?.Here().Error(ex.Message);
+                            availableApplications.Add(candidate);
                         }
                     }
                 }
@@ -106,66 +93,12 @@ namespace ellabi.Actions
             {
                 IntervalExecutionCount++;
                 StaticCode.Logger?.Here().Information(ToString());
-                string windowName = null;
-
-                if (Mode.Equals(SearchMode.Window) && (Application.StartsWith("*") || Application.EndsWith("*")))
-                {
-                    if (Application.StartsWith("*") && Application.EndsWith("*"))
-                    {
-                        windowName = Process.GetProcesses().FirstOrDefault(p => !String.IsNullOrEmpty(p.MainWindowTitle) && (p.MainWindowTitle.IndexOf(Application.Trim(Convert.ToChar("*")), StringComparison.CurrentCultureIgnoreCase) >= 0))?.MainWindowTitle;
-                    }
-                    else if (Application.StartsWith("*"))
-                    {
-                        windowName = Process.GetProcesses().FirstOrDefault(p => !String.IsNullOrEmpty(p.MainWindowTitle) && p.MainWindowTitle.EndsWith(Application.Trim(Convert.ToChar("*")), StringComparison.CurrentCultureIgnoreCase))?.MainWindowTitle;
-                    }
-                    else if (Application.EndsWith("*"))
-                    {
-                        windowName = Process.GetProcesses().FirstOrDefault(p => !String.IsNullOrEmpty(p.MainWindowTitle) && p.MainWindowTitle.StartsWith(Application.Trim(Convert.ToChar("*")), StringComparison.CurrentCultureIgnoreCase))?.MainWindowTitle;
-                    }
-                }
-                else
-                {
-                    windowName = Mode.Equals(SearchMode.Window) ? Application : Process.GetProcessesByName(Application).FirstOrDefault(p => !String.IsNullOrEmpty(p.MainWindowTitle))?.MainWindowTitle;
-                }
-
-                //Debug.WriteLine(windowName);
-
-                if (!String.IsNullOrEmpty(windowName))
-                {
-                    IntPtr handle = NativeMethods.FindWindow(null, windowName);
-
-                    if (handle != IntPtr.Zero)
-                    {
-                        if (IsWindowMinimised(handle))
-                        {
-                            NativeMethods.ShowWindow(handle, NativeMethods.ShowWindowCommands.Restore);
-                        }
-
-                        Interaction.AppActivate(windowName);
-                    }
-                }
+                LinuxWindowService.ActivateWindow(Application, Mode == SearchMode.Window);
             }
             catch (Exception ex)
             {
                 StaticCode.Logger?.Here().Error(ex.Message);
             }
-        }
-
-        private bool IsWindowMinimised(IntPtr handle)
-        {
-            try
-            {
-                var placement = new NativeMethods.WINDOWPLACEMENT();
-                placement.length = Marshal.SizeOf(placement);
-                NativeMethods.GetWindowPlacement(handle, ref placement);
-                return placement.showCmd == NativeMethods.ShowWindowCommands.ShowMinimized;
-            }
-            catch (Exception ex)
-            {
-                StaticCode.Logger?.Here().Error(ex.Message);
-            }
-
-            return false;
         }
 
         private void RefreshApplications()
@@ -182,7 +115,7 @@ namespace ellabi.Actions
 
         public override string ToString()
         {
-            return $"{this.GetType().Name} | Name = {Name} | Mode = {Mode} | Application = {Application} | Trigger = {Trigger} | Repeat = {Repeat} | RepeatMode = {RepeatMode} | IntervalThrottle = {IntervalThrottle} | IntervalExecutionCount = {IntervalExecutionCount} | InterruptsIdleTime = {InterruptsIdleTime}";
+            return $"{GetType().Name} | Name = {Name} | Mode = {Mode} | Application = {Application} | Trigger = {Trigger} | Repeat = {Repeat} | RepeatMode = {RepeatMode} | IntervalThrottle = {IntervalThrottle} | IntervalExecutionCount = {IntervalExecutionCount} | InterruptsIdleTime = {InterruptsIdleTime}";
         }
     }
 }

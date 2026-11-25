@@ -1,0 +1,23 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="ellabi.Views.MessageDialog"
+        Width="420"
+        SizeToContent="Height"
+        WindowStartupLocation="CenterOwner"
+        SystemDecorations="None"
+        CanResize="False"
+        Background="Transparent">
+    <Border Background="{StaticResource StandardWindowBackground}"
+            BorderBrush="{StaticResource StandardBorderBrush}"
+            BorderThickness="3"
+            Padding="20">
+        <StackPanel Spacing="16">
+            <TextBlock Name="TitleText" FontSize="15" FontWeight="Bold" Foreground="{StaticResource StandardLightControlSolidColorBrush}"/>
+            <TextBlock Name="MessageText" FontSize="12" TextWrapping="Wrap" Foreground="{StaticResource StandardLightTextSolidColorBrush}"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
+                <Button Name="YesButton" Content="Yes" Click="YesButton_Click"/>
+                <Button Name="NoButton" Content="No" Click="NoButton_Click"/>
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</Window>

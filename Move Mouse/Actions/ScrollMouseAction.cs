@@ -1,7 +1,6 @@
-﻿using ellabi.Wrappers;
+using ellabi.Platform;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 namespace ellabi.Actions
@@ -92,32 +91,25 @@ namespace ellabi.Actions
             {
                 IntervalExecutionCount++;
                 StaticCode.Logger?.Here().Information(ToString());
-                var direction = (Direction == WheelDirection.Random) ? WheelDirectionValues.OrderBy(wd => Guid.NewGuid()).FirstOrDefault() : Direction;
-                uint distance = Random ? (uint)(new Random().Next(Convert.ToInt32(Distance), Convert.ToInt32(UpperDistance))) : Distance;
 
-                switch (direction)
+                var direction = (Direction == WheelDirection.Random)
+                    ? WheelDirectionValues.Where(wd => wd != WheelDirection.Random).OrderBy(_ => Guid.NewGuid()).FirstOrDefault()
+                    : Direction;
+
+                uint distance = Random
+                    ? (uint)System.Random.Shared.Next(Convert.ToInt32(Distance), Convert.ToInt32(UpperDistance) + 1)
+                    : Distance;
+
+                var scrollDir = direction switch
                 {
-                    case WheelDirection.Up:
-                        {
-                            NativeMethods.mouse_event((int)NativeMethods.MouseEventFlags.WHEEL, 0, 0, distance, 0);
-                            break;
-                        }
-                    case WheelDirection.Down:
-                        {
-                            NativeMethods.mouse_event((int)NativeMethods.MouseEventFlags.WHEEL, 0, 0, (uint)(distance * -1), 0);
-                            break;
-                        }
-                    case WheelDirection.Left:
-                        {
-                            NativeMethods.mouse_event((int)NativeMethods.MouseEventFlags.HWHEEL, 0, 0, distance, 0);
-                            break;
-                        }
-                    case WheelDirection.Right:
-                        {
-                            NativeMethods.mouse_event((int)NativeMethods.MouseEventFlags.HWHEEL, 0, 0, (uint)(distance * -1), 0);
-                            break;
-                        }
-                }
+                    WheelDirection.Up => LinuxInputService.ScrollDirectionType.Up,
+                    WheelDirection.Down => LinuxInputService.ScrollDirectionType.Down,
+                    WheelDirection.Left => LinuxInputService.ScrollDirectionType.Left,
+                    WheelDirection.Right => LinuxInputService.ScrollDirectionType.Right,
+                    _ => LinuxInputService.ScrollDirectionType.Down
+                };
+
+                LinuxInputService.Scroll(scrollDir, distance);
             }
             catch (Exception ex)
             {
@@ -127,7 +119,7 @@ namespace ellabi.Actions
 
         public override string ToString()
         {
-            return $"{this.GetType().Name} | Name = {Name} | Distance = {Distance} | Direction = {Direction} | Trigger = {Trigger} | Repeat = {Repeat} | RepeatMode = {RepeatMode} | IntervalThrottle = {IntervalThrottle} | IntervalExecutionCount = {IntervalExecutionCount} | InterruptsIdleTime = {InterruptsIdleTime}";
+            return $"{GetType().Name} | Name = {Name} | Distance = {Distance} | Direction = {Direction} | Trigger = {Trigger} | Repeat = {Repeat} | RepeatMode = {RepeatMode} | IntervalThrottle = {IntervalThrottle} | IntervalExecutionCount = {IntervalExecutionCount} | InterruptsIdleTime = {InterruptsIdleTime}";
         }
     }
 }

@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 using System.Globalization;
-using System.Windows.Data;
+using Avalonia.Data.Converters;
 
 namespace ellabi.Converters
 {
@@ -8,7 +8,11 @@ namespace ellabi.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-           return StaticCode.VirtualKeys.Value.ContainsKey((int)value) ? StaticCode.VirtualKeys.Value[(int)value].Key : "Unknown";
+            if (value is int vk && StaticCode.VirtualKeys.Value.TryGetValue(vk, out var info))
+            {
+                return info.Key;
+            }
+            return "Unknown";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

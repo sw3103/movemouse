@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.IO;
 
@@ -11,7 +11,7 @@ namespace ellabi.Actions
         private bool _waitForExit;
         private bool _hidden;
 
-        public override bool IsValid => !String.IsNullOrWhiteSpace(FilePath) && File.Exists(FilePath);
+        public override bool IsValid => !string.IsNullOrWhiteSpace(FilePath) && File.Exists(FilePath);
 
         public string FilePath
         {
@@ -20,6 +20,7 @@ namespace ellabi.Actions
             {
                 _filePath = value;
                 OnPropertyChanged();
+                ExecuteCommand?.RaiseCanExecuteChanged();
             }
         }
 
@@ -64,18 +65,19 @@ namespace ellabi.Actions
 
                 if (File.Exists(FilePath))
                 {
-                    var process = new Process
+                    var psi = new ProcessStartInfo
                     {
-                        StartInfo =
-                        {
-                            FileName = FilePath.Trim(),
-                            Arguments = Arguments,
-                            WindowStyle = Hidden ? ProcessWindowStyle.Hidden : ProcessWindowStyle.Normal
-                        }
+                        FileName = FilePath.Trim(),
+                        Arguments = Arguments ?? string.Empty,
+                        UseShellExecute = false,
+                        CreateNoWindow = Hidden
                     };
 
-                    process.Start();
-                    if (WaitForExit) process.WaitForExit();
+                    var process = Process.Start(psi);
+                    if (WaitForExit && process != null)
+                    {
+                        process.WaitForExit();
+                    }
                 }
             }
             catch (Exception ex)
@@ -86,7 +88,7 @@ namespace ellabi.Actions
 
         public override string ToString()
         {
-            return $"{this.GetType().Name} | Name = {Name} | FilePath = {FilePath} | Arguments = {Arguments} | WaitForExit = {WaitForExit} | Hidden = {Hidden} | Trigger = {Trigger} | Repeat = {Repeat} | RepeatMode = {RepeatMode} | IntervalThrottle = {IntervalThrottle} | IntervalExecutionCount = {IntervalExecutionCount} | InterruptsIdleTime = {InterruptsIdleTime}";
+            return $"{GetType().Name} | Name = {Name} | FilePath = {FilePath} | Arguments = {Arguments} | WaitForExit = {WaitForExit} | Hidden = {Hidden} | Trigger = {Trigger} | Repeat = {Repeat} | RepeatMode = {RepeatMode} | IntervalThrottle = {IntervalThrottle} | IntervalExecutionCount = {IntervalExecutionCount} | InterruptsIdleTime = {InterruptsIdleTime}";
         }
     }
 }

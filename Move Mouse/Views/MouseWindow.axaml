@@ -1,0 +1,222 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:converters="clr-namespace:ellabi.Converters"
+        xmlns:classes="clr-namespace:ellabi.Classes"
+        xmlns:controls="clr-namespace:ellabi.Controls"
+        x:Class="ellabi.Views.MouseWindow"
+        Width="600"
+        Height="600"
+        MinWidth="600"
+        MinHeight="600"
+        WindowStartupLocation="CenterScreen"
+        CanResize="False"
+        SystemDecorations="None"
+        ExtendClientAreaToDecorationsHint="False"
+        TransparencyLevelHint="Transparent"
+        TransparencyBackgroundFallback="Transparent"
+        Background="Transparent"
+        Icon="avares://MoveMouse/Resources/Mouse.ico"
+        Cursor="SizeAll"
+        PointerPressed="Window_OnPointerPressed"
+        Closing="MouseWindow_OnClosing">
+    <Window.Resources>
+        <converters:ProgressToAngleConverter x:Key="ProgressConverter"/>
+        <converters:MouseStateIsSleepingConverter x:Key="MouseStateIsSleepingConverter"/>
+        <converters:MouseStateBrushConverter x:Key="MouseStateBrushConverter"/>
+    </Window.Resources>
+
+    <Window.Styles>
+        <Style Selector="Button.FlyingButton">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Height" Value="50"/>
+            <Setter Property="Width" Value="50"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="#01FFFFFF"/>
+            <Setter Property="Opacity" Value="0.0"/>
+            <Setter Property="IsHitTestVisible" Value="False"/>
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <ContentPresenter Name="PART_ContentPresenter"
+                                      Background="#01FFFFFF"
+                                      Content="{TemplateBinding Content}"
+                                      HorizontalContentAlignment="Center"
+                                      VerticalContentAlignment="Center"/>
+                </ControlTemplate>
+            </Setter>
+        </Style>
+        <Style Selector="Button.FlyingButton:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="#01FFFFFF"/>
+        </Style>
+        <Style Selector="Button.FlyingButton:pressed /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="#01FFFFFF"/>
+        </Style>
+        <Style Selector="Image.FlyingImage">
+            <Setter Property="Stretch" Value="Uniform"/>
+            <Setter Property="Width" Value="50"/>
+            <Setter Property="Height" Value="50"/>
+        </Style>
+    </Window.Styles>
+
+    <Grid>
+        <!-- Central 200x200 Ring + Mouse -->
+        <Grid Name="MouseGrid"
+              Width="200"
+              Height="200"
+              HorizontalAlignment="Center"
+              VerticalAlignment="Center"
+              PointerEntered="MouseGrid_OnPointerEntered"
+              PointerExited="UIElement_OnPointerExited">
+
+            <Viewbox Width="200" Height="200">
+                <Grid Width="300" Height="300">
+                    <ProgressBar Name="CountDownProgressBar"
+                                 Minimum="0"
+                                 Maximum="100"
+                                 Value="100"
+                                 Width="300"
+                                 Height="300"
+                                 Opacity="0"
+                                 IsHitTestVisible="False"/>
+                    <Ellipse Fill="{StaticResource StandardWindowBackground}"/>
+                    <classes:Arc Name="CountdownArc"
+                                 StrokeThickness="15"
+                                 Stroke="{Binding CurrentState, Converter={StaticResource MouseStateBrushConverter}}"
+                                 RenderTransformOrigin="50%,50%">
+                        <classes:Arc.RenderTransform>
+                            <ScaleTransform ScaleX="-1"/>
+                        </classes:Arc.RenderTransform>
+                        <classes:Arc.StartAngle>
+                            <MultiBinding Converter="{StaticResource ProgressConverter}">
+                                <Binding ElementName="CountDownProgressBar" Path="Minimum"/>
+                                <Binding ElementName="CountDownProgressBar"/>
+                            </MultiBinding>
+                        </classes:Arc.StartAngle>
+                        <classes:Arc.EndAngle>
+                            <MultiBinding Converter="{StaticResource ProgressConverter}">
+                                <Binding ElementName="CountDownProgressBar" Path="Value"/>
+                                <Binding ElementName="CountDownProgressBar"/>
+                            </MultiBinding>
+                        </classes:Arc.EndAngle>
+                    </classes:Arc>
+                </Grid>
+            </Viewbox>
+
+            <!-- Mouse Image & Blinking Eyes & Click Area -->
+            <Grid VerticalAlignment="Center" HorizontalAlignment="Center" Margin="35">
+                <Image Source="avares://MoveMouse/Resources/Mouse.ico" Stretch="Uniform"/>
+                <Image Name="ClosedEyesImage"
+                       Source="avares://MoveMouse/Resources/MouseClosedEyes_128x128.png"
+                       Stretch="Uniform"
+                       Opacity="0.0"/>
+                <Button Name="MainToggleButton"
+                        Classes="NoChrome"
+                        AutomationProperties.Name="Toggle start stop"
+                        Command="{Binding StartStopToggleCommand}"
+                        Cursor="Hand"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        PointerPressed="MouseButton_OnPointerPressed"/>
+            </Grid>
+
+            <!-- Status Text -->
+            <TextBlock Text="{Binding CurrentState}"
+                       Foreground="{StaticResource StandardLightTextSolidColorBrush}"
+                       IsVisible="{Binding SettingsVm.Settings.ShowMoveMouseStatus}"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Bottom"
+                       Margin="0,0,0,20"
+                       IsHitTestVisible="False"/>
+        </Grid>
+
+        <!-- 6 Orbiting Flying Buttons placed explicitly on Canvas for accurate hit-testing -->
+        <Canvas Name="FlyingButtonsCanvas" Width="600" Height="600">
+            <Button Name="FlyingTwitterButton"
+                    Classes="FlyingButton"
+                    AutomationProperties.Name="Twitter"
+                    Canvas.Left="125"
+                    Canvas.Top="275"
+                    PointerEntered="UIElement_OnPointerEntered"
+                    PointerExited="UIElement_OnPointerExited"
+                    Click="TwitterButton_OnClick">
+                <Image Name="FlyingTwitterImage" Classes="FlyingImage" Source="avares://MoveMouse/Resources/Twitter_Dark_64x64.png"/>
+            </Button>
+
+            <Button Name="FlyingSettingsButton"
+                    Classes="FlyingButton"
+                    AutomationProperties.Name="Settings"
+                    Canvas.Left="125"
+                    Canvas.Top="275"
+                    PointerEntered="UIElement_OnPointerEntered"
+                    PointerExited="UIElement_OnPointerExited"
+                    Click="SettingsButton_OnClick">
+                <Image Name="FlyingSettingsImage" Classes="FlyingImage" Source="avares://MoveMouse/Resources/Settings_Dark_64x64.png"/>
+            </Button>
+
+            <Button Name="FlyingCloseButton"
+                    Classes="FlyingButton"
+                    AutomationProperties.Name="Close"
+                    Canvas.Left="125"
+                    Canvas.Top="275"
+                    PointerEntered="UIElement_OnPointerEntered"
+                    PointerExited="UIElement_OnPointerExited"
+                    Click="CloseButton_OnClick">
+                <Image Name="FlyingCloseImage" Classes="FlyingImage" Source="avares://MoveMouse/Resources/Close_Dark_64x64.png"/>
+            </Button>
+
+            <Button Name="FlyingMinimiseButton"
+                    Classes="FlyingButton"
+                    AutomationProperties.Name="Minimise"
+                    Canvas.Left="125"
+                    Canvas.Top="275"
+                    PointerEntered="UIElement_OnPointerEntered"
+                    PointerExited="UIElement_OnPointerExited"
+                    Click="MinimiseButton_OnClick">
+                <Image Name="FlyingMinimiseImage" Classes="FlyingImage" Source="avares://MoveMouse/Resources/Minimise_Dark_64x64.png"/>
+            </Button>
+
+            <Button Name="FlyingPayPalButton"
+                    Classes="FlyingButton"
+                    AutomationProperties.Name="Pay Pal"
+                    Canvas.Left="125"
+                    Canvas.Top="275"
+                    PointerEntered="UIElement_OnPointerEntered"
+                    PointerExited="UIElement_OnPointerExited"
+                    Click="PayPalButton_OnClick">
+                <Image Name="FlyingPayPalImage" Classes="FlyingImage" Source="avares://MoveMouse/Resources/PayPal_Dark_64x64.png"/>
+            </Button>
+
+            <Button Name="FlyingHelpButton"
+                    Classes="FlyingButton"
+                    AutomationProperties.Name="Help"
+                    Canvas.Left="125"
+                    Canvas.Top="275"
+                    PointerEntered="UIElement_OnPointerEntered"
+                    PointerExited="UIElement_OnPointerExited"
+                    Click="HelpButton_OnClick">
+                <Image Name="FlyingHelpImage" Classes="FlyingImage" Source="avares://MoveMouse/Resources/Help_Dark_64x64.png"/>
+            </Button>
+        </Canvas>
+
+        <!-- Update Available Callout -->
+        <controls:CalloutBubble Name="UpdateCallout"
+                                Text="Click here to download a new version of me"
+                                Width="180"
+                                VerticalAlignment="Bottom"
+                                HorizontalAlignment="Right"
+                                Margin="0,0,90,311"
+                                Cursor="Hand"
+                                IsVisible="False"
+                                PointerPressed="UpdateCallout_OnPointerPressed"/>
+
+        <!-- First-time Start Callout (non-hit-testable so it never blocks Help/Close buttons) -->
+        <controls:CalloutBubble Name="StartCallout"
+                                Text="Click here to start Move Mouse"
+                                Width="165"
+                                VerticalAlignment="Bottom"
+                                HorizontalAlignment="Right"
+                                Margin="0,0,105,311"
+                                IsHitTestVisible="False"
+                                IsVisible="{Binding !SettingsVm.Settings.MoveMouseHasBeenClicked}"/>
+    </Grid>
+</Window>

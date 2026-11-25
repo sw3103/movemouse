@@ -1,9 +1,9 @@
-﻿using AudioSwitcher.AudioApi.CoreAudio;
+using Avalonia.Threading;
 using ellabi.Actions;
 using ellabi.Jobs;
+using ellabi.Platform;
 using ellabi.Schedules;
 using ellabi.Utilities;
-using Microsoft.Win32;
 using Quartz;
 using Quartz.Impl;
 using Quartz.Impl.Triggers;
@@ -18,19 +18,22 @@ using System.Threading.Tasks;
 
 namespace ellabi.ViewModels
 {
-    internal class MouseWindowViewModel : INotifyPropertyChanged, IDisposable
+    public class MouseWindowViewModel : INotifyPropertyChanged, IDisposable
     {
+        public enum NotificationIcon
+        {
+            None,
+            Info,
+            Warning,
+            Error
+        }
+
         public delegate void MouseStateChangedHandler(object sender, MouseState state);
-
         public delegate void AltTabVisibilityChangedHandler(object sender, bool visible);
-
         public delegate void RequestActivateHandler(object sender);
-
         public delegate void RequestMinimiseHandler(object sender);
-
-        public delegate void RequestNotificationHandler(object sender, string title, string message, Hardcodet.Wpf.TaskbarNotification.BalloonIcon symbol);
-
-        //public delegate void HookKeyEnabledChangedHandler(object sender, bool enabled, Key key);
+        public delegate void RequestNotificationHandler(object sender, string title, string message, NotificationIcon symbol);
+        public delegate void RequestConcealMainWindowHandler(object sender);
 
         public event PropertyChangedEventHandler PropertyChanged;
         public event MouseStateChangedHandler MouseStateChanged;
@@ -38,7 +41,7 @@ namespace ellabi.ViewModels
         public event RequestActivateHandler RequestActivate;
         public event RequestMinimiseHandler RequestMinimise;
         public event RequestNotificationHandler RequestNotification;
-        //public event HookKeyEnabledChangedHandler HookKeyEnabledChanged;
+        public event RequestConcealMainWindowHandler RequestConcealMainWindow;
 
         private MouseState _currentState;
         private DateTime _executionTime;
@@ -46,25 +49,22 @@ namespace ellabi.ViewModels
         private SettingsWindowViewModel _settingsVm;
         private System.Timers.Timer _autoPauseTimer;
         private System.Timers.Timer _autoResumeTimer;
+        private System.Timers.Timer _blackoutTimer;
+        private System.Timers.Timer _environmentMonitorTimer;
         private bool _firstPass = true;
         private readonly TimeSpan _minTimeBetweenStopStartToggle = TimeSpan.FromMilliseconds(500);
         private DateTime _lastStopStartToggleTime = DateTime.MinValue;
         private StdSchedulerFactory _schedulerFactory;
         private IScheduler _scheduler;
-        //private DateTime _lastSchedulesUpdateTime = new DateTime(1980, 3, 31);
-        //private readonly TimeSpan _schedulesUpdateDelay = TimeSpan.FromSeconds(1);
-        //private BitmapImage _themeImage;
-        private System.Timers.Timer _blackoutTimer;
         private bool _workstationLocked;
+        private bool _lastOnBattery;
         private bool _forceSystrayIconVisibility;
         private double? _initialVolume;
-        private CoreAudioDevice _defaultPlaybackDevice;
         private Guid _activeExecutionId;
-        private object _actionsLock = new object();
-        private object _pauseLock = new object();
+        private readonly object _actionsLock = new object();
+        private readonly object _pauseLock = new object();
+        private readonly SemaphoreSlim _scheduleJobsSemaphore = new SemaphoreSlim(1, 1);
         private bool _updateAvailable;
-        //private DateTime _startTime;
-        //private string _previousActiveWindowTitle;
 
         public enum MouseState
         {
@@ -77,7 +77,7 @@ namespace ellabi.ViewModels
             Locked
         }
 
-        public SettingsWindowViewModel SettingsVm => _settingsVm ?? (_settingsVm = new SettingsWindowViewModel());
+        public SettingsWindowViewModel SettingsVm => _settingsVm ??= new SettingsWindowViewModel();
 
         public MouseState CurrentState
         {
@@ -106,16 +106,6 @@ namespace ellabi.ViewModels
             }
         }
 
-        //public BitmapImage ThemeImage
-        //{
-        //    get => _themeImage;
-        //    set
-        //    {
-        //        _themeImage = value;
-        //        OnPropertyChanged();
-        //    }
-        //}
-
         public bool UpdateAvailable
         {
             get => _updateAvailable;
@@ -139,20 +129,66 @@ namespace ellabi.ViewModels
 
         public MouseWindowViewModel()
         {
-            //StaticCode.ActivityLog.LogActivity("Move Mouse launched");
             StartStopToggleCommand = new RelayCommand(param => StartStopToggle(), param => CanStartStopToggle());
             ShowMoveMouseCommand = new RelayCommand(param => OnRequestActivate(this));
             CurrentState = MouseState.Idle;
             SettingsVm.Settings.PropertyChanged += Settings_PropertyChanged;
             StaticCode.ScheduleArrived += StaticCode_ScheduleArrived;
-            //StaticCode.ThemeUpdated += StaticCode_ThemeUpdated;
-            if (StaticCode.DownloadSource == StaticCode.MoveMouseSource.GitHub) StaticCode.UpdateAvailablityChanged += StaticCode_UpdateAvailablityChanged;
+            if (StaticCode.DownloadSource == StaticCode.MoveMouseSource.GitHub)
+            {
+                StaticCode.UpdateAvailablityChanged += StaticCode_UpdateAvailablityChanged;
+            }
             StaticCode.RefreshSchedules += StaticCode_RefreshSchedules;
-            SystemEvents.SessionSwitch += SystemEvents_SessionSwitch;
-            SystemEvents.PowerModeChanged += SystemEvents_PowerModeChanged;
+
+            _lastOnBattery = RunningOnBattery();
+            _workstationLocked = LinuxSessionLockService.IsSessionLocked();
+            _environmentMonitorTimer = new System.Timers.Timer(2500);
+            _environmentMonitorTimer.Elapsed += EnvironmentMonitorTimer_Elapsed;
+            _environmentMonitorTimer.Start();
+
             ThreadPool.QueueUserWorkItem(ForceSystrayIconVisibilityAtLaunch);
             ScheduleJobs();
-            //Debug.WriteLine(SystemInformation.PowerStatus.BatteryChargeStatus);
+        }
+
+        private void EnvironmentMonitorTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            try
+            {
+                bool locked = LinuxSessionLockService.IsSessionLocked();
+                if (locked != _workstationLocked)
+                {
+                    _workstationLocked = locked;
+                    StaticCode.Logger?.Here().Debug(locked ? "SessionLock" : "SessionUnlock");
+
+                    if (!locked && (CurrentState.Equals(MouseState.Locked) || CurrentState.Equals(MouseState.Running)) && !SettingsVm.Settings.ActiveWhenLocked)
+                    {
+                        ShowNotification("Automatically resuming now workstation has been unlocked.");
+                    }
+                }
+
+                bool onBattery = RunningOnBattery();
+                if (onBattery != _lastOnBattery)
+                {
+                    _lastOnBattery = onBattery;
+                    if (SettingsVm.Settings.PauseOnBattery)
+                    {
+                        if (CurrentState.Equals(MouseState.Running) && onBattery)
+                        {
+                            Stop(MouseState.OnBattery);
+                            ShowNotification("Pausing now running on battery.");
+                        }
+                        else if (CurrentState.Equals(MouseState.OnBattery) && !onBattery)
+                        {
+                            Start();
+                            ShowNotification("Resuming now running on mains power.");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                StaticCode.Logger?.Here().Error(ex.Message);
+            }
         }
 
         private void StaticCode_RefreshSchedules()
@@ -163,7 +199,7 @@ namespace ellabi.ViewModels
 
         private void ForceSystrayIconVisibilityAtLaunch(object stateInfo)
         {
-            StaticCode.Logger?.Here().Debug(String.Empty);
+            StaticCode.Logger?.Here().Debug(string.Empty);
 
             try
             {
@@ -181,76 +217,6 @@ namespace ellabi.ViewModels
         {
             UpdateAvailable = updateAvailable;
         }
-
-        private void SystemEvents_SessionSwitch(object sender, SessionSwitchEventArgs e)
-        {
-            try
-            {
-                StaticCode.Logger?.Here().Debug(e.Reason.ToString());
-
-                switch (e.Reason)
-                {
-                    case SessionSwitchReason.SessionUnlock:
-                        _workstationLocked = false;
-
-                        if ((CurrentState.Equals(MouseState.Locked) || CurrentState.Equals(MouseState.Running)) && !SettingsVm.Settings.ActiveWhenLocked)
-                        {
-                            ShowNotification("Automatically resuming now workstation has been unlocked.");
-                        }
-
-                        break;
-                    case SessionSwitchReason.SessionLock:
-                        _workstationLocked = true;
-                        break;
-                }
-            }
-            catch (Exception ex)
-            {
-                StaticCode.Logger?.Here().Error(ex.Message);
-            }
-        }
-
-        private void SystemEvents_PowerModeChanged(object sender, PowerModeChangedEventArgs e)
-        {
-            try
-            {
-                StaticCode.Logger?.Here().Debug(e.Mode.ToString());
-
-                if (SettingsVm.Settings.PauseOnBattery && e.Mode.Equals(PowerModes.StatusChange))
-                {
-                    //todo Check what happens if state is Executing
-                    if (CurrentState.Equals(MouseState.Running) && RunningOnBattery())
-                    {
-                        Stop(MouseState.OnBattery);
-                        ShowNotification("Pausing now running on battery.");
-                    }
-                    else if (CurrentState.Equals(MouseState.OnBattery) && !RunningOnBattery())
-                    {
-                        Start();
-                        ShowNotification("Resuming now running on mains power.");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                StaticCode.Logger?.Here().Error(ex.Message);
-            }
-        }
-
-        //private void StaticCode_ThemeUpdated(Theme theme)
-        //{
-        //    try
-        //    {
-        //        System.Windows.Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate
-        //        {
-        //            ThemeImage = (theme != null) ? new BitmapImage(new Uri(theme.ImagePath, UriKind.Absolute)) : null;
-        //        }));
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        StaticCode.Logger?.Here().Error(ex.Message);
-        //    }
-        //}
 
         private void StaticCode_ScheduleArrived(ScheduleBase.ScheduleAction action)
         {
@@ -278,101 +244,83 @@ namespace ellabi.ViewModels
 
         private async void ScheduleJobs()
         {
-            using (Mutex myMutex = new Mutex(false, "ScheduleJobsThread", out var owned))
+            if (!await _scheduleJobsSemaphore.WaitAsync(0))
             {
-                if (owned)
+                StaticCode.Logger?.Here().Warning("ScheduleJobs already running.");
+                return;
+            }
+
+            try
+            {
+                CleanupJobs();
+
+                _schedulerFactory = new StdSchedulerFactory();
+                _scheduler = await _schedulerFactory.GetScheduler();
+
+                if (SettingsVm.Settings.Schedules != null && SettingsVm.Settings.Schedules.Any(schedule => schedule.IsValid && schedule.IsEnabled))
                 {
-                    try
+                    foreach (var schedule in SettingsVm.Settings.Schedules.Where(schedule => schedule.IsValid && schedule.IsEnabled))
                     {
-                        //_lastSchedulesUpdateTime = DateTime.Now;
-
-                        //if (_lastSchedulesUpdateTime.Add(_schedulesUpdateDelay) > DateTime.Now)
-                        //{
-                        CleanupJobs();
-
-                        //while (_lastSchedulesUpdateTime.Add(_schedulesUpdateDelay) > DateTime.Now)
-                        //{
-                        //    Thread.Sleep(100);
-                        //}
-
-                        _schedulerFactory = new StdSchedulerFactory();
-                        _scheduler = await _schedulerFactory.GetScheduler();
-
-                        if ((SettingsVm.Settings.Schedules != null) && SettingsVm.Settings.Schedules.Any(schedule => schedule.IsValid && schedule.IsEnabled))
+                        try
                         {
-                            foreach (var schedule in SettingsVm.Settings.Schedules.Where(schedule => schedule.IsValid && schedule.IsEnabled))
-                            {
-                                try
-                                {
-                                    var job = JobBuilder.Create<ScheduleArrivedJob>()
-                                        .WithIdentity(schedule.Id.ToString())
-                                        .UsingJobData("action", schedule.Action.ToString())
-                                        .Build();
-                                    var trigger = new CronTriggerImpl(schedule.Id.ToString(), null, schedule.CronExpression);
-                                    StaticCode.Logger?.Here().Information($"{schedule.Action} schedule created ({schedule.CronExpression})");
-                                    await _scheduler.ScheduleJob(job, trigger);
-                                }
-                                catch (Exception ex)
-                                {
-                                    StaticCode.Logger?.Here().Error(ex.Message);
-                                }
-                            }
+                            var job = JobBuilder.Create<ScheduleArrivedJob>()
+                                .WithIdentity(schedule.Id.ToString())
+                                .UsingJobData("action", schedule.Action.ToString())
+                                .Build();
+                            var trigger = new CronTriggerImpl(schedule.Id.ToString(), null, schedule.CronExpression);
+                            StaticCode.Logger?.Here().Information($"{schedule.Action} schedule created ({schedule.CronExpression})");
+                            await _scheduler.ScheduleJob(job, trigger);
                         }
-
-                        //var updateThemeJob = JobBuilder.Create<UpdateThemeJob>()
-                        //    .WithIdentity("UpdateThemeJob")
-                        //    .Build();
-                        //var themeUpdateTime = TimeSpan.FromSeconds(new Random().Next(0, 3600));
-                        //_scheduler.ScheduleJob(updateThemeJob, new CronTriggerImpl("UpdateThemeJob", null, $"{themeUpdateTime.Seconds} {themeUpdateTime.Minutes} {themeUpdateTime.Hours} ? * *"));
-                        ////For testing aggressive theme updates
-                        ////_scheduler.ScheduleJob(updateThemeJob, new CronTriggerImpl("UpdateThemeJob", null, $"0 0/1 * ? * *"));
-                        //_scheduler.TriggerJob(new JobKey("UpdateThemeJob"));
-
-                        if (StaticCode.DownloadSource == StaticCode.MoveMouseSource.GitHub)
+                        catch (Exception ex)
                         {
-                            var resetUpdateStatusJob = JobBuilder.Create<ResetUpdateStatusJob>()
-                                .WithIdentity("ResetUpdateStatusJob")
-                                .Build();
-                            await _scheduler.ScheduleJob(resetUpdateStatusJob, new CronTriggerImpl("ResetUpdateStatusJob", null, "0 1 0 ? * *"));
-                            await _scheduler.TriggerJob(new JobKey("ResetUpdateStatusJob"));
-                            var checkForUpdateTime = TimeSpan.FromHours(10).Add(TimeSpan.FromSeconds(new Random().Next(0, 21600)));
-                            var checkForUpdateJob = JobBuilder.Create<CheckForUpdateJob>()
-                                .WithIdentity("CheckForUpdateJob")
-                                .Build();
-                            await _scheduler.ScheduleJob(checkForUpdateJob, new CronTriggerImpl("CheckForUpdateJob", null, $"{checkForUpdateTime.Seconds} {checkForUpdateTime.Minutes} {checkForUpdateTime.Hours} ? * *"));
-                            await _scheduler.TriggerJob(new JobKey("CheckForUpdateJob"));
+                            StaticCode.Logger?.Here().Error(ex.Message);
                         }
-
-                        var refreshSchedulesJob = JobBuilder.Create<RefreshSchedulesJob>()
-                            .WithIdentity("RefreshSchedulesJob")
-                            .Build();
-                        var refreshSchedulesTime = DateTime.Now.AddSeconds(-1).TimeOfDay;
-                        await _scheduler.ScheduleJob(refreshSchedulesJob, new CronTriggerImpl("RefreshSchedulesJob", null, $"{refreshSchedulesTime.Seconds} {refreshSchedulesTime.Minutes} {refreshSchedulesTime.Hours} ? * *"));
-                        await _scheduler.Start();
-                        //}
-                    }
-                    catch (Exception ex)
-                    {
-                        StaticCode.Logger?.Here().Error(ex.Message);
                     }
                 }
-                else
+
+                if (StaticCode.DownloadSource == StaticCode.MoveMouseSource.GitHub)
                 {
-                    StaticCode.Logger?.Here().Warning("Mutex already owned.");
+                    var resetUpdateStatusJob = JobBuilder.Create<ResetUpdateStatusJob>()
+                        .WithIdentity("ResetUpdateStatusJob")
+                        .Build();
+                    await _scheduler.ScheduleJob(resetUpdateStatusJob, new CronTriggerImpl("ResetUpdateStatusJob", null, "0 1 0 ? * *"));
+                    await _scheduler.TriggerJob(new JobKey("ResetUpdateStatusJob"));
+
+                    var checkForUpdateTime = TimeSpan.FromHours(10).Add(TimeSpan.FromSeconds(Random.Shared.Next(0, 21600)));
+                    var checkForUpdateJob = JobBuilder.Create<CheckForUpdateJob>()
+                        .WithIdentity("CheckForUpdateJob")
+                        .Build();
+                    await _scheduler.ScheduleJob(checkForUpdateJob, new CronTriggerImpl("CheckForUpdateJob", null, $"{checkForUpdateTime.Seconds} {checkForUpdateTime.Minutes} {checkForUpdateTime.Hours} ? * *"));
+                    await _scheduler.TriggerJob(new JobKey("CheckForUpdateJob"));
                 }
+
+                var refreshSchedulesJob = JobBuilder.Create<RefreshSchedulesJob>()
+                    .WithIdentity("RefreshSchedulesJob")
+                    .Build();
+                var refreshSchedulesTime = DateTime.Now.AddSeconds(-1).TimeOfDay;
+                await _scheduler.ScheduleJob(refreshSchedulesJob, new CronTriggerImpl("RefreshSchedulesJob", null, $"{refreshSchedulesTime.Seconds} {refreshSchedulesTime.Minutes} {refreshSchedulesTime.Hours} ? * *"));
+                await _scheduler.Start();
+            }
+            catch (Exception ex)
+            {
+                StaticCode.Logger?.Here().Error(ex.Message);
+            }
+            finally
+            {
+                _scheduleJobsSemaphore.Release();
             }
         }
 
         private void CleanupJobs()
         {
-            StaticCode.Logger?.Here().Debug(String.Empty);
+            StaticCode.Logger?.Here().Debug(string.Empty);
 
             try
             {
-                if ((_scheduler != null) && !_scheduler.IsShutdown)
+                if (_scheduler != null && !_scheduler.IsShutdown)
                 {
-                    Task.WaitAll(new[] { _scheduler?.Clear() });
-                    Task.WaitAll(new[] { _scheduler?.Shutdown(false) });
+                    Task.WaitAll(new[] { _scheduler.Clear() });
+                    Task.WaitAll(new[] { _scheduler.Shutdown(false) });
                 }
             }
             catch (Exception ex)
@@ -389,59 +337,40 @@ namespace ellabi.ViewModels
             {
                 switch (e.PropertyName)
                 {
-                    case "AutoPause":
+                    case nameof(Classes.Settings.AutoPause):
+                        if (!SettingsVm.Settings.AutoPause) StopAutoPauseTimer();
+                        break;
+                    case nameof(Classes.Settings.AutoResume):
+                        if (!SettingsVm.Settings.AutoResume)
                         {
-                            if (!SettingsVm.Settings.AutoPause) StopAutoPauseTimer();
-                            break;
-                        }
-                    case "AutoResume":
-                        {
-                            if (!SettingsVm.Settings.AutoResume)
+                            if (CurrentState.Equals(MouseState.Paused))
                             {
-                                if (CurrentState.Equals(MouseState.Paused))
-                                {
-                                    Stop(MouseState.Idle);
-                                }
-                                else
-                                {
-                                    StopAutoResumeTimer();
-                                }
+                                Stop(MouseState.Idle);
                             }
-
-                            break;
-                        }
-                    case "Schedules":
-                        {
-                            ScheduleJobs();
-                            break;
-                        }
-                    case "HideFromAltTab":
-                        {
-                            OnAltTabVisibilityChanged(this, !SettingsVm.Settings.HideFromAltTab);
-                            break;
-                        }
-                    case "PauseOnBattery":
-                        {
-                            if (!SettingsVm.Settings.PauseOnBattery && CurrentState.Equals(MouseState.OnBattery))
+                            else
                             {
-                                Start();
-                                ShowNotification("Resuming now running on mains power.");
+                                StopAutoResumeTimer();
                             }
-                            //todo Check what happens if state is Executing
-                            else if (SettingsVm.Settings.PauseOnBattery && CurrentState.Equals(MouseState.Running) && RunningOnBattery())
-                            {
-                                Stop(MouseState.OnBattery);
-                                ShowNotification("Pausing now running on battery.");
-                            }
-
-                            break;
                         }
-                        //case "HookKeyEnabled":
-                        //{
-                        //        //OnHookKeyEnabledChanged(this, SettingsVm.Settings.HookKeyEnabled, SettingsVm.Settings.HookKey);
-                        //        OnHookKeyEnabledChanged(this, SettingsVm.Settings.HookKeyEnabled, Key.S);
-                        //        break;
-                        //}
+                        break;
+                    case nameof(Classes.Settings.Schedules):
+                        ScheduleJobs();
+                        break;
+                    case nameof(Classes.Settings.HideFromAltTab):
+                        OnAltTabVisibilityChanged(this, !SettingsVm.Settings.HideFromAltTab);
+                        break;
+                    case nameof(Classes.Settings.PauseOnBattery):
+                        if (!SettingsVm.Settings.PauseOnBattery && CurrentState.Equals(MouseState.OnBattery))
+                        {
+                            Start();
+                            ShowNotification("Resuming now running on mains power.");
+                        }
+                        else if (SettingsVm.Settings.PauseOnBattery && CurrentState.Equals(MouseState.Running) && RunningOnBattery())
+                        {
+                            Stop(MouseState.OnBattery);
+                            ShowNotification("Pausing now running on battery.");
+                        }
+                        break;
                 }
             }
             catch (Exception ex)
@@ -450,9 +379,9 @@ namespace ellabi.ViewModels
             }
         }
 
-        public void StartStopToggle()
+        public void StartStopToggle(bool concealMainWindowAfter = false)
         {
-            StaticCode.Logger?.Here().Information(String.Empty);
+            StaticCode.Logger?.Here().Information(string.Empty);
 
             try
             {
@@ -466,6 +395,11 @@ namespace ellabi.ViewModels
                     {
                         Stop(MouseState.Idle);
                     }
+
+                    if (concealMainWindowAfter)
+                    {
+                        OnRequestConcealMainWindow(this);
+                    }
                 }
             }
             catch (Exception ex)
@@ -474,15 +408,11 @@ namespace ellabi.ViewModels
             }
         }
 
-        private bool CanStartStopToggle()
-        {
-            return true;
-            //return !CurrentState.Equals(MouseState.Executing);
-        }
+        private bool CanStartStopToggle() => true;
 
         public void Start()
         {
-            StaticCode.Logger?.Here().Information(String.Empty);
+            StaticCode.Logger?.Here().Information(string.Empty);
 
             try
             {
@@ -494,29 +424,30 @@ namespace ellabi.ViewModels
                     {
                         CurrentState = MouseState.OnBattery;
                     }
+                    else if (!BlackoutIsActive())
+                    {
+                        StopAutoResumeTimer();
+                        _activeExecutionId = Guid.NewGuid();
+                        _lastStopStartToggleTime = DateTime.Now;
+                        if (_firstPass) PerformActions(ActionBase.EventTrigger.Start);
+
+                        double interval = SettingsVm.Settings.RandomInterval
+                            ? Random.Shared.Next(SettingsVm.Settings.LowerInterval * 1000, SettingsVm.Settings.UpperInterval * 1000)
+                            : (SettingsVm.Settings.LowerInterval * 1000);
+                        interval = interval > 0 ? interval : 1;
+
+                        ExecutionTime = DateTime.Now.AddMilliseconds(interval);
+                        CurrentState = MouseState.Running;
+                        _actionTimer?.Dispose();
+                        _actionTimer = new Timer(param => PerformActions(ActionBase.EventTrigger.Interval), null, TimeSpan.FromMilliseconds(interval), Timeout.InfiniteTimeSpan);
+                        StopBlackoutTimer();
+                        AdjustVolume();
+                        StartAutoPauseTimer();
+                    }
                     else
                     {
-                        if (!BlackoutIsActive())
-                        {
-                            StopAutoResumeTimer();
-                            _activeExecutionId = Guid.NewGuid();
-                            _lastStopStartToggleTime = DateTime.Now;
-                            if (_firstPass) PerformActions(ActionBase.EventTrigger.Start);
-                            double interval = SettingsVm.Settings.RandomInterval ? new Random().Next(SettingsVm.Settings.LowerInterval * 1000, SettingsVm.Settings.UpperInterval * 1000) : (SettingsVm.Settings.LowerInterval * 1000);
-                            interval = interval > 0 ? interval : 1;
-                            ExecutionTime = DateTime.Now.AddMilliseconds(interval);
-                            CurrentState = MouseState.Running;
-                            _actionTimer = new Timer(param => { PerformActions(ActionBase.EventTrigger.Interval); }, null, TimeSpan.FromMilliseconds(interval), Timeout.InfiniteTimeSpan);
-                            StopBlackoutTimer();
-                            AdjustVolume();
-                            if (_settingsVm.Settings.TopmostWhenRunning) OnRequestActivate(this);
-                            StartAutoPauseTimer();
-                        }
-                        else
-                        {
-                            CurrentState = MouseState.Sleeping;
-                            StartBlackoutTimer();
-                        }
+                        CurrentState = MouseState.Sleeping;
+                        StartBlackoutTimer();
                     }
                 }
             }
@@ -525,26 +456,6 @@ namespace ellabi.ViewModels
                 StaticCode.Logger?.Here().Error(ex.Message);
             }
         }
-
-        //private void GetActiveWindow()
-        //{
-        //    try
-        //    {
-        //        var handle = NativeMethods.GetForegroundWindow();
-        //        const int nChar = 256;
-        //        var sb = new StringBuilder(nChar);
-        //        _previousActiveWindowTitle = null;
-
-        //        if (NativeMethods.GetWindowText(handle, sb, nChar) > 0)
-        //        {
-        //            _previousActiveWindowTitle = sb.ToString();
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        StaticCode.Logger?.Here().Error(ex.Message);
-        //    }
-        //}
 
         public void Stop(MouseState state)
         {
@@ -568,17 +479,11 @@ namespace ellabi.ViewModels
                     if (previousState == MouseState.Running)
                     {
                         PerformActions(ActionBase.EventTrigger.Stop);
-                        if (_settingsVm.Settings.MinimiseOnStop) OnRequestMinimise(this);
                     }
 
                     if (CurrentState.Equals(MouseState.Paused))
                     {
                         StartAutoResumeTimer();
-
-                        //if (SettingsVm.Settings.ReactivatePreviousWindow && !String.IsNullOrWhiteSpace(_previousActiveWindowTitle))
-                        //{
-                        //    Interaction.AppActivate(_previousActiveWindowTitle);
-                        //}
                     }
                 }
             }
@@ -594,19 +499,13 @@ namespace ellabi.ViewModels
             {
                 if (SettingsVm.Settings.AdjustRunningVolume)
                 {
-                    if (_defaultPlaybackDevice == null)
-                    {
-                        _defaultPlaybackDevice = new CoreAudioController().DefaultPlaybackDevice;
-                    }
-
                     if (!_initialVolume.HasValue)
                     {
-                        _initialVolume = _defaultPlaybackDevice.Volume;
+                        _initialVolume = await LinuxAudioService.GetDefaultVolumeAsync();
                     }
 
                     StaticCode.Logger?.Here().Information(SettingsVm.Settings.RunningVolume.ToString());
-                    //_defaultPlaybackDevice.Volume = SettingsVm.Settings.RunningVolume;
-                    await _defaultPlaybackDevice.SetVolumeAsync(SettingsVm.Settings.RunningVolume);
+                    await LinuxAudioService.SetDefaultVolumeAsync(SettingsVm.Settings.RunningVolume);
                 }
             }
             catch (Exception ex)
@@ -621,14 +520,8 @@ namespace ellabi.ViewModels
             {
                 if (SettingsVm.Settings.AdjustRunningVolume && _initialVolume.HasValue)
                 {
-                    if (_defaultPlaybackDevice == null)
-                    {
-                        _defaultPlaybackDevice = new CoreAudioController().DefaultPlaybackDevice;
-                    }
-
                     StaticCode.Logger?.Here().Information(_initialVolume.Value.ToString());
-                    //_defaultPlaybackDevice.Volume = _initialVolume.Value;
-                    await _defaultPlaybackDevice.SetVolumeAsync(_initialVolume.Value);
+                    await LinuxAudioService.SetDefaultVolumeAsync(_initialVolume.Value);
                     _initialVolume = null;
                 }
             }
@@ -663,24 +556,21 @@ namespace ellabi.ViewModels
                     switch (trigger)
                     {
                         case ActionBase.EventTrigger.Start:
-                            if (_firstPass)
+                            if (_firstPass && SettingsVm.Settings.Actions.Any(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger)))
                             {
-                                if (SettingsVm.Settings.Actions.Any(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger)))
-                                {
-                                    actions = SettingsVm.Settings.Actions.Where(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger));
+                                actions = SettingsVm.Settings.Actions.Where(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger));
 
-                                    foreach (var action in actions)
+                                foreach (var action in actions)
+                                {
+                                    if (!actionAborted && _activeExecutionId.Equals(executionId))
                                     {
-                                        if (!actionAborted && _activeExecutionId.Equals(executionId))
-                                        {
-                                            action.Execute();
-                                            actionAborted = action.Aborted;
-                                        }
+                                        action.Execute();
+                                        actionAborted = action.Aborted;
                                     }
                                 }
                             }
-
                             break;
+
                         case ActionBase.EventTrigger.Interval:
                             if (SettingsVm.Settings.ActiveWhenLocked || !_workstationLocked)
                             {
@@ -691,7 +581,11 @@ namespace ellabi.ViewModels
 
                                     if (SettingsVm.Settings.Actions.Any(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger)))
                                     {
-                                        actions = _firstPass ? SettingsVm.Settings.Actions.Where(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger)) : SettingsVm.Settings.Actions.Where(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger) && action.Repeat && ((action.RepeatMode == ActionBase.IntervalRepeatMode.Forever) || ((action.RepeatMode == ActionBase.IntervalRepeatMode.Throttle) && (action.IntervalExecutionCount < action.IntervalThrottle))));
+                                        actions = _firstPass
+                                            ? SettingsVm.Settings.Actions.Where(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger))
+                                            : SettingsVm.Settings.Actions.Where(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger) && action.Repeat &&
+                                                ((action.RepeatMode == ActionBase.IntervalRepeatMode.Forever) ||
+                                                 ((action.RepeatMode == ActionBase.IntervalRepeatMode.Throttle) && (action.IntervalExecutionCount < action.IntervalThrottle))));
 
                                         foreach (var action in actions)
                                         {
@@ -721,7 +615,12 @@ namespace ellabi.ViewModels
                             }
                             else
                             {
-                                if (_activeExecutionId.Equals(executionId) && (CurrentState.Equals(MouseState.Locked) || CurrentState.Equals(MouseState.Sleeping) || (!_firstPass && SettingsVm.Settings.Actions.Any(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger) && action.Repeat && ((action.RepeatMode == ActionBase.IntervalRepeatMode.Forever) || ((action.RepeatMode == ActionBase.IntervalRepeatMode.Throttle) && (action.IntervalExecutionCount < action.IntervalThrottle)))))))
+                                if (_activeExecutionId.Equals(executionId) &&
+                                    (CurrentState.Equals(MouseState.Locked) ||
+                                     CurrentState.Equals(MouseState.Sleeping) ||
+                                     (!_firstPass && SettingsVm.Settings.Actions.Any(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger) && action.Repeat &&
+                                         ((action.RepeatMode == ActionBase.IntervalRepeatMode.Forever) ||
+                                          ((action.RepeatMode == ActionBase.IntervalRepeatMode.Throttle) && (action.IntervalExecutionCount < action.IntervalThrottle)))))))
                                 {
                                     Start();
                                 }
@@ -731,8 +630,8 @@ namespace ellabi.ViewModels
                                     ShowNotification("Automatically stopping as there are no actions that are configured to repeat forever at each interval.");
                                 }
                             }
-
                             break;
+
                         case ActionBase.EventTrigger.Stop:
                             if (SettingsVm.Settings.Actions.Any(action => action.IsValid && action.IsEnabled && action.Trigger.Equals(trigger)))
                             {
@@ -747,11 +646,10 @@ namespace ellabi.ViewModels
                                     }
                                 }
                             }
-
                             break;
                     }
 
-                    if ((actions != null) && actions.Any(action => action.InterruptsIdleTime) && (lastInputTime <= StaticCode.GetLastInputTime()))
+                    if (actions != null && actions.Any(action => action.InterruptsIdleTime) && lastInputTime <= StaticCode.GetLastInputTime())
                     {
                         StaticCode.Logger?.Here().Warning($"Your system idle time has not been reset which may result in session timeout due to lack of user activity. Please refer to the Troubleshooting section in the Wiki for further assistance ({StaticCode.TroubleshootingUrl}).");
                     }
@@ -765,7 +663,7 @@ namespace ellabi.ViewModels
 
         private void StartAutoPauseTimer()
         {
-            StaticCode.Logger?.Here().Debug(String.Empty);
+            StaticCode.Logger?.Here().Debug(string.Empty);
 
             try
             {
@@ -775,10 +673,7 @@ namespace ellabi.ViewModels
                 {
                     if (_autoPauseTimer == null)
                     {
-                        _autoPauseTimer = new System.Timers.Timer
-                        {
-                            Interval = 250
-                        };
+                        _autoPauseTimer = new System.Timers.Timer { Interval = 250 };
                         _autoPauseTimer.Elapsed += _autoPauseTimer_Elapsed;
                     }
 
@@ -793,8 +688,8 @@ namespace ellabi.ViewModels
 
         private void StopAutoPauseTimer()
         {
-            StaticCode.Logger?.Here().Debug(String.Empty);
-            
+            StaticCode.Logger?.Here().Debug(string.Empty);
+
             lock (_pauseLock)
             {
                 try
@@ -816,7 +711,7 @@ namespace ellabi.ViewModels
 
                 lock (_pauseLock)
                 {
-                    if (CurrentState.Equals(MouseState.Running) && (StaticCode.GetLastInputTime() < TimeSpan.FromMilliseconds(_autoPauseTimer.Interval)))
+                    if (CurrentState.Equals(MouseState.Running) && StaticCode.GetLastInputTime() < TimeSpan.FromMilliseconds(_autoPauseTimer.Interval))
                     {
                         Stop((SettingsVm.Settings.AutoPause && SettingsVm.Settings.AutoResume) ? MouseState.Paused : MouseState.Idle);
                     }
@@ -830,7 +725,7 @@ namespace ellabi.ViewModels
 
         private void StartAutoResumeTimer()
         {
-            StaticCode.Logger?.Here().Debug(String.Empty);
+            StaticCode.Logger?.Here().Debug(string.Empty);
 
             try
             {
@@ -838,10 +733,7 @@ namespace ellabi.ViewModels
 
                 if (_autoResumeTimer == null)
                 {
-                    _autoResumeTimer = new System.Timers.Timer
-                    {
-                        Interval = 250
-                    };
+                    _autoResumeTimer = new System.Timers.Timer { Interval = 250 };
                     _autoResumeTimer.Elapsed += _autoResumeTimer_Elapsed;
                 }
 
@@ -855,7 +747,7 @@ namespace ellabi.ViewModels
 
         private void StopAutoResumeTimer()
         {
-            StaticCode.Logger?.Here().Debug(String.Empty);
+            StaticCode.Logger?.Here().Debug(string.Empty);
 
             try
             {
@@ -876,7 +768,6 @@ namespace ellabi.ViewModels
                 if (StaticCode.GetLastInputTime().TotalSeconds > SettingsVm.Settings.AutoResumeSeconds)
                 {
                     Start();
-                    //GetActiveWindow();
                     ShowNotification($"Automatically resuming after {SettingsVm.Settings.AutoResumeSeconds} seconds of inactivity.");
                 }
             }
@@ -888,7 +779,7 @@ namespace ellabi.ViewModels
 
         private void StartBlackoutTimer()
         {
-            StaticCode.Logger?.Here().Debug(String.Empty);
+            StaticCode.Logger?.Here().Debug(string.Empty);
 
             try
             {
@@ -897,10 +788,7 @@ namespace ellabi.ViewModels
 
                 if (_blackoutTimer == null)
                 {
-                    _blackoutTimer = new System.Timers.Timer
-                    {
-                        Interval = 1000
-                    };
+                    _blackoutTimer = new System.Timers.Timer { Interval = 1000 };
                     _blackoutTimer.Elapsed += _blackoutTimer_Elapsed;
                 }
 
@@ -914,7 +802,7 @@ namespace ellabi.ViewModels
 
         private void StopBlackoutTimer()
         {
-            StaticCode.Logger?.Here().Debug(String.Empty);
+            StaticCode.Logger?.Here().Debug(string.Empty);
 
             try
             {
@@ -928,7 +816,7 @@ namespace ellabi.ViewModels
 
         private void _blackoutTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            StaticCode.Logger?.Here().Debug(String.Empty);
+            StaticCode.Logger?.Here().Debug(string.Empty);
 
             try
             {
@@ -950,7 +838,7 @@ namespace ellabi.ViewModels
 
             try
             {
-                blackoutIsActive = (SettingsVm.Settings.Blackouts != null) && SettingsVm.Settings.Blackouts.Any(blackout => blackout.IsActive);
+                blackoutIsActive = SettingsVm.Settings.Blackouts != null && SettingsVm.Settings.Blackouts.Any(blackout => blackout.IsActive);
             }
             catch (Exception ex)
             {
@@ -964,28 +852,17 @@ namespace ellabi.ViewModels
 
         private bool RunningOnBattery()
         {
-            bool runningOnBattery;
-
-            try
-            {
-                runningOnBattery = System.Windows.Forms.SystemInformation.PowerStatus.PowerLineStatus.Equals(System.Windows.Forms.PowerLineStatus.Offline);
-            }
-            catch (Exception ex)
-            {
-                runningOnBattery = false;
-                StaticCode.Logger?.Here().Error(ex.Message);
-            }
-
+            bool runningOnBattery = LinuxPowerService.IsRunningOnBattery();
             StaticCode.Logger?.Here().Debug(runningOnBattery.ToString());
             return runningOnBattery;
         }
 
         public void ShowNotification(string message)
         {
-            ShowNotification(null, message, Hardcodet.Wpf.TaskbarNotification.BalloonIcon.None);
+            ShowNotification(null, message, NotificationIcon.None);
         }
 
-        public void ShowNotification(string title, string message, Hardcodet.Wpf.TaskbarNotification.BalloonIcon symbol)
+        public void ShowNotification(string title, string message, NotificationIcon symbol)
         {
             if (!SettingsVm.Settings.HideSystemTrayIcon && SettingsVm.Settings.ShowSystemTrayNotifications && !_workstationLocked)
             {
@@ -1021,14 +898,9 @@ namespace ellabi.ViewModels
             }
         }
 
-        //protected void OnHookKeyEnabledChanged(object sender, bool enabled, Key key)
-        //{
-        //    HookKeyEnabledChanged?.Invoke(sender, enabled, key);
-        //}
-
         protected void OnRequestActivate(object sender)
         {
-            StaticCode.Logger?.Here().Debug(String.Empty);
+            StaticCode.Logger?.Here().Debug(string.Empty);
 
             try
             {
@@ -1040,7 +912,21 @@ namespace ellabi.ViewModels
             }
         }
 
-        protected void OnRequestNotification(object sender, string title, string message, Hardcodet.Wpf.TaskbarNotification.BalloonIcon symbol)
+        protected void OnRequestConcealMainWindow(object sender)
+        {
+            StaticCode.Logger?.Here().Debug(string.Empty);
+
+            try
+            {
+                RequestConcealMainWindow?.Invoke(sender);
+            }
+            catch (Exception ex)
+            {
+                StaticCode.Logger?.Here().Error(ex.Message);
+            }
+        }
+
+        protected void OnRequestNotification(object sender, string title, string message, NotificationIcon symbol)
         {
             StaticCode.Logger?.Here().Debug($"{title}\t{message}\t{symbol}");
 
@@ -1056,7 +942,7 @@ namespace ellabi.ViewModels
 
         protected void OnRequestMinimise(object sender)
         {
-            StaticCode.Logger?.Here().Debug(String.Empty);
+            StaticCode.Logger?.Here().Debug(string.Empty);
 
             try
             {
@@ -1072,7 +958,14 @@ namespace ellabi.ViewModels
         {
             try
             {
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                if (Avalonia.Application.Current != null && !Dispatcher.UIThread.CheckAccess())
+                {
+                    Dispatcher.UIThread.Post(() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)));
+                }
+                else
+                {
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                }
             }
             catch (Exception ex)
             {
@@ -1084,15 +977,18 @@ namespace ellabi.ViewModels
         {
             try
             {
+                _actionTimer?.Dispose();
+                _autoPauseTimer?.Dispose();
+                _autoResumeTimer?.Dispose();
+                _blackoutTimer?.Dispose();
+                _environmentMonitorTimer?.Dispose();
                 RestoreVolume();
                 CleanupJobs();
                 StaticCode.ScheduleArrived -= StaticCode_ScheduleArrived;
-                //StaticCode.ThemeUpdated -= StaticCode_ThemeUpdated;
                 StaticCode.UpdateAvailablityChanged -= StaticCode_UpdateAvailablityChanged;
                 StaticCode.RefreshSchedules -= StaticCode_RefreshSchedules;
-                SystemEvents.SessionSwitch -= SystemEvents_SessionSwitch;
-                SystemEvents.PowerModeChanged -= SystemEvents_PowerModeChanged;
                 SettingsVm.Dispose();
+                LinuxInputService.Dispose();
             }
             catch (Exception ex)
             {

@@ -1,5 +1,7 @@
-﻿using ellabi.Actions;
+using Avalonia.Threading;
+using ellabi.Actions;
 using ellabi.Classes;
+using ellabi.Platform;
 using ellabi.Schedules;
 using ellabi.Utilities;
 using Serilog.Events;
@@ -12,14 +14,11 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using System.Timers;
 using System.Xml.Serialization;
-using Windows.ApplicationModel;
-using Windows.System;
 
 namespace ellabi.ViewModels
 {
-    internal class SettingsWindowViewModel : INotifyPropertyChanged, IDisposable
+    public class SettingsWindowViewModel : INotifyPropertyChanged, IDisposable
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -33,15 +32,14 @@ namespace ellabi.ViewModels
         private RelayCommand _addBlackoutCommand;
         private RelayCommand _removeSelectedBlackoutCommand;
         private StartupTaskState _launchAtStartup;
-        private System.Timers.Timer _updateSystemIdleTimeTimer;
-        private object _settingsLock = new object();
+        private readonly System.Timers.Timer _updateSystemIdleTimeTimer;
+        private readonly object _settingsLock = new object();
         private DateTime _lastSettingsPropertyChanged;
-        private TimeSpan _lastSettingsPropertyChangedInterval = TimeSpan.FromMilliseconds(1000);
+        private readonly TimeSpan _lastSettingsPropertyChangedInterval = TimeSpan.FromMilliseconds(1000);
         private Guid _lastThreadId;
 
-        public Settings Settings => _settings ?? (_settings = ReadSettings());
+        public Settings Settings => _settings ??= ReadSettings();
 
-        //public ObservableCollection<VirtualKey> VirtualKeys => new ObservableCollection<VirtualKey>(VirtualKey.GetVirtualKeys());
         public ObservableCollection<int> VirtualKeys => new ObservableCollection<int>(StaticCode.VirtualKeys.Value.Keys);
 
         public ActionBase SelectedAction
@@ -51,6 +49,7 @@ namespace ellabi.ViewModels
             {
                 _selectedAction = value;
                 OnPropertyChanged();
+                RaiseActionCommands();
             }
         }
 
@@ -130,7 +129,14 @@ namespace ellabi.ViewModels
             set => ToggleStartupTask();
         }
 
-        public string Version => String.Format("{0}.{1}.{2}", Assembly.GetExecutingAssembly().GetName().Version.Major, Assembly.GetExecutingAssembly().GetName().Version.Minor, Assembly.GetExecutingAssembly().GetName().Version.Build);
+        public string Version
+        {
+            get
+            {
+                var v = Assembly.GetExecutingAssembly().GetName().Version;
+                return v != null ? $"{v.Major}.{v.Minor}.{v.Build}" : "4.21.0";
+            }
+        }
 
         public string HomePage => StaticCode.HomePageUrl;
 
@@ -142,7 +148,15 @@ namespace ellabi.ViewModels
 
         public string PayPalUrl => StaticCode.PayPalUrl;
 
-        public string Copyright => ((AssemblyCopyrightAttribute)Attribute.GetCustomAttribute(Assembly.GetExecutingAssembly(), typeof(AssemblyCopyrightAttribute), false)).Copyright;
+        public string Copyright
+        {
+            get
+            {
+                var attr = (AssemblyCopyrightAttribute)Attribute.GetCustomAttribute(
+                    Assembly.GetExecutingAssembly(), typeof(AssemblyCopyrightAttribute), false);
+                return attr?.Copyright ?? "Copyright © Steve Williams 2017";
+            }
+        }
 
         public TimeSpan SystemIdleTime => StaticCode.GetLastInputTime();
 
@@ -156,8 +170,7 @@ namespace ellabi.ViewModels
             }
 
             StaticCode.Logger?.Here().Information($"WorkingDirectory = {StaticCode.WorkingDirectory}");
-            ReadSettings();
-            SelectedAction = Settings.Actions.First();
+            _selectedAction = Settings.Actions.FirstOrDefault();
             _removeSelectedActionCommand = new RelayCommand(param => RemoveSelectedAction(), param => CanRemoveSelectedAction());
             _copySelectedActionCommand = new RelayCommand(param => CopySelectedAction(), param => CanCopySelectedAction());
             _moveUpSelectedActionCommand = new RelayCommand(param => MoveUpSelectedAction(), param => CanMoveUpSelectedAction());
@@ -168,7 +181,20 @@ namespace ellabi.ViewModels
             Settings.PropertyChanged += Settings_PropertyChanged;
             RefreshStartupTask();
             _updateSystemIdleTimeTimer = new System.Timers.Timer(250);
-            _updateSystemIdleTimeTimer.Elapsed += (sender, args) => OnPropertyChanged(nameof(SystemIdleTime));
+            _updateSystemIdleTimeTimer.Elapsed += UpdateSystemIdleTimeTimer_Elapsed;
+        }
+
+        private void UpdateSystemIdleTimeTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            OnPropertyChanged(nameof(SystemIdleTime));
+        }
+
+        private void RaiseActionCommands()
+        {
+            _removeSelectedActionCommand?.RaiseCanExecuteChanged();
+            _copySelectedActionCommand?.RaiseCanExecuteChanged();
+            _moveUpSelectedActionCommand?.RaiseCanExecuteChanged();
+            _moveDownSelectedActionCommand?.RaiseCanExecuteChanged();
         }
 
         public void AddKeystroke(int key)
@@ -188,32 +214,17 @@ namespace ellabi.ViewModels
             }
         }
 
-        public void StartSystemIdleTimer()
-        {
-            _updateSystemIdleTimeTimer.Start();
-        }
+        public void StartSystemIdleTimer() => _updateSystemIdleTimeTimer.Start();
 
-        public void StopSystemIdleTimer()
-        {
-            _updateSystemIdleTimeTimer.Stop();
-        }
+        public void StopSystemIdleTimer() => _updateSystemIdleTimeTimer.Stop();
 
-        public async void RefreshStartupTask()
+        public void RefreshStartupTask()
         {
-            StaticCode.Logger?.Here().Debug(String.Empty);
+            StaticCode.Logger?.Here().Debug(string.Empty);
 
             try
             {
-                if (StaticCode.DownloadSource == StaticCode.MoveMouseSource.MicrosoftStore)
-                {
-                    var startupTask = await StartupTask.GetAsync("MoveMouseStartupTask");
-                    _launchAtStartup = startupTask.State;
-                }
-                else
-                {
-                    var runKey = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
-                    _launchAtStartup = (runKey?.GetValue(StaticCode.RunRegistryValueName) != null) ? StartupTaskState.Enabled : StartupTaskState.Disabled;
-                }
+                _launchAtStartup = LinuxStartupService.GetState();
             }
             catch (Exception ex)
             {
@@ -224,38 +235,13 @@ namespace ellabi.ViewModels
             OnPropertyChanged(nameof(LaunchAtStartup));
         }
 
-        private async void ToggleStartupTask()
+        private void ToggleStartupTask()
         {
-            StaticCode.Logger?.Here().Debug(String.Empty);
+            StaticCode.Logger?.Here().Debug(string.Empty);
 
             try
             {
-                if (StaticCode.DownloadSource == StaticCode.MoveMouseSource.MicrosoftStore)
-                {
-                    var startupTask = await StartupTask.GetAsync("MoveMouseStartupTask");
-
-                    if (startupTask.State.Equals(StartupTaskState.Enabled))
-                    {
-                        startupTask.Disable();
-                    }
-                    else
-                    {
-                        await startupTask.RequestEnableAsync();
-                    }
-                }
-                else
-                {
-                    var runKey = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
-
-                    if (LaunchAtStartup == StartupTaskState.Enabled)
-                    {
-                        runKey?.DeleteValue(StaticCode.RunRegistryValueName);
-                    }
-                    else
-                    {
-                        runKey?.SetValue(StaticCode.RunRegistryValueName, $"\"{Assembly.GetExecutingAssembly().Location}\"");
-                    }
-                }
+                LinuxStartupService.SetEnabled(LaunchAtStartup != StartupTaskState.Enabled);
             }
             catch (Exception ex)
             {
@@ -275,43 +261,25 @@ namespace ellabi.ViewModels
 
                 switch (e.PropertyName)
                 {
-                    //case "LaunchAtLogon":
-                    //    {
-                    //        if (Settings.LaunchAtLogon)
-                    //        {
-                    //            var key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
-                    //            key?.SetValue("Move Mouse", $"\"{Assembly.GetExecutingAssembly().Location}\" /WorkingDirectory:\"{StaticCode.WorkingDirectory}\"");
-                    //        }
-                    //        else
-                    //        {
-                    //            var key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
-                    //            key?.DeleteValue("Move Mouse");
-                    //        }
-
-                    //        break;
-                    //    }
-                    case "EnableLogging":
+                    case nameof(Settings.Actions):
+                        RaiseActionCommands();
+                        break;
+                    case nameof(Settings.EnableLogging):
+                        if (Settings.EnableLogging)
                         {
-                            if (Settings.EnableLogging)
-                            {
-                                StaticCode.EnableLog(Settings.LogLevel);
-                            }
-                            else
-                            {
-                                StaticCode.DisableLog();
-                            }
-
-                            break;
+                            StaticCode.EnableLog(Settings.LogLevel);
                         }
-                    case "LogLevel":
+                        else
                         {
-                            if (Settings.EnableLogging)
-                            {
-                                StaticCode.EnableLog(Settings.LogLevel);
-                            }
-
-                            break;
+                            StaticCode.DisableLog();
                         }
+                        break;
+                    case nameof(Settings.LogLevel):
+                        if (Settings.EnableLogging)
+                        {
+                            StaticCode.EnableLog(Settings.LogLevel);
+                        }
+                        break;
                 }
             }
             catch (Exception ex)
@@ -323,7 +291,7 @@ namespace ellabi.ViewModels
         private void SaveSettings(Settings settings)
         {
             _lastThreadId = Guid.NewGuid();
-            System.Threading.ThreadPool.QueueUserWorkItem(SaveSettingsThread, settings);
+            ThreadPool.QueueUserWorkItem(SaveSettingsThread, settings);
         }
 
         private void SaveSettingsThread(object settings)
@@ -344,6 +312,7 @@ namespace ellabi.ViewModels
 
                     try
                     {
+                        Directory.CreateDirectory(StaticCode.WorkingDirectory);
                         sw = new StreamWriter(StaticCode.SettingsXmlPath, false);
                         var xs = XmlSerializer.FromTypes(new[] { typeof(Settings) })[0];
                         xs.Serialize(sw, settings);
@@ -359,7 +328,7 @@ namespace ellabi.ViewModels
                         sw?.Dispose();
                     }
 
-                    System.Threading.Thread.Sleep(1000); // Ensure file is written before next read
+                    Thread.Sleep(1000);
                 }
             }
         }
@@ -417,7 +386,7 @@ namespace ellabi.ViewModels
 
             try
             {
-                var actions = (Settings.Actions == null) ? new List<ActionBase>() : new List<ActionBase>(Settings.Actions);
+                var actions = Settings.Actions == null ? new List<ActionBase>() : new List<ActionBase>(Settings.Actions);
 
                 if (SelectedAction != null)
                 {
@@ -441,18 +410,15 @@ namespace ellabi.ViewModels
         {
             try
             {
+                if (!CanRemoveSelectedAction()) return;
+
                 StaticCode.Logger?.Here().Debug(SelectedAction.ToString());
                 var previousActionIndex = Settings.Actions.ToList().FindIndex(t => t.Id.Equals(SelectedAction.Id)) - 1;
                 Settings.Actions = new List<ActionBase>(Settings.Actions.Except(new[] { SelectedAction })).ToArray();
 
-                if (previousActionIndex > -1)
-                {
-                    SelectedAction = Settings.Actions[previousActionIndex];
-                }
-                else
-                {
-                    SelectedAction = Settings.Actions.First();
-                }
+                SelectedAction = previousActionIndex > -1
+                    ? Settings.Actions[previousActionIndex]
+                    : Settings.Actions.FirstOrDefault();
             }
             catch (Exception ex)
             {
@@ -460,16 +426,21 @@ namespace ellabi.ViewModels
             }
         }
 
-        private bool CanRemoveSelectedAction() => (SelectedAction != null) && (Settings.Actions.Length > 1);
+        private bool CanRemoveSelectedAction() => SelectedAction != null && Settings.Actions.Length > 1;
 
         public void CopySelectedAction()
         {
             try
             {
+                if (!CanCopySelectedAction()) return;
+
                 StaticCode.Logger?.Here().Debug(SelectedAction.ToString());
                 var copy = DeepCopy(SelectedAction);
-                copy.Id = Guid.NewGuid();
-                InsertAction(copy);
+                if (copy != null)
+                {
+                    copy.Id = Guid.NewGuid();
+                    InsertAction(copy);
+                }
             }
             catch (Exception ex)
             {
@@ -479,17 +450,15 @@ namespace ellabi.ViewModels
 
         private bool CanCopySelectedAction() => SelectedAction != null;
 
-        private ActionBase DeepCopy<ActionBase>(ActionBase action)
+        private TAction DeepCopy<TAction>(TAction action)
         {
             try
             {
-                using (var ms = new MemoryStream())
-                {
-                    var serializer = new XmlSerializer(action.GetType());
-                    serializer.Serialize(ms, action);
-                    ms.Position = 0;
-                    return (ActionBase)serializer.Deserialize(ms);
-                }
+                using var ms = new MemoryStream();
+                var serializer = new XmlSerializer(action.GetType());
+                serializer.Serialize(ms, action);
+                ms.Position = 0;
+                return (TAction)serializer.Deserialize(ms);
             }
             catch (Exception ex)
             {
@@ -503,6 +472,8 @@ namespace ellabi.ViewModels
         {
             try
             {
+                if (!CanMoveUpSelectedAction()) return;
+
                 StaticCode.Logger?.Here().Debug(SelectedAction.ToString());
                 var actions = new List<ActionBase>(Settings.Actions);
                 var action = SelectedAction;
@@ -522,7 +493,8 @@ namespace ellabi.ViewModels
         {
             try
             {
-                return (SelectedAction != null) && (Settings.Actions != null) && (Settings.Actions.Any()) && !Settings.Actions.ToList().FindIndex(action => action.Id.Equals(SelectedAction.Id)).Equals(0);
+                return SelectedAction != null && Settings.Actions != null && Settings.Actions.Any() &&
+                       !Settings.Actions.ToList().FindIndex(action => action.Id.Equals(SelectedAction.Id)).Equals(0);
             }
             catch (Exception ex)
             {
@@ -536,6 +508,8 @@ namespace ellabi.ViewModels
         {
             try
             {
+                if (!CanMoveDownSelectedAction()) return;
+
                 StaticCode.Logger?.Here().Debug(SelectedAction.ToString());
                 var actions = new List<ActionBase>(Settings.Actions);
                 var action = SelectedAction;
@@ -555,7 +529,8 @@ namespace ellabi.ViewModels
         {
             try
             {
-                return (SelectedAction != null) && (Settings.Actions != null) && Settings.Actions.Any() && !Settings.Actions.ToList().FindIndex(action => action.Id.Equals(SelectedAction.Id)).Equals(Settings.Actions.Length - 1);
+                return SelectedAction != null && Settings.Actions != null && Settings.Actions.Any() &&
+                       !Settings.Actions.ToList().FindIndex(action => action.Id.Equals(SelectedAction.Id)).Equals(Settings.Actions.Length - 1);
             }
             catch (Exception ex)
             {
@@ -572,7 +547,7 @@ namespace ellabi.ViewModels
             try
             {
                 var schedule = (ScheduleBase)Activator.CreateInstance(scheduleType);
-                var schedules = (Settings.Schedules == null) ? new List<ScheduleBase>() : new List<ScheduleBase>(Settings.Schedules);
+                var schedules = Settings.Schedules == null ? new List<ScheduleBase>() : new List<ScheduleBase>(Settings.Schedules);
                 schedules.Add(schedule);
                 Settings.Schedules = schedules.ToArray();
             }
@@ -584,11 +559,11 @@ namespace ellabi.ViewModels
 
         public void RemoveSelectedSchedule(object id)
         {
-            StaticCode.Logger?.Here().Debug(id.ToString());
+            StaticCode.Logger?.Here().Debug(id?.ToString() ?? string.Empty);
 
             try
             {
-                if (id != null)
+                if (id != null && Settings.Schedules != null)
                 {
                     var scheduleToRemove = Settings.Schedules.FirstOrDefault(schedule => schedule.Id.Equals((Guid)id));
 
@@ -606,11 +581,11 @@ namespace ellabi.ViewModels
 
         public void AddBlackout()
         {
-            StaticCode.Logger?.Here().Debug(String.Empty);
+            StaticCode.Logger?.Here().Debug(string.Empty);
 
             try
             {
-                var blackouts = (Settings.Blackouts == null) ? new List<Blackout>() : new List<Blackout>(Settings.Blackouts);
+                var blackouts = Settings.Blackouts == null ? new List<Blackout>() : new List<Blackout>(Settings.Blackouts);
                 blackouts.Add(new Blackout());
                 Settings.Blackouts = blackouts.ToArray();
             }
@@ -622,11 +597,11 @@ namespace ellabi.ViewModels
 
         public void RemoveSelectedBlackout(object id)
         {
-            StaticCode.Logger?.Here().Debug(id.ToString());
+            StaticCode.Logger?.Here().Debug(id?.ToString() ?? string.Empty);
 
             try
             {
-                if (id != null)
+                if (id != null && Settings.Blackouts != null)
                 {
                     var blackoutToRemove = Settings.Blackouts.FirstOrDefault(blackout => blackout.Id.Equals((Guid)id));
 
@@ -642,17 +617,18 @@ namespace ellabi.ViewModels
             }
         }
 
-        //public void LogActivity(string details)
-        //{
-        //    _activityLog?.LogActivity(details);
-        //    OnPropertyChanged("Activities");
-        //}
-
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             try
             {
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                if (Avalonia.Application.Current != null && !Dispatcher.UIThread.CheckAccess())
+                {
+                    Dispatcher.UIThread.Post(() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)));
+                }
+                else
+                {
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                }
             }
             catch (Exception ex)
             {
@@ -662,9 +638,12 @@ namespace ellabi.ViewModels
 
         public void Dispose()
         {
-            _updateSystemIdleTimeTimer?.Stop();
-            _updateSystemIdleTimeTimer.Elapsed -= (sender, args) => OnPropertyChanged(nameof(SystemIdleTime));
-            _updateSystemIdleTimeTimer?.Dispose();
+            if (_updateSystemIdleTimeTimer != null)
+            {
+                _updateSystemIdleTimeTimer.Stop();
+                _updateSystemIdleTimeTimer.Elapsed -= UpdateSystemIdleTimeTimer_Elapsed;
+                _updateSystemIdleTimeTimer.Dispose();
+            }
         }
     }
 }
