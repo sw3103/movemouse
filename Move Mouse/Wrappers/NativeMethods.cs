@@ -77,6 +77,18 @@ namespace ellabi.Wrappers
             // ...
         }
 
+        [Flags]
+        public enum HotkeyModifiers : uint
+        {
+            MOD_ALT = 0x0001,
+            MOD_CONTROL = 0x0002,
+            MOD_SHIFT = 0x0004,
+            MOD_NOREPEAT = 0x4000
+        }
+
+        public const int WM_HOTKEY = 0x0312;
+        public const int ERROR_HOTKEY_ALREADY_REGISTERED = 1409;
+
         public enum GetWindowLongFields
         {
             GWL_HWNDPARENT = (-8),
@@ -223,5 +235,17 @@ namespace ellabi.Wrappers
             IntPtr hWnd, 
             StringBuilder lpString, 
             int nMaxCount);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool RegisterHotKey(
+            IntPtr hWnd,
+            int id,
+            HotkeyModifiers fsModifiers,
+            uint vk);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool UnregisterHotKey(
+            IntPtr hWnd,
+            int id);
     }
 }

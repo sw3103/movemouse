@@ -3,6 +3,7 @@ using ellabi.Wrappers;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -26,6 +27,9 @@ namespace ellabi.Views
         //private IntPtr _hookId = IntPtr.Zero;
         //private Key _hookKey;
         //private NativeMethods.LowLevelKeyboardProc _hookProc;
+        private const int StartStopHotkeyId = 0x4D4D;
+        private HwndSource _hwndSource;
+        private bool _hotkeyRegistered;
 
         public MouseWindow()
         {
@@ -52,6 +56,17 @@ namespace ellabi.Views
             _vm.RequestMinimise += _vm_RequestMinimise;
             _vm.RequestNotification += _vm_RequestNotification;
             //_vm.HookKeyEnabledChanged += _vm_HookKeyEnabledChanged;
+            _vm.HotkeyChanged += _vm_HotkeyChanged;
+
+            try
+            {
+                _hwndSource = HwndSource.FromHwnd(new WindowInteropHelper(this).Handle);
+                _hwndSource?.AddHook(WndProc);
+            }
+            catch (Exception ex)
+            {
+                StaticCode.Logger?.Here().Error(ex.Message);
+            }
 
             if (_vm.SettingsVm.Settings.HideFromAltTab)
             {
@@ -67,6 +82,9 @@ namespace ellabi.Views
             {
                 WindowState = WindowState.Minimized;
             }
+
+            // Registered last so a failure notification is not replaced by the start-at-launch one.
+            ApplyHotkey(true);
         }
 
         private void _vm_RequestNotification(object sender, string title, string message, Hardcodet.Wpf.TaskbarNotification.BalloonIcon symbol)
@@ -113,6 +131,91 @@ namespace ellabi.Views
         //        _hookId = SetHook(_hookProc);
         //    }
         //}
+
+        private void _vm_HotkeyChanged(object sender)
+        {
+            StaticCode.Logger?.Here().Debug(String.Empty);
+
+            try
+            {
+                Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate { ApplyHotkey(false); }));
+            }
+            catch (Exception ex)
+            {
+                StaticCode.Logger?.Here().Error(ex.Message);
+            }
+        }
+
+        private void ApplyHotkey(bool notifyOnFailure)
+        {
+            StaticCode.Logger?.Here().Debug(String.Empty);
+
+            try
+            {
+                UnregisterHotkey();
+                _vm.SettingsVm.HotkeyError = null;
+                var settings = _vm.SettingsVm.Settings;
+
+                if (!settings.HotkeyEnabled || (_hwndSource == null))
+                {
+                    return;
+                }
+
+                var modifiers = NativeMethods.HotkeyModifiers.MOD_NOREPEAT;
+                if (settings.HotkeyCtrl) modifiers |= NativeMethods.HotkeyModifiers.MOD_CONTROL;
+                if (settings.HotkeyShift) modifiers |= NativeMethods.HotkeyModifiers.MOD_SHIFT;
+                if (settings.HotkeyAlt) modifiers |= NativeMethods.HotkeyModifiers.MOD_ALT;
+
+                // Shift alone is not enough, as it would hijack normal typing (e.g. capital letters) in every application.
+                if (!settings.HotkeyCtrl && !settings.HotkeyAlt)
+                {
+                    _vm.SettingsVm.HotkeyError = "Select Ctrl or Alt (Shift alone is not enough).";
+                }
+                else
+                {
+                    _hotkeyRegistered = NativeMethods.RegisterHotKey(_hwndSource.Handle, StartStopHotkeyId, modifiers, (uint)settings.HotkeyKey);
+
+                    if (!_hotkeyRegistered)
+                    {
+                        int error = Marshal.GetLastWin32Error();
+                        StaticCode.Logger?.Here().Warning($"RegisterHotKey failed (error {error}).");
+                        _vm.SettingsVm.HotkeyError = error == NativeMethods.ERROR_HOTKEY_ALREADY_REGISTERED
+                            ? "This shortcut is already used by another application."
+                            : "This shortcut could not be registered.";
+                    }
+                }
+
+                if (notifyOnFailure && (_vm.SettingsVm.HotkeyError != null))
+                {
+                    _vm.ShowNotification($"Keyboard shortcut not available. {_vm.SettingsVm.HotkeyError}");
+                }
+            }
+            catch (Exception ex)
+            {
+                StaticCode.Logger?.Here().Error(ex.Message);
+            }
+        }
+
+        private void UnregisterHotkey()
+        {
+            if (_hotkeyRegistered && (_hwndSource != null))
+            {
+                NativeMethods.UnregisterHotKey(_hwndSource.Handle, StartStopHotkeyId);
+                _hotkeyRegistered = false;
+            }
+        }
+
+        private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+            if ((msg == NativeMethods.WM_HOTKEY) && (wParam.ToInt32() == StartStopHotkeyId))
+            {
+                StaticCode.Logger?.Here().Information("Start/Stop keyboard shortcut pressed.");
+                _vm?.StartStopToggle();
+                handled = true;
+            }
+
+            return IntPtr.Zero;
+        }
 
         private void _vm_RequestActivate(object sender)
         {
@@ -588,6 +691,8 @@ namespace ellabi.Views
                     _settingsWindow.Close();
                 }
 
+                UnregisterHotkey();
+                _hwndSource?.RemoveHook(WndProc);
                 _vm.Dispose();
             }
             catch (Exception ex)

@@ -48,6 +48,11 @@ namespace ellabi.Classes
         private bool? _disableButtonAnimation;
         //private bool? _hookKeyEnabled;
         //private Key _hookKey;
+        private bool? _hotkeyEnabled;
+        private bool? _hotkeyCtrl;
+        private bool? _hotkeyShift;
+        private bool? _hotkeyAlt;
+        private int? _hotkeyKey;
         private bool? _pauseOnBattery;
         private LogEventLevel? _logLevel;
         private bool? _showSystemTrayNotifications;
@@ -395,6 +400,76 @@ namespace ellabi.Classes
         //        OnPropertyChanged();
         //    }
         //}
+
+        public bool HotkeyEnabled
+        {
+            get
+            {
+                if (_hotkeyEnabled == null) _hotkeyEnabled = false;
+                return _hotkeyEnabled.Value;
+            }
+            set
+            {
+                _hotkeyEnabled = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool HotkeyCtrl
+        {
+            get
+            {
+                if (_hotkeyCtrl == null) _hotkeyCtrl = true;
+                return _hotkeyCtrl.Value;
+            }
+            set
+            {
+                _hotkeyCtrl = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool HotkeyShift
+        {
+            get
+            {
+                if (_hotkeyShift == null) _hotkeyShift = true;
+                return _hotkeyShift.Value;
+            }
+            set
+            {
+                _hotkeyShift = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool HotkeyAlt
+        {
+            get
+            {
+                if (_hotkeyAlt == null) _hotkeyAlt = true;
+                return _hotkeyAlt.Value;
+            }
+            set
+            {
+                _hotkeyAlt = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int HotkeyKey
+        {
+            get
+            {
+                if (_hotkeyKey == null) _hotkeyKey = 0x4D; // M
+                return _hotkeyKey.Value;
+            }
+            set
+            {
+                _hotkeyKey = value;
+                OnPropertyChanged();
+            }
+        }
 
         public int RunningVolume
         {
