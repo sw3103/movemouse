@@ -1,5 +1,5 @@
-﻿using ellabi.Schedules;
-using ellabi.Wrappers;
+using ellabi.Platform;
+using ellabi.Schedules;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
@@ -8,20 +8,16 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using Windows.Storage;
 
 namespace ellabi
 {
     public static class StaticCode
     {
         public delegate void ScheduleArrivedHandler(ScheduleBase.ScheduleAction action);
-        //public delegate void ThemeUpdatedHandler(Theme theme);
         public delegate void UpdateAvailablityChangedHandler(bool updateAvailable);
         public delegate void RefreshSchedulesHandler();
 
         public static event ScheduleArrivedHandler ScheduleArrived;
-        //public static event ThemeUpdatedHandler ThemeUpdated;
         public static event UpdateAvailablityChangedHandler UpdateAvailablityChanged;
         public static event RefreshSchedulesHandler RefreshSchedules;
 
@@ -32,26 +28,30 @@ namespace ellabi
         public const string GitHubUrl = "https://github.com/sw3103/movemouse";
         public const string CronHelpUrl = "http://www.quartz-scheduler.org/documentation/quartz-2.3.0/tutorials/crontrigger.html";
         public const string TroubleshootingUrl = "https://github.com/sw3103/movemouse/wiki/Troubleshooting";
-        //public const string CronHelpUrl = "https://crontab.guru/examples.html";
-        //public const string ThemesXmlUrl = "https://raw.githubusercontent.com/sw3103/movemouse/master/Themes/Themes.xml";
-        //public const string ThemesXmlUrl = "C:\\Users\\steve\\source\\repos\\movemouse\\Themes\\Themes_Test.xml";
-        //public const string ThemesXmlUrl = "https://raw.githubusercontent.com/sw3103/movemouse/master/Themes/Themes_Test.xml";
         public const string UpdateXmlUrl = "https://raw.githubusercontent.com/sw3103/movemouse/master/Update_4x.xml";
         public const string MailAddress = "contact@movemouse.co.uk";
         public const string RunRegistryValueName = "Move Mouse";
 
-        public static string WorkingDirectory = Path.Combine(Environment.ExpandEnvironmentVariables("%AppData%"), @"Ellanet\Move Mouse");
-        public static string TempDirectory = Path.Combine(Environment.ExpandEnvironmentVariables("%Temp%"), @"Ellanet\Move Mouse");
+        public static string WorkingDirectory = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            "Ellanet",
+            "Move Mouse");
+
+        public static string TempDirectory = Path.Combine(
+            Path.GetTempPath(),
+            "Ellanet",
+            "Move Mouse");
+
         public static MoveMouseSource DownloadSource = MoveMouseSource.GitHub;
 
         public static string UpdateUrl;
         public static string ContactMailToAddress = $"mailto:{MailAddress}?subject=Move%20Mouse%20Feedback";
         public static ILogger Logger;
         public static Lazy<Dictionary<int, KeyValuePair<string, string>>> VirtualKeys = new Lazy<Dictionary<int, KeyValuePair<string, string>>>(GetVirtualKeys);
-       
+
         private static string _logPath;
-        private static LoggingLevelSwitch _loggingLevelSwitch = new LoggingLevelSwitch();
-     
+        private static readonly LoggingLevelSwitch _loggingLevelSwitch = new LoggingLevelSwitch();
+
         public enum MoveMouseSource
         {
             MicrosoftStore,
@@ -63,8 +63,6 @@ namespace ellabi
             Debug.WriteLine("Loading Virtual Keys...");
             return new Dictionary<int, KeyValuePair<string, string>>
             {
-                //[0x1] = new KeyValuePair<string, string>("LBUTTON", "Left mouse button"),
-                //[0x2] = new KeyValuePair<string, string>("RBUTTON", "Right mouse button"),
                 [0x3] = new KeyValuePair<string, string>("CANCEL", "Control-break processing"),
                 [0x4] = new KeyValuePair<string, string>("MBUTTON", "Middle mouse button"),
                 [0x5] = new KeyValuePair<string, string>("XBUTTON1", "X1 mouse button"),
@@ -78,12 +76,10 @@ namespace ellabi
                 [0x12] = new KeyValuePair<string, string>("MENU", "Alt key"),
                 [0x13] = new KeyValuePair<string, string>("PAUSE", "Pause key"),
                 [0x14] = new KeyValuePair<string, string>("CAPITAL", "Caps lock key"),
-                [0x15] = new KeyValuePair<string, string>("KANA", "IME Kana mode"),
                 [0x15] = new KeyValuePair<string, string>("HANGUL", "IME Hangul mode"),
                 [0x16] = new KeyValuePair<string, string>("IME_ON", "IME On"),
                 [0x17] = new KeyValuePair<string, string>("JUNJA", "IME Junja mode"),
                 [0x18] = new KeyValuePair<string, string>("FINAL", "IME final mode"),
-                [0x19] = new KeyValuePair<string, string>("HANJA", "IME Hanja mode"),
                 [0x19] = new KeyValuePair<string, string>("KANJI", "IME Kanji mode"),
                 [0x1A] = new KeyValuePair<string, string>("IME_OFF", "IME Off"),
                 [0x1B] = new KeyValuePair<string, string>("ESCAPE", "Esc key"),
@@ -143,9 +139,9 @@ namespace ellabi
                 [0x58] = new KeyValuePair<string, string>("X", "X key"),
                 [0x59] = new KeyValuePair<string, string>("Y", "Y key"),
                 [0x5A] = new KeyValuePair<string, string>("Z", "Z key"),
-                [0x5B] = new KeyValuePair<string, string>("LWIN", "Left Windows logo key"),
-                [0x5C] = new KeyValuePair<string, string>("RWIN", "Right Windows logo key"),
-                [0x5D] = new KeyValuePair<string, string>("APPS", "Application key"),
+                [0x5B] = new KeyValuePair<string, string>("LWIN", "Left Super/Meta key"),
+                [0x5C] = new KeyValuePair<string, string>("RWIN", "Right Super/Meta key"),
+                [0x5D] = new KeyValuePair<string, string>("APPS", "Application/Menu key"),
                 [0x5F] = new KeyValuePair<string, string>("SLEEP", "Computer Sleep key"),
                 [0x60] = new KeyValuePair<string, string>("NUMPAD0", "Numeric keypad 0 key"),
                 [0x61] = new KeyValuePair<string, string>("NUMPAD1", "Numeric keypad 1 key"),
@@ -223,7 +219,7 @@ namespace ellabi
                 [0xFC] = new KeyValuePair<string, string>("NONAME", "Reserved"),
                 [0xFD] = new KeyValuePair<string, string>("PA1", "PA1 key"),
                 [0xFE] = new KeyValuePair<string, string>("OEM_CLEAR", "Clear key")
-            };            
+            };
         }
 
         public static string SettingsXmlPath => Path.Combine(WorkingDirectory, "Settings.xml");
@@ -235,7 +231,8 @@ namespace ellabi
             try
             {
                 _loggingLevelSwitch.MinimumLevel = (LogEventLevel)1 + (int)LogEventLevel.Fatal;
-                _logPath = Path.Combine(StaticCode.DownloadSource == MoveMouseSource.MicrosoftStore ? ApplicationData.Current.LocalFolder.Path : TempDirectory, "Move Mouse.log");
+                Directory.CreateDirectory(TempDirectory);
+                _logPath = Path.Combine(TempDirectory, "Move Mouse.log");
 
                 if (File.Exists(_logPath))
                 {
@@ -243,15 +240,15 @@ namespace ellabi
                     {
                         File.Delete(_logPath);
                     }
-                    catch (Exception)
+                    catch
                     {
                     }
                 }
 
                 var logConfiguration = new LoggerConfiguration()
-                                        .MinimumLevel.ControlledBy(_loggingLevelSwitch)
-                                        .WriteTo.File(_logPath,
-                                        outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff}\t[{Level:u3}]\t{MemberName}\t{Message}{NewLine}{Exception}");
+                    .MinimumLevel.ControlledBy(_loggingLevelSwitch)
+                    .WriteTo.File(_logPath,
+                        outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff}\t[{Level:u3}]\t{MemberName}\t{Message}{NewLine}{Exception}");
                 Logger = logConfiguration.CreateLogger();
             }
             catch (Exception ex)
@@ -275,7 +272,7 @@ namespace ellabi
 
         public static void DisableLog()
         {
-            Logger?.Here().Debug(String.Empty);
+            Logger?.Here().Debug(string.Empty);
 
             try
             {
@@ -287,41 +284,13 @@ namespace ellabi
             }
         }
 
-        public static TimeSpan GetLastInputTime()
-        {
-            int idleTime = 0;
-
-            try
-            {
-                var lastInputInfo = new NativeMethods.LASTINPUTINFO();
-                lastInputInfo.cbSize = Marshal.SizeOf(lastInputInfo);
-                lastInputInfo.dwTime = 0;
-
-                if (NativeMethods.GetLastInputInfo(ref lastInputInfo))
-                {
-                    int lastInputTick = lastInputInfo.dwTime;
-                    idleTime = Environment.TickCount - lastInputTick;
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger?.Here().Error(ex.Message);
-            }
-
-            //Debug.WriteLine(idleTime);
-            return TimeSpan.FromMilliseconds(idleTime);
-        }
+        public static TimeSpan GetLastInputTime() => LinuxIdleService.GetLastInputTime();
 
         public static void OnScheduleArrived(ScheduleBase.ScheduleAction action)
         {
             Logger?.Here().Debug(action.ToString());
             ScheduleArrived?.Invoke(action);
         }
-
-        //public static void OnThemeUpdated(Theme theme)
-        //{
-        //    ThemeUpdated?.Invoke(theme);
-        //}
 
         public static void OnUpdateAvailablityChanged(bool updateAvailable)
         {

@@ -1,29 +1,21 @@
-﻿using System;
-using System.Diagnostics;
-using System.Windows.Data;
+using System;
+using System.Globalization;
+using Avalonia.Data.Converters;
 
 namespace ellabi.Converters
 {
     public class DoubleDividedByTwoConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            try
+            if (value != null && double.TryParse(value.ToString(), out var d))
             {
-                if ((value != null) && Double.TryParse(value.ToString(), out var d))
-                {
-                    return d / 2;
-                }
+                return d / 2;
             }
-            catch (Exception ex)
-            {
-                StaticCode.Logger?.Here().Error(ex.Message);
-            }
-
             return 0.0;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }

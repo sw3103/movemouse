@@ -1,22 +1,15 @@
-﻿using System;
+using System;
 using System.Windows.Input;
+using Avalonia.Threading;
 
 namespace ellabi.Utilities
 {
-    /// <summary>
-    /// Code for RelayCommand taken from the following article:
-    /// http://msdn.microsoft.com/en-us/magazine/dd419663.aspx
-    /// </summary>
     public class RelayCommand : ICommand
     {
-        #region Fields
+        private readonly Action<object> _execute;
+        private readonly Predicate<object> _canExecute;
 
-        readonly Action<object> _execute;
-        readonly Predicate<object> _canExecute;
-
-        #endregion // Fields
-
-        #region Constructors
+        public event EventHandler CanExecuteChanged;
 
         public RelayCommand(Action<object> execute)
             : this(execute, null)
@@ -25,33 +18,24 @@ namespace ellabi.Utilities
 
         public RelayCommand(Action<object> execute, Predicate<object> canExecute)
         {
-            if (execute == null)
-                throw new ArgumentNullException("execute");
-
-            _execute = execute;
+            _execute = execute ?? throw new ArgumentNullException(nameof(execute));
             _canExecute = canExecute;
         }
-        #endregion // Constructors
 
-        #region ICommand Members
+        public bool CanExecute(object parameter) => _canExecute == null || _canExecute(parameter);
 
+        public void Execute(object parameter) => _execute(parameter);
 
-        public bool CanExecute(object parameter)
+        public void RaiseCanExecuteChanged()
         {
-            return _canExecute == null ? true : _canExecute(parameter);
+            if (Dispatcher.UIThread.CheckAccess())
+            {
+                CanExecuteChanged?.Invoke(this, EventArgs.Empty);
+            }
+            else
+            {
+                Dispatcher.UIThread.Post(() => CanExecuteChanged?.Invoke(this, EventArgs.Empty));
+            }
         }
-
-        public event EventHandler CanExecuteChanged
-        {
-            add { CommandManager.RequerySuggested += value; }
-            remove { CommandManager.RequerySuggested -= value; }
-        }
-
-        public void Execute(object parameter)
-        {
-            _execute(parameter);
-        }
-
-        #endregion // ICommand Members
     }
 }

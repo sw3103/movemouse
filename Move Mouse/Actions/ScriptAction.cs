@@ -1,18 +1,21 @@
-﻿using System;
-using System.Diagnostics;
+using ellabi.Platform;
+using System;
 using System.IO;
 
 namespace ellabi.Actions
 {
     public class ScriptAction : ActionBase
     {
-        private const string PowerShellPath = @"%SystemRoot%\system32\WindowsPowerShell\v1.0\powershell.exe";
-
         private string _scriptPath;
         private bool _waitForExit;
         private bool _hidden;
 
-        public override bool IsValid => !String.IsNullOrWhiteSpace(ScriptPath) && File.Exists(ScriptPath) && ScriptPath.EndsWith(".ps1", StringComparison.CurrentCultureIgnoreCase);
+        public override bool IsValid =>
+            !string.IsNullOrWhiteSpace(ScriptPath) &&
+            File.Exists(ScriptPath) &&
+            (ScriptPath.EndsWith(".sh", StringComparison.OrdinalIgnoreCase) ||
+             ScriptPath.EndsWith(".py", StringComparison.OrdinalIgnoreCase) ||
+             ScriptPath.EndsWith(".ps1", StringComparison.OrdinalIgnoreCase));
 
         public string ScriptPath
         {
@@ -21,6 +24,7 @@ namespace ellabi.Actions
             {
                 _scriptPath = value;
                 OnPropertyChanged();
+                ExecuteCommand?.RaiseCanExecuteChanged();
             }
         }
 
@@ -52,23 +56,7 @@ namespace ellabi.Actions
             {
                 IntervalExecutionCount++;
                 StaticCode.Logger?.Here().Information(ToString());
-                string powerShellPath = Environment.ExpandEnvironmentVariables(PowerShellPath);
-
-                if (File.Exists(powerShellPath) && File.Exists(ScriptPath))
-                {
-                    var powershell = new Process
-                    {
-                        StartInfo =
-                        {
-                            FileName = powerShellPath,
-                            Arguments = String.Format("-ExecutionPolicy Bypass -File \"{0}\"", ScriptPath.Trim()),
-                            WindowStyle = Hidden ? ProcessWindowStyle.Hidden : ProcessWindowStyle.Normal
-                        }
-                    };
-
-                    powershell.Start();
-                    if (WaitForExit) powershell.WaitForExit();
-                }
+                LinuxDesktopService.RunScript(ScriptPath, WaitForExit, Hidden);
             }
             catch (Exception ex)
             {
@@ -78,7 +66,7 @@ namespace ellabi.Actions
 
         public override string ToString()
         {
-            return $"{this.GetType().Name} | Name = {Name} | ScriptPath = {ScriptPath} | WaitForExit = {WaitForExit} | Hidden = {Hidden} | Trigger = {Trigger} | Repeat = {Repeat} | RepeatMode = {RepeatMode} | IntervalThrottle = {IntervalThrottle} | IntervalExecutionCount = {IntervalExecutionCount} | InterruptsIdleTime = {InterruptsIdleTime}";
+            return $"{GetType().Name} | Name = {Name} | ScriptPath = {ScriptPath} | WaitForExit = {WaitForExit} | Hidden = {Hidden} | Trigger = {Trigger} | Repeat = {Repeat} | RepeatMode = {RepeatMode} | IntervalThrottle = {IntervalThrottle} | IntervalExecutionCount = {IntervalExecutionCount} | InterruptsIdleTime = {InterruptsIdleTime}";
         }
     }
 }

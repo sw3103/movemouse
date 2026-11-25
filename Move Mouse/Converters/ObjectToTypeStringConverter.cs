@@ -1,7 +1,6 @@
-﻿using System;
-using System.Diagnostics;
+using System;
 using System.Globalization;
-using System.Windows.Data;
+using Avalonia.Data.Converters;
 
 namespace ellabi.Converters
 {
@@ -9,16 +8,7 @@ namespace ellabi.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            try
-            {
-                return value?.GetType().ToString();
-            }
-            catch (Exception ex)
-            {
-                StaticCode.Logger?.Here().Error(ex.Message);
-            }
-
-            return null;
+            return value?.GetType().Name ?? string.Empty;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

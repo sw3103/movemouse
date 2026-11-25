@@ -1,4 +1,4 @@
-﻿using ellabi.Wrappers;
+using ellabi.Platform;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,6 +56,7 @@ namespace ellabi.Actions
         public ClickMouseAction()
         {
             _button = MouseButton.Left;
+            _holdInterval = 0.1;
             InterruptsIdleTime = true;
         }
 
@@ -68,39 +69,22 @@ namespace ellabi.Actions
                 IntervalExecutionCount++;
                 StaticCode.Logger?.Here().Information(ToString());
 
-                switch (_button)
+                var btnType = _button switch
                 {
-                    case MouseButton.Left:
-                        NativeMethods.mouse_event((int)NativeMethods.MouseEventFlags.LEFTDOWN, 0, 0, 0, 0);
-                        break;
-                    case MouseButton.Middle:
-                        NativeMethods.mouse_event((int)NativeMethods.MouseEventFlags.MIDDLEDOWN, 0, 0, 0, 0);
-                        break;
-                    case MouseButton.Right:
-                        NativeMethods.mouse_event((int)NativeMethods.MouseEventFlags.RIGHTDOWN, 0, 0, 0, 0);
-                        break;
-                        //case MouseButton.WheelUp:
-                        //    NativeMethods.mouse_event((int)NativeMethods.MouseEventFlags.WHEEL, 0, 0, Distance, 0);
-                        //    break;
-                }
+                    MouseButton.Left => LinuxInputService.MouseButtonType.Left,
+                    MouseButton.Middle => LinuxInputService.MouseButtonType.Middle,
+                    MouseButton.Right => LinuxInputService.MouseButtonType.Right,
+                    _ => LinuxInputService.MouseButtonType.Left
+                };
 
-                if (Hold)
+                LinuxInputService.MouseButton(btnType, true);
+
+                if (Hold && HoldInterval > 0)
                 {
                     Thread.Sleep(Convert.ToInt32(1000 * HoldInterval));
                 }
 
-                switch (_button)
-                {
-                    case MouseButton.Left:
-                        NativeMethods.mouse_event((int)NativeMethods.MouseEventFlags.LEFTUP, 0, 0, 0, 0);
-                        break;
-                    case MouseButton.Middle:
-                        NativeMethods.mouse_event((int)NativeMethods.MouseEventFlags.MIDDLEUP, 0, 0, 0, 0);
-                        break;
-                    case MouseButton.Right:
-                        NativeMethods.mouse_event((int)NativeMethods.MouseEventFlags.RIGHTUP, 0, 0, 0, 0);
-                        break;
-                }
+                LinuxInputService.MouseButton(btnType, false);
             }
             catch (Exception ex)
             {
@@ -110,7 +94,7 @@ namespace ellabi.Actions
 
         public override string ToString()
         {
-            return $"{this.GetType().Name} | Name = {Name} | Button = {Button} | Hold = {Hold} | HoldInterval = {HoldInterval} | Trigger = {Trigger} | Repeat = {Repeat} | RepeatMode = {RepeatMode} | IntervalThrottle = {IntervalThrottle} | IntervalExecutionCount = {IntervalExecutionCount} | InterruptsIdleTime = {InterruptsIdleTime}";
+            return $"{GetType().Name} | Name = {Name} | Button = {Button} | Hold = {Hold} | HoldInterval = {HoldInterval} | Trigger = {Trigger} | Repeat = {Repeat} | RepeatMode = {RepeatMode} | IntervalThrottle = {IntervalThrottle} | IntervalExecutionCount = {IntervalExecutionCount} | InterruptsIdleTime = {InterruptsIdleTime}";
         }
     }
 }

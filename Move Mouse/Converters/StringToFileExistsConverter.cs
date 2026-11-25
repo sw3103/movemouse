@@ -1,8 +1,7 @@
-﻿using System;
-using System.Diagnostics;
+using System;
 using System.Globalization;
 using System.IO;
-using System.Windows.Data;
+using Avalonia.Data.Converters;
 
 namespace ellabi.Converters
 {
@@ -12,13 +11,12 @@ namespace ellabi.Converters
         {
             try
             {
-                return !String.IsNullOrWhiteSpace(value?.ToString()) && File.Exists(value.ToString());
+                return !string.IsNullOrWhiteSpace(value?.ToString()) && File.Exists(value.ToString());
             }
             catch (Exception ex)
             {
                 StaticCode.Logger?.Here().Error(ex.Message);
             }
-
             return false;
         }
 

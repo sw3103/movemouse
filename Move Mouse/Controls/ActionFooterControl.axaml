@@ -1,0 +1,93 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:converters="clr-namespace:ellabi.Converters"
+             x:Class="ellabi.Controls.ActionFooterControl">
+    <UserControl.Resources>
+        <converters:EnumEqualsConverter x:Key="EnumEqualsConverter"/>
+        <converters:RepeatThrottleEnabledConverter x:Key="RepeatThrottleEnabledConverter"/>
+        <converters:DecimalToNumberConverter x:Key="DecimalToNumberConverter"/>
+    </UserControl.Resources>
+
+    <StackPanel Orientation="Vertical">
+        <!-- Trigger -->
+        <Grid ColumnDefinitions="60,*" RowDefinitions="22,10">
+            <TextBlock Grid.Column="0" Grid.Row="0" Text="Trigger" VerticalAlignment="Center" Foreground="{StaticResource StandardLightTextSolidColorBrush}" FontSize="12"/>
+            <Grid Grid.Column="1" Grid.Row="0" ColumnDefinitions="*,10,Auto">
+                <ComboBox AutomationProperties.Name="Trigger"
+                          Grid.Column="0"
+                          HorizontalAlignment="Stretch"
+                          SelectedItem="{Binding Trigger}"
+                          ItemsSource="{Binding EventTriggerValues}"
+                          IsEnabled="{Binding IsEnabled}"/>
+                <Image Grid.Column="2"
+                       Source="avares://MoveMouse/Resources/Help_Dark_64x64.png"
+                       Height="20"
+                       Width="20"
+                       Stretch="Uniform"
+                      
+                       ToolTip.Tip="Start - Run this action when Move Mouse starts.&#10;&#10;Interval - Run this action at each interval.&#10;&#10;Stop - Run this action when Move Mouse stops&#10;or pauses (does not include blackouts)."/>
+            </Grid>
+        </Grid>
+
+        <!-- Repeat (visible only when Trigger == Interval) -->
+        <Grid ColumnDefinitions="60,Auto,10,*,10,Auto,10,Auto"
+              RowDefinitions="22,10"
+              IsVisible="{Binding Trigger, Converter={StaticResource EnumEqualsConverter}, ConverterParameter=Interval}">
+            <TextBlock Grid.Column="0" Grid.Row="0" Text="Repeat" VerticalAlignment="Center" Foreground="{StaticResource StandardLightTextSolidColorBrush}" FontSize="12"/>
+            <ToggleSwitch Classes="CompactSwitch" Grid.Column="1" Grid.Row="0" IsChecked="{Binding Repeat, Mode=TwoWay}" IsEnabled="{Binding IsEnabled}"/>
+            <ComboBox AutomationProperties.Name="Repeat mode"
+                      Grid.Column="3"
+                      Grid.Row="0"
+                      HorizontalAlignment="Stretch"
+                      SelectedItem="{Binding RepeatMode}"
+                      ItemsSource="{Binding IntervalRepeatModeValues}">
+                <ComboBox.IsEnabled>
+                    <MultiBinding Converter="{x:Static BoolConverters.And}">
+                        <Binding Path="Repeat"/>
+                        <Binding Path="IsEnabled"/>
+                    </MultiBinding>
+                </ComboBox.IsEnabled>
+            </ComboBox>
+            <NumericUpDown Grid.Column="5"
+                           Grid.Row="0"
+                           Width="65"
+                           Value="{Binding IntervalThrottle, Converter={StaticResource DecimalToNumberConverter}}"
+                           Increment="1"
+                           Minimum="1"
+                           Maximum="99999">
+                <NumericUpDown.IsEnabled>
+                    <MultiBinding Converter="{StaticResource RepeatThrottleEnabledConverter}">
+                        <Binding Path="Repeat"/>
+                        <Binding Path="RepeatMode"/>
+                        <Binding Path="IsEnabled"/>
+                    </MultiBinding>
+                </NumericUpDown.IsEnabled>
+            </NumericUpDown>
+            <Image Grid.Column="7"
+                   Grid.Row="0"
+                   Source="avares://MoveMouse/Resources/Help_Dark_64x64.png"
+                   Height="20"
+                   Width="20"
+                   Stretch="Uniform"
+                  
+                   ToolTip.Tip="Forever - Run this action at every interval.&#10;&#10;Throttle - Limits the number of intervals to run this action."/>
+        </Grid>
+
+        <!-- Enabled -->
+        <Grid ColumnDefinitions="60,*" RowDefinitions="22,10">
+            <TextBlock Grid.Column="0" Grid.Row="0" Text="Enabled" VerticalAlignment="Center" Foreground="{StaticResource StandardLightTextSolidColorBrush}" FontSize="12"/>
+            <ToggleSwitch Classes="CompactSwitch" Grid.Column="1" Grid.Row="0" IsChecked="{Binding IsEnabled, Mode=TwoWay}"/>
+        </Grid>
+
+        <!-- Optional Test Button -->
+        <Grid Name="TestRow" ColumnDefinitions="60,*" RowDefinitions="22,10" IsVisible="True">
+            <Button AutomationProperties.Name="Test action"
+                    Grid.Column="1"
+                    Grid.Row="0"
+                    Content="Test"
+                    HorizontalAlignment="Left"
+                    Command="{Binding ExecuteCommand}"
+                    IsEnabled="{Binding IsEnabled}"/>
+        </Grid>
+    </StackPanel>
+</UserControl>

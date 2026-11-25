@@ -1,0 +1,25 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="ellabi.Controls.CalloutBubble">
+    <Grid RowDefinitions="*,14">
+        <Border Grid.Row="0"
+                Background="{StaticResource StandardWindowBackground}"
+                BorderBrush="{StaticResource StandardLightTextSolidColorBrush}"
+                BorderThickness="3"
+                CornerRadius="8"
+                Padding="10,6">
+            <TextBlock Name="BubbleText"
+                       Foreground="{StaticResource StandardLightTextSolidColorBrush}"
+                       FontSize="14"
+                       TextWrapping="Wrap"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       TextAlignment="Center"/>
+        </Border>
+        <Path Grid.Row="1"
+              Data="M 16,0 L 2,14 L 30,0 Z"
+              Fill="{StaticResource StandardLightTextSolidColorBrush}"
+              HorizontalAlignment="Left"
+              Margin="12,-2,0,0"/>
+    </Grid>
+</UserControl>

@@ -1,23 +1,24 @@
-﻿using ellabi.Classes;
+using ellabi.Classes;
 using Quartz;
 using System;
-using System.IO;
+using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Xml;
-using System.Xml.Serialization;
 
 namespace ellabi.Jobs
 {
     public class CheckForUpdateJob : IJob
     {
+        private static readonly HttpClient HttpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(10) };
+
         public async Task Execute(IJobExecutionContext context)
         {
             try
             {
-                var update = GetUpdate();
+                var update = await GetUpdateAsync();
 
-                if ((update != null) && (update.LatestVersion > Assembly.GetExecutingAssembly().GetName().Version))
+                if (update != null && update.LatestVersion > Assembly.GetExecutingAssembly().GetName().Version)
                 {
                     StaticCode.UpdateUrl = update.DownloadUrl;
                     StaticCode.OnUpdateAvailablityChanged(true);
@@ -27,20 +28,22 @@ namespace ellabi.Jobs
             {
                 StaticCode.Logger?.Here().Error(ex.Message);
             }
-
-            await Task.CompletedTask;
         }
 
-        private Update GetUpdate()
+        private async Task<Update> GetUpdateAsync()
         {
             try
             {
+                string xml = await HttpClient.GetStringAsync(StaticCode.UpdateXmlUrl);
                 var xmlDoc = new XmlDocument();
-                xmlDoc.Load(StaticCode.UpdateXmlUrl);
+                xmlDoc.LoadXml(xml);
                 var versionNode = xmlDoc.SelectSingleNode("Update/LatestVersion");
                 var urlNode = xmlDoc.SelectSingleNode("Update/DownloadUrl");
 
-                if ((versionNode != null) && (urlNode != null) && !String.IsNullOrWhiteSpace(versionNode.InnerText) && !String.IsNullOrWhiteSpace(urlNode.InnerText) && Version.TryParse(versionNode.InnerText, out var version))
+                if (versionNode != null && urlNode != null &&
+                    !string.IsNullOrWhiteSpace(versionNode.InnerText) &&
+                    !string.IsNullOrWhiteSpace(urlNode.InnerText) &&
+                    Version.TryParse(versionNode.InnerText, out var version))
                 {
                     return new Update
                     {

@@ -1,0 +1,47 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="ellabi.Controls.TimeSpanUpDown"
+             Height="22"
+             MinWidth="82">
+    <Border BorderBrush="{StaticResource StandardBorderBrush}" BorderThickness="1" Background="Transparent">
+        <Grid ColumnDefinitions="*,16">
+            <TextBox Grid.Column="0"
+                     Name="TimeTextBox"
+                     BorderThickness="0"
+                     Background="Transparent"
+                     Foreground="{StaticResource StandardLightTextSolidColorBrush}"
+                     FontSize="12"
+                     Padding="4,0,2,0"
+                     VerticalContentAlignment="Center"
+                     IsReadOnly="True"
+                     Focusable="True"
+                     KeyDown="TimeTextBox_KeyDown"/>
+            <Grid Grid.Column="1" RowDefinitions="*,*" Background="Transparent">
+                <RepeatButton Grid.Row="0"
+                              Name="UpButton"
+                              Padding="0"
+                              Margin="0"
+                              Height="10"
+                              Width="16"
+                              Background="Transparent"
+                              BorderThickness="1,0,0,0"
+                              BorderBrush="{StaticResource StandardBorderBrush}"
+                              Click="UpButton_Click">
+                    <Path Data="M 0,4 L 3,0 L 6,4 Z" Fill="{StaticResource StandardLightControlSolidColorBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </RepeatButton>
+                <RepeatButton Grid.Row="1"
+                              Name="DownButton"
+                              Padding="0"
+                              Margin="0"
+                              Height="10"
+                              Width="16"
+                              Background="Transparent"
+                              BorderThickness="1,1,0,0"
+                              BorderBrush="{StaticResource StandardBorderBrush}"
+                              Click="DownButton_Click">
+                    <Path Data="M 0,0 L 3,4 L 6,0 Z" Fill="{StaticResource StandardLightControlSolidColorBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </RepeatButton>
+            </Grid>
+        </Grid>
+    </Border>
+</UserControl>

@@ -1,8 +1,7 @@
-﻿using ellabi.Actions;
+using ellabi.Actions;
 using System;
-using System.Diagnostics;
 using System.Globalization;
-using System.Windows.Data;
+using Avalonia.Data.Converters;
 
 namespace ellabi.Converters
 {
@@ -10,36 +9,19 @@ namespace ellabi.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            try
+            if (value is MoveMouseCursorAction.CursorDirection direction)
             {
-                if ((value != null) && value.GetType() == typeof(MoveMouseCursorAction.CursorDirection))
-                {
-                    var direction = (MoveMouseCursorAction.CursorDirection)value;
-                    return direction.Equals(MoveMouseCursorAction.CursorDirection.None);
-                }
+                return direction == MoveMouseCursorAction.CursorDirection.None;
             }
-            catch (Exception ex)
-            {
-                StaticCode.Logger?.Here().Error(ex.Message);
-            }
-
             return false;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            try
+            if (bool.TryParse(value?.ToString(), out var b))
             {
-                if (Boolean.TryParse(value?.ToString(), out var b))
-                {
-                    return b ? MoveMouseCursorAction.CursorDirection.None : MoveMouseCursorAction.CursorDirection.Square;
-                }
+                return b ? MoveMouseCursorAction.CursorDirection.None : MoveMouseCursorAction.CursorDirection.Square;
             }
-            catch (Exception ex)
-            {
-                StaticCode.Logger?.Here().Error(ex.Message);
-            }
-
             return MoveMouseCursorAction.CursorDirection.Square;
         }
     }
