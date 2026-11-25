@@ -32,6 +32,8 @@ namespace ellabi.ViewModels
 
         //public delegate void HookKeyEnabledChangedHandler(object sender, bool enabled, Key key);
 
+        public delegate void HotkeyChangedHandler(object sender);
+
         public event PropertyChangedEventHandler PropertyChanged;
         public event MouseStateChangedHandler MouseStateChanged;
         public event AltTabVisibilityChangedHandler AltTabVisibilityChanged;
@@ -39,6 +41,7 @@ namespace ellabi.ViewModels
         public event RequestMinimiseHandler RequestMinimise;
         public event RequestNotificationHandler RequestNotification;
         //public event HookKeyEnabledChangedHandler HookKeyEnabledChanged;
+        public event HotkeyChangedHandler HotkeyChanged;
 
         private MouseState _currentState;
         private DateTime _executionTime;
@@ -434,6 +437,15 @@ namespace ellabi.ViewModels
                                 ShowNotification("Pausing now running on battery.");
                             }
 
+                            break;
+                        }
+                    case "HotkeyEnabled":
+                    case "HotkeyCtrl":
+                    case "HotkeyShift":
+                    case "HotkeyAlt":
+                    case "HotkeyKey":
+                        {
+                            OnHotkeyChanged(this);
                             break;
                         }
                         //case "HookKeyEnabled":
@@ -1025,6 +1037,20 @@ namespace ellabi.ViewModels
         //{
         //    HookKeyEnabledChanged?.Invoke(sender, enabled, key);
         //}
+
+        protected void OnHotkeyChanged(object sender)
+        {
+            StaticCode.Logger?.Here().Debug(String.Empty);
+
+            try
+            {
+                HotkeyChanged?.Invoke(sender);
+            }
+            catch (Exception ex)
+            {
+                StaticCode.Logger?.Here().Error(ex.Message);
+            }
+        }
 
         protected void OnRequestActivate(object sender)
         {

@@ -38,11 +38,35 @@ namespace ellabi.ViewModels
         private DateTime _lastSettingsPropertyChanged;
         private TimeSpan _lastSettingsPropertyChangedInterval = TimeSpan.FromMilliseconds(1000);
         private Guid _lastThreadId;
+        private string _hotkeyError;
 
         public Settings Settings => _settings ?? (_settings = ReadSettings());
 
         //public ObservableCollection<VirtualKey> VirtualKeys => new ObservableCollection<VirtualKey>(VirtualKey.GetVirtualKeys());
         public ObservableCollection<int> VirtualKeys => new ObservableCollection<int>(StaticCode.VirtualKeys.Value.Keys);
+
+        // Keys that can be used as the main key of the start/stop shortcut (excludes mouse buttons, modifiers, Windows keys,
+        // lock keys and F12, which Windows reserves for the debugger).
+        public ObservableCollection<int> HotkeyKeys => new ObservableCollection<int>(StaticCode.VirtualKeys.Value.Keys.Where(key =>
+            !(key >= 0x01 && key <= 0x06) &&
+            !(key >= 0x10 && key <= 0x12) &&
+            !(key >= 0xA0 && key <= 0xA5) &&
+            key != 0x5B &&
+            key != 0x5C &&
+            key != 0x14 &&
+            key != 0x90 &&
+            key != 0x91 &&
+            key != 0x7B));
+
+        public string HotkeyError
+        {
+            get => _hotkeyError;
+            set
+            {
+                _hotkeyError = value;
+                OnPropertyChanged();
+            }
+        }
 
         public ActionBase SelectedAction
         {

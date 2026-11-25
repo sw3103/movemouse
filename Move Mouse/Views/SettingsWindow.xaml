@@ -2148,6 +2148,60 @@
                         <toggleSwitch:HorizontalToggleSwitch IsChecked="{Binding Path=Settings.HookKeyEnabled, NotifyOnTargetUpdated=True, Mode=TwoWay}"/>
                         <TextBlock Margin="5,0,0,0" Text="Start/Stop Move Mouse using the keyboard" Style="{StaticResource LabelTextBlockStyle}"/>
                     </StackPanel>-->
+                    <StackPanel Style="{StaticResource OptionStackPanelStyle}">
+                        <StackPanel.Resources>
+                            <converters:VirtualKeyToNameConverter x:Key="VirtualKeyToNameConverter"/>
+                            <converters:VirtualKeyToDescriptionConverter x:Key="VirtualKeyToDescriptionConverter"/>
+                        </StackPanel.Resources>
+                        <toggleSwitch:HorizontalToggleSwitch AutomationProperties.Name="Start/Stop keyboard shortcut" IsChecked="{Binding Path=Settings.HotkeyEnabled, NotifyOnTargetUpdated=True, Mode=TwoWay}"/>
+                        <TextBlock Margin="5,0,0,0" Text="Start/Stop Move Mouse using the keyboard" Style="{StaticResource LabelTextBlockStyle}"/>
+                        <StackPanel Orientation="Horizontal" Margin="20,0,0,0">
+                            <StackPanel.Style>
+                                <Style TargetType="StackPanel">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Path=Settings.HotkeyEnabled, NotifyOnTargetUpdated=True}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </StackPanel.Style>
+                            <CheckBox AutomationProperties.Name="Ctrl" VerticalAlignment="Center" IsChecked="{Binding Path=Settings.HotkeyCtrl, NotifyOnTargetUpdated=True, Mode=TwoWay}">
+                                <TextBlock Text="Ctrl" Style="{StaticResource LabelTextBlockStyle}"/>
+                            </CheckBox>
+                            <CheckBox AutomationProperties.Name="Shift" Margin="10,0,0,0" VerticalAlignment="Center" IsChecked="{Binding Path=Settings.HotkeyShift, NotifyOnTargetUpdated=True, Mode=TwoWay}">
+                                <TextBlock Text="Shift" Style="{StaticResource LabelTextBlockStyle}"/>
+                            </CheckBox>
+                            <CheckBox AutomationProperties.Name="Alt" Margin="10,0,0,0" VerticalAlignment="Center" IsChecked="{Binding Path=Settings.HotkeyAlt, NotifyOnTargetUpdated=True, Mode=TwoWay}">
+                                <TextBlock Text="Alt" Style="{StaticResource LabelTextBlockStyle}"/>
+                            </CheckBox>
+                            <TextBlock Margin="10,0,10,0" Text="+" Style="{StaticResource LabelTextBlockStyle}"/>
+                            <ComboBox AutomationProperties.Name="Shortcut key" Width="120" MaxDropDownHeight="300" ItemsSource="{Binding Path=HotkeyKeys}" SelectedItem="{Binding Path=Settings.HotkeyKey, NotifyOnTargetUpdated=True}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Converter={StaticResource VirtualKeyToNameConverter}}" ToolTip="{Binding Converter={StaticResource VirtualKeyToDescriptionConverter}}"/>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </StackPanel>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                        <StackPanel.Style>
+                            <Style TargetType="StackPanel">
+                                <Setter Property="Visibility" Value="Visible"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Path=HotkeyError, NotifyOnTargetUpdated=True}" Value="{x:Null}">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Path=Settings.HotkeyEnabled, NotifyOnTargetUpdated=True}" Value="False">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
+                        <Image Source="/Resources/Warning_128x128.png" RenderOptions.BitmapScalingMode="HighQuality"/>
+                        <TextBlock Margin="5,0,0,0" Text="{Binding Path=HotkeyError, NotifyOnTargetUpdated=True}" Style="{StaticResource LabelTextBlockStyle}"/>
+                    </StackPanel>
                     <!--<StackPanel Style="{StaticResource OptionStackPanelStyle}">
                         <toggleSwitch:HorizontalToggleSwitch Grid.Column="0" Grid.Row="8" IsChecked="{Binding Path=Settings.EnableLogging, NotifyOnTargetUpdated=True, Mode=TwoWay}"/>
                         <StackPanel Grid.Column="2" Grid.Row="8" Orientation="Horizontal" Margin="5,0,0,0">
