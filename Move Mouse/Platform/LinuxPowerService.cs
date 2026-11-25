@@ -9,6 +9,11 @@ namespace ellabi.Platform
 
         public static bool IsRunningOnBattery()
         {
+            if (OperatingSystem.IsWindows())
+            {
+                return WindowsPowerService.IsRunningOnBattery();
+            }
+
             try
             {
                 if (!Directory.Exists(PowerSupplyPath)) return false;

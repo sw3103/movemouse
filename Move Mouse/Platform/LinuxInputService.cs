@@ -30,6 +30,11 @@ namespace ellabi.Platform
 
         public static Point GetCursorPosition()
         {
+            if (OperatingSystem.IsWindows())
+            {
+                return WindowsInputService.GetCursorPosition();
+            }
+
             if (HasDisplay)
             {
                 try
@@ -66,6 +71,12 @@ namespace ellabi.Platform
 
         public static void MoveRelative(int dx, int dy)
         {
+            if (OperatingSystem.IsWindows())
+            {
+                WindowsInputService.MoveRelative(dx, dy);
+                return;
+            }
+
             try
             {
                 _virtualCursor = new Point(_virtualCursor.X + dx, _virtualCursor.Y + dy);
@@ -103,6 +114,12 @@ namespace ellabi.Platform
 
         public static void SetCursorPosition(int x, int y)
         {
+            if (OperatingSystem.IsWindows())
+            {
+                WindowsInputService.SetCursorPosition(x, y);
+                return;
+            }
+
             try
             {
                 _virtualCursor = new Point(x, y);
@@ -143,6 +160,19 @@ namespace ellabi.Platform
 
         public static void MouseButton(MouseButtonType button, bool isDown)
         {
+            if (OperatingSystem.IsWindows())
+            {
+                var winBtn = button switch
+                {
+                    MouseButtonType.Left => WindowsInputService.MouseButtonType.Left,
+                    MouseButtonType.Middle => WindowsInputService.MouseButtonType.Middle,
+                    MouseButtonType.Right => WindowsInputService.MouseButtonType.Right,
+                    _ => WindowsInputService.MouseButtonType.Left
+                };
+                WindowsInputService.MouseButton(winBtn, isDown);
+                return;
+            }
+
             try
             {
                 ushort evdevBtn = button switch
@@ -185,6 +215,20 @@ namespace ellabi.Platform
 
         public static void Scroll(ScrollDirectionType direction, uint distance)
         {
+            if (OperatingSystem.IsWindows())
+            {
+                var winDir = direction switch
+                {
+                    ScrollDirectionType.Up => WindowsInputService.ScrollDirectionType.Up,
+                    ScrollDirectionType.Down => WindowsInputService.ScrollDirectionType.Down,
+                    ScrollDirectionType.Left => WindowsInputService.ScrollDirectionType.Left,
+                    ScrollDirectionType.Right => WindowsInputService.ScrollDirectionType.Right,
+                    _ => WindowsInputService.ScrollDirectionType.Down
+                };
+                WindowsInputService.Scroll(winDir, distance);
+                return;
+            }
+
             try
             {
                 int clicks = Math.Max(1, (int)Math.Round(distance / 120.0));
@@ -249,6 +293,12 @@ namespace ellabi.Platform
 
         public static void SendKey(int virtualKeyCode, bool isDown)
         {
+            if (OperatingSystem.IsWindows())
+            {
+                WindowsInputService.SendKey(virtualKeyCode, isDown);
+                return;
+            }
+
             try
             {
                 if (!IsWayland && HasDisplay && TryX11Key(virtualKeyCode, isDown))
@@ -401,6 +451,15 @@ namespace ellabi.Platform
             }
         }
 
-        public static void Dispose() => _uinput.Dispose();
+        public static void Dispose()
+        {
+            if (OperatingSystem.IsWindows())
+            {
+                WindowsInputService.Dispose();
+                return;
+            }
+
+            _uinput.Dispose();
+        }
     }
 }

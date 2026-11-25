@@ -284,7 +284,10 @@ namespace ellabi
             }
         }
 
-        public static TimeSpan GetLastInputTime() => LinuxIdleService.GetLastInputTime();
+        public static TimeSpan GetLastInputTime() =>
+            OperatingSystem.IsWindows()
+                ? WindowsIdleService.GetLastInputTime()
+                : LinuxIdleService.GetLastInputTime();
 
         public static void OnScheduleArrived(ScheduleBase.ScheduleAction action)
         {

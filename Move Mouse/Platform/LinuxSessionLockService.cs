@@ -7,6 +7,11 @@ namespace ellabi.Platform
     {
         public static bool IsSessionLocked()
         {
+            if (OperatingSystem.IsWindows())
+            {
+                return WindowsSessionLockService.IsSessionLocked();
+            }
+
             try
             {
                 // 1. Check loginctl LockedHint for current session

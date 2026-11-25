@@ -10,6 +10,12 @@ namespace ellabi.Platform
         {
             if (string.IsNullOrWhiteSpace(target)) return;
 
+            if (OperatingSystem.IsWindows())
+            {
+                WindowsDesktopService.OpenTarget(target);
+                return;
+            }
+
             try
             {
                 var psi = new ProcessStartInfo
@@ -30,6 +36,12 @@ namespace ellabi.Platform
         public static void ShowNotification(string title, string message)
         {
             if (string.IsNullOrWhiteSpace(message)) return;
+
+            if (OperatingSystem.IsWindows())
+            {
+                WindowsDesktopService.ShowNotification(title, message);
+                return;
+            }
 
             try
             {
@@ -54,6 +66,12 @@ namespace ellabi.Platform
         public static void FollowLog(string logPath)
         {
             if (string.IsNullOrWhiteSpace(logPath)) return;
+
+            if (OperatingSystem.IsWindows())
+            {
+                WindowsDesktopService.FollowLog(logPath);
+                return;
+            }
 
             string escaped = logPath.Replace("'", "'\\''");
             string tailCmd = $"tail -n 500 -f '{escaped}'";
@@ -94,6 +112,12 @@ namespace ellabi.Platform
         public static void RunScript(string scriptPath, bool waitForExit, bool hidden)
         {
             if (string.IsNullOrWhiteSpace(scriptPath) || !File.Exists(scriptPath)) return;
+
+            if (OperatingSystem.IsWindows())
+            {
+                WindowsDesktopService.RunScript(scriptPath, waitForExit, hidden);
+                return;
+            }
 
             string trimmed = scriptPath.Trim();
             ProcessStartInfo psi;

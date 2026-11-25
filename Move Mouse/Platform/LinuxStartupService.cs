@@ -29,6 +29,11 @@ namespace ellabi.Platform
 
         public static StartupTaskState GetState()
         {
+            if (OperatingSystem.IsWindows())
+            {
+                return WindowsStartupService.GetState();
+            }
+
             try
             {
                 if (!File.Exists(DesktopFilePath))
@@ -54,6 +59,12 @@ namespace ellabi.Platform
 
         public static void SetEnabled(bool enabled)
         {
+            if (OperatingSystem.IsWindows())
+            {
+                WindowsStartupService.SetEnabled(enabled);
+                return;
+            }
+
             try
             {
                 if (enabled)

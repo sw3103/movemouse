@@ -19,6 +19,11 @@ namespace ellabi.Platform
 
         public static List<WindowEntry> GetOpenWindows()
         {
+            if (OperatingSystem.IsWindows())
+            {
+                return WindowsWindowService.GetOpenWindows();
+            }
+
             var windows = new List<WindowEntry>();
 
             if (HasDisplay)
@@ -127,6 +132,11 @@ namespace ellabi.Platform
         public static bool ActivateWindow(string pattern, bool byWindowTitle)
         {
             if (string.IsNullOrWhiteSpace(pattern)) return false;
+
+            if (OperatingSystem.IsWindows())
+            {
+                return WindowsWindowService.ActivateWindow(pattern, byWindowTitle);
+            }
 
             var windows = GetOpenWindows();
             WindowEntry match = FindMatch(windows, pattern, byWindowTitle);

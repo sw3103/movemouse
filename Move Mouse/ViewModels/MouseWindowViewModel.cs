@@ -33,6 +33,7 @@ namespace ellabi.ViewModels
         public delegate void RequestActivateHandler(object sender);
         public delegate void RequestMinimiseHandler(object sender);
         public delegate void RequestNotificationHandler(object sender, string title, string message, NotificationIcon symbol);
+        public delegate void RequestConcealMainWindowHandler(object sender);
 
         public event PropertyChangedEventHandler PropertyChanged;
         public event MouseStateChangedHandler MouseStateChanged;
@@ -40,6 +41,7 @@ namespace ellabi.ViewModels
         public event RequestActivateHandler RequestActivate;
         public event RequestMinimiseHandler RequestMinimise;
         public event RequestNotificationHandler RequestNotification;
+        public event RequestConcealMainWindowHandler RequestConcealMainWindow;
 
         private MouseState _currentState;
         private DateTime _executionTime;
@@ -377,7 +379,7 @@ namespace ellabi.ViewModels
             }
         }
 
-        public void StartStopToggle()
+        public void StartStopToggle(bool concealMainWindowAfter = false)
         {
             StaticCode.Logger?.Here().Information(string.Empty);
 
@@ -392,6 +394,11 @@ namespace ellabi.ViewModels
                     else
                     {
                         Stop(MouseState.Idle);
+                    }
+
+                    if (concealMainWindowAfter)
+                    {
+                        OnRequestConcealMainWindow(this);
                     }
                 }
             }
@@ -435,7 +442,6 @@ namespace ellabi.ViewModels
                         _actionTimer = new Timer(param => PerformActions(ActionBase.EventTrigger.Interval), null, TimeSpan.FromMilliseconds(interval), Timeout.InfiniteTimeSpan);
                         StopBlackoutTimer();
                         AdjustVolume();
-                        if (_settingsVm.Settings.TopmostWhenRunning) OnRequestActivate(this);
                         StartAutoPauseTimer();
                     }
                     else
@@ -473,7 +479,6 @@ namespace ellabi.ViewModels
                     if (previousState == MouseState.Running)
                     {
                         PerformActions(ActionBase.EventTrigger.Stop);
-                        if (_settingsVm.Settings.MinimiseOnStop) OnRequestMinimise(this);
                     }
 
                     if (CurrentState.Equals(MouseState.Paused))
@@ -900,6 +905,20 @@ namespace ellabi.ViewModels
             try
             {
                 RequestActivate?.Invoke(sender);
+            }
+            catch (Exception ex)
+            {
+                StaticCode.Logger?.Here().Error(ex.Message);
+            }
+        }
+
+        protected void OnRequestConcealMainWindow(object sender)
+        {
+            StaticCode.Logger?.Here().Debug(string.Empty);
+
+            try
+            {
+                RequestConcealMainWindow?.Invoke(sender);
             }
             catch (Exception ex)
             {

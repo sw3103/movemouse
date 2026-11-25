@@ -10,6 +10,11 @@ namespace ellabi.Platform
     {
         public static async Task<double?> GetDefaultVolumeAsync()
         {
+            if (OperatingSystem.IsWindows())
+            {
+                return await WindowsAudioService.GetDefaultVolumeAsync();
+            }
+
             // 1. Try WirePlumber (wpctl)
             string wpctlOut = await RunCommandAsync("wpctl", "get-volume", "@DEFAULT_AUDIO_SINK@");
             if (!string.IsNullOrWhiteSpace(wpctlOut))
@@ -38,6 +43,12 @@ namespace ellabi.Platform
 
         public static async Task SetDefaultVolumeAsync(double volumePercent)
         {
+            if (OperatingSystem.IsWindows())
+            {
+                await WindowsAudioService.SetDefaultVolumeAsync(volumePercent);
+                return;
+            }
+
             double clamped = Math.Clamp(volumePercent, 0.0, 100.0);
             string wpVal = (clamped / 100.0).ToString("0.00", CultureInfo.InvariantCulture);
 

@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Threading;
@@ -52,6 +53,7 @@ namespace ellabi.Views
         private DispatcherTimer _screenBurnTimer;
         private bool _screenBurnToggle;
         private bool _isPointerOverWindow;
+        private bool _userExplicitlyShowMainWindow;
 
         private DispatcherTimer _updateCalloutTimer;
 
@@ -73,7 +75,20 @@ namespace ellabi.Views
         {
             InitializeComponent();
             Opened += MouseWindow_Opened;
+
+            ApplyBorderlessTransparentChrome();
+
+            if (OperatingSystem.IsWindows())
+            {
+                Win32Properties.AddWindowStylesCallback(this, (style, exStyle) =>
+                {
+                    style &= ~0x00080000u; // WS_SYSMENU — borderless sizing on Win32
+                    return (style, exStyle);
+                });
+            }
         }
+
+        private void ApplyBorderlessTransparentChrome() => WindowsShellService.ApplyBorderlessChrome(this);
 
         private void MouseWindow_Opened(object sender, EventArgs e)
         {
@@ -84,6 +99,7 @@ namespace ellabi.Views
             _vm.MouseStateChanged += _vm_MouseStateChanged;
             _vm.AltTabVisibilityChanged += _vm_AltTabVisibilityChanged;
             _vm.RequestActivate += _vm_RequestActivate;
+            _vm.RequestConcealMainWindow += _vm_RequestConcealMainWindow;
             _vm.RequestMinimise += _vm_RequestMinimise;
             _vm.RequestNotification += _vm_RequestNotification;
             _vm.PropertyChanged += _vm_PropertyChanged;
@@ -92,7 +108,14 @@ namespace ellabi.Views
             InitializeFlyingSlots();
             InitializeTrayIcon();
             InitializeTimers();
+
+            _userExplicitlyShowMainWindow = !_vm.SettingsVm.Settings.HideMainWindow;
             ApplyWindowSettings();
+
+            if (OperatingSystem.IsWindows() && _userExplicitlyShowMainWindow)
+            {
+                WindowsShellService.RestoreMainWindow(this, ensureVisible: true);
+            }
 
             if (_vm.SettingsVm.Settings.StartAtLaunch)
             {
@@ -175,10 +198,10 @@ namespace ellabi.Views
 
                 var menu = new NativeMenu();
                 var toggleItem = new NativeMenuItem("Start / Stop");
-                toggleItem.Click += (_, _) => _vm.StartStopToggle();
+                toggleItem.Click += (_, _) => _vm.StartStopToggle(concealMainWindowAfter: true);
 
-                var showItem = new NativeMenuItem("Show Move Mouse");
-                showItem.Click += (_, _) => _vm_RequestActivate(this);
+                var showItem = new NativeMenuItem("Show / Hide Move Mouse");
+                showItem.Click += (_, _) => ToggleMainWindowVisibility();
 
                 var settingsItem = new NativeMenuItem("Settings");
                 settingsItem.Click += (_, _) => ShowSettingsWindow();
@@ -213,7 +236,7 @@ namespace ellabi.Views
                 _traySingleClickTimer.Tick += (_, _) =>
                 {
                     _traySingleClickTimer.Stop();
-                    _vm_RequestActivate(this);
+                    ToggleMainWindowVisibility();
                 };
 
                 _trayIcon = new TrayIcon
@@ -247,7 +270,7 @@ namespace ellabi.Views
             {
                 _traySingleClickTimer?.Stop();
                 _lastTrayClickTime = DateTime.MinValue;
-                _vm?.StartStopToggle();
+                _vm?.StartStopToggle(concealMainWindowAfter: true);
             }
             else
             {
@@ -255,6 +278,29 @@ namespace ellabi.Views
                 _traySingleClickTimer?.Stop();
                 _traySingleClickTimer?.Start();
             }
+        }
+
+        private void ToggleMainWindowVisibility()
+        {
+            if (!Dispatcher.UIThread.CheckAccess())
+            {
+                Dispatcher.UIThread.Post(ToggleMainWindowVisibility);
+                return;
+            }
+
+            if (_isClosing || _vm == null) return;
+
+            if (_userExplicitlyShowMainWindow && IsVisible)
+            {
+                _userExplicitlyShowMainWindow = false;
+                ApplyWindowSettings();
+                return;
+            }
+
+            _userExplicitlyShowMainWindow = true;
+            ApplyWindowSettings();
+            WindowState = WindowState.Normal;
+            Activate();
         }
 
         private void InitializeTimers()
@@ -403,18 +449,22 @@ namespace ellabi.Views
                 ? s.WindowTitle
                 : "Move Mouse";
 
-            Topmost = !s.HideMainWindow &&
-                      (s.Topmost || (s.TopmostWhenRunning && _vm.CurrentState == MouseWindowViewModel.MouseState.Running));
+            Topmost = (_userExplicitlyShowMainWindow && s.Topmost) ||
+                      (s.TopmostWhenRunning && _vm.CurrentState == MouseWindowViewModel.MouseState.Running);
 
-            ShowInTaskbar = !s.HideMainWindow && !s.HideFromTaskbar;
+            ShowInTaskbar = _userExplicitlyShowMainWindow && !s.HideFromTaskbar;
 
-            if (s.HideMainWindow)
-            {
-                if (IsVisible) Hide();
-            }
-            else
+            if (_userExplicitlyShowMainWindow)
             {
                 if (!IsVisible) Show();
+                if (OperatingSystem.IsWindows())
+                {
+                    WindowsShellService.RestoreMainWindow(this);
+                }
+            }
+            else if (IsVisible)
+            {
+                Hide();
             }
 
             UpdateTrayVisibility();
@@ -438,15 +488,17 @@ namespace ellabi.Views
 
         private void _vm_RequestActivate(object sender)
         {
+            Dispatcher.UIThread.Post(ToggleMainWindowVisibility);
+        }
+
+        private void _vm_RequestConcealMainWindow(object sender)
+        {
             Dispatcher.UIThread.Post(() =>
             {
                 if (_isClosing || _vm == null) return;
-                if (!_vm.SettingsVm.Settings.HideMainWindow)
-                {
-                    if (!IsVisible) Show();
-                    WindowState = WindowState.Normal;
-                    Activate();
-                }
+
+                _userExplicitlyShowMainWindow = false;
+                ApplyWindowSettings();
             });
         }
 
@@ -540,7 +592,11 @@ namespace ellabi.Views
         private void HelpButton_OnClick(object sender, RoutedEventArgs e) => LinuxDesktopService.OpenTarget(StaticCode.HelpPageUrl);
         private void TwitterButton_OnClick(object sender, RoutedEventArgs e) => LinuxDesktopService.OpenTarget(StaticCode.TwitterUrl);
         private void CloseButton_OnClick(object sender, RoutedEventArgs e) => ShutdownApp();
-        private void MinimiseButton_OnClick(object sender, RoutedEventArgs e) => WindowState = WindowState.Minimized;
+        private void MinimiseButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            _userExplicitlyShowMainWindow = false;
+            WindowState = WindowState.Minimized;
+        }
 
         private void UpdateCallout_OnPointerPressed(object sender, PointerPressedEventArgs e)
         {
@@ -679,6 +735,7 @@ namespace ellabi.Views
                     _vm.MouseStateChanged -= _vm_MouseStateChanged;
                     _vm.AltTabVisibilityChanged -= _vm_AltTabVisibilityChanged;
                     _vm.RequestActivate -= _vm_RequestActivate;
+                    _vm.RequestConcealMainWindow -= _vm_RequestConcealMainWindow;
                     _vm.RequestMinimise -= _vm_RequestMinimise;
                     _vm.RequestNotification -= _vm_RequestNotification;
                     _vm.PropertyChanged -= _vm_PropertyChanged;
